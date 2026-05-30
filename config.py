@@ -27,6 +27,16 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./assistant.db"
     app_base_url: str = "http://localhost:8000"
 
+    # Digital waiver form
+    waiver_recipient_email: str = "Reception@Katara.club"
+    waiver_storage_dir: str = "./waiver_storage"
+    # Optional SMTP fallback (used when Gmail OAuth is not connected)
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = ""
+
     class Config:
         env_file = ".env"
 

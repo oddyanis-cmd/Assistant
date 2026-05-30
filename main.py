@@ -16,9 +16,12 @@ import secrets
 from datetime import datetime
 from urllib.parse import urlencode
 
+import os
+
 import httpx
 from fastapi import FastAPI, HTTPException, Query, Request, BackgroundTasks
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from google_auth_oauthlib.flow import Flow
 
 from agent import process_message
@@ -26,12 +29,19 @@ from config import settings
 from database.db import init_db, SessionLocal
 from database.models import OAuthToken
 from scheduler import start_scheduler
+from waiver import router as waiver_router
 from whatsapp import parse_incoming, send_message
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Personal AI Assistant", version="1.0.0")
+
+# Static assets (Katara Club logo, waiver form) + digital waiver routes
+_static_dir = os.path.join(os.path.dirname(__file__), "static")
+os.makedirs(_static_dir, exist_ok=True)
+app.mount("/static", StaticFiles(directory=_static_dir), name="static")
+app.include_router(waiver_router)
 
 # Temporary state store for OAuth CSRF tokens (in-memory is fine for a single-user app)
 _oauth_state: dict[str, str] = {}

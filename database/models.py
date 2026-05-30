@@ -39,6 +39,26 @@ class Task(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class WaiverSubmission(Base):
+    """A digitally signed waiver/consent form submitted by a member."""
+
+    __tablename__ = "waiver_submissions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    reference = Column(String, unique=True, index=True, nullable=False)
+    form_id = Column(String, default="K11-AIR-SELECT")
+    full_name = Column(String, nullable=False)
+    phone = Column(String, nullable=True)
+    membership_id = Column(String, nullable=True)
+    staff_name = Column(String, nullable=True)
+    form_date = Column(String, nullable=True)        # date as entered on the form
+    answers = Column(JSON, nullable=True)            # per-clause Yes/No + text
+    pdf_path = Column(String, nullable=True)         # stored signed PDF
+    emailed = Column(Boolean, default=False)
+    email_error = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class OAuthToken(Base):
     """Stores OAuth2 tokens for Gmail and LinkedIn after the one-time auth flow."""
 

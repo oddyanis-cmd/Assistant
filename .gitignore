@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Local database
+*.db
+assistant.db
+
+# Stored signed waivers (generated at runtime)
+waiver_storage/*.pdf
+
+# Environment
+.env
