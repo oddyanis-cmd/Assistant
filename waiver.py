@@ -32,6 +32,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from config import settings
 from database.db import SessionLocal
 from database.models import WaiverSubmission
+from forms import DEFAULT_FORM_ID, FORMS, get_form
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -75,33 +76,10 @@ def _shape_ar(text: str) -> str:
 
 # ── PDF generation ──────────────────────────────────────────────────────────────
 
-CLAUSES = [
-    ("I confirm that I am 18+ and have no medical condition preventing UV exposure.",
-     "أؤكد أن عمري ١٨ سنة أو أكثر ولا أعاني من حالة صحية تمنع التعرض للأشعة فوق البنفسجية"),
-    ("If female: I confirm that I am not pregnant and understand that this treatment is strictly prohibited during pregnancy.",
-     "إذا كنتِ أنثى، أؤكد أنني لست حاملاً، وأدرك أن هذا العلاج محظور تماماً أثناء فترة الحمل"),
-    ("I voluntarily choose to use the tanning machine, understanding the risks.",
-     "أستخدم الجهاز بمحض إرادتي وبعد فهم كامل للمخاطر المحتملة"),
-    ("I am not using medication increasing UV sensitivity and have not been advised to avoid tanning.",
-     "لا أستخدم أدوية أو منتجات تزيد حساسية الجلد للأشعة ولم يتم نصحي طبياً بتجنب التسمير"),
-    ("I understand UV exposure may cause skin and eye burns, irritation, or increase skin health risks.",
-     "أقر بأن جهاز التسمير يعرض الجلد والعينين للأشعة فوق البنفسجية وقد يسبب حروقاً أو تهيجاً أو يزيد خطر مشاكل الجلد"),
-    ("I agree to follow staff instructions and wear protective eyewear during the session.",
-     "ألتزم باتباع تعليمات موظفي النادي واستخدام نظارات حماية العين طوال الجلسة"),
-    ("I agree to follow recommended exposure time and use the equipment safely.",
-     "ألتزم بالمدة المحددة للجلسة واستخدام الجهاز بطريقة آمنة ومسؤولة"),
-    ("I confirm that I will avoid using the sauna, facial, ice plunge, and sun exposure for at least 24 hours "
-     "following my session, in accordance with Katara Club safety guidelines.",
-     "أؤكد أنني سأمتنع عن استخدام الساونا، فيشل، حوض الثلج، والتعرض المباشر لأشعة الشمس لمدة لا تقل عن ٢٤ ساعة بعد الجلسة، وفقاً لإرشادات السلامة الخاصة بنادي كتارا"),
-    ("I accept full responsibility and acknowledge Katara Club is not liable when safety instructions are not followed.",
-     "أتحمل المسؤولية الكاملة عن استخدام الجهاز وأقر بعدم مسؤولية نادي كتارا عن أي آثار ناتجة عن الاستخدام عند عدم الالتزام بالتعليمات"),
-    ("I confirm that I have read, understood, and agreed to all terms above.",
-     "أؤكد أنني قرأت وفهمت جميع البنود وأوافق عليها بالكامل"),
-]
-
-
 def build_pdf(submission: dict, reference: str) -> bytes:
     """Render a signed PDF that mirrors the original Katara Club waiver design."""
+    form_def = get_form(submission.get("form_id"))
+    clauses = [(c["en"], c["ar"]) for c in form_def["clauses"]]
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.units import mm
     from reportlab.pdfbase import pdfmetrics
@@ -158,18 +136,18 @@ def build_pdf(submission: dict, reference: str) -> bytes:
     # ── Title bar ──
     c.setFont(bold_font, 11.5)
     c.setFillColorRGB(*ROSE)
-    c.drawString(L, y, "11 Air Select Machine User Waiver & Consent Form")
-    draw_ar_right("نموذج إقرار وموافقة الاستخدام", R, y, size=11, color=ROSE, font="NotoArB" if ar_font else None)
+    c.drawString(L, y, form_def["title"]["en"])
+    draw_ar_right(form_def["title"]["ar"], R, y, size=11, color=ROSE, font="NotoArB" if ar_font else None)
     y -= 5.5 * mm
     c.setFont(base_font, 7.6)
     c.setFillColorRGB(*ROSE_DARK)
-    c.drawString(L, y, "This waiver applies to all members using the K11 Air Select Machine.")
-    draw_ar_right("يطبق هذا الإقرار على جميع المستخدمين (الأعضاء) لجهاز العناية الضوئية", R, y, size=7.6, color=ROSE_DARK)
+    c.drawString(L, y, form_def["subtitle"]["en"])
+    draw_ar_right(form_def["subtitle"]["ar"], R, y, size=7.6, color=ROSE_DARK)
     y -= 7 * mm
 
     c.setFont(bold_font, 10.5)
     c.setFillColorRGB(*ROSE)
-    c.drawCentredString(W / 2, y, "Acknowledgment & Consent  /  " + (ar("الإقرار والموافقة") if ar_font else ""))
+    c.drawCentredString(W / 2, y, form_def["section"]["en"] + "  /  " + (ar(form_def["section"]["ar"]) if ar_font else ""))
     y -= 7 * mm
 
     # ── Clauses ──
@@ -195,7 +173,7 @@ def build_pdf(submission: dict, reference: str) -> bytes:
     ar_x_right = R
     ar_w = 70 * mm
 
-    for i, (en, ar_txt) in enumerate(CLAUSES):
+    for i, (en, ar_txt) in enumerate(clauses):
         a = (answers.get(str(i)) or answers.get(i) or {})
         ans = (a.get("answer") or "").lower()
 
@@ -242,11 +220,9 @@ def build_pdf(submission: dict, reference: str) -> bytes:
     c.rect(L, y - 9 * mm, R - L, 9 * mm, fill=1, stroke=0)
     c.setFont(base_font, 6.6)
     c.setFillColorRGB(*ROSE_DARK)
-    c.drawString(L + 3 * mm, y - 5.5 * mm,
-                 "Katara Club reserves the right to refuse equipment use if safety requirements are not met.")
+    c.drawString(L + 3 * mm, y - 5.5 * mm, form_def["note"]["en"])
     if ar_font:
-        draw_ar_right("يحتفظ نادي كتارا بالحق في منع استخدام الجهاز في حال عدم الالتزام بإرشادات السلامة",
-                      R - 3 * mm, y - 5.5 * mm, size=6.8, color=ROSE_DARK)
+        draw_ar_right(form_def["note"]["ar"], R - 3 * mm, y - 5.5 * mm, size=6.8, color=ROSE_DARK)
     y -= 16 * mm
 
     # ── Member details ──
@@ -422,6 +398,21 @@ def waiver_form():
         return HTMLResponse(f.read())
 
 
+@router.get("/api/forms")
+def list_forms():
+    """List available waiver forms (id + bilingual title)."""
+    return JSONResponse({
+        "default": DEFAULT_FORM_ID,
+        "forms": [{"id": f["id"], "title": f["title"]} for f in FORMS.values()],
+    })
+
+
+@router.get("/api/forms/{form_id}")
+def get_form_def(form_id: str):
+    """Return a single form definition for the web form to render."""
+    return JSONResponse(get_form(form_id))
+
+
 @router.post("/api/waiver")
 async def submit_waiver(request: Request):
     data = await request.json()
@@ -482,9 +473,16 @@ async def submit_waiver(request: Request):
     })
 
 
+def _form_target(form: str | None) -> str:
+    base = settings.app_base_url.rstrip("/") + "/waiver"
+    if form and form != DEFAULT_FORM_ID:
+        base += f"?form={form}"
+    return base
+
+
 @router.get("/waiver/qr.png")
-def waiver_qr_png(request: Request):
-    target = f"{settings.app_base_url.rstrip('/')}/waiver"
+def waiver_qr_png(form: str = DEFAULT_FORM_ID):
+    target = _form_target(form)
     qr = qrcode.QRCode(box_size=12, border=2,
                        error_correction=qrcode.constants.ERROR_CORRECT_M)
     qr.add_data(target)
@@ -496,8 +494,9 @@ def waiver_qr_png(request: Request):
 
 
 @router.get("/waiver/qr", response_class=HTMLResponse)
-def waiver_qr_page():
-    target = f"{settings.app_base_url.rstrip('/')}/waiver"
+def waiver_qr_page(form: str = DEFAULT_FORM_ID):
+    target = _form_target(form)
+    qr_src = "/waiver/qr.png" + (f"?form={form}" if form != DEFAULT_FORM_ID else "")
     return f"""
     <!DOCTYPE html><html><head><meta charset="utf-8">
     <title>Katara Club — Scan to Sign Waiver</title>
@@ -518,9 +517,9 @@ def waiver_qr_page():
         <img class="logo" src="/static/katara-logo.png" alt="Katara Club">
         <h1>Scan to Sign</h1>
         <div class="ar">امسح للتوقيع على نموذج الإقرار</div>
-        <div class="qr"><img src="/waiver/qr.png" alt="QR code"></div>
+        <div class="qr"><img src="{qr_src}" alt="QR code"></div>
         <p>Scan this code with your phone camera to open and sign the<br>
-           <strong>K11 Air Select Machine Waiver &amp; Consent Form</strong>.</p>
+           <strong>{get_form(form)["title"]["en"]}</strong>.</p>
         <div class="url">{target}</div>
       </div>
     </body></html>

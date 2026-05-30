@@ -25,14 +25,35 @@ signature.
 
 ## Endpoints
 
-| Method & path           | Purpose                                                        |
-|-------------------------|----------------------------------------------------------------|
-| `GET /waiver`           | The bilingual web form (mobile‑first, with signature pad).     |
-| `POST /api/waiver`      | Accepts the signed submission, generates the PDF, stores, emails. |
-| `GET /waiver/qr`        | Printable **"Scan to Sign"** reception poster.                 |
-| `GET /waiver/qr.png`    | The QR image (points to `APP_BASE_URL/waiver`).                |
-| `GET /waiver/admin`     | Dashboard listing every submitted waiver + PDF links.          |
-| `GET /waiver/pdf/{ref}` | Download a stored signed PDF.                                  |
+| Method & path             | Purpose                                                        |
+|---------------------------|----------------------------------------------------------------|
+| `GET /waiver`             | The bilingual web form (mobile‑first, with signature pad).     |
+| `POST /api/waiver`        | Accepts the signed submission, generates the PDF, stores, emails. |
+| `GET /api/forms`          | List available waiver forms (id + bilingual title).            |
+| `GET /api/forms/{id}`     | A single form definition (titles, clauses) the web form renders. |
+| `GET /waiver/qr`          | Printable **"Scan to Sign"** reception poster.                 |
+| `GET /waiver/qr.png`      | The QR image (points to `APP_BASE_URL/waiver`).                |
+| `GET /waiver/admin`       | Dashboard listing every submitted waiver + PDF links.          |
+| `GET /waiver/pdf/{ref}`   | Download a stored signed PDF.                                  |
+
+## Language toggle
+
+The form opens in **bilingual (EN / عربي)** mode by default. A toggle at the top
+lets the member switch to **English‑only** or **العربية‑only** — the Arabic view
+flips the whole layout to right‑to‑left. The signed PDF always keeps the full
+bilingual record regardless of the on‑screen choice.
+
+## Multiple waiver types
+
+All form content lives in **`forms.py`** as a single source of truth, read by both
+the web form and the PDF generator. To add another waiver (sauna, gym, pool, spa…):
+
+1. Append an entry to `FORMS` in `forms.py` with its `title`, `subtitle`,
+   `section`, `note`, and `clauses` (each bilingual).
+2. Link to it with `…/waiver?form=YOUR_ID`, and print its poster at
+   `…/waiver/qr?form=YOUR_ID`.
+
+No HTML or PDF code changes are needed.
 
 ## Storage & delivery
 

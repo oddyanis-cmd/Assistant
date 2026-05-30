@@ -6,78 +6,53 @@
 <title>Katara Club — Waiver &amp; Consent Form</title>
 <style>
   :root{
-    --rose:#a06e64;            /* primary brand rose */
-    --rose-dark:#8a5a50;
-    --rose-light:#c9a59b;
-    --rose-bg:#f7efec;
-    --line:#e3d2cc;
-    --ink:#4a4a4a;
-    --ok:#3f8f6f;
-    --no:#c2614f;
-    --radius:14px;
+    --rose:#a06e64;--rose-dark:#8a5a50;--rose-light:#c9a59b;--rose-bg:#f7efec;
+    --line:#e3d2cc;--ink:#4a4a4a;--ok:#3f8f6f;--no:#c2614f;--radius:14px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
   body{
     font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
-    background:linear-gradient(180deg,#faf6f4 0%,#f1e7e3 100%);
-    color:var(--ink);
-    line-height:1.5;
-    padding:0 0 60px;
+    background:linear-gradient(180deg,#faf6f4 0%,#f1e7e3 100%);color:var(--ink);line-height:1.5;padding:0 0 60px;
   }
-  .sheet{
-    max-width:820px;margin:0 auto;background:#fff;
-    box-shadow:0 10px 40px rgba(138,90,80,.12);
-  }
-  header{
-    text-align:center;padding:30px 20px 18px;border-bottom:2px solid var(--line);
-  }
+  .sheet{max-width:820px;margin:0 auto;background:#fff;box-shadow:0 10px 40px rgba(138,90,80,.12);}
+  header{text-align:center;padding:26px 20px 14px;border-bottom:2px solid var(--line);}
   header img{max-width:280px;width:70%;height:auto;}
-  .titlebar{
-    display:flex;justify-content:space-between;align-items:center;gap:14px;
-    padding:16px 26px;border-bottom:1px solid var(--line);
+
+  /* Language toggle */
+  .langbar{display:flex;justify-content:center;gap:0;padding:14px 20px 4px;}
+  .langbar .seg{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;background:#faf7f6;}
+  .langbar button{
+    border:none;background:transparent;cursor:pointer;padding:8px 18px;font-size:.85rem;font-weight:600;
+    color:var(--rose-dark);transition:.15s;font-family:inherit;
   }
+  .langbar button.active{background:var(--rose);color:#fff;}
+
+  .titlebar{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 26px;border-bottom:1px solid var(--line);}
   .titlebar .en{color:var(--rose);font-size:1.18rem;font-weight:600;}
   .titlebar .ar{color:var(--rose);font-size:1.18rem;font-weight:600;direction:rtl;font-family:"Segoe UI",Tahoma,sans-serif;}
-  .subbar{
-    display:flex;justify-content:space-between;gap:14px;
-    padding:8px 26px 16px;color:var(--rose-dark);font-size:.86rem;border-bottom:1px solid var(--line);
-  }
+  .subbar{display:flex;justify-content:space-between;gap:14px;padding:8px 26px 16px;color:var(--rose-dark);font-size:.86rem;border-bottom:1px solid var(--line);}
   .subbar .ar{direction:rtl;}
-  .section-title{
-    text-align:center;color:var(--rose);font-size:1.15rem;letter-spacing:.5px;
-    padding:18px 10px;direction:rtl;
-  }
+  .section-title{text-align:center;color:var(--rose);font-size:1.15rem;letter-spacing:.5px;padding:18px 10px;}
+  body.lang-en .section-title .sep,body.lang-en .section-title .ar{display:none;}
+  body.lang-ar .section-title .sep,body.lang-ar .section-title .en{display:none;}
   .clauses{padding:0 18px;}
-  .clause{
-    display:grid;grid-template-columns:1fr 116px 1fr;gap:10px;align-items:center;
-    padding:14px 8px;border-bottom:1px solid var(--line);
-  }
+  .clause{display:grid;grid-template-columns:1fr 116px 1fr;gap:10px;align-items:center;padding:14px 8px;border-bottom:1px solid var(--line);}
   .clause .en{font-size:.9rem;}
   .clause .ar{font-size:.92rem;direction:rtl;text-align:right;}
   .toggle{display:flex;justify-content:center;gap:8px;}
-  .toggle label{
-    cursor:pointer;border:1.5px solid var(--line);border-radius:10px;
-    padding:7px 12px;font-size:.8rem;font-weight:600;color:#9a9a9a;
-    background:#faf7f6;min-width:46px;text-align:center;transition:.15s;
-  }
+  .toggle label{cursor:pointer;border:1.5px solid var(--line);border-radius:10px;padding:7px 12px;font-size:.8rem;font-weight:600;color:#9a9a9a;background:#faf7f6;min-width:46px;text-align:center;transition:.15s;}
   .toggle input{position:absolute;opacity:0;pointer-events:none;}
   .toggle input[value="yes"]:checked + label{background:var(--ok);border-color:var(--ok);color:#fff;}
   .toggle input[value="no"]:checked + label{background:var(--no);border-color:var(--no);color:#fff;}
-  .note{
-    background:var(--rose-bg);color:var(--rose-dark);font-size:.84rem;
-    padding:14px 26px;display:flex;justify-content:space-between;gap:14px;margin-top:6px;
-  }
+  .note{background:var(--rose-bg);color:var(--rose-dark);font-size:.84rem;padding:14px 26px;display:flex;justify-content:space-between;gap:14px;margin-top:6px;}
   .note .ar{direction:rtl;}
   .fields{padding:22px 26px;display:grid;grid-template-columns:1fr 1fr;gap:18px 22px;}
   .field{display:flex;flex-direction:column;gap:6px;}
   .field.full{grid-column:1 / -1;}
   .field label{font-size:.82rem;color:var(--rose-dark);font-weight:600;}
   .field label .ar{float:right;direction:rtl;color:var(--rose);font-weight:600;}
-  .field input{
-    border:none;border-bottom:1.5px solid var(--line);background:transparent;
-    padding:9px 4px;font-size:1rem;color:var(--ink);outline:none;
-  }
+  .field input{border:none;border-bottom:1.5px solid var(--line);background:transparent;padding:9px 4px;font-size:1rem;color:var(--ink);outline:none;}
   .field input:focus{border-color:var(--rose);}
   .sig-block{grid-column:1 / -1;}
   .sig-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
@@ -86,37 +61,39 @@
   .sig-pad-wrap{position:relative;border:1.5px solid var(--line);border-radius:var(--radius);background:#fffdfc;}
   canvas{display:block;width:100%;height:170px;border-radius:var(--radius);touch-action:none;}
   .sig-hint{position:absolute;left:14px;bottom:10px;color:#cdbdb8;font-size:.8rem;pointer-events:none;}
-  .clear-sig{
-    position:absolute;top:8px;right:10px;background:#fff;border:1px solid var(--line);
-    color:var(--rose);border-radius:8px;padding:5px 12px;font-size:.78rem;cursor:pointer;
-  }
+  .clear-sig{position:absolute;top:8px;right:10px;background:#fff;border:1px solid var(--line);color:var(--rose);border-radius:8px;padding:5px 12px;font-size:.78rem;cursor:pointer;}
   .actions{padding:6px 26px 28px;}
-  .submit{
-    width:100%;border:none;border-radius:var(--radius);cursor:pointer;
-    background:linear-gradient(135deg,var(--rose) 0%,var(--rose-dark) 100%);
-    color:#fff;font-size:1.05rem;font-weight:600;padding:16px;letter-spacing:.4px;
-    box-shadow:0 6px 18px rgba(160,110,100,.35);transition:.15s;
-  }
+  .submit{width:100%;border:none;border-radius:var(--radius);cursor:pointer;background:linear-gradient(135deg,var(--rose) 0%,var(--rose-dark) 100%);color:#fff;font-size:1.05rem;font-weight:600;padding:16px;letter-spacing:.4px;box-shadow:0 6px 18px rgba(160,110,100,.35);transition:.15s;}
   .submit:active{transform:translateY(1px);}
   .submit:disabled{opacity:.55;cursor:not-allowed;}
   .footnote{text-align:center;color:#b9aaa5;font-size:.74rem;padding:8px 20px 4px;}
-  .overlay{
-    position:fixed;inset:0;background:rgba(255,255,255,.95);display:none;
-    flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;z-index:50;
-  }
+  .overlay{position:fixed;inset:0;background:rgba(255,255,255,.95);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;z-index:50;}
   .overlay.show{display:flex;}
   .overlay img{max-width:240px;width:60%;margin-bottom:24px;}
-  .check{
-    width:84px;height:84px;border-radius:50%;background:var(--ok);
-    display:flex;align-items:center;justify-content:center;margin-bottom:20px;
-  }
+  .check{width:84px;height:84px;border-radius:50%;background:var(--ok);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
   .check svg{width:44px;height:44px;}
   .overlay h2{color:var(--rose);margin:0 0 6px;}
   .overlay p{color:var(--ink);max-width:420px;}
   .spinner{width:46px;height:46px;border:4px solid var(--line);border-top-color:var(--rose);border-radius:50%;animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── Language modes ── */
+  body.lang-en .ar{display:none !important;}
+  body.lang-en .clause{grid-template-columns:1fr 120px;}
+  body.lang-en .titlebar,body.lang-en .subbar,body.lang-en .note{justify-content:flex-start;}
+  body.lang-en .field label .ar{display:none;}
+
+  body.lang-ar .en{display:none !important;}
+  body.lang-ar .clause{grid-template-columns:120px 1fr;direction:rtl;}
+  body.lang-ar .titlebar,body.lang-ar .subbar,body.lang-ar .note{direction:rtl;justify-content:flex-start;}
+  body.lang-ar .field label{text-align:right;}
+  body.lang-ar .field label .ar{float:none;}
+  body.lang-ar .field input{text-align:right;direction:rtl;}
+  body.lang-ar .sig-head{direction:rtl;}
+
   @media(max-width:620px){
     .clause{grid-template-columns:1fr;gap:8px;text-align:left;}
+    body.lang-en .clause,body.lang-ar .clause{grid-template-columns:1fr;}
     .clause .ar{text-align:right;}
     .toggle{justify-content:flex-start;}
     .titlebar{flex-direction:column;align-items:flex-start;gap:4px;}
@@ -126,28 +103,36 @@
   }
 </style>
 </head>
-<body>
+<body class="lang-both">
 <form class="sheet" id="waiverForm" autocomplete="on">
   <header>
     <img src="/static/katara-logo.png" alt="Katara Club" />
   </header>
 
+  <div class="langbar">
+    <div class="seg">
+      <button type="button" data-lang="both" class="active">EN / عربي</button>
+      <button type="button" data-lang="en">English</button>
+      <button type="button" data-lang="ar">العربية</button>
+    </div>
+  </div>
+
   <div class="titlebar">
-    <div class="en">11 Air Select Machine User Waiver &amp; Consent Form</div>
-    <div class="ar">نموذج إقرار وموافقة الاستخدام</div>
+    <div class="en" id="t-en"></div>
+    <div class="ar" id="t-ar"></div>
   </div>
   <div class="subbar">
-    <div class="en">This waiver applies to all members using the K11 Air Select Machine.</div>
-    <div class="ar">يطبق هذا الإقرار على جميع المستخدمين (الأعضاء) لجهاز العناية الضوئية</div>
+    <div class="en" id="s-en"></div>
+    <div class="ar" id="s-ar"></div>
   </div>
 
-  <div class="section-title">Acknowledgment &amp; Consent / الإقرار والموافقة</div>
+  <div class="section-title"><span class="en" id="sec-en"></span><span class="sep"> / </span><span class="ar" id="sec-ar"></span></div>
 
-  <div class="clauses" id="clauses"><!-- injected by JS --></div>
+  <div class="clauses" id="clauses"><!-- injected --></div>
 
   <div class="note">
-    <div class="en">Katara Club reserves the right to refuse equipment use if safety requirements are not met.</div>
-    <div class="ar">يحتفظ نادي كتارا بالحق في منع استخدام الجهاز في حال عدم الالتزام بإرشادات السلامة</div>
+    <div class="en" id="n-en"></div>
+    <div class="ar" id="n-ar"></div>
   </div>
 
   <div class="fields">
@@ -200,45 +185,57 @@
 </div>
 
 <script>
-const CLAUSES = [
-  {en:"I confirm that I am 18+ and have no medical condition preventing UV exposure.",
-   ar:"أؤكد أن عمري ١٨ سنة أو أكثر ولا أعاني من حالة صحية تمنع التعرض للأشعة فوق البنفسجية"},
-  {en:"If female: I confirm that I am not pregnant and understand that this treatment is strictly prohibited during pregnancy.",
-   ar:"إذا كنتِ أنثى، أؤكد أنني لست حاملاً، وأدرك أن هذا العلاج محظور تماماً أثناء فترة الحمل"},
-  {en:"I voluntarily choose to use the tanning machine, understanding the risks.",
-   ar:"أستخدم الجهاز بمحض إرادتي وبعد فهم كامل للمخاطر المحتملة"},
-  {en:"I am not using medication increasing UV sensitivity and have not been advised to avoid tanning.",
-   ar:"لا أستخدم أدوية أو منتجات تزيد حساسية الجلد للأشعة ولم يتم نصحي طبياً بتجنب التسمير"},
-  {en:"I understand UV exposure may cause skin and eye burns, irritation, or increase skin health risks.",
-   ar:"أقر بأن جهاز التسمير يعرض الجلد والعينين للأشعة فوق البنفسجية وقد يسبب حروقاً أو تهيجاً أو يزيد خطر مشاكل الجلد"},
-  {en:"I agree to follow staff instructions and wear protective eyewear during the session.",
-   ar:"ألتزم باتباع تعليمات موظفي النادي واستخدام نظارات حماية العين طوال الجلسة"},
-  {en:"I agree to follow recommended exposure time and use the equipment safely.",
-   ar:"ألتزم بالمدة المحددة للجلسة واستخدام الجهاز بطريقة آمنة ومسؤولة"},
-  {en:"I confirm that I will avoid using the sauna, facial, ice plunge, and sun exposure for at least 24 hours following my session, in accordance with Katara Club safety guidelines.",
-   ar:"أؤكد أنني سأمتنع عن استخدام الساونا، فيشل، حوض الثلج، والتعرض المباشر لأشعة الشمس لمدة لا تقل عن ٢٤ ساعة بعد الجلسة، وذلك وفقاً لإرشادات السلامة الخاصة بنادي كتارا"},
-  {en:"I accept full responsibility and acknowledge Katara Club is not liable when safety instructions are not followed.",
-   ar:"أتحمل المسؤولية الكاملة عن استخدام الجهاز وأقر بعدم مسؤولية نادي كتارا عن أي آثار ناتجة عن الاستخدام عند عدم الالتزام بالتعليمات"},
-  {en:"I confirm that I have read, understood, and agreed to all terms above.",
-   ar:"أؤكد أنني قرأت وفهمت جميع البنود وأوافق عليها بالكامل"}
-];
+const PARAMS = new URLSearchParams(location.search);
+const FORM_ID = PARAMS.get('form') || 'K11-AIR-SELECT';
+let CLAUSES = [];
 
-// Build clause rows
-const wrap = document.getElementById('clauses');
-CLAUSES.forEach((c,i)=>{
-  const row = document.createElement('div');
-  row.className='clause';
-  row.innerHTML = `
-    <div class="en">${c.en}</div>
-    <div class="toggle">
-      <input type="radio" id="c${i}y" name="clause_${i}" value="yes" required>
-      <label for="c${i}y">Yes<br>نعم</label>
-      <input type="radio" id="c${i}n" name="clause_${i}" value="no">
-      <label for="c${i}n">No<br>لا</label>
-    </div>
-    <div class="ar">${c.ar}</div>`;
-  wrap.appendChild(row);
+// ---- Language toggle ----
+document.querySelectorAll('.langbar button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.langbar button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.body.className = 'lang-' + btn.dataset.lang;
+    setTimeout(resizeCanvas,30);
+  });
 });
+
+// ---- Load form definition (single source of truth from backend) ----
+async function loadForm(){
+  let def;
+  try{
+    const r = await fetch('/api/forms/' + encodeURIComponent(FORM_ID));
+    def = await r.json();
+  }catch(e){ def = null; }
+  if(!def || !def.clauses){ return; }
+
+  document.title = 'Katara Club — ' + def.title.en;
+  document.getElementById('t-en').textContent = def.title.en;
+  document.getElementById('t-ar').textContent = def.title.ar;
+  document.getElementById('s-en').textContent = def.subtitle.en;
+  document.getElementById('s-ar').textContent = def.subtitle.ar;
+  document.getElementById('sec-en').textContent = def.section.en;
+  document.getElementById('sec-ar').textContent = def.section.ar;
+  document.getElementById('n-en').textContent = def.note.en;
+  document.getElementById('n-ar').textContent = def.note.ar;
+
+  CLAUSES = def.clauses;
+  const wrap = document.getElementById('clauses');
+  wrap.innerHTML = '';
+  CLAUSES.forEach((c,i)=>{
+    const row = document.createElement('div');
+    row.className='clause';
+    row.innerHTML = `
+      <div class="en">${c.en}</div>
+      <div class="toggle">
+        <input type="radio" id="c${i}y" name="clause_${i}" value="yes" required>
+        <label for="c${i}y">Yes<br>نعم</label>
+        <input type="radio" id="c${i}n" name="clause_${i}" value="no">
+        <label for="c${i}n">No<br>لا</label>
+      </div>
+      <div class="ar">${c.ar}</div>`;
+    wrap.appendChild(row);
+  });
+}
 
 // Prefill today's date
 document.querySelector('input[name="date"]').valueAsDate = new Date();
@@ -250,32 +247,23 @@ let drawing=false, hasSig=false;
 function resizeCanvas(){
   const ratio = window.devicePixelRatio||1;
   const rect = canvas.getBoundingClientRect();
+  if(!rect.width) return;
   const data = hasSig ? canvas.toDataURL() : null;
   canvas.width = rect.width*ratio;
   canvas.height = rect.height*ratio;
+  ctx.setTransform(1,0,0,1,0,0);
   ctx.scale(ratio,ratio);
   ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#33323a';
   if(data){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,rect.width,rect.height);img.src=data;}
 }
-function pos(e){
-  const r=canvas.getBoundingClientRect();
-  const t=e.touches?e.touches[0]:e;
-  return {x:t.clientX-r.left,y:t.clientY-r.top};
-}
+function pos(e){const r=canvas.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return {x:t.clientX-r.left,y:t.clientY-r.top};}
 function start(e){drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault();}
 function move(e){if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();hasSig=true;document.getElementById('sigHint').style.display='none';e.preventDefault();}
 function end(){drawing=false;}
-canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);
-window.addEventListener('mouseup',end);
-canvas.addEventListener('touchstart',start,{passive:false});
-canvas.addEventListener('touchmove',move,{passive:false});
-canvas.addEventListener('touchend',end);
-document.getElementById('clearSig').addEventListener('click',()=>{
-  ctx.clearRect(0,0,canvas.width,canvas.height);hasSig=false;
-  document.getElementById('sigHint').style.display='block';
-});
+canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);window.addEventListener('mouseup',end);
+canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});canvas.addEventListener('touchend',end);
+document.getElementById('clearSig').addEventListener('click',()=>{ctx.clearRect(0,0,canvas.width,canvas.height);hasSig=false;document.getElementById('sigHint').style.display='block';});
 window.addEventListener('resize',resizeCanvas);
-setTimeout(resizeCanvas,50);
 
 // ---- Submit ----
 const form = document.getElementById('waiverForm');
@@ -283,7 +271,7 @@ form.addEventListener('submit', async (e)=>{
   e.preventDefault();
   if(!hasSig){alert('Please provide your signature.\nيرجى التوقيع.');return;}
   const btn=document.getElementById('submitBtn');btn.disabled=true;
-  const overlay=document.getElementById('overlay');overlay.classList.add('show');
+  document.getElementById('overlay').classList.add('show');
 
   const answers={};
   CLAUSES.forEach((c,i)=>{
@@ -299,14 +287,12 @@ form.addEventListener('submit', async (e)=>{
     membership_id: form.membership_id.value.trim(),
     answers,
     signature: canvas.toDataURL('image/png'),
-    form_id: "K11-AIR-SELECT",
+    form_id: FORM_ID,
     submitted_at: new Date().toISOString()
   };
 
   try{
-    const res = await fetch('/api/waiver',{
-      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
-    });
+    const res = await fetch('/api/waiver',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     const data = await res.json();
     if(!res.ok || data.error){throw new Error(data.error||'Submission failed');}
     document.getElementById('overlayBody').innerHTML = `
@@ -322,6 +308,9 @@ form.addEventListener('submit', async (e)=>{
     btn.disabled=false;
   }
 });
+
+// Init
+loadForm().then(()=>setTimeout(resizeCanvas,60));
 </script>
 </body>
 </html>
