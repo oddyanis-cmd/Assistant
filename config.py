@@ -30,7 +30,18 @@ class Settings(BaseSettings):
     # Digital waiver form
     waiver_recipient_email: str = "Reception@Katara.club"
     waiver_storage_dir: str = "./waiver_storage"
-    # Optional SMTP fallback (used when Gmail OAuth is not connected)
+
+    # Microsoft 365 (Graph API) — email + save signed PDFs into your 365
+    ms365_tenant_id: str = ""
+    ms365_client_id: str = ""
+    ms365_client_secret: str = ""
+    ms365_sender: str = "Reception@Katara.club"   # mailbox/OneDrive to send & save from
+    ms365_send_email: bool = True                  # email reception via Graph
+    ms365_save_to_drive: bool = True               # archive copy into 365
+    ms365_save_folder: str = "Katara Club Waivers" # OneDrive/SharePoint folder
+    ms365_sharepoint_site: str = ""                # e.g. "contoso.sharepoint.com/sites/Reception" (blank = OneDrive)
+
+    # Optional SMTP fallback (used only if Graph is not configured)
     smtp_host: str = ""
     smtp_port: int = 587
     smtp_user: str = ""

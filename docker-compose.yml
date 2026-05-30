@@ -1,0 +1,25 @@
+# Katara Club — Digital Waiver System
+#
+#   1. cp .env.waiver.example .env   and fill in the Microsoft 365 values
+#   2. docker compose up -d --build
+#   3. Open http://<server>:8000/waiver/qr  and print the poster for reception
+#
+# Data (signed PDFs + database) is kept in the named volume "katara_data",
+# so it survives container rebuilds.
+services:
+  waiver:
+    build:
+      context: .
+      dockerfile: Dockerfile.waiver
+    image: katara-waiver:latest
+    container_name: katara-waiver
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - katara_data:/data
+
+volumes:
+  katara_data:

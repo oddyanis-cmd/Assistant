@@ -53,9 +53,12 @@ class WaiverSubmission(Base):
     staff_name = Column(String, nullable=True)
     form_date = Column(String, nullable=True)        # date as entered on the form
     answers = Column(JSON, nullable=True)            # per-clause Yes/No + text
-    pdf_path = Column(String, nullable=True)         # stored signed PDF
+    pdf_path = Column(String, nullable=True)         # stored signed PDF (local)
     emailed = Column(Boolean, default=False)
     email_error = Column(Text, nullable=True)
+    cloud_saved = Column(Boolean, default=False)     # archived into Microsoft 365
+    cloud_url = Column(String, nullable=True)        # web URL of the 365 copy
+    delivery_channel = Column(String, nullable=True) # graph | smtp | gmail | local
     created_at = Column(DateTime, default=datetime.utcnow)
 
 

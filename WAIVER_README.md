@@ -55,20 +55,32 @@ the web form and the PDF generator. To add another waiver (sauna, gym, pool, spa
 
 No HTML or PDF code changes are needed.
 
+> **Deploying this for your company?** See **[DEPLOYMENT.md](DEPLOYMENT.md)** for
+> a step-by-step guide (Microsoft 365 setup + Docker). The waiver system can run
+> **standalone** via `waiver_app.py` — no AI-assistant parts required.
+
 ## Storage & delivery
 
 Every submission produces three records:
 
-1. **PDF on disk** — `waiver_storage/Katara_Waiver_<ref>.pdf`. Point
-   `WAIVER_STORAGE_DIR` at a mounted cloud volume (S3/GCS fuse mount, Google
-   Drive sync folder, etc.) to push copies to the cloud automatically.
+1. **PDF on disk** — `waiver_storage/Katara_Waiver_<ref>.pdf`.
 2. **Database row** — `waiver_submissions` table (name, phone, answers,
-   reference, email status, PDF path).
-3. **Email** — the signed PDF is attached and sent to `WAIVER_RECIPIENT_EMAIL`
-   (default `Reception@Katara.club`). Delivery uses the app's existing **Gmail
-   OAuth** connection if available; otherwise it falls back to **SMTP** if
-   `SMTP_HOST` is configured. If neither is set, the PDF is still stored on disk
-   and the dashboard flags the email as pending.
+   reference, email + cloud status, PDF path).
+3. **Email + cloud archive** — the signed PDF is sent to
+   `WAIVER_RECIPIENT_EMAIL` (default `Reception@katara.club`) **and** saved into
+   your Microsoft 365.
+
+Delivery preference, handled automatically:
+
+1. **Microsoft 365 (Graph API)** — *recommended.* One Azure app registration
+   both emails reception (`Mail.Send`) and saves a copy into OneDrive/SharePoint
+   (`Files.ReadWrite.All` / `Sites.ReadWrite.All`). Works with modern auth, so it
+   keeps working even when legacy SMTP AUTH is disabled on the tenant.
+2. **Gmail OAuth** — if the assistant's Gmail is connected.
+3. **SMTP** — if `SMTP_HOST` is set.
+
+If none are configured, the PDF is still stored on disk and the dashboard flags
+delivery as pending. Check **`/waiver/status`** to confirm what's wired up.
 
 ## Configuration (`.env`)
 

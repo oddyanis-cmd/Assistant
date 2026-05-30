@@ -48,8 +48,16 @@ INK = (0.290, 0.290, 0.290)
 OK = (0.247, 0.561, 0.435)
 NO_COL = (0.761, 0.380, 0.310)
 
-ARABIC_FONT_PATH = "/usr/share/fonts/truetype/noto/NotoNaskhArabic-Regular.ttf"
-ARABIC_FONT_BOLD = "/usr/share/fonts/truetype/noto/NotoNaskhArabic-Bold.ttf"
+def _font(name: str) -> str:
+    """Prefer the font bundled with the app; fall back to a system path."""
+    bundled = os.path.join(STATIC_DIR, "fonts", name)
+    if os.path.exists(bundled):
+        return bundled
+    return os.path.join("/usr/share/fonts/truetype/noto", name)
+
+
+ARABIC_FONT_PATH = _font("NotoNaskhArabic-Regular.ttf")
+ARABIC_FONT_BOLD = _font("NotoNaskhArabic-Bold.ttf")
 
 
 def _ensure_storage() -> str:
@@ -331,11 +339,9 @@ def _chip(c, x, y_mid, text, active, color):
     c.drawCentredString(x + w / 2, y_mid - 2.2, text)
 
 
-# ── Email delivery ──────────────────────────────────────────────────────────────
+# ── Delivery (email + cloud archive) ─────────────────────────────────────────────
 
-def _email_pdf(reference: str, submission: dict, pdf_bytes: bytes) -> tuple[bool, str]:
-    """Send the signed PDF to reception. Tries Gmail (OAuth) first, then SMTP."""
-    to_addr = settings.waiver_recipient_email
+def _message(reference: str, submission: dict) -> tuple[str, str]:
     subject = f"New Signed Waiver — {submission.get('full_name','')} [{reference}]"
     body = (
         f"A new digital waiver has been submitted and signed.\n\n"
@@ -347,9 +353,48 @@ def _email_pdf(reference: str, submission: dict, pdf_bytes: bytes) -> tuple[bool
         f"Member ID : {submission.get('membership_id','') or '—'}\n\n"
         f"The signed PDF is attached.\n\n— Katara Club digital waiver system"
     )
-    filename = f"Katara_Waiver_{reference}.pdf"
+    return subject, body
 
-    # 1) Gmail via existing OAuth integration
+
+def deliver(reference: str, submission: dict, pdf_bytes: bytes) -> dict:
+    """
+    Deliver a signed waiver: email it to reception and/or archive it in the cloud.
+
+    Order of preference for email: Microsoft 365 Graph → Gmail OAuth → SMTP.
+    Cloud archive: Microsoft 365 (OneDrive/SharePoint) when configured.
+
+    Returns: {emailed, cloud_saved, cloud_url, channel, errors[]}
+    """
+    to_addr = settings.waiver_recipient_email
+    subject, body = _message(reference, submission)
+    filename = f"Katara_Waiver_{reference}.pdf"
+    result = {"emailed": False, "cloud_saved": False, "cloud_url": None,
+              "channel": None, "errors": []}
+
+    # ── Microsoft 365 (Graph) — preferred, covers BOTH email and cloud save ──
+    try:
+        import microsoft365 as ms
+        if ms.is_configured():
+            if settings.ms365_send_email:
+                try:
+                    ms.send_mail(to_addr, subject, body, pdf_bytes, filename)
+                    result["emailed"] = True
+                    result["channel"] = "graph"
+                except Exception as e:
+                    result["errors"].append(f"graph_email: {e}")
+            if settings.ms365_save_to_drive:
+                try:
+                    result["cloud_url"] = ms.save_to_drive(pdf_bytes, filename)
+                    result["cloud_saved"] = True
+                    result["channel"] = result["channel"] or "graph"
+                except Exception as e:
+                    result["errors"].append(f"graph_drive: {e}")
+            if result["emailed"] or result["cloud_saved"]:
+                return result
+    except Exception as e:
+        result["errors"].append(f"graph_init: {e}")
+
+    # ── Gmail OAuth (if the assistant's Gmail is connected) ──
     try:
         from tools.email_tools import _get_gmail_service
         service = _get_gmail_service()
@@ -362,12 +407,13 @@ def _email_pdf(reference: str, submission: dict, pdf_bytes: bytes) -> tuple[bool
         msg.attach(part)
         raw = base64.urlsafe_b64encode(msg.as_bytes()).decode()
         service.users().messages().send(userId="me", body={"raw": raw}).execute()
-        return True, "gmail"
+        result["emailed"] = True
+        result["channel"] = "gmail"
+        return result
     except Exception as e:
-        gmail_err = str(e)
-        logger.info("Gmail send unavailable (%s); trying SMTP.", gmail_err)
+        logger.info("Gmail send unavailable (%s); trying SMTP.", e)
 
-    # 2) SMTP fallback
+    # ── SMTP fallback ──
     if settings.smtp_host:
         try:
             msg = MIMEMultipart()
@@ -383,11 +429,16 @@ def _email_pdf(reference: str, submission: dict, pdf_bytes: bytes) -> tuple[bool
                 if settings.smtp_user:
                     s.login(settings.smtp_user, settings.smtp_password)
                 s.send_message(msg)
-            return True, "smtp"
+            result["emailed"] = True
+            result["channel"] = "smtp"
+            return result
         except Exception as e:
-            return False, f"smtp_failed: {e}"
+            result["errors"].append(f"smtp: {e}")
 
-    return False, "no_email_channel_configured (PDF stored on disk)"
+    if not result["channel"]:
+        result["channel"] = "local"
+        result["errors"].append("no delivery channel configured — PDF stored on disk only")
+    return result
 
 
 # ── Routes ──────────────────────────────────────────────────────────────────────
@@ -437,8 +488,9 @@ async def submit_waiver(request: Request):
     with open(pdf_path, "wb") as f:
         f.write(pdf_bytes)
 
-    # Email to reception
-    emailed, channel = _email_pdf(reference, data, pdf_bytes)
+    # Email to reception + archive into the cloud (Microsoft 365)
+    delivery = deliver(reference, data, pdf_bytes)
+    errors = "; ".join(delivery["errors"]) or None
 
     # Persist record
     db = SessionLocal()
@@ -453,23 +505,28 @@ async def submit_waiver(request: Request):
             form_date=data.get("date", ""),
             answers=data.get("answers", {}),
             pdf_path=pdf_path,
-            emailed=emailed,
-            email_error=None if emailed else channel,
+            emailed=delivery["emailed"],
+            email_error=errors,
+            cloud_saved=delivery["cloud_saved"],
+            cloud_url=delivery["cloud_url"],
+            delivery_channel=delivery["channel"],
         )
         db.add(row)
         db.commit()
     finally:
         db.close()
 
-    logger.info("Waiver %s stored (%s); email=%s via %s",
-                reference, pdf_path, emailed, channel)
+    logger.info("Waiver %s stored (%s); emailed=%s cloud=%s via %s %s",
+                reference, pdf_path, delivery["emailed"], delivery["cloud_saved"],
+                delivery["channel"], f"errors=[{errors}]" if errors else "")
 
     return JSONResponse({
         "ok": True,
         "reference": reference,
         "stored": True,
-        "emailed": emailed,
-        "channel": channel,
+        "emailed": delivery["emailed"],
+        "cloud_saved": delivery["cloud_saved"],
+        "channel": delivery["channel"],
     })
 
 
@@ -531,25 +588,77 @@ def waiver_admin():
     db = SessionLocal()
     try:
         rows = db.query(WaiverSubmission).order_by(WaiverSubmission.id.desc()).all()
+
+        def cloud_cell(r):
+            if getattr(r, "cloud_saved", False):
+                return f"<a href='{r.cloud_url}' target='_blank'>☁︎ 365</a>" if r.cloud_url else "☁︎ 365"
+            return "—"
+
         items = "".join(
             f"<tr><td>{r.reference}</td><td>{r.full_name}</td><td>{r.phone or ''}</td>"
             f"<td>{r.form_date or ''}</td><td>{r.staff_name or ''}</td>"
-            f"<td>{'✅' if r.emailed else '⚠️ '+(r.email_error or '')}</td>"
+            f"<td>{'✅' if r.emailed else '⚠️'}</td>"
+            f"<td>{cloud_cell(r)}</td>"
             f"<td><a href='/waiver/pdf/{r.reference}'>PDF</a></td></tr>"
             for r in rows
-        ) or "<tr><td colspan=7 style='text-align:center;color:#aaa'>No waivers yet</td></tr>"
+        ) or "<tr><td colspan=8 style='text-align:center;color:#aaa'>No waivers yet</td></tr>"
     finally:
         db.close()
     return f"""
     <!DOCTYPE html><html><head><meta charset="utf-8"><title>Waivers — Katara Club</title>
-    <style>body{{font-family:'Segoe UI',sans-serif;max-width:1000px;margin:30px auto;padding:0 16px;color:#4a4a4a;}}
-    h1{{color:#a06e64;}}img{{max-width:200px;margin-bottom:10px;}}
+    <style>body{{font-family:'Segoe UI',sans-serif;max-width:1050px;margin:30px auto;padding:0 16px;color:#4a4a4a;}}
+    h1{{color:#a06e64;}}img.logo{{max-width:200px;margin-bottom:10px;}}
     table{{border-collapse:collapse;width:100%;font-size:.9rem;}}
     th{{background:#f7efec;color:#8a5a50;}}td,th{{padding:9px 10px;border:1px solid #e3d2cc;text-align:left;}}
-    a{{color:#a06e64;}}</style></head><body>
-    <img src="/static/katara-logo.png"><h1>Submitted Waivers</h1>
-    <table><tr><th>Reference</th><th>Name</th><th>Phone</th><th>Date</th><th>Staff</th><th>Emailed</th><th>File</th></tr>
+    a{{color:#a06e64;}}.bar{{margin:0 0 16px;font-size:.9rem;}}
+    .bar a{{display:inline-block;margin-right:14px;padding:6px 12px;border:1px solid #e3d2cc;border-radius:8px;text-decoration:none;}}
+    </style></head><body>
+    <img class="logo" src="/static/katara-logo.png"><h1>Submitted Waivers</h1>
+    <div class="bar"><a href="/waiver/qr">🖨 Reception poster</a><a href="/waiver/status">⚙️ System status</a><a href="/waiver">📝 Open form</a></div>
+    <table><tr><th>Reference</th><th>Name</th><th>Phone</th><th>Date</th><th>Staff</th><th>Emailed</th><th>Cloud</th><th>File</th></tr>
     {items}</table></body></html>
+    """
+
+
+@router.get("/waiver/status", response_class=HTMLResponse)
+def waiver_status():
+    """Configuration health page — lets staff verify email/cloud are wired up."""
+    try:
+        import microsoft365 as ms
+        ms_ok = ms.is_configured()
+    except Exception:
+        ms_ok = False
+    smtp_ok = bool(settings.smtp_host)
+    font_ok = os.path.exists(ARABIC_FONT_PATH)
+    storage = _ensure_storage()
+
+    def row(label, ok, detail):
+        badge = "✅ Ready" if ok else "⚠️ Not configured"
+        return f"<tr><td>{label}</td><td>{badge}</td><td>{detail}</td></tr>"
+
+    rows = "".join([
+        row("Microsoft 365 email (Graph)",
+            ms_ok and settings.ms365_send_email,
+            f"Sends to <b>{settings.waiver_recipient_email}</b> as {settings.ms365_sender}"),
+        row("Microsoft 365 cloud archive",
+            ms_ok and settings.ms365_save_to_drive,
+            f"Folder: <b>{settings.ms365_save_folder}</b> "
+            + (f"in SharePoint {settings.ms365_sharepoint_site}" if settings.ms365_sharepoint_site else "in OneDrive")),
+        row("SMTP fallback", smtp_ok, settings.smtp_host or "—"),
+        row("Local PDF storage", True, storage),
+        row("Arabic PDF font", font_ok, ARABIC_FONT_PATH),
+        row("Public base URL (QR target)", bool(settings.app_base_url), settings.app_base_url),
+    ])
+    return f"""
+    <!DOCTYPE html><html><head><meta charset="utf-8"><title>System Status — Katara Club</title>
+    <style>body{{font-family:'Segoe UI',sans-serif;max-width:820px;margin:30px auto;padding:0 16px;color:#4a4a4a;}}
+    h1{{color:#a06e64;}}img{{max-width:200px;margin-bottom:10px;}}
+    table{{border-collapse:collapse;width:100%;}}th{{background:#f7efec;color:#8a5a50;}}
+    td,th{{padding:10px;border:1px solid #e3d2cc;text-align:left;}}p{{color:#8a5a50;}}</style>
+    </head><body><img src="/static/katara-logo.png"><h1>Waiver System Status</h1>
+    <p>Use this page after deployment to confirm signed forms will reach reception and your Microsoft 365.</p>
+    <table><tr><th>Component</th><th>Status</th><th>Details</th></tr>{rows}</table>
+    </body></html>
     """
 
 

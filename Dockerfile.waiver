@@ -1,0 +1,33 @@
+# Katara Club — Digital Waiver System (standalone)
+# Build:  docker build -f Dockerfile.waiver -t katara-waiver .
+# Run:    docker run -p 8000:8000 --env-file .env -v katara_waivers:/data/waivers katara-waiver
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Fonts: the Arabic PDF font is bundled in static/fonts, so no system fonts needed.
+# Only minimal build tooling for reportlab/pillow wheels (usually prebuilt).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements-waiver.txt .
+RUN pip install --no-cache-dir -r requirements-waiver.txt
+
+# App code
+COPY waiver_app.py waiver.py forms.py config.py microsoft365.py ./
+COPY database ./database
+COPY static ./static
+
+# Persisted data (signed PDFs + sqlite db) live here — mount a volume.
+ENV WAIVER_STORAGE_DIR=/data/waivers \
+    DATABASE_URL=sqlite:////data/assistant.db \
+    PORT=8000
+RUN mkdir -p /data/waivers
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -fsS http://localhost:8000/health || exit 1
+
+CMD ["sh", "-c", "uvicorn waiver_app:app --host 0.0.0.0 --port ${PORT}"]
