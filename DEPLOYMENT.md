@@ -80,6 +80,11 @@ Edit `.env` and fill in:
 APP_BASE_URL=https://waiver.katara.club        # your public HTTPS URL
 WAIVER_RECIPIENT_EMAIL=Reception@katara.club
 
+# Protect the management pages (admin/status/PDF downloads) — REQUIRED before
+# go-live, since those pages show members' personal data and signatures.
+ADMIN_USER=reception
+ADMIN_PASSWORD=<a strong password>
+
 MS365_TENANT_ID=<Directory (tenant) ID>
 MS365_CLIENT_ID=<Application (client) ID>
 MS365_CLIENT_SECRET=<the secret Value>
@@ -106,10 +111,16 @@ That's it. Check it's healthy:
 curl http://localhost:8000/health
 ```
 
-Open **`/waiver/status`** in a browser — the Microsoft 365 rows should show
-**✅ Ready**. Then submit a test from **`/waiver`** and confirm:
-- an email with the PDF arrives at `Reception@katara.club`, and
-- a copy appears in the **Katara Club Waivers** folder in OneDrive/SharePoint.
+Open **`/waiver/status`** in a browser (it'll ask for the admin login) — the
+Microsoft 365 rows should show **✅ Ready**. Click **"Send a test delivery →"**:
+this fires the real email + cloud-save path and reports the result, so you can
+confirm everything works **without** filling out a form. Then check:
+- an email with the PDF arrived at `Reception@katara.club`, and
+- a copy appeared in the **Katara Club Waivers** folder in OneDrive/SharePoint.
+
+> **Security note:** the form at `/waiver` is public (members need it), but
+> `/waiver/admin`, `/waiver/status`, and PDF downloads are gated by
+> `ADMIN_PASSWORD`. The status page warns you in red if it's left unset.
 
 ---
 

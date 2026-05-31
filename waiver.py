@@ -25,9 +25,12 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+import secrets
+
 import qrcode
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from config import settings
 from database.db import SessionLocal
@@ -58,6 +61,32 @@ def _font(name: str) -> str:
 
 ARABIC_FONT_PATH = _font("NotoNaskhArabic-Regular.ttf")
 ARABIC_FONT_BOLD = _font("NotoNaskhArabic-Bold.ttf")
+
+
+_basic = HTTPBasic(auto_error=False)
+
+
+def require_admin(credentials: HTTPBasicCredentials = Depends(_basic)):
+    """
+    Protect the management pages with HTTP Basic auth.
+
+    If ADMIN_PASSWORD is not set, the pages stay open (handy for a quick demo);
+    once it's set, /waiver/admin, /waiver/status, /waiver/pdf and /waiver/selftest
+    require the configured user + password. The member-facing form is never gated.
+    """
+    if not settings.admin_password:
+        return  # protection disabled
+    ok = (
+        credentials is not None
+        and secrets.compare_digest(credentials.username, settings.admin_user)
+        and secrets.compare_digest(credentials.password, settings.admin_password)
+    )
+    if not ok:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required.",
+            headers={"WWW-Authenticate": "Basic"},
+        )
 
 
 def _ensure_storage() -> str:
@@ -584,7 +613,7 @@ def waiver_qr_page(form: str = DEFAULT_FORM_ID):
 
 
 @router.get("/waiver/admin", response_class=HTMLResponse)
-def waiver_admin():
+def waiver_admin(_: None = Depends(require_admin)):
     db = SessionLocal()
     try:
         rows = db.query(WaiverSubmission).order_by(WaiverSubmission.id.desc()).all()
@@ -621,7 +650,7 @@ def waiver_admin():
 
 
 @router.get("/waiver/status", response_class=HTMLResponse)
-def waiver_status():
+def waiver_status(_: None = Depends(require_admin)):
     """Configuration health page — lets staff verify email/cloud are wired up."""
     try:
         import microsoft365 as ms
@@ -636,6 +665,7 @@ def waiver_status():
         badge = "✅ Ready" if ok else "⚠️ Not configured"
         return f"<tr><td>{label}</td><td>{badge}</td><td>{detail}</td></tr>"
 
+    admin_protected = bool(settings.admin_password)
     rows = "".join([
         row("Microsoft 365 email (Graph)",
             ms_ok and settings.ms365_send_email,
@@ -648,22 +678,71 @@ def waiver_status():
         row("Local PDF storage", True, storage),
         row("Arabic PDF font", font_ok, ARABIC_FONT_PATH),
         row("Public base URL (QR target)", bool(settings.app_base_url), settings.app_base_url),
+        row("Admin pages protected", admin_protected,
+            "Login required" if admin_protected
+            else "⚠️ OPEN — set ADMIN_PASSWORD to protect member data"),
     ])
     return f"""
     <!DOCTYPE html><html><head><meta charset="utf-8"><title>System Status — Katara Club</title>
     <style>body{{font-family:'Segoe UI',sans-serif;max-width:820px;margin:30px auto;padding:0 16px;color:#4a4a4a;}}
-    h1{{color:#a06e64;}}img{{max-width:200px;margin-bottom:10px;}}
+    h1{{color:#a06e64;}}img.logo{{max-width:200px;margin-bottom:10px;}}
     table{{border-collapse:collapse;width:100%;}}th{{background:#f7efec;color:#8a5a50;}}
-    td,th{{padding:10px;border:1px solid #e3d2cc;text-align:left;}}p{{color:#8a5a50;}}</style>
-    </head><body><img src="/static/katara-logo.png"><h1>Waiver System Status</h1>
+    td,th{{padding:10px;border:1px solid #e3d2cc;text-align:left;}}p{{color:#8a5a50;}}
+    .btn{{display:inline-block;margin:18px 0;padding:11px 20px;border:none;border-radius:10px;cursor:pointer;
+      background:linear-gradient(135deg,#a06e64,#8a5a50);color:#fff;font-size:.95rem;font-weight:600;}}
+    #res{{margin-top:10px;padding:12px 14px;border-radius:10px;font-size:.9rem;display:none;white-space:pre-wrap;}}
+    .ok{{background:#e8f3ee;color:#256b4f;}}.bad{{background:#fbeae6;color:#a23b29;}}
+    a.back{{color:#a06e64;}}</style>
+    </head><body><img class="logo" src="/static/katara-logo.png"><h1>Waiver System Status</h1>
     <p>Use this page after deployment to confirm signed forms will reach reception and your Microsoft 365.</p>
     <table><tr><th>Component</th><th>Status</th><th>Details</th></tr>{rows}</table>
+    <button class="btn" id="t">Send a test delivery →</button>
+    <div id="res"></div>
+    <p><a class="back" href="/waiver/admin">← Back to submissions</a></p>
+    <script>
+    document.getElementById('t').addEventListener('click', async ()=>{{
+      const r=document.getElementById('res'); r.style.display='block'; r.className=''; r.textContent='Sending test…';
+      try{{
+        const res=await fetch('/waiver/selftest',{{method:'POST'}});
+        const d=await res.json();
+        if(d.emailed||d.cloud_saved){{
+          r.className='ok';
+          r.textContent='✅ Test delivered.\\nEmailed: '+d.emailed+'  |  Saved to 365: '+d.cloud_saved+'  |  Channel: '+d.channel
+            +'\\nCheck '+ '{settings.waiver_recipient_email}' +' and your 365 folder.';
+        }}else{{
+          r.className='bad';
+          r.textContent='⚠️ Nothing was delivered (stored locally only).\\n'+(d.errors&&d.errors.join('\\n')||'No delivery channel configured.');
+        }}
+      }}catch(e){{ r.className='bad'; r.textContent='Request failed: '+e.message; }}
+    }});
+    </script>
     </body></html>
     """
 
 
+@router.post("/waiver/selftest")
+def waiver_selftest(_: None = Depends(require_admin)):
+    """Generate a small test PDF and run the real delivery path, so staff can
+    confirm email + Microsoft 365 are wired up — without filling out a form."""
+    reference = "TEST-" + datetime.utcnow().strftime("%Y%m%d-%H%M%S")
+    sample = {
+        "full_name": "TEST — Configuration Check",
+        "phone": "+974 0000 0000",
+        "date": datetime.utcnow().strftime("%Y-%m-%d"),
+        "staff_name": "System",
+        "membership_id": "—",
+        "form_id": DEFAULT_FORM_ID,
+        "answers": {str(i): {"answer": "yes"} for i in range(10)},
+        "signature": "",
+        "submitted_at": datetime.utcnow().isoformat(),
+    }
+    pdf = build_pdf(sample, reference)
+    result = deliver(reference, sample, pdf)
+    return JSONResponse(result)
+
+
 @router.get("/waiver/pdf/{reference}")
-def waiver_pdf(reference: str):
+def waiver_pdf(reference: str, _: None = Depends(require_admin)):
     db = SessionLocal()
     try:
         row = db.query(WaiverSubmission).filter_by(reference=reference).first()

@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     waiver_recipient_email: str = "Reception@Katara.club"
     waiver_storage_dir: str = "./waiver_storage"
 
+    # Admin protection for the management pages (/waiver/admin, /status, /pdf).
+    # The member-facing form stays public. Set admin_password to require login.
+    admin_user: str = "admin"
+    admin_password: str = ""
+
     # Microsoft 365 (Graph API) — email + save signed PDFs into your 365
     ms365_tenant_id: str = ""
     ms365_client_id: str = ""
