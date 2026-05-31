@@ -400,7 +400,30 @@ def deliver(reference: str, submission: dict, pdf_bytes: bytes) -> dict:
     result = {"emailed": False, "cloud_saved": False, "cloud_url": None,
               "channel": None, "errors": []}
 
-    # ── Microsoft 365 (Graph) — preferred, covers BOTH email and cloud save ──
+    # ── Google Workspace (Drive + Gmail) — preferred when configured ──
+    try:
+        import google_drive as gd
+        if gd.is_configured():
+            if settings.google_send_email and settings.google_delegated_sender:
+                try:
+                    gd.send_mail(to_addr, subject, body, pdf_bytes, filename)
+                    result["emailed"] = True
+                    result["channel"] = "google"
+                except Exception as e:
+                    result["errors"].append(f"gmail: {e}")
+            if settings.google_save_to_drive and settings.google_drive_folder_id:
+                try:
+                    result["cloud_url"] = gd.save_to_drive(pdf_bytes, filename)
+                    result["cloud_saved"] = True
+                    result["channel"] = result["channel"] or "google"
+                except Exception as e:
+                    result["errors"].append(f"drive: {e}")
+            if result["emailed"] or result["cloud_saved"]:
+                return result
+    except Exception as e:
+        result["errors"].append(f"google_init: {e}")
+
+    # ── Microsoft 365 (Graph) — covers BOTH email and cloud save ──
     try:
         import microsoft365 as ms
         if ms.is_configured():
@@ -698,6 +721,11 @@ def waiver_status(_: None = Depends(require_admin)):
         ms_ok = ms.is_configured()
     except Exception:
         ms_ok = False
+    try:
+        import google_drive as gd
+        g_ok = gd.is_configured()
+    except Exception:
+        g_ok = False
     smtp_ok = bool(settings.smtp_host)
     font_ok = os.path.exists(ARABIC_FONT_PATH)
     storage = _ensure_storage()
@@ -708,6 +736,12 @@ def waiver_status(_: None = Depends(require_admin)):
 
     admin_protected = bool(settings.admin_password)
     rows = "".join([
+        row("Google Drive archive",
+            g_ok and settings.google_save_to_drive and bool(settings.google_drive_folder_id),
+            f"Folder ID: <b>{settings.google_drive_folder_id or '—'}</b>"),
+        row("Gmail email",
+            g_ok and settings.google_send_email and bool(settings.google_delegated_sender),
+            f"Sends to <b>{settings.waiver_recipient_email}</b> as {settings.google_delegated_sender or '—'}"),
         row("Microsoft 365 email (Graph)",
             ms_ok and settings.ms365_send_email,
             f"Sends to <b>{settings.waiver_recipient_email}</b> as {settings.ms365_sender}"),

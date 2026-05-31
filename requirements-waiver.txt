@@ -10,3 +10,7 @@ reportlab==4.5.1
 qrcode[pil]==8.2
 arabic-reshaper==3.0.1
 python-bidi==0.6.10
+# Google Workspace (Drive + Gmail) delivery
+google-api-python-client==2.137.0
+google-auth==2.31.0
+google-auth-httplib2==0.2.0

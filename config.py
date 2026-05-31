@@ -36,6 +36,16 @@ class Settings(BaseSettings):
     admin_user: str = "admin"
     admin_password: str = ""
 
+    # Google Workspace — store signed PDFs in Google Drive + email via Gmail.
+    # Provide the service-account key either as a file path or inline JSON
+    # (inline is handy for Cloud Run / secret managers).
+    google_service_account_file: str = ""   # path to the service-account JSON key
+    google_service_account_json: str = ""   # OR the JSON key contents inline
+    google_drive_folder_id: str = ""        # target folder (use a Shared Drive folder)
+    google_delegated_sender: str = ""       # Workspace user to send Gmail as (domain-wide delegation)
+    google_save_to_drive: bool = True
+    google_send_email: bool = True
+
     # Microsoft 365 (Graph API) — email + save signed PDFs into your 365
     ms365_tenant_id: str = ""
     ms365_client_id: str = ""
