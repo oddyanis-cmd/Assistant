@@ -55,6 +55,44 @@ FORMS = {
              "ar": "أؤكد أنني قرأت وفهمت جميع البنود وأوافق عليها بالكامل"},
         ],
     },
+
+    "SAUNA-STEAM": {
+        "id": "SAUNA-STEAM",
+        "title": {
+            "en": "Sauna & Steam Room Waiver & Consent Form",
+            "ar": "نموذج إقرار وموافقة استخدام الساونا وغرفة البخار",
+        },
+        "subtitle": {
+            "en": "This waiver applies to all members using the Katara Club sauna and steam room facilities.",
+            "ar": "يطبق هذا الإقرار على جميع الأعضاء المستخدمين لمرافق الساونا وغرفة البخار في نادي كتارا",
+        },
+        "section": {"en": "Acknowledgment & Consent", "ar": "الإقرار والموافقة"},
+        "note": {
+            "en": "Katara Club reserves the right to refuse facility use if safety requirements are not met.",
+            "ar": "يحتفظ نادي كتارا بالحق في منع استخدام المرفق في حال عدم الالتزام بإرشادات السلامة",
+        },
+        "clauses": [
+            {"en": "I confirm that I am 18+ (or accompanied by a guardian) and have no medical condition "
+                   "(heart disease, high or low blood pressure, etc.) that prevents sauna or steam room use.",
+             "ar": "أؤكد أن عمري ١٨ سنة أو أكثر (أو برفقة ولي أمر) وأنني لا أعاني من أي حالة صحية (أمراض القلب، ارتفاع أو انخفاض ضغط الدم، وغيرها) تمنع استخدام الساونا أو غرفة البخار"},
+            {"en": "If pregnant: I understand sauna and steam use is not recommended during pregnancy and I use it at my own discretion after medical advice.",
+             "ar": "في حال الحمل: أدرك أن استخدام الساونا والبخار غير موصى به أثناء الحمل، وأتحمل مسؤولية الاستخدام بعد استشارة الطبيب"},
+            {"en": "I am not under the influence of alcohol or any medication that impairs heat tolerance.",
+             "ar": "لست تحت تأثير الكحول أو أي أدوية تؤثر على تحمّل الحرارة"},
+            {"en": "I understand prolonged heat exposure may cause dizziness, dehydration, fainting, or burns, and I will limit my session and stay hydrated.",
+             "ar": "أدرك أن التعرض الطويل للحرارة قد يسبب الدوخة أو الجفاف أو الإغماء أو الحروق، وألتزم بتقليل مدة الجلسة وشرب كميات كافية من الماء"},
+            {"en": "I will shower before entering and follow all hygiene and etiquette rules.",
+             "ar": "سأستحم قبل الدخول وألتزم بجميع قواعد النظافة والآداب العامة"},
+            {"en": "I agree to follow staff instructions and recommended session times, and to exit immediately if I feel unwell.",
+             "ar": "ألتزم باتباع تعليمات الموظفين والمدة الموصى بها للجلسة، وبالخروج فوراً عند الشعور بأي توعّك"},
+            {"en": "I will not pour any unauthorized substances on the heater and will use the facility safely.",
+             "ar": "لن أسكب أي مواد غير مصرّح بها على السخان وسأستخدم المرفق بطريقة آمنة"},
+            {"en": "I accept full responsibility and acknowledge Katara Club is not liable when safety instructions are not followed.",
+             "ar": "أتحمل المسؤولية الكاملة وأقر بعدم مسؤولية نادي كتارا عن أي آثار ناتجة عند عدم الالتزام بالتعليمات"},
+            {"en": "I confirm that I have read, understood, and agreed to all terms above.",
+             "ar": "أؤكد أنني قرأت وفهمت جميع البنود وأوافق عليها بالكامل"},
+        ],
+    },
 }
 
 DEFAULT_FORM_ID = "K11-AIR-SELECT"

@@ -478,6 +478,47 @@ def waiver_form():
         return HTMLResponse(f.read())
 
 
+@router.get("/waiver/forms", response_class=HTMLResponse)
+def waiver_forms_index():
+    """Reception landing page listing every available waiver, with links to the
+    form and its printable QR poster."""
+    cards = ""
+    for f in FORMS.values():
+        is_default = f["id"] == DEFAULT_FORM_ID
+        q = "" if is_default else f"?form={f['id']}"
+        cards += f"""
+        <div class="card">
+          <div class="ttl">{f['title']['en']}</div>
+          <div class="ttl ar">{f['title']['ar']}</div>
+          <div class="sub">{f['subtitle']['en']}</div>
+          <div class="links">
+            <a href="/waiver{q}">📝 Open form</a>
+            <a href="/waiver/qr{q}">🖨 QR poster</a>
+          </div>
+        </div>"""
+    return f"""
+    <!DOCTYPE html><html><head><meta charset="utf-8"><title>Waivers — Katara Club</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>body{{font-family:'Segoe UI',sans-serif;background:#faf6f4;color:#4a4a4a;
+      max-width:760px;margin:0 auto;padding:36px 18px;}}
+    img.logo{{max-width:240px;width:62%;display:block;margin:0 auto 26px;}}
+    h1{{color:#a06e64;text-align:center;font-weight:600;margin:0 0 22px;}}
+    .card{{background:#fff;border:1px solid #e3d2cc;border-radius:14px;padding:18px 20px;margin-bottom:16px;
+      box-shadow:0 6px 20px rgba(138,90,80,.08);}}
+    .ttl{{color:#8a5a50;font-weight:600;font-size:1.05rem;}}
+    .ttl.ar{{direction:rtl;color:#a06e64;font-weight:600;margin-top:2px;}}
+    .sub{{color:#9a8a85;font-size:.85rem;margin:8px 0 14px;}}
+    .links a{{display:inline-block;margin-right:10px;padding:8px 16px;border-radius:9px;text-decoration:none;
+      background:linear-gradient(135deg,#a06e64,#8a5a50);color:#fff;font-size:.88rem;font-weight:600;}}
+    .links a:last-child{{background:#fff;color:#a06e64;border:1px solid #e3d2cc;}}</style>
+    </head><body>
+    <img class="logo" src="/static/katara-logo.png" alt="Katara Club">
+    <h1>Digital Waivers</h1>
+    {cards}
+    </body></html>
+    """
+
+
 @router.get("/api/forms")
 def list_forms():
     """List available waiver forms (id + bilingual title)."""
