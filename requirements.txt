@@ -13,3 +13,8 @@ python-dotenv==1.0.1
 pydantic-settings==2.3.4
 python-multipart==0.0.9
 aiofiles==23.2.1
+
+# katara_tracker (ODP <-> Excel member tracker)
+openpyxl==3.1.5
+Pillow==12.2.0
+lxml==6.1.1
