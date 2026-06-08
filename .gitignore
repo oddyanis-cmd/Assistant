@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Generated tracker artifacts (build outputs, not source)
+*.xlsx
+*.odp
+media/
+slide_preview*.png
+
+# Local tooling / secrets
+.claude/
+.env
+assistant.db
