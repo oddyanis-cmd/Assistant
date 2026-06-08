@@ -53,6 +53,24 @@ def cmd_sync(args: argparse.Namespace) -> int:
     )
 
 
+def cmd_preview(args: argparse.Namespace) -> int:
+    from .render import render_slide
+
+    clients = parse_odp(args.odp)
+    matches = [
+        c for c in clients
+        if str(c.slide_index) == args.who
+        or args.who.lower() in c.name.lower()
+        or args.who.lower() in c.app_id.lower()
+    ]
+    if not matches:
+        print("No member matched %r" % args.who, file=sys.stderr)
+        return 1
+    out = render_slide(matches[0], args.out, args.media)
+    print("Wrote slide preview -> %s (%s)" % (out, matches[0].name))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="katara_tracker", description=__doc__)
     sub = p.add_subparsers(dest="command", required=True)
@@ -76,6 +94,13 @@ def build_parser() -> argparse.ArgumentParser:
                    help="original .odp to reuse as design template "
                         "(defaults to the path recorded at extract time)")
     s.set_defaults(func=cmd_sync)
+
+    pv = sub.add_parser("preview", help="render one member's slide to a PNG")
+    pv.add_argument("odp", help="source .odp presentation")
+    pv.add_argument("who", help="slide number, name fragment, or App ID")
+    pv.add_argument("--media", default="media", help="folder holding photos")
+    pv.add_argument("--out", default="slide_preview.png", help="output PNG")
+    pv.set_defaults(func=cmd_preview)
     return p
 
 
