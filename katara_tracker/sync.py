@@ -170,6 +170,7 @@ def sync_workbook(
 
     # Rebuild the workbook with everyone re-filed by status.
     out_xlsx = out_xlsx or xlsx_path
-    build_workbook(all_clients, media_dir, out_xlsx, template_path=template_odp)
+    build_workbook(all_clients, media_dir, out_xlsx, template_path=template_odp,
+                   macro_ready=bool(meta.get("macro_ready")))
     print("Rewrote workbook -> %s" % out_xlsx)
     return 0

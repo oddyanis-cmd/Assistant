@@ -172,9 +172,37 @@ def test_sections_and_pptx():
         assert len(list(prs.slides)) == 9
 
 
+def test_macro_ready_workbook():
+    """Macro-ready build: status sheets carry no floating thumbnails, but the
+    Member Cards sheet still does; the flag round-trips through sync."""
+    with tempfile.TemporaryDirectory() as tmp:
+        odp = os.path.join(tmp, "sample.odp")
+        make_sample_odp(odp, MEMBERS)
+        media = os.path.join(tmp, "media")
+        extract_media(odp, media)
+        xlsx = os.path.join(tmp, "wb.xlsx")
+        build_workbook(parse_odp(odp), media, xlsx, template_path=odp,
+                       macro_ready=True)
+
+        wb = openpyxl.load_workbook(xlsx)
+        for status in ("Pending approval", "Approved", "Paid"):
+            assert len(wb[status]._images) == 0      # data-only
+        assert len(wb["Member Cards"]._images) >= 1   # cards keep photos
+        assert wb["_meta"]["B3"].value == "1"
+
+        # sync preserves macro-ready (status sheets stay image-free).
+        rc = sync_workbook(xlsx, media, os.path.join(tmp, "d.odp"), None,
+                           out_pptx="")
+        assert rc == 0
+        wb2 = openpyxl.load_workbook(xlsx)
+        assert len(wb2["Approved"]._images) == 0
+        assert len(wb2["Member Cards"]._images) >= 1
+
+
 if __name__ == "__main__":
     test_parse()
     test_build_workbook()
     test_sync_status_change_and_new_member()
     test_sections_and_pptx()
+    test_macro_ready_workbook()
     print("All tests passed.")

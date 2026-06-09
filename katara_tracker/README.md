@@ -83,6 +83,23 @@ python -m katara_tracker sync Katara_Tracker.xlsx \
 [ ANALYSIS ]                → KPI slide + membership-type table slide
 ```
 
+## Automated mode (slides/rows move on their own)
+
+Two ways to make a status change re-file the member automatically — see
+`powerpoint_macros/` (re-sort slides in PowerPoint) and `excel_macros/` (live
+in Excel: change the Workflow Status dropdown → the row moves to the matching
+sheet and the Member Card is rebuilt with the correct status, instantly). For
+the live Excel macro, build a macro-ready workbook:
+
+```bash
+python -m katara_tracker extract Katara_Profiles_Final.odp \
+    --out Katara_Tracker.xlsm --media media --macro-ready
+```
+
+No macros? `python -m katara_tracker watch Katara_Tracker.xlsx` does the same on
+every save (re-file, rebuild cards, file new Create-Slide members, rebuild
+decks).
+
 ## How the design is preserved
 
 Colours and layout are taken straight from the source deck

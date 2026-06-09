@@ -109,8 +109,13 @@ def _status_validation(ws, nrows: int, status_col: int) -> None:
     dv.add("%s2:%s%d" % (col, col, max(nrows + 1, 500)))
 
 
-def _write_client_rows(ws, clients: list[Client], media_dir: str) -> None:
-    """Write a header + one row per client onto an existing worksheet."""
+def _write_client_rows(ws, clients: list[Client], media_dir: str,
+                       thumbnails: bool = True) -> None:
+    """Write a header + one row per client onto an existing worksheet.
+
+    ``thumbnails=False`` keeps the sheet as a clean data table (no floating
+    images) so VBA can move rows between sheets safely.
+    """
     for i, (header, _attr, width) in enumerate(COLUMNS, start=1):
         ws.cell(row=1, column=i, value=header)
         ws.column_dimensions[get_column_letter(i)].width = width
@@ -139,7 +144,7 @@ def _write_client_rows(ws, clients: list[Client], media_dir: str) -> None:
         ws.cell(row=r, column=rate_col).number_format = MONEY_FMT
         ws.cell(row=r, column=status_col).alignment = CENTER
         # Embed the portrait thumbnail (look in media dir, then the raw path).
-        if client.photo:
+        if client.photo and thumbnails:
             candidates = [
                 os.path.join(media_dir, os.path.basename(client.photo)),
                 client.photo,
@@ -388,14 +393,21 @@ def build_workbook(
     media_dir: str,
     out_path: str,
     template_path: str = "",
+    macro_ready: bool = False,
 ) -> None:
+    """Build the tracking workbook.
+
+    ``macro_ready=True`` keeps the status sheets as clean data tables (no
+    floating thumbnails) so the live VBA automation can move rows between
+    sheets safely; the Member Cards sheet still carries the photos.
+    """
     wb = Workbook()
     wb.remove(wb.active)
 
     for status in STATUSES:
         ws = wb.create_sheet(title=status)
         subset = [c for c in clients if c.status == status]
-        _write_client_rows(ws, subset, media_dir)
+        _write_client_rows(ws, subset, media_dir, thumbnails=not macro_ready)
 
     _build_cards(wb.create_sheet(title="Member Cards"), clients, media_dir)
     _build_analysis(wb.create_sheet(title="Analysis"), clients)
@@ -407,6 +419,8 @@ def build_workbook(
     meta["B1"] = os.path.abspath(template_path) if template_path else ""
     meta["A2"] = "media_dir"
     meta["B2"] = os.path.abspath(media_dir) if media_dir else ""
+    meta["A3"] = "macro_ready"
+    meta["B3"] = "1" if macro_ready else ""
     meta.sheet_state = "hidden"
 
     wb.save(out_path)

@@ -35,8 +35,11 @@ def cmd_extract(args: argparse.Namespace) -> int:
     if args.media:
         extract_media(args.odp, args.media)
         print("  extracted photos -> %s/" % args.media)
-    build_workbook(clients, args.media or "", args.out, template_path=args.odp)
-    print("Wrote workbook -> %s" % args.out)
+    build_workbook(clients, args.media or "", args.out, template_path=args.odp,
+                   macro_ready=args.macro_ready)
+    print("Wrote workbook -> %s%s" % (
+        args.out, " (macro-ready: status sheets are data-only)"
+        if args.macro_ready else ""))
     # Quick status summary.
     from collections import Counter
 
@@ -110,6 +113,9 @@ def build_parser() -> argparse.ArgumentParser:
     e.add_argument("odp", help="path to the source .odp presentation")
     e.add_argument("--out", default="Katara_Tracker.xlsx", help="output .xlsx")
     e.add_argument("--media", default="media", help="folder to unpack photos into")
+    e.add_argument("--macro-ready", action="store_true",
+                   help="status sheets as data-only tables (for the live Excel "
+                        "VBA automation); photos stay on the Member Cards sheet")
     e.set_defaults(func=cmd_extract)
 
     s = sub.add_parser("sync", help="workbook -> re-filed workbook + rebuilt deck")

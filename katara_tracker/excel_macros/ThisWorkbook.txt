@@ -1,0 +1,45 @@
+'==============================================================================
+' PASTE THIS INTO THE "ThisWorkbook" MODULE (not a standard module).
+'
+' In the VBA editor (Alt+F11), double-click "ThisWorkbook" in the project tree
+' on the left, then paste everything below into the code window.
+'
+' It listens for changes on any sheet and drives the live automation in the
+' KataraExcel module: changing a Workflow Status moves the row to the matching
+' sheet and rebuilds the Member Cards; completing a Create Slide row files it
+' into the right sheet.
+'==============================================================================
+
+Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
+    On Error GoTo CleanUp
+    If Target Is Nothing Then Exit Sub
+    If Target.Cells.Count <> 1 Then Exit Sub
+
+    Dim nm As String: nm = Sh.Name
+
+    ' --- A status sheet: did the Workflow Status change? ---------------------
+    If nm = "Pending approval" Or nm = "Approved" Or nm = "Paid" Then
+        Dim wsc As Long: wsc = KataraExcel.ColIndex(Sh, "Workflow Status")
+        If wsc > 0 And Target.Column = wsc And Target.Row > 1 Then
+            Dim newStatus As String: newStatus = Trim(CStr(Target.Value))
+            If (newStatus = "Pending approval" Or newStatus = "Approved" _
+                Or newStatus = "Paid") And newStatus <> nm Then
+                Application.EnableEvents = False
+                KataraExcel.MoveRowToStatus Sh, Target.Row, newStatus
+                KataraExcel.RebuildCards
+            End If
+        End If
+
+    ' --- The Create Slide form: a new member's status was set ---------------
+    ElseIf nm = "Create Slide" Then
+        Dim csc As Long: csc = KataraExcel.ColIndex(Sh, "Workflow Status", 6)
+        If csc > 0 And Target.Column = csc And Target.Row > 6 Then
+            Application.EnableEvents = False
+            KataraExcel.FileNewMember Sh, Target.Row
+            KataraExcel.RebuildCards
+        End If
+    End If
+
+CleanUp:
+    Application.EnableEvents = True
+End Sub
