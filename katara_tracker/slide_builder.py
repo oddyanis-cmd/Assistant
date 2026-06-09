@@ -27,6 +27,140 @@ from .odp_parser import (
 
 GREEN_FILL = "#00b050"
 
+# --- Section divider / analysis page builders --------------------------------
+# All ODF namespace declarations, so XML snippets parse standalone.
+from .theme import MAROON as _MAROON, GREEN as _GREEN  # noqa: E402
+
+_NSDECL = " ".join('xmlns:%s="%s"' % (p, u) for p, u in NS.items())
+
+# Automatic styles injected into the deck for the new slides.
+_EXTRA_STYLES = """
+<office:styles {ns}>
+  <style:style style:name="ktMaroon" style:family="graphic">
+    <style:graphic-properties draw:fill="solid" draw:fill-color="#{maroon}"
+      draw:stroke="none"/></style:style>
+  <style:style style:name="ktGreen" style:family="graphic">
+    <style:graphic-properties draw:fill="solid" draw:fill-color="#{green}"
+      draw:stroke="none"/></style:style>
+  <style:style style:name="ktClear" style:family="graphic">
+    <style:graphic-properties draw:fill="none" draw:stroke="none"/></style:style>
+  <style:style style:name="ktCenter" style:family="paragraph">
+    <style:paragraph-properties fo:text-align="center"/></style:style>
+  <style:style style:name="ktTitle" style:family="text">
+    <style:text-properties fo:color="#FFFFFF" fo:font-size="44pt"
+      fo:font-weight="bold"/></style:style>
+  <style:style style:name="ktSub" style:family="text">
+    <style:text-properties fo:color="#E8D8E2" fo:font-size="20pt"/></style:style>
+  <style:style style:name="ktHdr" style:family="text">
+    <style:text-properties fo:color="#FFFFFF" fo:font-size="24pt"
+      fo:font-weight="bold"/></style:style>
+  <style:style style:name="ktLabel" style:family="text">
+    <style:text-properties fo:color="#{maroon}" fo:font-size="14pt"
+      fo:font-weight="bold"/></style:style>
+  <style:style style:name="ktVal" style:family="text">
+    <style:text-properties fo:color="#111111" fo:font-size="13pt"/></style:style>
+  <style:style style:name="ktValGreen" style:family="text">
+    <style:text-properties fo:color="#{green}" fo:font-size="14pt"
+      fo:font-weight="bold"/></style:style>
+</office:styles>
+""".format(ns=_NSDECL, maroon=_MAROON, green=_GREEN)
+
+
+def _odf(snippet: str):
+    """Parse a namespaced ODF snippet (wrapped) and return the inner element."""
+    wrapped = "<root %s>%s</root>" % (_NSDECL, snippet)
+    return etree.fromstring(wrapped)[0]
+
+
+def _rect(x, y, w, h, style):
+    return _odf(
+        '<draw:rect draw:style-name="%s" svg:x="%.3fin" svg:y="%.3fin" '
+        'svg:width="%.3fin" svg:height="%.3fin"/>' % (style, x, y, w, h)
+    )
+
+
+def _tbox(x, y, w, h, text, text_style, par_style="", anchor=""):
+    par = '<text:p text:style-name="%s"><text:span text:style-name="%s">%s' \
+          '</text:span></text:p>' % (par_style, text_style, _esc(text))
+    return _odf(
+        '<draw:frame svg:x="%.3fin" svg:y="%.3fin" svg:width="%.3fin" '
+        'svg:height="%.3fin"><draw:text-box>%s</draw:text-box></draw:frame>'
+        % (x, y, w, h, par)
+    )
+
+
+def _esc(s: str) -> str:
+    return (str(s).replace("&", "&amp;").replace("<", "&lt;")
+            .replace(">", "&gt;"))
+
+
+def _divider_page(title: str, subtitle: str):
+    page = _odf('<draw:page draw:name="Section"/>')
+    page.append(_rect(0, 0, 13.333, 7.5, "ktMaroon"))
+    page.append(_tbox(0.8, 2.7, 11.7, 1.3, title, "ktTitle", "ktCenter"))
+    page.append(_rect(5.4, 3.95, 2.5, 0.06, "ktGreen"))
+    page.append(_tbox(0.8, 4.15, 11.7, 0.7, subtitle, "ktSub", "ktCenter"))
+    return page
+
+
+def _analysis_pages(clients):
+    from .analytics import kpis, membership_breakdown
+
+    pages = []
+    # KPI page.
+    p = _odf('<draw:page draw:name="Analysis"/>')
+    p.append(_rect(0, 0, 13.333, 1.0, "ktMaroon"))
+    p.append(_tbox(0.4, 0.25, 12.5, 0.6, "ANALYSIS — Membership Summary",
+                   "ktHdr"))
+    y = 1.4
+    for label, value, is_money in kpis(clients):
+        disp = "{:,} QAR".format(value) if is_money else str(value)
+        p.append(_tbox(0.8, y, 7.5, 0.45, label, "ktLabel"))
+        style = "ktValGreen" if "PAID" in label else "ktVal"
+        p.append(_tbox(8.3, y, 4.2, 0.45, disp, style))
+        y += 0.55
+    pages.append(p)
+
+    # Membership-type breakdown page (rows laid out as text columns).
+    p = _odf('<draw:page draw:name="AnalysisByType"/>')
+    p.append(_rect(0, 0, 13.333, 1.0, "ktMaroon"))
+    p.append(_tbox(0.4, 0.25, 12.5, 0.6, "ANALYSIS — By Membership Type",
+                   "ktHdr"))
+    cols = [(0.5, "Membership Type"), (6.0, "Joiners"), (7.5, "Paid"),
+            (8.8, "Amount Paid"), (11.0, "Pipeline")]
+    for x, h in cols:
+        p.append(_tbox(x, 1.25, 2.6, 0.4, h, "ktLabel"))
+    y = 1.75
+    tot = {"n": 0, "paid": 0, "paid_amt": 0, "pipe": 0}
+    for row in membership_breakdown(clients):
+        p.append(_tbox(0.5, y, 5.4, 0.4, row["type"], "ktVal"))
+        p.append(_tbox(6.0, y, 1.4, 0.4, str(row["n"]), "ktVal"))
+        p.append(_tbox(7.5, y, 1.2, 0.4, str(row["paid"]), "ktVal"))
+        p.append(_tbox(8.8, y, 2.1, 0.4, "{:,}".format(row["paid_amt"]),
+                       "ktVal"))
+        p.append(_tbox(11.0, y, 2.0, 0.4, "{:,}".format(row["pipe"]), "ktVal"))
+        for k in tot:
+            tot[k] += row[k]
+        y += 0.42
+    p.append(_tbox(0.5, y, 5.4, 0.4, "TOTAL", "ktLabel"))
+    p.append(_tbox(6.0, y, 1.4, 0.4, str(tot["n"]), "ktLabel"))
+    p.append(_tbox(7.5, y, 1.2, 0.4, str(tot["paid"]), "ktLabel"))
+    p.append(_tbox(8.8, y, 2.1, 0.4, "{:,}".format(tot["paid_amt"]), "ktLabel"))
+    p.append(_tbox(11.0, y, 2.0, 0.4, "{:,}".format(tot["pipe"]), "ktLabel"))
+    pages.append(p)
+    return pages
+
+
+def _ensure_extra_styles(root) -> None:
+    """Append the divider/analysis automatic styles to the deck once."""
+    auto = root.find(_q("office:automatic-styles"))
+    if auto is None:
+        auto = etree.SubElement(root, _q("office:automatic-styles"))
+    existing = {s.get(_q("style:name")) for s in auto.iter(_q("style:style"))}
+    for st in _odf(_EXTRA_STYLES):  # iterate children of office:styles
+        if st.get(_q("style:name")) not in existing:
+            auto.append(st)
+
 
 def _fill_map(root) -> dict:
     out = {}
@@ -219,21 +353,49 @@ def build_deck(
     for pg in pages:
         parent.remove(pg)
 
+    _ensure_extra_styles(root)
+
     extra_media: dict = {}
     order = {"Pending approval": 0, "Approved": 1, "Paid": 2}
-    ordered = sorted(clients, key=lambda c: (order.get(c.status, 0), c.slide_index))
+    all_clients = list(clients) + list(new_clients)
+    new_ids = {id(c) for c in new_clients}
+    ordered = sorted(
+        all_clients, key=lambda c: (order.get(c.status, 0), c.slide_index)
+    )
 
+    from .analytics import status_counts
+
+    counts = status_counts(all_clients)
+    subtitles = {
+        "Pending approval": "Awaiting approval",
+        "Approved": "Approved — payment pending",
+        "Paid": "Paid — membership active",
+    }
+
+    # Member slides grouped by status, each group introduced by a divider.
+    current = None
     for client in ordered:
-        src = by_appid.get(client.app_id)
-        slide = copy.deepcopy(src) if src is not None else copy.deepcopy(base_slide)
+        if client.status != current:
+            current = client.status
+            parent.append(_divider_page(
+                current.upper(),
+                "%d member(s) · %s" % (counts.get(current, 0),
+                                       subtitles.get(current, "")),
+            ))
+        if id(client) in new_ids:
+            slide = copy.deepcopy(base_slide)
+            _fill_new_slide(slide, client, extra_media)
+        else:
+            src = by_appid.get(client.app_id)
+            slide = (copy.deepcopy(src) if src is not None
+                     else copy.deepcopy(base_slide))
         _apply_status_note(slide, client.status, fills, note_template)
         parent.append(slide)
 
-    for client in new_clients:
-        slide = copy.deepcopy(base_slide)
-        _fill_new_slide(slide, client, extra_media)
-        _apply_status_note(slide, client.status, fills, note_template)
-        parent.append(slide)
+    # Analysis section.
+    parent.append(_divider_page("ANALYSIS", "Membership analytics & totals"))
+    for ap in _analysis_pages(all_clients):
+        parent.append(ap)
 
     new_content = etree.tostring(
         root, xml_declaration=True, encoding="UTF-8", standalone=True

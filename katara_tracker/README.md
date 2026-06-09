@@ -63,17 +63,33 @@ python -m katara_tracker sync Katara_Tracker.xlsx \
 
 1. re-files every member into the sheet matching its Workflow Status,
 2. rebuilds the **Analysis** totals,
-3. regenerates the deck — existing members keep their **original slide** (the
-   green note is added/updated/removed to match their status), new members get a
-   freshly cloned slide with their fields and photo — ordered
-   *Pending → Approved → Paid* so a status change visibly moves the slide.
+3. regenerates **two decks** — ordered *Pending → Approved → Paid* with a
+   **section divider** before each group and an **Analysis section** at the end:
+   * `--out-odp` (default `Katara_Profiles_Rebuilt.odp`): design-faithful;
+     existing members keep their **original slide** (the green note is
+     added/updated/removed to match their status), new members get a cloned
+     slide with their fields + photo.
+   * `--out-pptx` (default `Katara_Profiles_Rebuilt.pptx`): a **native
+     PowerPoint** built from scratch, re-creating the design + sections +
+     analysis. Pass `--out-pptx ''` to skip it.
+
+### Segregated deck structure
+
+```
+[ PENDING APPROVAL — 107 ]  → the 107 member slides
+[ APPROVED — 18 ]           → the 18 member slides
+[ PAID — 18 ]               → the 18 member slides
+[ ANALYSIS ]                → KPI slide + membership-type table slide
+```
 
 ## How the design is preserved
 
 Colours and layout are taken straight from the source deck
-(maroon `#49153B` header, green `#00B050` status note, etc. — see `theme.py`),
-and slide regeneration **reuses the original slides as templates** rather than
-drawing new ones, so the output stays visually identical to the source.
+(maroon `#49153B` header, green `#00B050` status note, etc. — see `theme.py`).
+The `.odp` regeneration **reuses the original slides as templates** rather than
+drawing new ones, so it stays visually identical to the source. The native
+`.pptx` re-creates the same design with python-pptx (a faithful re-creation
+rather than a pixel clone).
 
 ## Notes & limitations
 
@@ -103,7 +119,10 @@ parse → build → sync round-trip, including a status change and a new member.
 |------|----------------|
 | `odp_parser.py` | Parse `.odp` slides into `Client` records (+ extract media) |
 | `excel_builder.py` | Build the styled workbook (status sheets, Analysis, Create Slide) |
-| `slide_builder.py` | Regenerate the `.odp` deck from `Client` records |
-| `sync.py` | Read the edited workbook, re-file, rebuild deck + workbook |
+| `slide_builder.py` | Regenerate the `.odp` deck (sections + analysis) |
+| `pptx_builder.py` | Build the native `.pptx` deck (sections + analysis) |
+| `analytics.py` | Shared KPI / membership-breakdown calculations |
+| `render.py` | Render a single member slide to a PNG preview |
+| `sync.py` | Read the edited workbook, re-file, rebuild decks + workbook |
 | `theme.py` | Brand colours / layout constants |
-| `cli.py` | `extract` and `sync` commands |
+| `cli.py` | `extract`, `sync`, `preview` commands |

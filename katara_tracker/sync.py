@@ -98,6 +98,7 @@ def sync_workbook(
     out_odp: str,
     out_xlsx: str | None,
     template_odp: str | None = None,
+    out_pptx: str | None = None,
 ) -> int:
     if not os.path.exists(xlsx_path):
         print("ERROR: file not found: %s" % xlsx_path, file=sys.stderr)
@@ -158,8 +159,16 @@ def sync_workbook(
         print("WARNING: template deck not found (%r); skipping ODP rebuild. "
               "Pass --template <original.odp>." % template_odp, file=sys.stderr)
 
-    # Rebuild the workbook with everyone re-filed by status.
     all_clients = existing + new_clients
+
+    # Native PowerPoint deck (sections + analysis), built from scratch.
+    if out_pptx:
+        from .pptx_builder import build_pptx
+
+        build_pptx(all_clients, media_dir, out_pptx)
+        print("Built PowerPoint -> %s" % out_pptx)
+
+    # Rebuild the workbook with everyone re-filed by status.
     out_xlsx = out_xlsx or xlsx_path
     build_workbook(all_clients, media_dir, out_xlsx, template_path=template_odp)
     print("Rewrote workbook -> %s" % out_xlsx)

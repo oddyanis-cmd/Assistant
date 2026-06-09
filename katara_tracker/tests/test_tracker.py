@@ -130,8 +130,50 @@ def test_sync_status_change_and_new_member():
         assert "MEM-APP-2025-00001" in paid_ids
 
 
+def test_sections_and_pptx():
+    """The rebuilt decks include section dividers + analysis, and the native
+    .pptx opens with the expected slide count."""
+    import zipfile as _zip
+
+    from lxml import etree
+
+    from katara_tracker.pptx_builder import build_pptx
+
+    with tempfile.TemporaryDirectory() as tmp:
+        odp = os.path.join(tmp, "sample.odp")
+        make_sample_odp(odp, MEMBERS)
+        media = os.path.join(tmp, "media")
+        extract_media(odp, media)
+        xlsx = os.path.join(tmp, "wb.xlsx")
+        build_workbook(parse_odp(odp), media, xlsx, template_path=odp)
+
+        out_odp = os.path.join(tmp, "rebuilt.odp")
+        out_pptx = os.path.join(tmp, "rebuilt.pptx")
+        rc = sync_workbook(xlsx, media, out_odp, None, out_pptx=out_pptx)
+        assert rc == 0
+
+        # ODP: member slides skipped on reparse, but raw pages include sections.
+        assert len(parse_odp(out_odp)) == 3
+        root = etree.fromstring(_zip.ZipFile(out_odp).read("content.xml"))
+        names = [
+            p.get("{urn:oasis:names:tc:opendocument:xmlns:drawing:1.0}name")
+            for p in root.iter(
+                "{urn:oasis:names:tc:opendocument:xmlns:drawing:1.0}page")
+        ]
+        # 3 members + 3 status dividers + 1 analysis divider + 2 analysis pages.
+        assert len(names) == 9
+        assert names.count("Section") == 4
+
+        # PPTX opens and has the same slide total.
+        from pptx import Presentation
+
+        prs = Presentation(out_pptx)
+        assert len(list(prs.slides)) == 9
+
+
 if __name__ == "__main__":
     test_parse()
     test_build_workbook()
     test_sync_status_change_and_new_member()
+    test_sections_and_pptx()
     print("All tests passed.")

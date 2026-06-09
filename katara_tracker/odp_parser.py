@@ -278,13 +278,27 @@ def parse_client(page, page_index: int, fills: dict) -> Client:
 
 
 def parse_odp(odp_path: str) -> list[Client]:
-    """Parse every slide of an ODP deck into a list of Client records."""
+    """Parse member-profile slides of an ODP deck into Client records.
+
+    Section-divider and Analysis slides (added by the deck generator) carry no
+    member identity, so they are skipped — this keeps re-parsing a regenerated
+    deck idempotent.
+    """
     with zipfile.ZipFile(odp_path) as z:
         content = z.read("content.xml")
     root = etree.fromstring(content)
     fills = _fill_colors(root)
     pages = root.findall(".//" + _q("draw:page"))
-    return [parse_client(pg, i + 1, fills) for i, pg in enumerate(pages)]
+    clients = []
+    idx = 0
+    for pg in pages:
+        client = parse_client(pg, idx + 1, fills)
+        if not client.app_id and not client.name:
+            continue  # divider / analysis slide
+        idx += 1
+        client.slide_index = idx
+        clients.append(client)
+    return clients
 
 
 def extract_media(odp_path: str, dest_dir: str) -> None:

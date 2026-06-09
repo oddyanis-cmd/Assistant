@@ -49,7 +49,8 @@ def cmd_sync(args: argparse.Namespace) -> int:
     from .sync import sync_workbook
 
     return sync_workbook(
-        args.xlsx, args.media, args.out_odp, args.out_xlsx, args.template
+        args.xlsx, args.media, args.out_odp, args.out_xlsx, args.template,
+        args.out_pptx,
     )
 
 
@@ -87,7 +88,10 @@ def build_parser() -> argparse.ArgumentParser:
                    help="folder holding member photos "
                         "(defaults to the path recorded at extract time)")
     s.add_argument("--out-odp", default="Katara_Profiles_Rebuilt.odp",
-                   help="regenerated presentation")
+                   help="regenerated presentation (design-faithful clone)")
+    s.add_argument("--out-pptx", default="Katara_Profiles_Rebuilt.pptx",
+                   help="native PowerPoint deck (sections + analysis); "
+                        "pass '' to skip")
     s.add_argument("--out-xlsx", default=None,
                    help="rewritten workbook (defaults to overwriting input)")
     s.add_argument("--template", default=None,
