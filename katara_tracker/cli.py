@@ -105,6 +105,51 @@ def cmd_watch(args: argparse.Namespace) -> int:
         return 0
 
 
+def cmd_export_table(args: argparse.Namespace) -> int:
+    """ODP deck -> a flat one-table file to import into Microsoft Lists etc."""
+    from .table_io import write_import_csv, write_import_table
+
+    if not os.path.exists(args.odp):
+        print("ERROR: file not found: %s" % args.odp, file=sys.stderr)
+        return 2
+    clients = parse_odp(args.odp)
+    write_import_table(clients, args.out)
+    print("Wrote import workbook -> %s (%d members)" % (args.out, len(clients)))
+    if args.csv:
+        write_import_csv(clients, args.csv)
+        print("Wrote import CSV      -> %s" % args.csv)
+    if args.media:
+        extract_media(args.odp, args.media)
+        print("Extracted photos      -> %s/" % args.media)
+    return 0
+
+
+def cmd_from_table(args: argparse.Namespace) -> int:
+    """A list export (CSV/Excel) -> tracking workbook + PowerPoint/ODP decks."""
+    from .table_io import read_table
+    from .excel_builder import build_workbook
+
+    if not os.path.exists(args.table):
+        print("ERROR: file not found: %s" % args.table, file=sys.stderr)
+        return 2
+    clients = read_table(args.table)
+    print("Read %d members from %s" % (len(clients), args.table))
+    build_workbook(clients, args.media or "", args.out_xlsx,
+                   template_path=args.template or "")
+    print("Wrote workbook  -> %s" % args.out_xlsx)
+    if args.template and os.path.exists(args.template):
+        from .slide_builder import build_deck
+
+        build_deck(args.template, clients, [], args.out_odp)
+        print("Built ODP deck  -> %s" % args.out_odp)
+    if args.out_pptx:
+        from .pptx_builder import build_pptx
+
+        build_pptx(clients, args.media or "", args.out_pptx)
+        print("Built PowerPoint -> %s" % args.out_pptx)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="katara_tracker", description=__doc__)
     sub = p.add_subparsers(dest="command", required=True)
@@ -146,6 +191,26 @@ def build_parser() -> argparse.ArgumentParser:
     w.add_argument("--interval", type=float, default=2.0,
                    help="poll interval in seconds (default 2)")
     w.set_defaults(func=cmd_watch)
+
+    et = sub.add_parser("export-table",
+                        help="ODP deck -> import file for Microsoft Lists etc.")
+    et.add_argument("odp", help="source .odp presentation")
+    et.add_argument("--out", default="Katara_Members_ForImport.xlsx",
+                    help="output one-table .xlsx (import into Lists)")
+    et.add_argument("--csv", default=None, help="also write a CSV copy")
+    et.add_argument("--media", default=None, help="also unpack photos here")
+    et.set_defaults(func=cmd_export_table)
+
+    ft = sub.add_parser("from-table",
+                        help="list export (CSV/Excel) -> workbook + decks")
+    ft.add_argument("table", help="exported CSV or .xlsx from the list")
+    ft.add_argument("--media", default="media", help="photos folder")
+    ft.add_argument("--template", default=None,
+                    help="original .odp for design-faithful slide rebuild")
+    ft.add_argument("--out-xlsx", default="Katara_Tracker.xlsx")
+    ft.add_argument("--out-odp", default="Katara_Profiles_Rebuilt.odp")
+    ft.add_argument("--out-pptx", default="Katara_Profiles_Rebuilt.pptx")
+    ft.set_defaults(func=cmd_from_table)
 
     pv = sub.add_parser("preview", help="render one member's slide to a PNG")
     pv.add_argument("odp", help="source .odp presentation")

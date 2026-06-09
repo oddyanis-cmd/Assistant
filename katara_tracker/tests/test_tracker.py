@@ -199,10 +199,35 @@ def test_macro_ready_workbook():
         assert len(wb2["Member Cards"]._images) >= 1
 
 
+def test_table_roundtrip():
+    """ODP -> import table -> read back preserves members and statuses."""
+    from katara_tracker.table_io import (read_table, write_import_csv,
+                                         write_import_table)
+
+    with tempfile.TemporaryDirectory() as tmp:
+        odp = os.path.join(tmp, "sample.odp")
+        make_sample_odp(odp, MEMBERS)
+        clients = parse_odp(odp)
+
+        xlsx = os.path.join(tmp, "import.xlsx")
+        csvp = os.path.join(tmp, "import.csv")
+        write_import_table(clients, xlsx)
+        write_import_csv(clients, csvp)
+
+        for path in (xlsx, csvp):
+            back = read_table(path)
+            assert len(back) == len(clients)
+            assert {c.name for c in back} == {c.name for c in clients}
+            assert {c.status for c in back} == {c.status for c in clients}
+            paid = next(c for c in back if c.status == "Paid")
+            assert paid.rate_amount == 21000
+
+
 if __name__ == "__main__":
     test_parse()
     test_build_workbook()
     test_sync_status_change_and_new_member()
     test_sections_and_pptx()
     test_macro_ready_workbook()
+    test_table_roundtrip()
     print("All tests passed.")
