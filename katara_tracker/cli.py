@@ -72,6 +72,36 @@ def cmd_preview(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_watch(args: argparse.Namespace) -> int:
+    """Re-run sync automatically whenever the workbook is saved."""
+    import time
+
+    from .sync import sync_workbook
+
+    if not os.path.exists(args.xlsx):
+        print("ERROR: file not found: %s" % args.xlsx, file=sys.stderr)
+        return 2
+    print("Watching %s — edit & save it to auto-rebuild the decks. Ctrl+C to "
+          "stop." % args.xlsx)
+    last = 0.0
+    try:
+        while True:
+            mtime = os.path.getmtime(args.xlsx)
+            if mtime != last:
+                last = mtime
+                print("\n[%s] change detected — syncing..." %
+                      time.strftime("%H:%M:%S"))
+                try:
+                    sync_workbook(args.xlsx, args.media, args.out_odp,
+                                  args.out_xlsx, args.template, args.out_pptx)
+                except Exception as exc:  # keep watching despite a bad save
+                    print("  sync error: %s" % exc, file=sys.stderr)
+            time.sleep(args.interval)
+    except KeyboardInterrupt:
+        print("\nStopped watching.")
+        return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="katara_tracker", description=__doc__)
     sub = p.add_subparsers(dest="command", required=True)
@@ -98,6 +128,18 @@ def build_parser() -> argparse.ArgumentParser:
                    help="original .odp to reuse as design template "
                         "(defaults to the path recorded at extract time)")
     s.set_defaults(func=cmd_sync)
+
+    w = sub.add_parser("watch",
+                       help="auto-rebuild decks whenever the workbook is saved")
+    w.add_argument("xlsx", help="the tracking workbook to watch")
+    w.add_argument("--media", default=None, help="photos folder")
+    w.add_argument("--out-odp", default="Katara_Profiles_Rebuilt.odp")
+    w.add_argument("--out-pptx", default="Katara_Profiles_Rebuilt.pptx")
+    w.add_argument("--out-xlsx", default=None)
+    w.add_argument("--template", default=None)
+    w.add_argument("--interval", type=float, default=2.0,
+                   help="poll interval in seconds (default 2)")
+    w.set_defaults(func=cmd_watch)
 
     pv = sub.add_parser("preview", help="render one member's slide to a PNG")
     pv.add_argument("odp", help="source .odp presentation")
