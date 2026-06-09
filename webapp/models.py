@@ -97,6 +97,34 @@ def _to_int(v) -> int:
         return int(s) if s else 0
 
 
+class User(Base):
+    """A staff login account."""
+
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(80), unique=True, index=True)
+    display_name = Column(String(120), default="")
+    password_hash = Column(String(255), default="")
+    is_admin = Column(Integer, default=0)   # 1 = can manage staff
+
+    def set_password(self, raw: str) -> None:
+        from werkzeug.security import generate_password_hash
+
+        self.password_hash = generate_password_hash(raw)
+
+    def check_password(self, raw: str) -> bool:
+        from werkzeug.security import check_password_hash
+
+        return bool(self.password_hash) and check_password_hash(
+            self.password_hash, raw)
+
+    def to_dict(self) -> dict:
+        return {"id": self.id, "username": self.username,
+                "display_name": self.display_name,
+                "is_admin": bool(self.is_admin)}
+
+
 def make_session(db_path: str):
     engine = create_engine("sqlite:///%s" % db_path, future=True,
                            connect_args={"check_same_thread": False})
