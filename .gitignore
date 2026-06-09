@@ -13,3 +13,9 @@ slide_preview*.png
 .claude/
 .env
 assistant.db
+
+# Web app runtime data (personal member data — keep out of the repo)
+*.db
+webapp/katara.db
+webapp/seed_data.csv
+webapp/media/

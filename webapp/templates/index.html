@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Katara Members</title>
+<style>
+  :root{ --maroon:#49153B; --green:#00B050; --paid:#1F7A3D; --pending:#B0883B; --bg:#f5f2f4; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#222}
+  header{background:var(--maroon);color:#fff;padding:10px 16px;display:flex;
+    align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+  header h1{font-size:18px;margin:0;letter-spacing:.5px}
+  header .sp{flex:1}
+  button{font-size:14px;border:0;border-radius:6px;padding:8px 12px;cursor:pointer}
+  .btn-light{background:#fff;color:var(--maroon);font-weight:bold}
+  .btn-ghost{background:rgba(255,255,255,.15);color:#fff}
+  .stats{font-size:12px;opacity:.95}
+  .stats b{font-size:14px}
+  .board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px;
+    align-items:start}
+  @media(max-width:820px){.board{grid-template-columns:1fr}}
+  .col{background:#eee;border-radius:10px;padding:8px;min-height:120px}
+  .col h2{font-size:14px;margin:4px 6px 8px;display:flex;justify-content:space-between}
+  .col .count{background:#fff;border-radius:10px;padding:0 8px;font-size:12px}
+  .col[data-status="Pending approval"] h2 .dot{color:var(--pending)}
+  .card{background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.15);
+    margin-bottom:8px;overflow:hidden;cursor:pointer}
+  .card .hd{background:var(--maroon);color:#fff;font-size:11px;font-weight:bold;
+    padding:4px 8px;display:flex;justify-content:space-between;align-items:center}
+  .badge{border-radius:10px;padding:1px 8px;font-size:10px}
+  .card .bd{display:flex;gap:8px;padding:8px}
+  .card img.ph{width:60px;height:74px;object-fit:cover;border-radius:4px;background:#eee}
+  .card .info{font-size:12px;line-height:1.35;min-width:0}
+  .card .nm{font-weight:bold;color:var(--maroon);font-size:13px}
+  .card .rate{font-weight:bold}
+  .card select{width:100%;margin-top:4px;font-size:11px;padding:2px}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
+    align-items:flex-start;justify-content:center;padding:20px;z-index:20;overflow:auto}
+  .modal.open{display:flex}
+  .sheet{background:#fff;border-radius:10px;max-width:720px;width:100%;overflow:hidden}
+  .sheet .top{background:var(--maroon);color:#fff;padding:10px 14px;display:flex;
+    justify-content:space-between;align-items:center}
+  .sheet .body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .sheet .body .full{grid-column:1/3}
+  label{font-size:11px;color:#666;display:block;margin-bottom:2px}
+  input,select,textarea{width:100%;padding:7px;border:1px solid #ccc;border-radius:6px;
+    font-size:13px;font-family:inherit}
+  textarea{min-height:64px}
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 14px}
+  .slideimg{width:100%;border:1px solid #ddd;border-radius:6px;margin-top:6px}
+  .danger{background:#b3261e;color:#fff}
+  .ok{background:var(--green);color:#fff;font-weight:bold}
+  .muted{color:#777;font-size:11px}
+</style>
+</head>
+<body>
+<header>
+  <h1>KATARA · Members</h1>
+  <div class="stats" id="stats"></div>
+  <div class="sp"></div>
+  <button class="btn-light" onclick="openAdd()">+ Add member</button>
+  <button class="btn-ghost" onclick="location='/export/pptx'">PowerPoint</button>
+  <button class="btn-ghost" onclick="location='/export/xlsx'">Excel</button>
+</header>
+
+<div class="board" id="board"></div>
+
+<!-- Detail / edit modal -->
+<div class="modal" id="modal">
+  <div class="sheet">
+    <div class="top"><b id="mTitle">Member</b>
+      <button class="btn-ghost" onclick="closeModal()">✕</button></div>
+    <div class="body" id="form"></div>
+    <div class="row-actions">
+      <button class="ok" onclick="saveMember()">Save</button>
+      <button class="btn-light" onclick="viewSlide()">View slide</button>
+      <button class="danger" onclick="deleteMember()" id="delBtn">Delete</button>
+      <span class="muted" id="saveMsg"></span>
+    </div>
+    <div style="padding:0 14px 14px"><img class="slideimg" id="slideImg" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+const STATUSES = {{ statuses|tojson }};
+const COLORS = {"Pending approval":"#B0883B","Approved":"#00B050","Paid":"#1F7A3D"};
+let MEMBERS = [], current = null, modalOpen = false;
+
+const FIELDS = [
+  ["name","Name","full"],["app_id","App ID"],["status","Workflow Status","sel"],
+  ["application_type","Application Type"],["application_date","Application Date"],
+  ["age","Age"],["occupation","Occupation"],["company","Company"],
+  ["membership_plan","Membership Plan","full"],["rate_amount","Rate (QAR)","num"],
+  ["tag","Tag"],["cec","CEC"],["mobile","Mobile"],
+  ["special_request","Special Request / Note","full","area"]
+];
+
+async function load(){
+  const r = await fetch('/api/members'); MEMBERS = await r.json();
+  if(!modalOpen) render();
+  const st = await (await fetch('/api/stats')).json();
+  document.getElementById('stats').innerHTML =
+    `Total <b>${st.total}</b> · Paid <b>${st.by_status.Paid||0}</b> · `+
+    `Collected <b>${(st.total_paid||0).toLocaleString()} QAR</b>`;
+}
+
+function render(){
+  const b = document.getElementById('board'); b.innerHTML='';
+  for(const stt of STATUSES){
+    const list = MEMBERS.filter(m=>m.status===stt);
+    const col = document.createElement('div');
+    col.className='col'; col.dataset.status=stt;
+    col.innerHTML = `<h2><span class="dot">●</span> ${stt}
+       <span class="count">${list.length}</span></h2>`;
+    for(const m of list) col.appendChild(cardEl(m));
+    b.appendChild(col);
+  }
+}
+
+function cardEl(m){
+  const c = document.createElement('div'); c.className='card';
+  const color = COLORS[m.status];
+  const badge = m.status==='Pending approval'?'Pending':m.status;
+  const img = m.photo ? `<img class="ph" src="/media/${m.photo}">`
+                      : `<div class="ph"></div>`;
+  c.innerHTML = `
+    <div class="hd"><span>MEMBER PROFILE</span>
+      <span class="badge" style="background:${color}">${badge}</span></div>
+    <div class="bd">${img}
+      <div class="info">
+        <div class="nm">${esc(m.name)||'(no name)'}</div>
+        <div class="muted">${esc(m.app_id)}</div>
+        <div>${esc(m.membership_plan)}</div>
+        <div class="rate" style="color:${color}">${(m.rate_amount||0).toLocaleString()} QAR</div>
+        <select onchange="quickStatus(${m.id}, this.value)" onclick="event.stopPropagation()">
+          ${STATUSES.map(s=>`<option ${s===m.status?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div></div>`;
+  c.onclick = ()=>openDetail(m.id);
+  return c;
+}
+
+async function quickStatus(id, status){
+  await fetch('/api/members/'+id,{method:'PATCH',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
+  load();
+}
+
+function openAdd(){
+  current = {id:null,status:'Pending approval'};
+  buildForm(current); document.getElementById('mTitle').textContent='New member';
+  document.getElementById('delBtn').style.display='none';
+  document.getElementById('slideImg').style.display='none';
+  showModal();
+}
+function openDetail(id){
+  current = MEMBERS.find(m=>m.id===id);
+  buildForm(current); document.getElementById('mTitle').textContent=current.name||'Member';
+  document.getElementById('delBtn').style.display='';
+  document.getElementById('slideImg').style.display='none';
+  showModal();
+}
+
+function buildForm(m){
+  const f = document.getElementById('form'); f.innerHTML='';
+  for(const [key,label,cls,type] of FIELDS){
+    const wrap = document.createElement('div');
+    if(cls==='full') wrap.className='full';
+    let ctrl;
+    if(type==='sel'){
+      ctrl=`<select id="f_${key}">${STATUSES.map(s=>
+        `<option ${s===(m[key]||'')?'selected':''}>${s}</option>`).join('')}</select>`;
+    } else if(type==='area'){
+      ctrl=`<textarea id="f_${key}">${esc(m[key]||'')}</textarea>`;
+    } else {
+      ctrl=`<input id="f_${key}" type="${type==='num'?'number':'text'}"
+              value="${esc(m[key]??'')}">`;
+    }
+    wrap.innerHTML=`<label>${label}</label>${ctrl}`;
+    f.appendChild(wrap);
+  }
+  // photo upload (only for existing members)
+  const pw = document.createElement('div'); pw.className='full';
+  pw.innerHTML = `<label>Photo</label>` +
+    (m.id ? `<input type="file" accept="image/*" id="f_photo_file"
+       onchange="uploadPhoto(${m.id})">` +
+       (m.photo?`<div class="muted">Current: ${m.photo}</div>`:'')
+     : `<div class="muted">Save first, then add a photo.</div>`);
+  f.appendChild(pw);
+}
+
+function collect(){
+  const d = {};
+  for(const [key,,,type] of FIELDS) d[key]=document.getElementById('f_'+key).value;
+  return d;
+}
+
+async function saveMember(){
+  const d = collect(); msg('Saving…');
+  let url='/api/members', method='POST';
+  if(current && current.id){ url+='/'+current.id; method='PATCH'; }
+  const r = await fetch(url,{method,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(d)});
+  const saved = await r.json();
+  current = saved; msg('Saved ✓');
+  if(method==='POST'){ document.getElementById('delBtn').style.display='';
+    buildForm(saved); }
+  load();
+}
+
+async function uploadPhoto(id){
+  const inp=document.getElementById('f_photo_file');
+  if(!inp.files[0]) return;
+  const fd=new FormData(); fd.append('photo',inp.files[0]); msg('Uploading photo…');
+  const r=await fetch('/api/members/'+id+'/photo',{method:'POST',body:fd});
+  current=await r.json(); msg('Photo added ✓'); load();
+}
+
+async function deleteMember(){
+  if(!current||!current.id) return;
+  if(!confirm('Delete this member?')) return;
+  await fetch('/api/members/'+current.id,{method:'DELETE'});
+  closeModal(); load();
+}
+
+function viewSlide(){
+  if(!current||!current.id){ alert('Save the member first.'); return; }
+  const img=document.getElementById('slideImg');
+  img.src='/api/members/'+current.id+'/slide.png?t='+Date.now();
+  img.style.display='block';
+}
+
+function showModal(){modalOpen=true;document.getElementById('modal').classList.add('open');}
+function closeModal(){modalOpen=false;document.getElementById('modal').classList.remove('open');}
+function msg(t){document.getElementById('saveMsg').textContent=t;}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,
+  c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+document.getElementById('modal').addEventListener('click',e=>{
+  if(e.target.id==='modal') closeModal();});
+
+load();
+setInterval(load, 5000);   // live refresh so staff see each other's changes
+</script>
+</body>
+</html>
