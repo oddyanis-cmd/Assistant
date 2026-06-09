@@ -23,7 +23,7 @@ from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
-from .theme import GREEN, MAROON, MONEY_FMT, STATUSES, WHITE
+from .theme import GREEN, MAROON, MONEY_FMT, STATUS_COLORS, STATUSES, WHITE
 from .odp_parser import Client
 
 try:
@@ -275,6 +275,114 @@ def _build_create_slide(ws) -> None:
             ws.cell(row=r, column=c).border = BORDER
 
 
+# --- Membership-card gallery -------------------------------------------------
+# A card occupies CARD_W columns x CARD_H rows; CARDS_PER_ROW cards per band,
+# separated by one gutter column/row.
+CARD_W = 7
+CARD_H = 9
+CARDS_PER_ROW = 3
+GUTTER = 1
+CARD_BORDER = Border(*(Side(style="thin", color=MAROON),) * 4)
+CARD_TOP = Side(style="medium", color=MAROON)
+
+
+def _draw_card(ws, client: Client, top: int, left: int, media_dir: str) -> None:
+    right = left + CARD_W - 1
+    status_color = STATUS_COLORS.get(client.status, MAROON)
+
+    # Header band: title + coloured status badge.
+    ws.merge_cells(start_row=top, start_column=left, end_row=top,
+                   end_column=left + 4)
+    h = ws.cell(top, left, "MEMBER PROFILE")
+    h.fill = HEADER_FILL
+    h.font = Font(bold=True, color=WHITE, size=10)
+    h.alignment = Alignment(horizontal="center", vertical="center")
+    ws.merge_cells(start_row=top, start_column=left + 5, end_row=top,
+                   end_column=right)
+    badge_text = "Pending" if client.status == "Pending approval" else client.status
+    b = ws.cell(top, left + 5, badge_text)
+    b.fill = PatternFill("solid", fgColor=status_color)
+    b.font = Font(bold=True, color=WHITE, size=9)
+    b.alignment = CENTER
+    ws.row_dimensions[top].height = 20
+
+    # Portrait spanning the left of the card body.
+    if client.photo:
+        img = _thumb(os.path.join(media_dir, os.path.basename(client.photo)),
+                     max_h=92)
+        if img is not None:
+            ws.add_image(img, "%s%d" % (get_column_letter(left), top + 1))
+
+    # Info column to the right of the photo.
+    info = left + 2
+    maroon_bold = Font(bold=True, color=MAROON, size=11)
+    grey = Font(color="777777", size=8)
+
+    def line(roff, value, font=None, money=False):
+        r = top + roff
+        ws.merge_cells(start_row=r, start_column=info, end_row=r,
+                       end_column=right)
+        cell = ws.cell(r, info, value)
+        cell.font = font or Font(size=9)
+        cell.alignment = Alignment(vertical="center", wrap_text=False)
+        if money:
+            cell.number_format = MONEY_FMT
+        ws.row_dimensions[r].height = 16
+        return cell
+
+    line(1, client.name, maroon_bold)
+    line(2, client.app_id, grey)
+    line(3, client.membership_plan, Font(size=9))
+    line(4, client.rate_amount, Font(bold=True, color=status_color, size=10),
+         money=True)
+    line(5, "CEC: %s" % (client.cec or "—"), Font(size=9))
+    line(6, "Mob: %s" % (client.mobile or "—"), Font(size=9))
+    line(7, "Applied: %s" % (client.application_date or "—"), Font(size=8,
+         color="555555"))
+
+    # Outline the whole card.
+    for r in range(top, top + CARD_H - 1):
+        for c in range(left, right + 1):
+            cell = ws.cell(r, c)
+            edges = {}
+            if r == top:
+                edges["top"] = CARD_TOP
+            if r == top + CARD_H - 2:
+                edges["bottom"] = CARD_BORDER.bottom
+            if c == left:
+                edges["left"] = CARD_BORDER.left
+            if c == right:
+                edges["right"] = CARD_BORDER.right
+            if edges:
+                cell.border = Border(**edges)
+
+
+def _build_cards(ws, clients: list[Client], media_dir: str) -> None:
+    """Lay members out as a gallery of membership cards (grouped by status)."""
+    ws.sheet_view.showGridLines = False
+    ws["A1"] = "Member Cards — visual gallery"
+    ws["A1"].font = TITLE_FONT
+    ws.merge_cells("A1:H1")
+
+    # Uniform card column widths (+ narrow gutter columns).
+    for g in range(CARDS_PER_ROW):
+        base = 1 + g * (CARD_W + GUTTER)
+        for c in range(base, base + CARD_W):
+            ws.column_dimensions[get_column_letter(c)].width = 11
+        if g < CARDS_PER_ROW - 1:
+            ws.column_dimensions[get_column_letter(base + CARD_W)].width = 2
+
+    order = {"Pending approval": 0, "Approved": 1, "Paid": 2}
+    ordered = sorted(clients, key=lambda c: (order.get(c.status, 0),
+                                             c.slide_index))
+    start_row = 3
+    for k, client in enumerate(ordered):
+        gr, gc = divmod(k, CARDS_PER_ROW)
+        left = 1 + gc * (CARD_W + GUTTER)
+        top = start_row + gr * (CARD_H + GUTTER)
+        _draw_card(ws, client, top, left, media_dir)
+
+
 def build_workbook(
     clients: list[Client],
     media_dir: str,
@@ -289,6 +397,7 @@ def build_workbook(
         subset = [c for c in clients if c.status == status]
         _write_client_rows(ws, subset, media_dir)
 
+    _build_cards(wb.create_sheet(title="Member Cards"), clients, media_dir)
     _build_analysis(wb.create_sheet(title="Analysis"), clients)
     _build_create_slide(wb.create_sheet(title="Create Slide"))
 

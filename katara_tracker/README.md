@@ -18,6 +18,7 @@ is where mistakes and oversights creep in.
 | **Pending approval** | Members whose slide has *no* green note |
 | **Approved** | Members with the green **"Approved"** note |
 | **Paid** | Members with the green **"Paid"** note |
+| **Member Cards** | A visual **gallery of membership cards** (not a list): each member as a styled card with photo, maroon header, colour-coded status badge, name, plan, rate and contact — 3 cards per row, grouped by status |
 | **Analysis** | KPIs (total joiners, counts per status, **total amount paid** = sum of the Rate of *Paid* members) and a per-**membership-type** breakdown |
 | **Create Slide** | A form: add one new member per row (incl. a photo path) and `sync` turns each into a real slide |
 

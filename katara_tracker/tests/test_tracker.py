@@ -73,9 +73,10 @@ def test_build_workbook():
         build_workbook(clients, media, out, template_path=odp)
         wb = openpyxl.load_workbook(out)
         assert wb.sheetnames == [
-            "Pending approval", "Approved", "Paid", "Analysis", "Create Slide",
-            "_meta",
+            "Pending approval", "Approved", "Paid", "Member Cards", "Analysis",
+            "Create Slide", "_meta",
         ]
+        assert len(wb["Member Cards"]._images) >= 1  # cards embed photos
         assert wb["Pending approval"].max_row == 2  # header + 1
         assert wb["Paid"].max_row == 2
         # Analysis total paid == Carol's rate.
