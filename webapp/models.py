@@ -149,8 +149,34 @@ def _to_int(v) -> int:
         return int(s) if s else 0
 
 
+def _migrate(engine) -> None:
+    """Add any columns introduced in newer versions to an existing 'members'
+    table (SQLite create_all does not alter existing tables). Idempotent."""
+    from sqlalchemy import inspect, text
+
+    insp = inspect(engine)
+    if not insp.has_table("members"):
+        return
+    existing = {c["name"] for c in insp.get_columns("members")}
+    adds = [
+        ("owner", "TEXT DEFAULT ''"),
+        ("updated_by", "TEXT DEFAULT ''"),
+        ("created_at", "DATETIME"),
+        ("updated_at", "DATETIME"),
+        ("approved_at", "DATETIME"),
+        ("paid_at", "DATETIME"),
+        ("deleted", "INTEGER DEFAULT 0"),
+    ]
+    with engine.begin() as conn:
+        for name, ddl in adds:
+            if name not in existing:
+                conn.execute(text("ALTER TABLE members ADD COLUMN %s %s"
+                                  % (name, ddl)))
+
+
 def make_session(db_path: str):
     engine = create_engine("sqlite:///%s" % db_path, future=True,
                            connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
+    _migrate(engine)
     return sessionmaker(bind=engine, expire_on_commit=False)
