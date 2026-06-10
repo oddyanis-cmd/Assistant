@@ -213,8 +213,8 @@ def create_member():
         m.apply(data)
         if not m.app_id:
             m.app_id = "MEM-APP-NEW-%03d" % ((s.query(Member).count() or 0) + 1)
-        if not m.owner:
-            m.owner = session.get("uname_login", "")
+        if not m.cec:
+            m.cec = session.get("uname_login", "")
         m.updated_by = _user()
         m.position = (s.query(Member).count() or 0) + 1
         if m.status == "Approved":

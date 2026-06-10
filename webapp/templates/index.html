@@ -86,8 +86,7 @@
 <div class="toolbar">
   <label>Type</label><select id="fType" onchange="render()"><option value="">All</option></select>
   <label>CEC</label><select id="fCec" onchange="render()"><option value="">All</option></select>
-  <label>Owner</label><select id="fOwner" onchange="render()"><option value="">All</option></select>
-  <label><input type="checkbox" id="fMine" onchange="render()" style="width:auto"> My members</label>
+  <label><input type="checkbox" id="fMine" onchange="render()" style="width:auto"> My clients</label>
   <label>Sort</label>
   <select id="fSort" onchange="render()">
     <option value="position">Default</option>
@@ -181,11 +180,11 @@ let MEMBERS=[], STAFF=[], current=null, modalOpen=false, selected=new Set();
 
 const FIELDS = [
   ["name","Name","full"],["app_id","App ID"],["status","Workflow Status","sel"],
-  ["owner","Owner (staff)","ownersel"],
+  ["cec","CEC (assigned consultant)","cecsel"],
   ["application_type","Application Type"],["application_date","Application Date"],
   ["age","Age"],["occupation","Occupation"],["company","Company"],
   ["membership_plan","Membership Plan","full"],["rate_amount","Rate (QAR)","num"],
-  ["tag","Tag"],["cec","CEC"],["mobile","Mobile"],
+  ["tag","Tag"],["mobile","Mobile"],
   ["special_request","Special Request / Note","full","area"]
 ];
 
@@ -203,8 +202,6 @@ function fillFilters(){
   const types=[...new Set(MEMBERS.map(m=>m.membership_plan).filter(Boolean))].sort();
   const cecs=[...new Set(MEMBERS.map(m=>m.cec).filter(Boolean))].sort();
   opt('fType',types); opt('fCec',cecs);
-  document.getElementById('fOwner').innerHTML='<option value="">All</option>'+
-    STAFF.map(u=>`<option value="${u.username}">${esc(u.display_name)}</option>`).join('');
   document.getElementById('bulkStatus').innerHTML=STATUSES.map(s=>`<option>${s}</option>`).join('');
 }
 function opt(id,arr){document.getElementById(id).innerHTML='<option value="">All</option>'+
@@ -217,13 +214,12 @@ function dateKey(d){const m=String(d||'').match(/(\d{1,2})[/.\-](\d{1,2})[/.\-](
 function visible(){
   const q=(document.getElementById('search').value||'').trim().toLowerCase();
   const ft=document.getElementById('fType').value, fc=document.getElementById('fCec').value;
-  const fo=document.getElementById('fOwner').value, mine=document.getElementById('fMine').checked;
+  const mine=document.getElementById('fMine').checked;
   let arr=MEMBERS.filter(m=>{
     if(ft && m.membership_plan!==ft) return false;
     if(fc && m.cec!==fc) return false;
-    if(fo && m.owner!==fo) return false;
-    if(mine && m.owner!==ME) return false;
-    if(q && ![m.name,m.app_id,m.company,m.membership_plan,m.occupation,m.cec,m.mobile,m.owner]
+    if(mine && m.cec!==ME) return false;
+    if(q && ![m.name,m.app_id,m.company,m.membership_plan,m.occupation,m.cec,m.mobile]
       .some(v=>String(v||'').toLowerCase().includes(q))) return false;
     return true;
   });
@@ -251,7 +247,7 @@ function cardEl(m){
   const c=document.createElement('div'); c.className='card';
   const color=COLORS[m.status], badge=m.status==='Pending approval'?'Pending':m.status;
   const img=m.photo?`<img class="ph" src="/media/${m.photo}">`:`<div class="ph"></div>`;
-  const ownerName=(STAFF.find(u=>u.username===m.owner)||{}).display_name||m.owner||'—';
+  const cecName=(STAFF.find(u=>u.username===m.cec)||{}).display_name||m.cec||'—';
   c.innerHTML=`
     <input type="checkbox" class="chk" ${selected.has(m.id)?'checked':''}
       onclick="event.stopPropagation();toggleSel(${m.id},this.checked)">
@@ -263,7 +259,7 @@ function cardEl(m){
         <div class="muted">${esc(m.app_id)}</div>
         <div>${esc(m.membership_plan)}</div>
         <div class="rate" style="color:${color}">${(m.rate_amount||0).toLocaleString()} QAR</div>
-        <div class="meta">👤 ${esc(ownerName)}${m.updated_by?' · edited by '+esc(m.updated_by):''}</div>
+        <div class="meta">CEC: ${esc(cecName)}${m.updated_by?' · edited by '+esc(m.updated_by):''}</div>
         <select onchange="quickStatus(${m.id},this.value)" onclick="event.stopPropagation()">
           ${STATUSES.map(s=>`<option ${s===m.status?'selected':''}>${s}</option>`).join('')}
         </select>
@@ -298,7 +294,7 @@ async function bulkApply(action){
 
 // ---- detail / add ----
 function openAdd(){
-  current={id:null,status:'Pending approval',owner:ME};
+  current={id:null,status:'Pending approval',cec:ME};
   buildForm(current); document.getElementById('mTitle').textContent='New member';
   document.getElementById('delBtn').style.display='none';
   document.getElementById('slideImg').style.display='none';
@@ -329,8 +325,13 @@ function buildForm(m){
     let ctrl;
     if(type==='sel') ctrl=`<select id="f_${key}">${STATUSES.map(s=>
       `<option ${s===(m[key]||'')?'selected':''}>${s}</option>`).join('')}</select>`;
-    else if(cls==='ownersel') ctrl=`<select id="f_${key}"><option value="">— none —</option>${
-      STAFF.map(u=>`<option value="${u.username}" ${u.username===(m.owner||'')?'selected':''}>${esc(u.display_name)}</option>`).join('')}</select>`;
+    else if(cls==='cecsel'){
+      const cur=m[key]||'', inStaff=STAFF.some(u=>u.username===cur);
+      let opts='<option value="">— none —</option>';
+      if(cur&&!inStaff) opts+=`<option value="${esc(cur)}" selected>${esc(cur)}</option>`;
+      opts+=STAFF.map(u=>`<option value="${esc(u.username)}" ${u.username===cur?'selected':''}>${esc(u.display_name)}</option>`).join('');
+      ctrl=`<select id="f_${key}">${opts}</select>`;
+    }
     else if(type==='area') ctrl=`<textarea id="f_${key}">${esc(m[key]||'')}</textarea>`;
     else ctrl=`<input id="f_${key}" type="${type==='num'?'number':'text'}" value="${esc(m[key]??'')}">`;
     wrap.innerHTML=`<label>${label}</label>${ctrl}`; f.appendChild(wrap);
@@ -405,7 +406,7 @@ function exportFiltered(kind){
   location='/export/'+kind+'?ids='+ids.join(',');
 }
 function csvDownload(rows){
-  const cols=['name','app_id','status','owner','membership_plan','rate_amount','application_date','cec','mobile','company'];
+  const cols=['name','app_id','status','cec','membership_plan','rate_amount','application_date','mobile','company'];
   const head=cols.join(',');
   const body=rows.map(m=>cols.map(c=>'"'+String(m[c]??'').replace(/"/g,'""')+'"').join(',')).join('\n');
   const blob=new Blob([head+'\n'+body],{type:'text/csv'});
