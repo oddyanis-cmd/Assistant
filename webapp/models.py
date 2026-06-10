@@ -1,15 +1,23 @@
-"""Database model for the Katara member web app (SQLite via SQLAlchemy)."""
+"""Database models for the Katara member web app (SQLite via SQLAlchemy)."""
 
 from __future__ import annotations
 
 import datetime
 
-from sqlalchemy import Column, DateTime, Integer, String, Text, create_engine
+from sqlalchemy import (Column, DateTime, Integer, String, Text, create_engine)
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 Base = declarative_base()
 
 STATUSES = ["Pending approval", "Approved", "Paid"]
+
+
+def _now():
+    return datetime.datetime.utcnow()
+
+
+def _iso(dt):
+    return dt.isoformat() if dt else ""
 
 
 class Member(Base):
@@ -30,61 +38,105 @@ class Member(Base):
     cec = Column(String(80), default="")
     mobile = Column(String(60), default="")
     special_request = Column(Text, default="")
-    photo = Column(String(200), default="")          # filename within media dir
-    position = Column(Integer, default=0)             # order within a column
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow,
-                        onupdate=datetime.datetime.utcnow)
+    photo = Column(String(200), default="")
+    owner = Column(String(80), default="")            # staff username (assignee)
+    position = Column(Integer, default=0)
 
-    # ---- conversions -------------------------------------------------------
-    FIELDS = [
-        "id", "name", "app_id", "status", "application_type", "application_date",
+    # bookkeeping
+    updated_by = Column(String(80), default="")
+    created_at = Column(DateTime, default=_now)
+    updated_at = Column(DateTime, default=_now, onupdate=_now)
+    approved_at = Column(DateTime, nullable=True)
+    paid_at = Column(DateTime, nullable=True)
+    deleted = Column(Integer, default=0)              # 1 = in recycle bin
+
+    EDITABLE = [
+        "name", "app_id", "status", "application_type", "application_date",
         "age", "occupation", "company", "membership_plan", "rate_amount", "tag",
-        "cec", "mobile", "special_request", "photo", "position",
+        "cec", "mobile", "special_request", "photo", "owner", "position",
     ]
 
     def to_dict(self) -> dict:
-        d = {f: getattr(self, f) for f in self.FIELDS}
-        d["updated_at"] = self.updated_at.isoformat() if self.updated_at else ""
+        d = {f: getattr(self, f) for f in self.EDITABLE}
+        d["id"] = self.id
+        d["updated_by"] = self.updated_by
+        d["created_at"] = _iso(self.created_at)
+        d["updated_at"] = _iso(self.updated_at)
+        d["approved_at"] = _iso(self.approved_at)
+        d["paid_at"] = _iso(self.paid_at)
+        d["deleted"] = bool(self.deleted)
         return d
 
     def apply(self, data: dict) -> None:
-        """Update editable fields from a dict (ignores unknown keys)."""
-        for f in self.FIELDS:
-            if f in ("id",) or f not in data:
+        for f in self.EDITABLE:
+            if f not in data:
                 continue
             val = data[f]
-            if f == "rate_amount":
-                val = _to_int(val)
-            elif f == "position":
+            if f in ("rate_amount", "position"):
                 val = _to_int(val)
             setattr(self, f, val if val is not None else "")
         if self.status not in STATUSES:
             self.status = "Pending approval"
 
     def to_client(self):
-        """Convert to a katara_tracker Client for deck/sheet generation."""
         from katara_tracker.odp_parser import Client
 
         c = Client(
-            slide_index=self.id or 0,
-            name=self.name or "",
-            app_id=self.app_id or "",
-            status=self.status or "Pending approval",
+            slide_index=self.id or 0, name=self.name or "",
+            app_id=self.app_id or "", status=self.status or "Pending approval",
             application_type=self.application_type or "",
-            application_date=self.application_date or "",
-            age=self.age or "",
-            occupation=self.occupation or "",
-            company=self.company or "",
+            application_date=self.application_date or "", age=self.age or "",
+            occupation=self.occupation or "", company=self.company or "",
             membership_plan=self.membership_plan or "",
-            rate_amount=self.rate_amount or 0,
-            tag=self.tag or "",
-            cec=self.cec or "",
-            mobile=self.mobile or "",
-            special_request=self.special_request or "",
-            photo=self.photo or "",
+            rate_amount=self.rate_amount or 0, tag=self.tag or "",
+            cec=self.cec or "", mobile=self.mobile or "",
+            special_request=self.special_request or "", photo=self.photo or "",
         )
         c.rate = "QAR %s" % format(c.rate_amount, ",") if c.rate_amount else ""
         return c
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(80), unique=True, index=True)
+    display_name = Column(String(120), default="")
+    password_hash = Column(String(255), default="")
+    is_admin = Column(Integer, default=0)
+
+    def set_password(self, raw: str) -> None:
+        from werkzeug.security import generate_password_hash
+        self.password_hash = generate_password_hash(raw)
+
+    def check_password(self, raw: str) -> bool:
+        from werkzeug.security import check_password_hash
+        return bool(self.password_hash) and check_password_hash(
+            self.password_hash, raw)
+
+    def to_dict(self) -> dict:
+        return {"id": self.id, "username": self.username,
+                "display_name": self.display_name,
+                "is_admin": bool(self.is_admin)}
+
+
+class Activity(Base):
+    """An audit log entry: who did what to which member, when."""
+
+    __tablename__ = "activity"
+
+    id = Column(Integer, primary_key=True)
+    ts = Column(DateTime, default=_now)
+    user = Column(String(80), default="")
+    action = Column(String(40), default="")       # created / edited / moved / deleted ...
+    member_id = Column(Integer, default=0)
+    member_name = Column(String(200), default="")
+    detail = Column(Text, default="")
+
+    def to_dict(self) -> dict:
+        return {"id": self.id, "ts": _iso(self.ts), "user": self.user,
+                "action": self.action, "member_id": self.member_id,
+                "member_name": self.member_name, "detail": self.detail}
 
 
 def _to_int(v) -> int:
@@ -95,34 +147,6 @@ def _to_int(v) -> int:
     except (TypeError, ValueError):
         s = "".join(ch for ch in str(v) if ch.isdigit())
         return int(s) if s else 0
-
-
-class User(Base):
-    """A staff login account."""
-
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True)
-    username = Column(String(80), unique=True, index=True)
-    display_name = Column(String(120), default="")
-    password_hash = Column(String(255), default="")
-    is_admin = Column(Integer, default=0)   # 1 = can manage staff
-
-    def set_password(self, raw: str) -> None:
-        from werkzeug.security import generate_password_hash
-
-        self.password_hash = generate_password_hash(raw)
-
-    def check_password(self, raw: str) -> bool:
-        from werkzeug.security import check_password_hash
-
-        return bool(self.password_hash) and check_password_hash(
-            self.password_hash, raw)
-
-    def to_dict(self) -> dict:
-        return {"id": self.id, "username": self.username,
-                "display_name": self.display_name,
-                "is_admin": bool(self.is_admin)}
 
 
 def make_session(db_path: str):

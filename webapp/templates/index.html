@@ -9,26 +9,32 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#222}
   header{background:var(--maroon);color:#fff;padding:10px 16px;display:flex;
-    align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+    align-items:center;gap:10px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
   header h1{font-size:18px;margin:0;letter-spacing:.5px}
   header .sp{flex:1}
   button{font-size:14px;border:0;border-radius:6px;padding:8px 12px;cursor:pointer}
   .btn-light{background:#fff;color:var(--maroon);font-weight:bold}
   .btn-ghost{background:rgba(255,255,255,.15);color:#fff}
+  a.navlink{color:#fff;font-size:13px;text-decoration:none;background:rgba(255,255,255,.15);
+    padding:8px 10px;border-radius:6px}
   .stats{font-size:12px;opacity:.95}
   .stats b{font-size:14px}
-  #search{padding:7px 10px;border:0;border-radius:6px;font-size:13px;width:220px;max-width:40vw}
+  #search{padding:7px 10px;border:0;border-radius:6px;font-size:13px;width:200px;max-width:40vw}
   .user{font-size:12px;opacity:.95}
-  .logout{color:#fff;font-size:12px;text-decoration:underline;margin-left:4px}
-  .board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px;
-    align-items:start}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:8px 14px;
+    background:#ece7ea;border-bottom:1px solid #ddd;font-size:13px}
+  .toolbar select,.toolbar input{padding:5px 7px;border:1px solid #ccc;border-radius:6px;font-size:13px}
+  .toolbar label{font-size:12px;color:#555}
+  .bulkbar{display:none;gap:8px;align-items:center;background:#49153B;color:#fff;
+    padding:6px 14px;font-size:13px}
+  .bulkbar.on{display:flex}
+  .board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px;align-items:start}
   @media(max-width:820px){.board{grid-template-columns:1fr}}
   .col{background:#eee;border-radius:10px;padding:8px;min-height:120px}
   .col h2{font-size:14px;margin:4px 6px 8px;display:flex;justify-content:space-between}
   .col .count{background:#fff;border-radius:10px;padding:0 8px;font-size:12px}
-  .col[data-status="Pending approval"] h2 .dot{color:var(--pending)}
   .card{background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.15);
-    margin-bottom:8px;overflow:hidden;cursor:pointer}
+    margin-bottom:8px;overflow:hidden;cursor:pointer;position:relative}
   .card .hd{background:var(--maroon);color:#fff;font-size:11px;font-weight:bold;
     padding:4px 8px;display:flex;justify-content:space-between;align-items:center}
   .badge{border-radius:10px;padding:1px 8px;font-size:10px}
@@ -37,11 +43,13 @@
   .card .info{font-size:12px;line-height:1.35;min-width:0}
   .card .nm{font-weight:bold;color:var(--maroon);font-size:13px}
   .card .rate{font-weight:bold}
+  .card .meta{font-size:10px;color:#888}
   .card select{width:100%;margin-top:4px;font-size:11px;padding:2px}
+  .card .chk{position:absolute;top:6px;left:6px;width:16px;height:16px;z-index:2}
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;
     align-items:flex-start;justify-content:center;padding:20px;z-index:20;overflow:auto}
   .modal.open{display:flex}
-  .sheet{background:#fff;border-radius:10px;max-width:720px;width:100%;overflow:hidden}
+  .sheet{background:#fff;border-radius:10px;max-width:760px;width:100%;overflow:hidden}
   .sheet .top{background:var(--maroon);color:#fff;padding:10px 14px;display:flex;
     justify-content:space-between;align-items:center}
   .sheet .body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -50,27 +58,57 @@
   input,select,textarea{width:100%;padding:7px;border:1px solid #ccc;border-radius:6px;
     font-size:13px;font-family:inherit}
   textarea{min-height:64px}
-  .row-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 14px}
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 14px;align-items:center}
   .slideimg{width:100%;border:1px solid #ddd;border-radius:6px;margin-top:6px}
   .danger{background:#b3261e;color:#fff}
   .ok{background:var(--green);color:#fff;font-weight:bold}
   .muted{color:#777;font-size:11px}
+  .hist{font-size:12px;border-top:1px solid #eee;padding:6px 0;color:#444}
+  .hist b{color:var(--maroon)}
 </style>
 </head>
 <body>
 <header>
   <h1>KATARA · Members</h1>
   <div class="stats" id="stats"></div>
-  <input id="search" placeholder="🔍 Search name, ID, company…"
-         oninput="render()" autocomplete="off">
+  <input id="search" placeholder="🔍 Search…" oninput="render()" autocomplete="off">
   <div class="sp"></div>
+  <a class="navlink" href="/dashboard">📊 Dashboard</a>
   <button class="btn-light" onclick="openAdd()">+ Add member</button>
-  <button class="btn-ghost" onclick="location='/export/pptx'">PowerPoint</button>
-  <button class="btn-ghost" onclick="location='/export/xlsx'">Excel</button>
+  <button class="btn-ghost" onclick="exportAll('pptx')">PowerPoint</button>
+  <button class="btn-ghost" onclick="exportAll('xlsx')">Excel</button>
+  <button class="btn-ghost" onclick="openBin()">🗑 Recycle bin</button>
   {% if is_admin %}<button class="btn-ghost" onclick="openStaff()">Staff</button>{% endif %}
-  <span class="user">👤 {{ uname }}</span>
-  <a class="logout" href="/logout">Sign out</a>
+  <button class="btn-ghost" onclick="openPwd()">🔑 {{ uname }}</button>
+  <a class="navlink" href="/logout">Sign out</a>
 </header>
+
+<div class="toolbar">
+  <label>Type</label><select id="fType" onchange="render()"><option value="">All</option></select>
+  <label>CEC</label><select id="fCec" onchange="render()"><option value="">All</option></select>
+  <label>Owner</label><select id="fOwner" onchange="render()"><option value="">All</option></select>
+  <label><input type="checkbox" id="fMine" onchange="render()" style="width:auto"> My members</label>
+  <label>Sort</label>
+  <select id="fSort" onchange="render()">
+    <option value="position">Default</option>
+    <option value="date">Application date</option>
+    <option value="rate">Rate (high→low)</option>
+    <option value="name">Name</option>
+  </select>
+  <span class="sp" style="flex:1"></span>
+  <button class="btn-light" onclick="exportFiltered('csv')">⬇ Export filtered (CSV)</button>
+  <button class="btn-light" onclick="exportFiltered('xlsx')">Excel</button>
+  <button class="btn-light" onclick="exportFiltered('pptx')">PPTX</button>
+</div>
+
+<div class="bulkbar" id="bulkbar">
+  <span id="bulkCount">0 selected</span>
+  <label style="color:#fff">Set status:</label>
+  <select id="bulkStatus"></select>
+  <button class="ok" onclick="bulkApply('status')">Apply</button>
+  <button class="danger" onclick="bulkApply('delete')">Delete selected</button>
+  <button class="btn-ghost" onclick="clearSel()">Clear</button>
+</div>
 
 <div class="board" id="board"></div>
 
@@ -79,33 +117,55 @@
   <div class="sheet">
     <div class="top"><b id="mTitle">Member</b>
       <button class="btn-ghost" onclick="closeModal()">✕</button></div>
+    <div style="padding:0 14px"><img class="slideimg" id="slideImg" style="display:none"></div>
     <div class="body" id="form"></div>
     <div class="row-actions">
       <button class="ok" onclick="saveMember()">Save</button>
-      <button class="btn-light" onclick="viewSlide()">View slide</button>
       <button class="danger" onclick="deleteMember()" id="delBtn">Delete</button>
       <span class="muted" id="saveMsg"></span>
     </div>
-    <div style="padding:0 14px 14px"><img class="slideimg" id="slideImg" style="display:none"></div>
+    <div style="padding:0 14px 14px"><b style="font-size:12px;color:#49153B">History</b>
+      <div id="history"></div></div>
   </div>
 </div>
 
-<!-- Staff management modal (admins only) -->
+<!-- Recycle bin modal -->
+<div class="modal" id="binModal">
+  <div class="sheet">
+    <div class="top"><b>🗑 Recycle bin</b>
+      <button class="btn-ghost" onclick="closeBin()">✕</button></div>
+    <div style="padding:14px" id="binList"></div>
+  </div>
+</div>
+
+<!-- Change password modal -->
+<div class="modal" id="pwdModal">
+  <div class="sheet" style="max-width:380px">
+    <div class="top"><b>Change my password</b>
+      <button class="btn-ghost" onclick="closePwd()">✕</button></div>
+    <div style="padding:14px">
+      <label>Current password</label><input id="pwCur" type="password">
+      <label style="margin-top:8px">New password</label><input id="pwNew" type="password">
+      <button class="ok" style="margin-top:12px" onclick="savePwd()">Update password</button>
+      <span class="muted" id="pwMsg"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Staff modal (admins only) -->
 <div class="modal" id="staffModal">
   <div class="sheet">
     <div class="top"><b>Staff accounts</b>
       <button class="btn-ghost" onclick="closeStaff()">✕</button></div>
     <div style="padding:14px">
-      <div id="staffList"></div>
-      <hr>
+      <div id="staffList"></div><hr>
       <b>Add a staff member</b>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
         <div><label>Display name</label><input id="ns_name"></div>
         <div><label>Username</label><input id="ns_user"></div>
         <div><label>Password</label><input id="ns_pass"></div>
-        <div style="display:flex;align-items:flex-end;gap:6px">
-          <label style="margin:0"><input type="checkbox" id="ns_admin"> Admin</label>
-        </div>
+        <div style="display:flex;align-items:flex-end"><label style="margin:0">
+          <input type="checkbox" id="ns_admin" style="width:auto"> Admin</label></div>
       </div>
       <button class="ok" style="margin-top:10px" onclick="addStaff()">Add staff</button>
       <span class="muted" id="staffMsg"></span>
@@ -115,12 +175,13 @@
 
 <script>
 const STATUSES = {{ statuses|tojson }};
-const IS_ADMIN = {{ 'true' if is_admin else 'false' }};
+const ME = {{ ulogin|tojson }};
 const COLORS = {"Pending approval":"#B0883B","Approved":"#00B050","Paid":"#1F7A3D"};
-let MEMBERS = [], current = null, modalOpen = false;
+let MEMBERS=[], STAFF=[], current=null, modalOpen=false, selected=new Set();
 
 const FIELDS = [
   ["name","Name","full"],["app_id","App ID"],["status","Workflow Status","sel"],
+  ["owner","Owner (staff)","ownersel"],
   ["application_type","Application Type"],["application_date","Application Date"],
   ["age","Age"],["occupation","Occupation"],["company","Company"],
   ["membership_plan","Membership Plan","full"],["rate_amount","Rate (QAR)","num"],
@@ -129,7 +190,8 @@ const FIELDS = [
 ];
 
 async function load(){
-  const r = await fetch('/api/members'); MEMBERS = await r.json();
+  MEMBERS = await (await fetch('/api/members')).json();
+  if(!STAFF.length){ STAFF = await (await fetch('/api/staff_names')).json(); fillFilters(); }
   if(!modalOpen) render();
   const st = await (await fetch('/api/stats')).json();
   document.getElementById('stats').innerHTML =
@@ -137,33 +199,62 @@ async function load(){
     `Collected <b>${(st.total_paid||0).toLocaleString()} QAR</b>`;
 }
 
-function matchSearch(m, q){
-  if(!q) return true;
-  return [m.name,m.app_id,m.company,m.membership_plan,m.occupation,m.cec,m.mobile]
-    .some(v=>String(v||'').toLowerCase().includes(q));
+function fillFilters(){
+  const types=[...new Set(MEMBERS.map(m=>m.membership_plan).filter(Boolean))].sort();
+  const cecs=[...new Set(MEMBERS.map(m=>m.cec).filter(Boolean))].sort();
+  opt('fType',types); opt('fCec',cecs);
+  document.getElementById('fOwner').innerHTML='<option value="">All</option>'+
+    STAFF.map(u=>`<option value="${u.username}">${esc(u.display_name)}</option>`).join('');
+  document.getElementById('bulkStatus').innerHTML=STATUSES.map(s=>`<option>${s}</option>`).join('');
+}
+function opt(id,arr){document.getElementById(id).innerHTML='<option value="">All</option>'+
+  arr.map(v=>`<option>${esc(v)}</option>`).join('');}
+
+function dateKey(d){const m=String(d||'').match(/(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})/);
+  if(!m)return '00000000';let[_,dd,mm,yy]=m;if(yy.length==2)yy='20'+yy;
+  return yy+mm.padStart(2,'0')+dd.padStart(2,'0');}
+
+function visible(){
+  const q=(document.getElementById('search').value||'').trim().toLowerCase();
+  const ft=document.getElementById('fType').value, fc=document.getElementById('fCec').value;
+  const fo=document.getElementById('fOwner').value, mine=document.getElementById('fMine').checked;
+  let arr=MEMBERS.filter(m=>{
+    if(ft && m.membership_plan!==ft) return false;
+    if(fc && m.cec!==fc) return false;
+    if(fo && m.owner!==fo) return false;
+    if(mine && m.owner!==ME) return false;
+    if(q && ![m.name,m.app_id,m.company,m.membership_plan,m.occupation,m.cec,m.mobile,m.owner]
+      .some(v=>String(v||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  const sort=document.getElementById('fSort').value;
+  arr.sort((a,b)=> sort==='date'? dateKey(b.application_date).localeCompare(dateKey(a.application_date))
+    : sort==='rate'? (b.rate_amount||0)-(a.rate_amount||0)
+    : sort==='name'? String(a.name).localeCompare(String(b.name))
+    : (a.position||0)-(b.position||0));
+  return arr;
 }
 
 function render(){
-  const q = (document.getElementById('search')?.value||'').trim().toLowerCase();
-  const b = document.getElementById('board'); b.innerHTML='';
+  const arr=visible(); const b=document.getElementById('board'); b.innerHTML='';
   for(const stt of STATUSES){
-    const list = MEMBERS.filter(m=>m.status===stt && matchSearch(m,q));
-    const col = document.createElement('div');
-    col.className='col'; col.dataset.status=stt;
-    col.innerHTML = `<h2><span class="dot">●</span> ${stt}
-       <span class="count">${list.length}</span></h2>`;
+    const list=arr.filter(m=>m.status===stt);
+    const col=document.createElement('div'); col.className='col';
+    col.innerHTML=`<h2><span>${stt}</span><span class="count">${list.length}</span></h2>`;
     for(const m of list) col.appendChild(cardEl(m));
     b.appendChild(col);
   }
+  updateBulk();
 }
 
 function cardEl(m){
-  const c = document.createElement('div'); c.className='card';
-  const color = COLORS[m.status];
-  const badge = m.status==='Pending approval'?'Pending':m.status;
-  const img = m.photo ? `<img class="ph" src="/media/${m.photo}">`
-                      : `<div class="ph"></div>`;
-  c.innerHTML = `
+  const c=document.createElement('div'); c.className='card';
+  const color=COLORS[m.status], badge=m.status==='Pending approval'?'Pending':m.status;
+  const img=m.photo?`<img class="ph" src="/media/${m.photo}">`:`<div class="ph"></div>`;
+  const ownerName=(STAFF.find(u=>u.username===m.owner)||{}).display_name||m.owner||'—';
+  c.innerHTML=`
+    <input type="checkbox" class="chk" ${selected.has(m.id)?'checked':''}
+      onclick="event.stopPropagation();toggleSel(${m.id},this.checked)">
     <div class="hd"><span>MEMBER PROFILE</span>
       <span class="badge" style="background:${color}">${badge}</span></div>
     <div class="bd">${img}
@@ -172,115 +263,163 @@ function cardEl(m){
         <div class="muted">${esc(m.app_id)}</div>
         <div>${esc(m.membership_plan)}</div>
         <div class="rate" style="color:${color}">${(m.rate_amount||0).toLocaleString()} QAR</div>
-        <select onchange="quickStatus(${m.id}, this.value)" onclick="event.stopPropagation()">
+        <div class="meta">👤 ${esc(ownerName)}${m.updated_by?' · edited by '+esc(m.updated_by):''}</div>
+        <select onchange="quickStatus(${m.id},this.value)" onclick="event.stopPropagation()">
           ${STATUSES.map(s=>`<option ${s===m.status?'selected':''}>${s}</option>`).join('')}
         </select>
       </div></div>`;
-  c.onclick = ()=>openDetail(m.id);
+  c.onclick=()=>openDetail(m.id);
   return c;
 }
 
-async function quickStatus(id, status){
+async function quickStatus(id,status){
   await fetch('/api/members/'+id,{method:'PATCH',
     headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});
   load();
 }
 
+// ---- selection / bulk ----
+function toggleSel(id,on){on?selected.add(id):selected.delete(id);updateBulk();}
+function clearSel(){selected.clear();render();}
+function updateBulk(){
+  const bar=document.getElementById('bulkbar');
+  document.getElementById('bulkCount').textContent=selected.size+' selected';
+  bar.classList.toggle('on',selected.size>0);
+}
+async function bulkApply(action){
+  if(!selected.size) return;
+  if(action==='delete' && !confirm('Move '+selected.size+' member(s) to the recycle bin?')) return;
+  const body={ids:[...selected],action};
+  if(action==='status') body.status=document.getElementById('bulkStatus').value;
+  await fetch('/api/members/bulk',{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  selected.clear(); load();
+}
+
+// ---- detail / add ----
 function openAdd(){
-  current = {id:null,status:'Pending approval'};
+  current={id:null,status:'Pending approval',owner:ME};
   buildForm(current); document.getElementById('mTitle').textContent='New member';
   document.getElementById('delBtn').style.display='none';
   document.getElementById('slideImg').style.display='none';
-  showModal();
+  document.getElementById('history').innerHTML=''; showModal();
 }
 function openDetail(id){
-  current = MEMBERS.find(m=>m.id===id);
+  current=MEMBERS.find(m=>m.id===id);
   buildForm(current); document.getElementById('mTitle').textContent=current.name||'Member';
-  document.getElementById('delBtn').style.display='';
-  document.getElementById('slideImg').style.display='none';
-  showModal();
+  document.getElementById('delBtn').style.display=''; showModal();
+  showSlide(id); loadHistory(id);
+}
+function showSlide(id){
+  const img=document.getElementById('slideImg');
+  img.src='/api/members/'+id+'/slide.png?t='+Date.now(); img.style.display='block';
+}
+async function loadHistory(id){
+  const h=await (await fetch('/api/members/'+id+'/history')).json();
+  document.getElementById('history').innerHTML = h.length? h.map(a=>
+    `<div class="hist"><b>${esc(a.user||'?')}</b> ${esc(a.action)} — ${esc(a.detail)}
+       <span class="muted">${fmtTime(a.ts)}</span></div>`).join('')
+    : '<div class="muted">No history yet.</div>';
 }
 
 function buildForm(m){
-  const f = document.getElementById('form'); f.innerHTML='';
+  const f=document.getElementById('form'); f.innerHTML='';
   for(const [key,label,cls,type] of FIELDS){
-    const wrap = document.createElement('div');
-    if(cls==='full') wrap.className='full';
+    const wrap=document.createElement('div'); if(cls==='full')wrap.className='full';
     let ctrl;
-    if(type==='sel'){
-      ctrl=`<select id="f_${key}">${STATUSES.map(s=>
-        `<option ${s===(m[key]||'')?'selected':''}>${s}</option>`).join('')}</select>`;
-    } else if(type==='area'){
-      ctrl=`<textarea id="f_${key}">${esc(m[key]||'')}</textarea>`;
-    } else {
-      ctrl=`<input id="f_${key}" type="${type==='num'?'number':'text'}"
-              value="${esc(m[key]??'')}">`;
-    }
-    wrap.innerHTML=`<label>${label}</label>${ctrl}`;
-    f.appendChild(wrap);
+    if(type==='sel') ctrl=`<select id="f_${key}">${STATUSES.map(s=>
+      `<option ${s===(m[key]||'')?'selected':''}>${s}</option>`).join('')}</select>`;
+    else if(cls==='ownersel') ctrl=`<select id="f_${key}"><option value="">— none —</option>${
+      STAFF.map(u=>`<option value="${u.username}" ${u.username===(m.owner||'')?'selected':''}>${esc(u.display_name)}</option>`).join('')}</select>`;
+    else if(type==='area') ctrl=`<textarea id="f_${key}">${esc(m[key]||'')}</textarea>`;
+    else ctrl=`<input id="f_${key}" type="${type==='num'?'number':'text'}" value="${esc(m[key]??'')}">`;
+    wrap.innerHTML=`<label>${label}</label>${ctrl}`; f.appendChild(wrap);
   }
-  // photo upload (only for existing members)
-  const pw = document.createElement('div'); pw.className='full';
-  pw.innerHTML = `<label>Photo</label>` +
-    (m.id ? `<input type="file" accept="image/*" id="f_photo_file"
-       onchange="uploadPhoto(${m.id})">` +
-       (m.photo?`<div class="muted">Current: ${m.photo}</div>`:'')
-     : `<div class="muted">Save first, then add a photo.</div>`);
+  const pw=document.createElement('div'); pw.className='full';
+  pw.innerHTML=`<label>Photo</label>`+(m.id?
+    `<input type="file" accept="image/*" id="f_photo_file" onchange="uploadPhoto(${m.id})">`+
+      (m.photo?`<div class="muted">Current: ${m.photo}</div>`:''):
+    `<div class="muted">Save first, then add a photo.</div>`);
   f.appendChild(pw);
 }
-
-function collect(){
-  const d = {};
-  for(const [key,,,type] of FIELDS) d[key]=document.getElementById('f_'+key).value;
-  return d;
-}
+function collect(){const d={};for(const [k,,,t]of FIELDS)d[k]=document.getElementById('f_'+k).value;return d;}
 
 async function saveMember(){
-  const d = collect(); msg('Saving…');
-  let url='/api/members', method='POST';
-  if(current && current.id){ url+='/'+current.id; method='PATCH'; }
-  const r = await fetch(url,{method,headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(d)});
-  const saved = await r.json();
-  current = saved; msg('Saved ✓');
-  if(method==='POST'){ document.getElementById('delBtn').style.display='';
-    buildForm(saved); }
+  const d=collect(); msg('Saving…');
+  let url='/api/members',method='POST';
+  if(current&&current.id){url+='/'+current.id;method='PATCH';}
+  const saved=await (await fetch(url,{method,headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(d)})).json();
+  current=saved; msg('Saved ✓');
+  document.getElementById('delBtn').style.display=''; buildForm(saved);
+  showSlide(saved.id); loadHistory(saved.id);   // auto-show the slide after add
   load();
 }
-
 async function uploadPhoto(id){
-  const inp=document.getElementById('f_photo_file');
-  if(!inp.files[0]) return;
-  const fd=new FormData(); fd.append('photo',inp.files[0]); msg('Uploading photo…');
-  const r=await fetch('/api/members/'+id+'/photo',{method:'POST',body:fd});
-  current=await r.json(); msg('Photo added ✓'); load();
+  const inp=document.getElementById('f_photo_file'); if(!inp.files[0])return;
+  const fd=new FormData(); fd.append('photo',inp.files[0]); msg('Uploading…');
+  current=await (await fetch('/api/members/'+id+'/photo',{method:'POST',body:fd})).json();
+  msg('Photo added ✓'); showSlide(id); load();
 }
-
 async function deleteMember(){
-  if(!current||!current.id) return;
-  if(!confirm('Delete this member?')) return;
-  await fetch('/api/members/'+current.id,{method:'DELETE'});
-  closeModal(); load();
+  if(!current||!current.id)return;
+  if(!confirm('Move "'+(current.name||'this member')+'" to the recycle bin?'))return;
+  await fetch('/api/members/'+current.id,{method:'DELETE'}); closeModal(); load();
 }
 
-function viewSlide(){
-  if(!current||!current.id){ alert('Save the member first.'); return; }
-  const img=document.getElementById('slideImg');
-  img.src='/api/members/'+current.id+'/slide.png?t='+Date.now();
-  img.style.display='block';
+// ---- recycle bin ----
+async function openBin(){
+  modalOpen=true; document.getElementById('binModal').classList.add('open');
+  const rows=await (await fetch('/api/recyclebin')).json();
+  document.getElementById('binList').innerHTML = rows.length? rows.map(m=>`
+    <div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid #eee;padding:6px 0">
+      <div style="flex:1"><b>${esc(m.name)}</b> <span class="muted">${esc(m.app_id)} · ${esc(m.status)}</span></div>
+      <button class="ok" onclick="restoreM(${m.id})">Restore</button>
+      <button class="danger" onclick="purgeM(${m.id})">Delete forever</button>
+    </div>`).join('') : '<div class="muted">Recycle bin is empty.</div>';
+}
+function closeBin(){modalOpen=false;document.getElementById('binModal').classList.remove('open');load();}
+async function restoreM(id){await fetch('/api/members/'+id+'/restore',{method:'POST'});openBin();}
+async function purgeM(id){if(!confirm('Permanently delete? This cannot be undone.'))return;
+  const r=await fetch('/api/members/'+id+'/purge',{method:'DELETE'});
+  if(r.ok)openBin(); else alert('Only an admin can permanently delete.');}
+
+// ---- change my password ----
+function openPwd(){modalOpen=true;document.getElementById('pwdModal').classList.add('open');pwMsg('');}
+function closePwd(){modalOpen=false;document.getElementById('pwdModal').classList.remove('open');}
+async function savePwd(){
+  const body={current:document.getElementById('pwCur').value,new:document.getElementById('pwNew').value};
+  const r=await fetch('/api/me/password',{method:'POST',
+    headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(r.ok){pwMsg('Password updated ✓');document.getElementById('pwCur').value='';document.getElementById('pwNew').value='';}
+  else pwMsg('Error: '+(await r.text()));
+}
+function pwMsg(t){document.getElementById('pwMsg').textContent=t;}
+
+// ---- exports ----
+function exportAll(kind){location='/export/'+kind;}
+function exportFiltered(kind){
+  const ids=visible().map(m=>m.id);
+  if(!ids.length){alert('Nothing to export with the current filters.');return;}
+  if(kind==='csv'){ csvDownload(visible()); return; }
+  location='/export/'+kind+'?ids='+ids.join(',');
+}
+function csvDownload(rows){
+  const cols=['name','app_id','status','owner','membership_plan','rate_amount','application_date','cec','mobile','company'];
+  const head=cols.join(',');
+  const body=rows.map(m=>cols.map(c=>'"'+String(m[c]??'').replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob([head+'\n'+body],{type:'text/csv'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='Katara_filtered.csv'; a.click();
 }
 
-// ---- staff management (admin) ----
-async function openStaff(){
-  modalOpen=true; document.getElementById('staffModal').classList.add('open');
-  await loadStaff();
-}
-function closeStaff(){modalOpen=false;
-  document.getElementById('staffModal').classList.remove('open');}
+// ---- staff admin ----
+async function openStaff(){modalOpen=true;document.getElementById('staffModal').classList.add('open');await loadStaff();}
+function closeStaff(){modalOpen=false;document.getElementById('staffModal').classList.remove('open');}
 async function loadStaff(){
-  const r = await fetch('/api/staff'); if(!r.ok){return;}
-  const users = await r.json(); const box = document.getElementById('staffList');
-  box.innerHTML = users.map(u=>`
+  const r=await fetch('/api/staff'); if(!r.ok)return;
+  const users=await r.json();
+  document.getElementById('staffList').innerHTML=users.map(u=>`
     <div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid #eee;padding:6px 0">
       <div style="flex:1"><b>${esc(u.display_name||u.username)}</b>
         <span class="muted">@${esc(u.username)} ${u.is_admin?'· admin':''}</span></div>
@@ -289,39 +428,32 @@ async function loadStaff(){
     </div>`).join('');
 }
 async function addStaff(){
-  const body={display_name:val('ns_name'),username:val('ns_user'),
-    password:val('ns_pass'),is_admin:document.getElementById('ns_admin').checked};
-  const r=await fetch('/api/staff',{method:'POST',
-    headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(r.ok){ staffMsg('Added ✓'); ['ns_name','ns_user','ns_pass'].forEach(i=>document.getElementById(i).value='');
-    document.getElementById('ns_admin').checked=false; loadStaff(); }
-  else { staffMsg('Error: '+(await r.text())); }
+  const body={display_name:val('ns_name'),username:val('ns_user'),password:val('ns_pass'),
+    is_admin:document.getElementById('ns_admin').checked};
+  const r=await fetch('/api/staff',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(r.ok){staffMsg('Added ✓');['ns_name','ns_user','ns_pass'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('ns_admin').checked=false;loadStaff();STAFF=[];load();}
+  else staffMsg('Error: '+(await r.text()));
 }
-async function resetPass(id){
-  const p=prompt('New password for this staff member:'); if(!p) return;
-  const r=await fetch('/api/staff/'+id,{method:'PATCH',
-    headers:{'Content-Type':'application/json'},body:JSON.stringify({password:p})});
-  staffMsg(r.ok?'Password updated ✓':'Error');
-}
-async function delStaff(id){
-  if(!confirm('Remove this staff account?')) return;
-  const r=await fetch('/api/staff/'+id,{method:'DELETE'});
-  if(r.ok) loadStaff(); else staffMsg('Error: '+(await r.text()));
-}
+async function resetPass(id){const p=prompt('New password:');if(!p)return;
+  const r=await fetch('/api/staff/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:p})});
+  staffMsg(r.ok?'Password updated ✓':'Error');}
+async function delStaff(id){if(!confirm('Remove this staff account?'))return;
+  const r=await fetch('/api/staff/'+id,{method:'DELETE'});if(r.ok){loadStaff();STAFF=[];}else staffMsg('Error: '+(await r.text()));}
 function val(id){return document.getElementById(id).value;}
 function staffMsg(t){document.getElementById('staffMsg').textContent=t;}
 
+// ---- helpers ----
 function showModal(){modalOpen=true;document.getElementById('modal').classList.add('open');}
-function closeModal(){modalOpen=false;document.getElementById('modal').classList.remove('open');}
+function closeModal(){modalOpen=false;document.getElementById('modal').classList.remove('open');load();}
 function msg(t){document.getElementById('saveMsg').textContent=t;}
-function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,
-  c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
-
-document.getElementById('modal').addEventListener('click',e=>{
-  if(e.target.id==='modal') closeModal();});
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function fmtTime(iso){if(!iso)return'';const d=new Date(iso+'Z');return isNaN(d)?iso:d.toLocaleString();}
+[...document.querySelectorAll('.modal')].forEach(mo=>mo.addEventListener('click',e=>{
+  if(e.target===mo){mo.classList.remove('open');modalOpen=false;load();}}));
 
 load();
-setInterval(load, 5000);   // live refresh so staff see each other's changes
+setInterval(()=>{if(!modalOpen)load();}, 5000);
 </script>
 </body>
 </html>

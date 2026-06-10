@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard — Katara Members</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{--maroon:#49153B;--green:#1F7A3D}
+  body{margin:0;font-family:-apple-system,Helvetica,Arial,sans-serif;background:#f5f2f4;color:#222}
+  header{background:var(--maroon);color:#fff;padding:12px 16px;display:flex;
+    align-items:center;gap:14px}
+  header h1{font-size:18px;margin:0}
+  header .sp{flex:1}
+  a.btn{background:rgba(255,255,255,.15);color:#fff;text-decoration:none;
+    padding:8px 12px;border-radius:6px;font-size:14px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px}
+  @media(max-width:760px){.kpis{grid-template-columns:1fr 1fr}}
+  .kpi{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+  .kpi .v{font-size:24px;font-weight:bold;color:var(--maroon)}
+  .kpi .v.green{color:var(--green)}
+  .kpi .l{font-size:12px;color:#777}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 14px 24px}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  .card{background:#fff;border-radius:10px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+  .card h3{margin:0 0 10px;font-size:14px;color:var(--maroon)}
+</style>
+</head>
+<body>
+<header>
+  <h1>KATARA · Dashboard</h1>
+  <div class="sp"></div>
+  <a class="btn" href="/">← Back to board</a>
+</header>
+
+<div class="kpis" id="kpis"></div>
+<div class="grid">
+  <div class="card"><h3>Collected vs Pipeline (QAR)</h3><canvas id="cMoney"></canvas></div>
+  <div class="card"><h3>Members by status</h3><canvas id="cStatus"></canvas></div>
+  <div class="card"><h3>By membership type</h3><canvas id="cType"></canvas></div>
+  <div class="card"><h3>By CEC</h3><canvas id="cCec"></canvas></div>
+  <div class="card" style="grid-column:1/-1"><h3>Monthly trend</h3><canvas id="cTrend"></canvas></div>
+</div>
+
+<script>
+const MAROON='#49153B', GREEN='#1F7A3D', AMBER='#B0883B';
+async function go(){
+  const a = await (await fetch('/api/analytics')).json();
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><div class="v">${a.by_status['Pending approval']+a.by_status['Approved']+a.by_status['Paid']}</div><div class="l">Total members</div></div>
+    <div class="kpi"><div class="v green">${a.collected.toLocaleString()} QAR</div><div class="l">Collected (Paid)</div></div>
+    <div class="kpi"><div class="v">${a.pipeline.toLocaleString()} QAR</div><div class="l">Total pipeline</div></div>
+    <div class="kpi"><div class="v">${a.by_status['Paid']}</div><div class="l">Paid members</div></div>`;
+
+  new Chart(cMoney,{type:'bar',data:{labels:['Collected','Pipeline'],
+    datasets:[{data:[a.collected,a.pipeline],backgroundColor:[GREEN,MAROON]}]},
+    options:{plugins:{legend:{display:false}}}});
+
+  new Chart(cStatus,{type:'doughnut',data:{labels:Object.keys(a.by_status),
+    datasets:[{data:Object.values(a.by_status),backgroundColor:[AMBER,'#00B050',GREEN]}]}});
+
+  const t=a.by_type;
+  new Chart(cType,{type:'bar',data:{labels:Object.keys(t),
+    datasets:[{label:'Members',data:Object.values(t).map(x=>x.n),backgroundColor:MAROON}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false}}}});
+
+  new Chart(cCec,{type:'bar',data:{labels:Object.keys(a.by_cec),
+    datasets:[{label:'Members',data:Object.values(a.by_cec),backgroundColor:AMBER}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false}}}});
+
+  new Chart(cTrend,{data:{labels:a.months,
+    datasets:[
+      {type:'line',label:'Joiners',data:a.monthly_joiners,borderColor:MAROON,yAxisID:'y'},
+      {type:'bar',label:'Collected (QAR)',data:a.monthly_collected,backgroundColor:GREEN,yAxisID:'y1'}
+    ]},
+    options:{scales:{y:{position:'left',title:{display:true,text:'Joiners'}},
+      y1:{position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'QAR'}}}}});
+}
+go();
+</script>
+</body>
+</html>
