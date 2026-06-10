@@ -23,9 +23,10 @@
   .user{font-size:12px;opacity:.95}
   .menubtn{background:rgba(255,255,255,.15);color:#fff;font-size:18px;
     line-height:1;padding:6px 12px}
-  .menupanel{display:none;flex-wrap:wrap;gap:8px;background:#3a1030;padding:10px 14px;
-    border-bottom:1px solid #5a2350}
-  .menupanel.open{display:flex}
+  .menupanel{display:flex;flex-wrap:wrap;gap:8px;background:#3a1030;
+    max-height:0;overflow:hidden;padding:0 14px;
+    transition:max-height .25s ease, padding .2s ease}
+  .menupanel.open{max-height:480px;padding:10px 14px;border-bottom:1px solid #5a2350}
   .filterbar{display:flex;align-items:center;gap:10px;padding:6px 14px;
     background:#ece7ea;border-bottom:1px solid #ddd}
   .filterbtn{background:#fff;color:var(--maroon);font-weight:bold;border:1px solid #cbb6c4}
@@ -73,6 +74,20 @@
   .muted{color:#777;font-size:11px}
   .hist{font-size:12px;border-top:1px solid #eee;padding:6px 0;color:#444}
   .hist b{color:var(--maroon)}
+  /* --- phones: clean top bar, full-width search, stacked drawer --- */
+  @media(max-width:640px){
+    header{gap:6px;padding:8px 10px}
+    header h1{font-size:15px}
+    .stats{order:6;flex-basis:100%;font-size:11px}
+    #search{order:7;flex-basis:100%;width:100%;max-width:none;margin-top:2px}
+    header .sp{display:none}
+    .navlink,.btn-light,.menubtn{font-size:13px;padding:7px 9px}
+    .menupanel{flex-direction:column}
+    .menupanel.open{max-height:600px}
+    .menupanel .btn-ghost{width:100%;text-align:left}
+    .toolbar{flex-direction:column;align-items:stretch}
+    .toolbar select,.toolbar .btn-light{width:100%}
+  }
 </style>
 </head>
 <body>
