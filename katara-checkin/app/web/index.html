@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Katara Club — Face Check-In</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>🏛️ Katara Club — Face Check-In</h1>
+    <div id="engine-badge" class="badge badge-muted">checking engine…</div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="kiosk">🟢 Check-In Kiosk</button>
+    <button class="tab" data-tab="enroll">➕ Enroll Client</button>
+    <button class="tab" data-tab="admin">📋 Clients &amp; Log</button>
+  </nav>
+
+  <!-- ── KIOSK ─────────────────────────────────────────────────────────────── -->
+  <section id="tab-kiosk" class="panel active">
+    <div class="camera-wrap">
+      <video id="kiosk-video" autoplay playsinline muted></video>
+      <div id="kiosk-overlay" class="overlay"></div>
+    </div>
+    <button id="kiosk-btn" class="big-btn">Scan my face</button>
+    <div id="kiosk-result" class="result"></div>
+    <p class="hint">Stand in front of the camera and tap <b>Scan my face</b>. Move
+      your head slightly so the system can confirm you are really there.</p>
+  </section>
+
+  <!-- ── ENROLL ────────────────────────────────────────────────────────────── -->
+  <section id="tab-enroll" class="panel">
+    <div class="camera-wrap">
+      <video id="enroll-video" autoplay playsinline muted></video>
+    </div>
+    <button id="enroll-capture" class="big-btn secondary">📸 Capture face</button>
+    <div id="enroll-preview"></div>
+
+    <form id="enroll-form" class="form">
+      <label>Full name *<input name="full_name" required placeholder="e.g. Aisha Al Thani" /></label>
+      <label>Membership&nbsp;No<input name="membership_no" placeholder="e.g. KC-10482" /></label>
+      <label>CRM&nbsp;ID<input name="crm_id" placeholder="ID in your CRM" /></label>
+      <label>Email<input name="email" type="email" placeholder="optional" /></label>
+      <label>Phone<input name="phone" placeholder="optional" /></label>
+      <button type="submit" class="big-btn" disabled id="enroll-submit">Save client</button>
+    </form>
+    <div id="enroll-result" class="result"></div>
+  </section>
+
+  <!-- ── ADMIN ─────────────────────────────────────────────────────────────── -->
+  <section id="tab-admin" class="panel">
+    <h2>Enrolled clients</h2>
+    <table id="clients-table"><thead>
+      <tr><th>ID</th><th>Name</th><th>Membership</th><th>Faces</th><th>CRM</th><th></th></tr>
+    </thead><tbody></tbody></table>
+
+    <h2>Recent check-ins</h2>
+    <table id="checkins-table"><thead>
+      <tr><th>Time</th><th>Member</th><th>Outcome</th><th>Similarity</th><th>Live?</th><th>CRM</th></tr>
+    </thead><tbody></tbody></table>
+  </section>
+
+  <canvas id="scratch" hidden></canvas>
+  <script src="/static/app.js"></script>
+</body>
+</html>

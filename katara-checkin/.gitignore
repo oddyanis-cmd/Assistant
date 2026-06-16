@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.env
+*.db
+media/
+.pytest_cache/
+sample_faces/*.jpg
+sample_faces/*.jpeg
+sample_faces/*.png

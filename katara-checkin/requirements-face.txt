@@ -1,0 +1,5 @@
+# Production face-recognition stack (InsightFace / ArcFace).
+# Installs a few hundred MB; the buffalo_l model (~280 MB) auto-downloads on first run.
+insightface>=0.7
+onnxruntime>=1.17       # use onnxruntime-gpu instead on a CUDA box for speed
+opencv-python-headless>=4.9
