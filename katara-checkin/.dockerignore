@@ -1,0 +1,9 @@
+.git
+.venv
+__pycache__
+*.pyc
+*.db
+media/
+sample_faces/
+.pytest_cache/
+tests/
