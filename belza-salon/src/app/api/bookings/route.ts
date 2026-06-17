@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
     const appointment = await createBooking(parsed.data);
 
     let clientSecret: string | null = null;
+    let depositCents = 0;
 
     // If the appointment is PENDING_PAYMENT, create the Stripe PaymentIntent now
     if (appointment.status === 'PENDING_PAYMENT') {
@@ -53,6 +54,7 @@ export async function POST(req: NextRequest) {
           });
 
           clientSecret = pi.client_secret;
+          depositCents = amountCents;
         }
       } catch (stripeErr) {
         console.error('[api/bookings] Stripe error — cancelling held slot:', stripeErr);
@@ -71,7 +73,7 @@ export async function POST(req: NextRequest) {
         cancelToken:    appointment.cancelToken,
         status:         appointment.status,
         paymentsEnabled,
-        ...(clientSecret ? { clientSecret } : {}),
+        ...(clientSecret ? { clientSecret, depositCents } : {}),
       },
       { status: 201 },
     );

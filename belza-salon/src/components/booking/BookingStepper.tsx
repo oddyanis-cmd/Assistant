@@ -1,12 +1,18 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, type FormEvent } from 'react';
 import Link from 'next/link';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { formatCents, formatDuration } from '@/lib/time';
 
 // Payments toggle — injected as a prop from the server component so the
 // Stripe SDK never loads in the browser when payments are off.
 const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
+
+// Stripe.js is loaded once, lazily, and only when a publishable key is configured.
+const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '';
+const stripePromise = STRIPE_PUBLISHABLE_KEY ? loadStripe(STRIPE_PUBLISHABLE_KEY) : null;
 
 // ── Types ─────────────────────────────────────────────────────────────
 interface ServiceCategory {
@@ -954,7 +960,7 @@ function Step4Confirm({
 }: {
   booking:   BookingState;
   onBack:    () => void;
-  onSuccess: (cancelToken: string, clientSecret?: string) => void;
+  onSuccess: (cancelToken: string, clientSecret?: string, depositCents?: number) => void;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState<string | null>(null);
@@ -1000,7 +1006,7 @@ function Step4Confirm({
         return;
       }
 
-      onSuccess(data.cancelToken, data.clientSecret ?? undefined);
+      onSuccess(data.cancelToken, data.clientSecret ?? undefined, data.depositCents ?? 0);
     } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
@@ -1131,37 +1137,101 @@ function Step5Deposit({
   booking,
   clientSecret,
   cancelToken,
+  depositCents,
 }: {
   booking:       BookingState;
   clientSecret:  string;
   cancelToken:   string;
+  depositCents:  number;
 }) {
-  // When PAYMENTS_ENABLED, we show a simple redirect to Stripe-hosted page
-  // or embed Elements. For MVP simplicity, we show the key and direct the
-  // user to complete payment. A full Stripe Elements integration requires
-  // @stripe/react-stripe-js — add it when you have the publishable key set.
-  useEffect(() => {
-    // Auto-redirect to confirmation so the webhook can update status
-    // In production: mount Stripe Elements here with the clientSecret
-    const timer = setTimeout(() => {
-      window.location.href = `/book/confirmation/${cancelToken}?pending=1`;
-    }, 200);
-    return () => clearTimeout(timer);
-  }, [cancelToken]);
+  // If no publishable key is configured, Stripe.js can't load — fall back gracefully.
+  if (!stripePromise) {
+    return (
+      <div className="animate-fade-in max-w-xl mx-auto text-center py-16">
+        <h1 className="font-display text-2xl font-bold text-text-primary mb-2">Payment unavailable</h1>
+        <p className="text-text-secondary text-sm">
+          Online payments aren&rsquo;t fully configured yet. Your booking is held — please contact the salon to confirm.
+        </p>
+        <Link
+          href={`/book/confirmation/${cancelToken}?pending=1`}
+          className="inline-block mt-6 text-sm font-semibold text-primary-600 hover:text-primary-700"
+        >
+          View booking &rarr;
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <div className="animate-fade-in max-w-2xl mx-auto text-center py-16">
-      <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mx-auto mb-6" aria-hidden="true">
-        <svg className="w-8 h-8 animate-spin text-primary-500" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-        </svg>
-      </div>
-      <h1 className="font-display text-2xl font-bold text-text-primary mb-2">Redirecting to payment…</h1>
-      <p className="text-text-secondary text-sm">Setting up your secure payment for the deposit.</p>
-      <p className="text-xs text-muted mt-4">
-        Booking is held for 15 minutes while you complete payment.
+    <Elements
+      stripe={stripePromise}
+      options={{ clientSecret, appearance: { theme: 'flat', variables: { colorPrimary: '#d4614f' } } }}
+    >
+      <DepositForm booking={booking} cancelToken={cancelToken} depositCents={depositCents} />
+    </Elements>
+  );
+}
+
+function DepositForm({
+  booking,
+  cancelToken,
+  depositCents,
+}: {
+  booking:      BookingState;
+  cancelToken:  string;
+  depositCents: number;
+}) {
+  const stripe   = useStripe();
+  const elements = useElements();
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError]           = useState<string | null>(null);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+    setSubmitting(true);
+    setError(null);
+
+    // On success, Stripe redirects to return_url; the webhook confirms the
+    // appointment server-side. We only reach the line below if confirmation failed.
+    const { error: stripeError } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/book/confirmation/${cancelToken}?pending=1`,
+      },
+    });
+
+    setError(stripeError?.message ?? 'Payment could not be completed. Please try again.');
+    setSubmitting(false);
+  };
+
+  return (
+    <div className="animate-fade-in max-w-xl mx-auto">
+      <h1 className="font-display text-2xl font-bold text-text-primary mb-1">Secure your appointment</h1>
+      <p className="text-text-secondary text-sm mb-6">
+        A deposit{depositCents > 0 ? ` of ${formatCents(depositCents)}` : ''} confirms your booking
+        {booking.service ? ` for ${booking.service.name}` : ''}. The balance is paid at the salon.
       </p>
+
+      <form onSubmit={handleSubmit} className="bg-surface border border-border-subtle rounded-card shadow-card p-6">
+        <PaymentElement />
+
+        {error && (
+          <p role="alert" className="mt-4 text-sm text-danger-700 bg-danger-100 rounded-lg px-3 py-2">{error}</p>
+        )}
+
+        <button
+          type="submit"
+          disabled={!stripe || submitting}
+          className="mt-6 w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 text-white font-medium text-sm rounded-pill shadow-sm hover:bg-primary-600 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {submitting ? 'Processing…' : depositCents > 0 ? `Pay ${formatCents(depositCents)} deposit` : 'Confirm booking'}
+        </button>
+
+        <p className="text-xs text-muted text-center mt-3">
+          Payments are processed securely by Stripe. Your booking is held for 15 minutes.
+        </p>
+      </form>
     </div>
   );
 }
@@ -1172,6 +1242,7 @@ export function BookingStepper({ initialServiceId }: { initialServiceId?: string
   const [booking, setBooking]       = useState<BookingState>(INITIAL_STATE);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [pendingToken, setPendingToken] = useState<string | null>(null);
+  const [depositCents, setDepositCents] = useState(0);
 
   const update = useCallback((patch: Partial<BookingState>) => {
     setBooking((prev) => ({ ...prev, ...patch }));
@@ -1225,7 +1296,7 @@ export function BookingStepper({ initialServiceId }: { initialServiceId?: string
     return (
       <>
         <StepperNav current={5} />
-        <Step5Deposit booking={booking} clientSecret={clientSecret} cancelToken={pendingToken} />
+        <Step5Deposit booking={booking} clientSecret={clientSecret} cancelToken={pendingToken} depositCents={depositCents} />
       </>
     );
   }
@@ -1237,11 +1308,12 @@ export function BookingStepper({ initialServiceId }: { initialServiceId?: string
       <Step4Confirm
         booking={booking}
         onBack={() => setStep(3)}
-        onSuccess={(cancelToken, secret) => {
+        onSuccess={(cancelToken, secret, deposit) => {
           if (secret) {
             // Payments enabled: go to deposit step
             setClientSecret(secret);
             setPendingToken(cancelToken);
+            setDepositCents(deposit ?? 0);
             setStep(5);
           } else {
             // No payment needed: redirect to confirmation
