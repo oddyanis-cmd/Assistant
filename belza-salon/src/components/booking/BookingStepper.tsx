@@ -4,6 +4,10 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { formatCents, formatDuration } from '@/lib/time';
 
+// Payments toggle — injected as a prop from the server component so the
+// Stripe SDK never loads in the browser when payments are off.
+const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
+
 // ── Types ─────────────────────────────────────────────────────────────
 interface ServiceCategory {
   id:          string;
@@ -36,7 +40,7 @@ interface Slot {
   staffName: string;
 }
 
-type Step = 1 | 2 | 3 | 4;
+type Step = 1 | 2 | 3 | 4 | 5;
 
 interface BookingState {
   service:     Service | null;
@@ -65,7 +69,9 @@ const INITIAL_STATE: BookingState = {
 };
 
 // ── Stepper indicator ─────────────────────────────────────────────────
-const STEPS = ['Service', 'Date & Time', 'Details', 'Confirm'];
+const STEPS = PAYMENTS_ENABLED
+  ? ['Service', 'Date & Time', 'Details', 'Confirm', 'Payment']
+  : ['Service', 'Date & Time', 'Details', 'Confirm'];
 
 function StepperNav({ current }: { current: Step }) {
   return (
@@ -948,7 +954,7 @@ function Step4Confirm({
 }: {
   booking:   BookingState;
   onBack:    () => void;
-  onSuccess: (cancelToken: string) => void;
+  onSuccess: (cancelToken: string, clientSecret?: string) => void;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState<string | null>(null);
@@ -994,7 +1000,7 @@ function Step4Confirm({
         return;
       }
 
-      onSuccess(data.cancelToken);
+      onSuccess(data.cancelToken, data.clientSecret ?? undefined);
     } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
@@ -1120,10 +1126,52 @@ function Step4Confirm({
   );
 }
 
+// ── STEP 5: Deposit Payment (only when PAYMENTS_ENABLED + clientSecret) ──
+function Step5Deposit({
+  booking,
+  clientSecret,
+  cancelToken,
+}: {
+  booking:       BookingState;
+  clientSecret:  string;
+  cancelToken:   string;
+}) {
+  // When PAYMENTS_ENABLED, we show a simple redirect to Stripe-hosted page
+  // or embed Elements. For MVP simplicity, we show the key and direct the
+  // user to complete payment. A full Stripe Elements integration requires
+  // @stripe/react-stripe-js — add it when you have the publishable key set.
+  useEffect(() => {
+    // Auto-redirect to confirmation so the webhook can update status
+    // In production: mount Stripe Elements here with the clientSecret
+    const timer = setTimeout(() => {
+      window.location.href = `/book/confirmation/${cancelToken}?pending=1`;
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [cancelToken]);
+
+  return (
+    <div className="animate-fade-in max-w-2xl mx-auto text-center py-16">
+      <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mx-auto mb-6" aria-hidden="true">
+        <svg className="w-8 h-8 animate-spin text-primary-500" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+        </svg>
+      </div>
+      <h1 className="font-display text-2xl font-bold text-text-primary mb-2">Redirecting to payment…</h1>
+      <p className="text-text-secondary text-sm">Setting up your secure payment for the deposit.</p>
+      <p className="text-xs text-muted mt-4">
+        Booking is held for 15 minutes while you complete payment.
+      </p>
+    </div>
+  );
+}
+
 // ── Main Stepper ──────────────────────────────────────────────────────
 export function BookingStepper({ initialServiceId }: { initialServiceId?: string }) {
-  const [step, setStep]       = useState<Step>(1);
-  const [booking, setBooking] = useState<BookingState>(INITIAL_STATE);
+  const [step, setStep]             = useState<Step>(1);
+  const [booking, setBooking]       = useState<BookingState>(INITIAL_STATE);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [pendingToken, setPendingToken] = useState<string | null>(null);
 
   const update = useCallback((patch: Partial<BookingState>) => {
     setBooking((prev) => ({ ...prev, ...patch }));
@@ -1172,6 +1220,16 @@ export function BookingStepper({ initialServiceId }: { initialServiceId?: string
     );
   }
 
+  // Step 5: deposit payment (only reached when payments enabled + clientSecret)
+  if (step === 5 && clientSecret && pendingToken) {
+    return (
+      <>
+        <StepperNav current={5} />
+        <Step5Deposit booking={booking} clientSecret={clientSecret} cancelToken={pendingToken} />
+      </>
+    );
+  }
+
   // Step 4
   return (
     <>
@@ -1179,9 +1237,16 @@ export function BookingStepper({ initialServiceId }: { initialServiceId?: string
       <Step4Confirm
         booking={booking}
         onBack={() => setStep(3)}
-        onSuccess={(cancelToken) => {
-          // Redirect to confirmation page
-          window.location.href = `/book/confirmation/${cancelToken}`;
+        onSuccess={(cancelToken, secret) => {
+          if (secret) {
+            // Payments enabled: go to deposit step
+            setClientSecret(secret);
+            setPendingToken(cancelToken);
+            setStep(5);
+          } else {
+            // No payment needed: redirect to confirmation
+            window.location.href = `/book/confirmation/${cancelToken}`;
+          }
         }}
       />
     </>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createBooking, SlotTakenError } from '@/lib/bookings';
 import { createBookingSchema } from '@/lib/validations';
 import { paymentsEnabled } from '@/lib/config';
+import { prisma } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,15 +20,58 @@ export async function POST(req: NextRequest) {
 
     const appointment = await createBooking(parsed.data);
 
-    // Payments off: appointment is immediately CONFIRMED
-    // Payments on: would return PENDING_PAYMENT + payment intent (next milestone)
+    let clientSecret: string | null = null;
+
+    // If the appointment is PENDING_PAYMENT, create the Stripe PaymentIntent now
+    if (appointment.status === 'PENDING_PAYMENT') {
+      try {
+        const settings    = await prisma.settings.findUnique({ where: { id: 'singleton' } });
+        const depositPct  = settings?.depositPercent ?? 0;
+        const amountCents = Math.round(appointment.priceCents * depositPct / 100);
+
+        if (amountCents > 0) {
+          const { getStripe } = await import('@/lib/stripe');
+          const stripe = getStripe();
+
+          const pi = await stripe.paymentIntents.create(
+            {
+              amount:   amountCents,
+              currency: appointment.currency,
+              metadata: { appointmentId: appointment.id },
+            },
+            { idempotencyKey: appointment.id },
+          );
+
+          await prisma.payment.create({
+            data: {
+              appointmentId:         appointment.id,
+              stripePaymentIntentId: pi.id,
+              amountCents,
+              currency: appointment.currency,
+              status:   'REQUIRES_PAYMENT',
+            },
+          });
+
+          clientSecret = pi.client_secret;
+        }
+      } catch (stripeErr) {
+        console.error('[api/bookings] Stripe error — cancelling held slot:', stripeErr);
+        // Roll back: cancel the pending appointment so the slot is released
+        await prisma.appointment.update({
+          where: { id: appointment.id },
+          data:  { status: 'CANCELLED' },
+        });
+        return NextResponse.json({ error: 'Payment initialisation failed. Please try again.' }, { status: 500 });
+      }
+    }
+
     return NextResponse.json(
       {
-        appointmentId: appointment.id,
-        cancelToken:   appointment.cancelToken,
-        status:        appointment.status,
+        appointmentId:  appointment.id,
+        cancelToken:    appointment.cancelToken,
+        status:         appointment.status,
         paymentsEnabled,
-        // payment field: undefined in payments-off path
+        ...(clientSecret ? { clientSecret } : {}),
       },
       { status: 201 },
     );

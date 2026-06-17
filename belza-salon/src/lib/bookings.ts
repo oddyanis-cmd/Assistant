@@ -10,7 +10,7 @@ import { addMinutes } from 'date-fns';
 import { Prisma } from '@prisma/client';
 import { prisma } from './db';
 import { sendConfirmationEmail } from './email';
-import { appUrl } from './config';
+import { appUrl, paymentsEnabled } from './config';
 import type { CreateBookingInput } from './validations';
 
 export class SlotTakenError extends Error {
@@ -20,7 +20,7 @@ export class SlotTakenError extends Error {
   }
 }
 
-export async function createBooking(input: CreateBookingInput) {
+export async function createBooking(input: CreateBookingInput & { source?: string }) {
   const {
     serviceId,
     staffId: staffIdParam,
@@ -31,6 +31,7 @@ export async function createBooking(input: CreateBookingInput) {
     phone,
     notes,
     marketingOptIn,
+    source: sourceParam,
   } = input;
 
   const startsAt = new Date(startsAtIso);
@@ -109,7 +110,13 @@ export async function createBooking(input: CreateBookingInput) {
           },
         });
 
-        // Create appointment (CONFIRMED because payments off)
+        // Determine deposit amount for status decision
+        const settings = await tx.settings.findUnique({ where: { id: 'singleton' } });
+        const depositPct = settings?.depositPercent ?? 0;
+        const requiresPayment = paymentsEnabled && depositPct > 0 && sourceParam !== 'admin';
+        const apptStatus = requiresPayment ? 'PENDING_PAYMENT' : 'CONFIRMED';
+
+        // Create appointment
         return tx.appointment.create({
           data: {
             serviceId,
@@ -117,11 +124,11 @@ export async function createBooking(input: CreateBookingInput) {
             clientId:   client.id,
             startsAt,
             endsAt,
-            status:     'CONFIRMED',
+            status:     apptStatus,
             priceCents: service.priceCents,
             currency:   service.currency,
             notes,
-            source:     'online',
+            source:     sourceParam ?? 'online',
           },
           include: {
             service: true,
@@ -133,10 +140,11 @@ export async function createBooking(input: CreateBookingInput) {
       { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
     );
 
-    // ── Send confirmation email (non-blocking) ────────────────────
+    // ── Send confirmation email (non-blocking, only when confirmed) ──
     const settings = await prisma.settings.findUnique({ where: { id: 'singleton' } });
     const cancelUrl = `${appUrl}/book/confirmation/${appointment.cancelToken}`;
 
+    if (appointment.status === 'CONFIRMED') {
     sendConfirmationEmail({
       to:          email,
       firstName,
@@ -151,6 +159,7 @@ export async function createBooking(input: CreateBookingInput) {
       salonName:   settings?.salonName ?? 'Belza',
       addressLine: settings?.addressLine ?? '',
     }).catch((err) => console.error('[email] send failed:', err));
+    }
 
     return appointment;
   } catch (err) {
