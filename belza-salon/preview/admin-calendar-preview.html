@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Belza Admin — Calendar (Preview)</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    /* ── Dana's design tokens ──────────────────────────────────────── */
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:    { 50:'#fdf5f3',100:'#fbe9e4',200:'#f6d1c9',300:'#efafa3',400:'#e48070',500:'#d4614f',600:'#c04535',700:'#a0372a',800:'#852f25',900:'#6f2b23',950:'#3c1310',DEFAULT:'#d4614f' },
+            accent:     { 50:'#fdf8ee',100:'#faedd0',200:'#f4d89d',300:'#ecbd5e',400:'#e5a330',500:'#d98818',600:'#c16a12',700:'#a04e13',800:'#833e16',900:'#6c3415',DEFAULT:'#d98818' },
+            background: '#faf8f6',
+            surface:    '#ffffff',
+            'surface-alt':'#f3ede9',
+            muted:      { DEFAULT:'#9c8e88',subtle:'#c4b9b4',strong:'#6b5e59' },
+            success:    { 50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',500:'#22c55e',600:'#16a34a',700:'#15803d',DEFAULT:'#16a34a' },
+            warning:    { 50:'#fffbeb',100:'#fef3c7',400:'#fbbf24',500:'#f59e0b',600:'#d97706',DEFAULT:'#d97706' },
+            danger:     { 50:'#fef2f2',100:'#fee2e2',500:'#ef4444',600:'#dc2626',700:'#b91c1c',DEFAULT:'#dc2626' },
+            text:       { primary:'#2c2220',secondary:'#6b5e59',tertiary:'#9c8e88',inverse:'#faf8f6',link:'#c04535' },
+            border:     { DEFAULT:'#e8ddd9',strong:'#cfc4bf',subtle:'#f0ebe8' },
+          },
+          fontFamily: {
+            sans:    ['Inter','ui-sans-serif','system-ui','sans-serif'],
+            display: ['"Playfair Display"','Georgia','ui-serif','serif'],
+          },
+          borderRadius: {
+            xs:'4px',sm:'6px',DEFAULT:'8px',md:'10px',lg:'12px',xl:'16px','2xl':'20px','3xl':'24px',card:'16px',pill:'999px',full:'9999px',
+          },
+          boxShadow: {
+            xs:      '0 1px 2px 0 rgba(44,34,32,0.04)',
+            sm:      '0 1px 3px 0 rgba(44,34,32,0.06), 0 1px 2px -1px rgba(44,34,32,0.04)',
+            DEFAULT: '0 2px 8px 0 rgba(44,34,32,0.08), 0 1px 3px -1px rgba(44,34,32,0.04)',
+            card:    '0 2px 8px 0 rgba(44,34,32,0.08)',
+            topbar:  '0 1px 0 0 rgba(44,34,32,0.08)',
+            sidebar: '4px 0 16px 0 rgba(44,34,32,0.06)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    body { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+
+    /* Thin scrollbar for the time grid */
+    .cal-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .cal-scroll::-webkit-scrollbar-track { background: #f0ebe8; }
+    .cal-scroll::-webkit-scrollbar-thumb { background: #cfc4bf; border-radius: 3px; }
+
+    /* Ensure the time labels line up precisely */
+    .time-label {
+      position: absolute;
+      right: 8px;
+      font-size: 10px;
+      color: #9c8e88;
+      transform: translateY(-7px);
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+</head>
+
+<body class="bg-background text-text-primary antialiased" style="height:100vh;overflow:hidden;">
+<div class="flex h-screen overflow-hidden bg-background">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SIDEBAR
+  ═══════════════════════════════════════════════════════════ -->
+  <aside class="hidden lg:flex flex-col bg-surface border-r border-border shrink-0 overflow-y-auto"
+         style="width:256px;box-shadow:4px 0 16px 0 rgba(44,34,32,0.06);"
+         aria-label="Admin navigation sidebar">
+
+    <!-- Logo -->
+    <div class="h-16 flex items-center gap-3 px-5 border-b border-border shrink-0">
+      <span class="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center text-white font-display font-bold text-base shrink-0">B</span>
+      <div>
+        <p class="text-sm font-semibold text-text-primary font-display">Belza</p>
+        <p class="text-xs text-muted">Admin Panel</p>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 p-3 space-y-1">
+      <!-- Dashboard -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </a>
+
+      <!-- Appointments -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Appointments
+      </a>
+
+      <!-- Calendar (ACTIVE) -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold bg-primary-50 text-primary-700 transition-colors" aria-current="page">
+        <span class="text-primary-500">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="16" y1="2" x2="16" y2="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="8" y1="2" x2="8" y2="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="3" y1="10" x2="21" y2="10" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Calendar
+      </a>
+
+      <!-- Clients -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        Clients
+      </a>
+
+      <!-- Services -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Services
+      </a>
+
+      <!-- Team -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Team
+      </a>
+
+      <div class="my-2 border-t border-border"></div>
+
+      <!-- Settings -->
+      <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <!-- User -->
+    <div class="p-3 border-t border-border shrink-0">
+      <div class="flex items-center gap-3 px-3 py-2.5">
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Salon+Owner&backgroundColor=d4614f&textColor=fff&radius=50" alt="" width="32" height="32" class="w-8 h-8 rounded-full shrink-0" />
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-text-primary truncate">Salon Owner</p>
+          <p class="text-xs text-muted truncate">owner@salon.com</p>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MAIN AREA
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Top bar -->
+    <header class="h-16 bg-surface border-b border-border flex items-center justify-between px-6 shrink-0 z-10"
+            style="box-shadow:0 1px 0 0 rgba(44,34,32,0.08);">
+      <div>
+        <h1 class="text-base font-semibold text-text-primary">Calendar</h1>
+        <p class="text-xs text-muted">Week of 15 Jun – 20 Jun 2026</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <a href="#" class="inline-flex items-center gap-2 px-3 py-1.5 border border-border text-sm font-medium rounded-full text-text-secondary hover:bg-surface-alt transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+          List view
+        </a>
+        <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-full hover:bg-primary-600 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          New
+        </a>
+      </div>
+    </header>
+
+    <!-- Week nav sub-bar -->
+    <div class="bg-surface border-b border-border px-6 py-2.5 flex items-center justify-between gap-4 shrink-0">
+      <div class="flex items-center gap-2">
+        <button class="p-1.5 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors" aria-label="Previous week">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <span class="text-sm font-semibold text-text-primary" style="min-width:180px;text-align:center;">15 Jun – 20 Jun 2026</span>
+        <button class="p-1.5 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors" aria-label="Next week">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <button class="text-xs font-medium text-primary-600 hover:underline">Today</button>
+    </div>
+
+    <!-- Calendar -->
+    <div class="flex-1 overflow-hidden flex flex-col">
+      <div class="flex-1 overflow-auto cal-scroll" id="cal-scroll-area">
+        <div style="min-width:640px;">
+
+          <!-- Day headers (sticky) -->
+          <div class="sticky top-0 z-30 bg-surface border-b border-border flex">
+            <!-- Gutter placeholder -->
+            <div style="width:56px;" class="shrink-0 border-r border-border"></div>
+            <!-- 6 day columns: Mon 15 – Sat 20 Jun 2026; today = Wed 17 (highlighted) -->
+            <div class="flex-1 grid" style="grid-template-columns:repeat(6,1fr);">
+              <!-- Mon 15 -->
+              <div class="py-3 px-2 text-center border-r border-border">
+                <p class="text-xs font-medium uppercase tracking-wide text-muted">Mon</p>
+                <p class="text-lg font-semibold text-text-primary mt-0.5 leading-none">15</p>
+              </div>
+              <!-- Tue 16 -->
+              <div class="py-3 px-2 text-center border-r border-border">
+                <p class="text-xs font-medium uppercase tracking-wide text-muted">Tue</p>
+                <p class="text-lg font-semibold text-text-primary mt-0.5 leading-none">16</p>
+              </div>
+              <!-- Wed 17 (TODAY) -->
+              <div class="py-3 px-2 text-center border-r border-border bg-primary-50">
+                <p class="text-xs font-semibold uppercase tracking-wide text-primary-600">Wed</p>
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary-500 text-white text-lg font-semibold mt-0.5 leading-none">17</span>
+              </div>
+              <!-- Thu 18 -->
+              <div class="py-3 px-2 text-center border-r border-border">
+                <p class="text-xs font-medium uppercase tracking-wide text-muted">Thu</p>
+                <p class="text-lg font-semibold text-text-primary mt-0.5 leading-none">18</p>
+              </div>
+              <!-- Fri 19 -->
+              <div class="py-3 px-2 text-center border-r border-border">
+                <p class="text-xs font-medium uppercase tracking-wide text-muted">Fri</p>
+                <p class="text-lg font-semibold text-text-primary mt-0.5 leading-none">19</p>
+              </div>
+              <!-- Sat 20 -->
+              <div class="py-3 px-2 text-center">
+                <p class="text-xs font-medium uppercase tracking-wide text-muted">Sat</p>
+                <p class="text-lg font-semibold text-text-primary mt-0.5 leading-none">20</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Time grid -->
+          <div class="flex">
+
+            <!-- Time gutter -->
+            <!-- 8AM–7PM = 11 hours; 90px/hr; total height = 990px -->
+            <div class="shrink-0 border-r border-border relative" style="width:56px;height:990px;">
+              <!-- Hour labels at 8,9,10,11,12,1,2,3,4,5,6,7 -->
+              <span class="time-label" style="top:8px;">8 AM</span>
+              <span class="time-label" style="top:98px;">9 AM</span>
+              <span class="time-label" style="top:188px;">10 AM</span>
+              <span class="time-label" style="top:278px;">11 AM</span>
+              <span class="time-label" style="top:368px;">12 PM</span>
+              <span class="time-label" style="top:458px;">1 PM</span>
+              <span class="time-label" style="top:548px;">2 PM</span>
+              <span class="time-label" style="top:638px;">3 PM</span>
+              <span class="time-label" style="top:728px;">4 PM</span>
+              <span class="time-label" style="top:818px;">5 PM</span>
+              <span class="time-label" style="top:908px;">6 PM</span>
+            </div>
+
+            <!-- 6 Day columns -->
+            <!--
+              Mapping UTC times to EDT (UTC-4) for visual positions:
+              Grid = 8AM–7PM EDT; 90px/hr = 1.5px/min
+              top = (localHour - 8) * 90 + localMin * 1.5
+
+              Appointments (EDT = UTC - 4h):
+              Mon 15:
+                Sophia / Elena / Balayage — 9:00–11:30 → top=90, h=225
+                Alex / Kai / Precision Cut — 10:00–11:00 → top=180, h=90
+                Mia / Sara / Deep Cond — 14:00–14:45 → top=540, h=67.5
+
+              Tue 16:
+                Omar / Elena / Full Colour — 11:00–12:30 → top=270, h=135
+                Lucy / Sara / Keratin — 9:30–12:30 → top=135, h=270
+
+              Wed 17 (TODAY):
+                Ethan / Kai / Blow-Dry — 9:00–9:45 → top=90, h=67.5
+                Nadia / Elena / Root Touch-Up — 13:00–14:00 → top=450, h=90
+
+              Thu 18:
+                Smoke / Elena / Balayage (non-demo) — 9:00–11:30 → top=90, h=225 (CONFIRMED)
+                Tom / Sara / Scalp Therapy — 10:30–11:30 → top=225, h=90
+                Sophia / Kai / Precision Cut — 15:00–16:00 → top=630, h=90 (PENDING_PAYMENT)
+
+              Fri 19:
+                Mia / Elena / Balayage — 9:00–11:30 → top=90, h=225
+
+              Sat 20:
+                Alex / Kai / Blow-Dry — 11:00–11:45 → top=270, h=67.5
+                Lucy / Sara / Deep Cond — 13:30–14:15 → top=495, h=67.5
+            -->
+            <div class="flex-1 grid" style="grid-template-columns:repeat(6,1fr);height:990px;">
+
+              <!-- ── MON 15 ── -->
+              <div class="relative border-r border-border" style="height:990px;">
+                <!-- Hour lines -->
+                <div class="absolute inset-0 pointer-events-none">
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:0px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:45px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:90px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:135px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:180px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:225px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:270px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:315px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:360px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:405px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:450px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:495px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:540px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:585px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:630px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:675px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:720px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:765px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:810px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:855px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:900px;"></div>
+                  <div class="absolute left-0 right-0 border-t border-dashed" style="top:945px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:990px;"></div>
+                </div>
+
+                <!-- Sophia / Elena / Balayage 9:00–11:30 — COMPLETED -->
+                <button class="absolute left-1 right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:90px;height:225px;background:#f0fdf4;border-left:3px solid #16a34a;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#15803d;line-height:1.2;">9:00 AM</p>
+                  <p style="font-size:11px;font-weight:600;color:#15803d;line-height:1.2;margin-top:2px;">Sophia Chen</p>
+                  <p style="font-size:10px;color:#16a34a;line-height:1.2;margin-top:2px;">Balayage &amp; Toner</p>
+                  <p style="font-size:10px;color:#16a34a;line-height:1.2;margin-top:1px;">Elena M.</p>
+                </button>
+
+                <!-- Alex / Kai / Precision Cut 10:00–11:00 — CONFIRMED -->
+                <button class="absolute left-1 right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:180px;height:90px;background:#fdf5f3;border-left:3px solid #d4614f;padding:3px 4px 3px 6px;margin-left:40%;">
+                  <p style="font-size:10px;font-weight:600;color:#a0372a;line-height:1.2;">10:00 AM</p>
+                  <p style="font-size:11px;font-weight:600;color:#a0372a;line-height:1.2;margin-top:2px;">Alex Rivers</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:2px;">Precision Cut</p>
+                </button>
+
+                <!-- Mia / Sara / Deep Cond 14:00–14:45 — CONFIRMED -->
+                <button class="absolute left-1 right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:540px;height:68px;background:#fdf5f3;border-left:3px solid #d4614f;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#a0372a;line-height:1.2;">2:00 PM</p>
+                  <p style="font-size:11px;font-weight:600;color:#a0372a;line-height:1.2;margin-top:2px;">Mia Johnson</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:2px;">Deep Conditioning</p>
+                </button>
+              </div>
+
+              <!-- ── TUE 16 ── -->
+              <div class="relative border-r border-border" style="height:990px;">
+                <div class="absolute inset-0 pointer-events-none">
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:0px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:45px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:90px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:135px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:180px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:225px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:270px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:315px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:360px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:405px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:450px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:495px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:540px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:585px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:630px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:675px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:720px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:765px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:810px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:855px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:900px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:945px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:990px;"></div>
+                </div>
+
+                <!-- Lucy / Sara / Keratin 9:30–12:30 — PENDING_PAYMENT -->
+                <button class="absolute left-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:135px;height:270px;right:45%;background:#fffbeb;border-left:3px solid #d97706;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#92400e;line-height:1.2;">9:30 AM</p>
+                  <p style="font-size:11px;font-weight:600;color:#92400e;line-height:1.2;margin-top:2px;">Lucy Martin</p>
+                  <p style="font-size:10px;color:#d97706;line-height:1.2;margin-top:2px;">Keratin Treatment</p>
+                  <p style="font-size:10px;color:#d97706;line-height:1.2;margin-top:1px;">Sara L.</p>
+                </button>
+
+                <!-- Omar / Elena / Full Colour 11:00–12:30 — CONFIRMED -->
+                <button class="absolute right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:270px;height:135px;left:55%;background:#fdf5f3;border-left:3px solid #d4614f;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#a0372a;line-height:1.2;">11:00 AM</p>
+                  <p style="font-size:11px;font-weight:600;color:#a0372a;line-height:1.2;margin-top:2px;">Omar Patel</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:2px;">Full Colour</p>
+                </button>
+              </div>
+
+              <!-- ── WED 17 (TODAY) ── -->
+              <div class="relative border-r border-border" style="height:990px;background:rgba(253,245,243,0.15);">
+                <div class="absolute inset-0 pointer-events-none">
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:0px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:45px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:90px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:135px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:180px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:225px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:270px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:315px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:360px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:405px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:450px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:495px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:540px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:585px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:630px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:675px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:720px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:765px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:810px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:855px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:900px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:945px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:990px;"></div>
+                </div>
+
+                <!-- Current time indicator — approx 12:10 PM EDT on Jun 17 -->
+                <!-- 12:10 PM → (12-8)*90 + 10*1.5 = 360+15 = 375px -->
+                <div class="absolute left-0 right-0 pointer-events-none z-20" style="top:375px;">
+                  <div class="flex items-center">
+                    <div style="width:8px;height:8px;border-radius:50%;background:#dc2626;flex-shrink:0;margin-left:-4px;"></div>
+                    <div style="flex:1;height:1px;background:#dc2626;"></div>
+                  </div>
+                </div>
+
+                <!-- Ethan / Kai / Blow-Dry 9:00–9:45 — COMPLETED -->
+                <button class="absolute left-1 right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:90px;height:68px;background:#f0fdf4;border-left:3px solid #16a34a;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#15803d;line-height:1.2;">9:00 AM</p>
+                  <p style="font-size:11px;font-weight:600;color:#15803d;line-height:1.2;margin-top:2px;">Ethan Kim</p>
+                  <p style="font-size:10px;color:#16a34a;line-height:1.2;margin-top:2px;">Blow-Dry &amp; Style</p>
+                </button>
+
+                <!-- Nadia / Elena / Root Touch-Up 13:00–14:00 — CONFIRMED -->
+                <button class="absolute left-1 right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:450px;height:90px;background:#fdf5f3;border-left:3px solid #d4614f;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#a0372a;line-height:1.2;">1:00 PM</p>
+                  <p style="font-size:11px;font-weight:600;color:#a0372a;line-height:1.2;margin-top:2px;">Nadia Osei</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:2px;">Root Touch-Up</p>
+                </button>
+              </div>
+
+              <!-- ── THU 18 ── -->
+              <div class="relative border-r border-border" style="height:990px;">
+                <div class="absolute inset-0 pointer-events-none">
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:0px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:45px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:90px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:135px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:180px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:225px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:270px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:315px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:360px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:405px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:450px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:495px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:540px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:585px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:630px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:675px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:720px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:765px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:810px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:855px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:900px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:945px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:990px;"></div>
+                </div>
+
+                <!-- Smoke Test / Elena / Balayage 9:00–11:30 — CONFIRMED -->
+                <button class="absolute left-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:90px;height:225px;right:45%;background:#fdf5f3;border-left:3px solid #d4614f;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#a0372a;line-height:1.2;">9:00 AM</p>
+                  <p style="font-size:11px;font-weight:600;color:#a0372a;line-height:1.2;margin-top:2px;">Smoke Test</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:2px;">Balayage &amp; Toner</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:1px;">Elena M.</p>
+                </button>
+
+                <!-- Tom / Sara / Scalp Therapy 10:30–11:30 — CONFIRMED -->
+                <button class="absolute right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:225px;height:90px;left:55%;background:#fdf5f3;border-left:3px solid #d4614f;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#a0372a;line-height:1.2;">10:30 AM</p>
+                  <p style="font-size:11px;font-weight:600;color:#a0372a;line-height:1.2;margin-top:2px;">Tom Walker</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:2px;">Scalp Therapy</p>
+                </button>
+
+                <!-- Sophia / Kai / Precision Cut 15:00–16:00 — PENDING_PAYMENT -->
+                <button class="absolute left-1 right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:630px;height:90px;background:#fffbeb;border-left:3px solid #d97706;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#92400e;line-height:1.2;">3:00 PM</p>
+                  <p style="font-size:11px;font-weight:600;color:#92400e;line-height:1.2;margin-top:2px;">Sophia Chen</p>
+                  <p style="font-size:10px;color:#d97706;line-height:1.2;margin-top:2px;">Precision Haircut</p>
+                </button>
+              </div>
+
+              <!-- ── FRI 19 ── -->
+              <div class="relative border-r border-border" style="height:990px;">
+                <div class="absolute inset-0 pointer-events-none">
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:0px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:45px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:90px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:135px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:180px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:225px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:270px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:315px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:360px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:405px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:450px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:495px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:540px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:585px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:630px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:675px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:720px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:765px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:810px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:855px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:900px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:945px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:990px;"></div>
+                </div>
+
+                <!-- Mia / Elena / Balayage 9:00–11:30 — CONFIRMED -->
+                <button class="absolute left-1 right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:90px;height:225px;background:#fdf5f3;border-left:3px solid #d4614f;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#a0372a;line-height:1.2;">9:00 AM</p>
+                  <p style="font-size:11px;font-weight:600;color:#a0372a;line-height:1.2;margin-top:2px;">Mia Johnson</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:2px;">Balayage &amp; Toner</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:1px;">Elena M.</p>
+                </button>
+              </div>
+
+              <!-- ── SAT 20 ── -->
+              <div class="relative" style="height:990px;">
+                <div class="absolute inset-0 pointer-events-none">
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:0px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:45px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:90px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:135px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:180px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:225px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:270px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:315px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:360px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:405px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:450px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:495px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:540px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:585px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:630px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:675px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:720px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:765px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:810px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:855px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:900px;"></div><div class="absolute left-0 right-0 border-t border-dashed" style="top:945px;border-color:#e8ddd9;"></div>
+                  <div class="absolute left-0 right-0 border-t border-border" style="top:990px;"></div>
+                </div>
+
+                <!-- Alex / Kai / Blow-Dry 11:00–11:45 — CONFIRMED -->
+                <button class="absolute left-1 right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:270px;height:68px;background:#fdf5f3;border-left:3px solid #d4614f;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#a0372a;line-height:1.2;">11:00 AM</p>
+                  <p style="font-size:11px;font-weight:600;color:#a0372a;line-height:1.2;margin-top:2px;">Alex Rivers</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:2px;">Blow-Dry &amp; Style</p>
+                </button>
+
+                <!-- Lucy / Sara / Deep Cond 13:30–14:15 — CONFIRMED -->
+                <button class="absolute left-1 right-1 overflow-hidden rounded-lg shadow-sm text-left" style="top:495px;height:68px;background:#fdf5f3;border-left:3px solid #d4614f;padding:3px 4px 3px 6px;">
+                  <p style="font-size:10px;font-weight:600;color:#a0372a;line-height:1.2;">1:30 PM</p>
+                  <p style="font-size:11px;font-weight:600;color:#a0372a;line-height:1.2;margin-top:2px;">Lucy Martin</p>
+                  <p style="font-size:10px;color:#c04535;line-height:1.2;margin-top:2px;">Deep Conditioning</p>
+                </button>
+              </div>
+
+            </div><!-- /6-col grid -->
+          </div><!-- /time grid flex -->
+
+        </div><!-- /min-width wrapper -->
+      </div><!-- /scroll area -->
+    </div><!-- /calendar flex-1 -->
+
+  </div><!-- /main area -->
+</div><!-- /app shell -->
+
+<script>
+  // Scroll to 8:30 AM on load (so users see the morning appointments without seeing empty time before 8AM)
+  document.addEventListener('DOMContentLoaded', function() {
+    var scrollArea = document.getElementById('cal-scroll-area');
+    // 8 AM = 0px but the header takes ~112px, scroll a bit to center nicely
+    if (scrollArea) scrollArea.scrollTop = 60;
+  });
+</script>
+</body>
+</html>

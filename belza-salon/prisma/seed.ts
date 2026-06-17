@@ -303,11 +303,183 @@ async function main() {
     }
   }
 
+  // ── Demo clients ──────────────────────────────────────────────────────────
+  const clientSophia = await prisma.client.upsert({
+    where:  { email: 'sophia.chen@demo.belza' },
+    update: {},
+    create: { firstName: 'Sophia',  lastName: 'Chen',       email: 'sophia.chen@demo.belza',     phone: '+1 (212) 555-0101' },
+  });
+
+  const clientAlex = await prisma.client.upsert({
+    where:  { email: 'alex.rivers@demo.belza' },
+    update: {},
+    create: { firstName: 'Alex',    lastName: 'Rivers',     email: 'alex.rivers@demo.belza',     phone: '+1 (212) 555-0102' },
+  });
+
+  const clientMia = await prisma.client.upsert({
+    where:  { email: 'mia.johnson@demo.belza' },
+    update: {},
+    create: { firstName: 'Mia',     lastName: 'Johnson',    email: 'mia.johnson@demo.belza',     phone: '+1 (212) 555-0103' },
+  });
+
+  const clientOmar = await prisma.client.upsert({
+    where:  { email: 'omar.patel@demo.belza' },
+    update: {},
+    create: { firstName: 'Omar',    lastName: 'Patel',      email: 'omar.patel@demo.belza',      phone: '+1 (212) 555-0104' },
+  });
+
+  const clientLucy = await prisma.client.upsert({
+    where:  { email: 'lucy.martin@demo.belza' },
+    update: {},
+    create: { firstName: 'Lucy',    lastName: 'Martin',     email: 'lucy.martin@demo.belza',     phone: '+1 (212) 555-0105' },
+  });
+
+  const clientEthan = await prisma.client.upsert({
+    where:  { email: 'ethan.kim@demo.belza' },
+    update: {},
+    create: { firstName: 'Ethan',   lastName: 'Kim',        email: 'ethan.kim@demo.belza',       phone: '+1 (212) 555-0106' },
+  });
+
+  const clientNadia = await prisma.client.upsert({
+    where:  { email: 'nadia.osei@demo.belza' },
+    update: {},
+    create: { firstName: 'Nadia',   lastName: 'Osei',       email: 'nadia.osei@demo.belza',      phone: '+1 (212) 555-0107' },
+  });
+
+  const clientTom = await prisma.client.upsert({
+    where:  { email: 'tom.walker@demo.belza' },
+    update: {},
+    create: { firstName: 'Tom',     lastName: 'Walker',     email: 'tom.walker@demo.belza',      phone: '+1 (212) 555-0108' },
+  });
+
+  // ── Demo appointments for current week (Mon–Sat) ───────────────────────────
+  // Strategy: delete then recreate so the seed is always idempotent on demo data.
+  await prisma.appointment.deleteMany({
+    where: {
+      client: {
+        email: {
+          in: [
+            'sophia.chen@demo.belza',
+            'alex.rivers@demo.belza',
+            'mia.johnson@demo.belza',
+            'omar.patel@demo.belza',
+            'lucy.martin@demo.belza',
+            'ethan.kim@demo.belza',
+            'nadia.osei@demo.belza',
+            'tom.walker@demo.belza',
+          ],
+        },
+      },
+    },
+  });
+
+  // Compute Monday of the current week (UTC date arithmetic; salon is America/New_York = UTC-4/5)
+  // We build the appointments using noon UTC on the desired date, then shift to 9–17 h NYC time.
+  // UTC offset for EDT = -4, so 9 AM EDT = 13:00 UTC.  We hard-code UTC times that correspond
+  // to the wanted NYC times and generate them relative to "this Monday".
+  const now        = new Date();
+  const dayOfWeek  = now.getUTCDay(); // 0=Sun, 1=Mon, …6=Sat
+  const daysToMon  = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const monday     = new Date(now);
+  monday.setUTCDate(monday.getUTCDate() + daysToMon);
+  monday.setUTCHours(0, 0, 0, 0);
+
+  // Helper: build a UTC Date for (monday + dayOffset) at (hhmm local NYC/EDT = UTC+4h)
+  // EDT offset = UTC-4; so 9:00 AM EDT = 13:00 UTC
+  const nyOffset = 4; // hours; EDT (summer). DST-safe enough for demo data.
+  function apptDate(dayOffset: number, localHour: number, localMin = 0): Date {
+    const d = new Date(monday);
+    d.setUTCDate(d.getUTCDate() + dayOffset);
+    d.setUTCHours(localHour + nyOffset, localMin, 0, 0);
+    return d;
+  }
+
+  const demoAppointments = [
+    // Monday (offset 0)
+    {
+      serviceId: svcBalayage.id,     staffId: staffElena.id, clientId: clientSophia.id,
+      startsAt:  apptDate(0, 9, 0),  durationMin: 150, priceCents: 12000, status: 'COMPLETED' as const,
+    },
+    {
+      serviceId: svcPrecisionCut.id, staffId: staffKai.id,   clientId: clientAlex.id,
+      startsAt:  apptDate(0, 10, 0), durationMin: 60,  priceCents: 5500,  status: 'CONFIRMED' as const,
+    },
+    {
+      serviceId: svcDeepCondition.id, staffId: staffSara.id, clientId: clientMia.id,
+      startsAt:  apptDate(0, 14, 0), durationMin: 45,  priceCents: 5500,  status: 'CONFIRMED' as const,
+    },
+
+    // Tuesday (offset 1)
+    {
+      serviceId: svcFullColour.id,   staffId: staffElena.id, clientId: clientOmar.id,
+      startsAt:  apptDate(1, 11, 0), durationMin: 90,  priceCents: 8500,  status: 'CONFIRMED' as const,
+    },
+    {
+      serviceId: svcKeratin.id,      staffId: staffSara.id,  clientId: clientLucy.id,
+      startsAt:  apptDate(1, 9, 30), durationMin: 180, priceCents: 22000, status: 'PENDING_PAYMENT' as const,
+    },
+
+    // Wednesday (offset 2)
+    {
+      serviceId: svcBlowDry.id,      staffId: staffKai.id,   clientId: clientEthan.id,
+      startsAt:  apptDate(2, 9, 0),  durationMin: 45,  priceCents: 4000,  status: 'COMPLETED' as const,
+    },
+    {
+      serviceId: svcRootTouchup.id,  staffId: staffElena.id, clientId: clientNadia.id,
+      startsAt:  apptDate(2, 13, 0), durationMin: 60,  priceCents: 6000,  status: 'CONFIRMED' as const,
+    },
+
+    // Thursday (offset 3)
+    {
+      serviceId: svcScalpTherapy.id, staffId: staffSara.id,  clientId: clientTom.id,
+      startsAt:  apptDate(3, 10, 30), durationMin: 60, priceCents: 7500,  status: 'CONFIRMED' as const,
+    },
+    {
+      serviceId: svcPrecisionCut.id, staffId: staffKai.id,   clientId: clientSophia.id,
+      startsAt:  apptDate(3, 15, 0), durationMin: 60,  priceCents: 5500,  status: 'PENDING_PAYMENT' as const,
+    },
+
+    // Friday (offset 4)
+    {
+      serviceId: svcBalayage.id,     staffId: staffElena.id, clientId: clientMia.id,
+      startsAt:  apptDate(4, 9, 0),  durationMin: 150, priceCents: 12000, status: 'CONFIRMED' as const,
+    },
+
+    // Saturday (offset 5)
+    {
+      serviceId: svcBlowDry.id,      staffId: staffKai.id,   clientId: clientAlex.id,
+      startsAt:  apptDate(5, 11, 0), durationMin: 45,  priceCents: 4000,  status: 'CONFIRMED' as const,
+    },
+    {
+      serviceId: svcDeepCondition.id, staffId: staffSara.id, clientId: clientLucy.id,
+      startsAt:  apptDate(5, 13, 30), durationMin: 45, priceCents: 5500,  status: 'CONFIRMED' as const,
+    },
+  ];
+
+  for (const appt of demoAppointments) {
+    const endsAt = new Date(appt.startsAt.getTime() + appt.durationMin * 60 * 1000);
+    await prisma.appointment.create({
+      data: {
+        serviceId:  appt.serviceId,
+        staffId:    appt.staffId,
+        clientId:   appt.clientId,
+        startsAt:   appt.startsAt,
+        endsAt,
+        status:     appt.status,
+        priceCents: appt.priceCents,
+        currency:   'usd',
+        source:     'demo',
+      },
+    });
+  }
+
   console.log('Seed complete.');
   console.log(`  Admin: ${adminEmail}`);
   console.log(`  Categories: Hair Colour, Cuts & Styling, Treatments`);
   console.log(`  Services: 8`);
   console.log(`  Staff: Elena Martinez, Kai Thompson, Sara Linden`);
+  console.log(`  Demo clients: 8`);
+  console.log(`  Demo appointments: ${demoAppointments.length} (this week)`);
 }
 
 main()
