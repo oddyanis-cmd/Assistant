@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<!--
+  ─────────────────────────────────────────────────────────────────
+  BELZA SALON — Screen (f): Admin Appointments Calendar (Week View)
+  Author: Dana (Designer)
+  ─────────────────────────────────────────────────────────────────
+  Implementation notes:
+  - Calendar grid: CSS Grid with time slots on Y-axis, days on X-axis.
+  - Each column = 1 day. Each row = 30min. Total rows = 22 (08:00-19:00).
+  - Event chips are absolutely positioned within their day column.
+  - Use react-big-calendar or FullCalendar as the base component,
+    then apply our custom styles via the className prop / CSS overrides.
+  - Alternatively build custom using CSS Grid:
+      grid-template-rows: repeat(22, 48px)  (48px per 30min slot)
+  - Event height = (duration_minutes / 30) * 48px
+  - Event top = ((start_minutes_from_08:00) / 30) * 48px
+  ─────────────────────────────────────────────────────────────────
+-->
+<html lang="en" class="antialiased">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendar — Belza Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:    { DEFAULT:'#d4614f', 50:'#fdf5f3', 100:'#fbe9e4', 200:'#f6d1c9', 300:'#efafa3', 400:'#e48070', 500:'#d4614f', 600:'#c04535', 700:'#a0372a' },
+            accent:     { DEFAULT:'#d98818', 100:'#faedd0', 300:'#ecbd5e', 500:'#d98818', 600:'#c16a12' },
+            background: '#faf8f6',
+            surface:    '#ffffff',
+            'surface-alt':'#f3ede9',
+            muted:      { DEFAULT:'#9c8e88', subtle:'#c4b9b4', strong:'#6b5e59' },
+            success:    { DEFAULT:'#16a34a', 50:'#f0fdf4', 100:'#dcfce7', 500:'#22c55e', 600:'#16a34a' },
+            warning:    { DEFAULT:'#d97706', 50:'#fffbeb', 100:'#fef3c7', 400:'#fbbf24', 600:'#d97706' },
+            danger:     { DEFAULT:'#dc2626', 50:'#fef2f2', 100:'#fee2e2', 600:'#dc2626' },
+            text:       { primary:'#2c2220', secondary:'#6b5e59', tertiary:'#9c8e88', inverse:'#faf8f6' },
+            border:     { DEFAULT:'#e8ddd9', strong:'#cfc4bf', subtle:'#f0ebe8' },
+          },
+          fontFamily: { sans:['Inter','sans-serif'], display:['"Playfair Display"','serif'] },
+          borderRadius: { card:'16px', pill:'999px' },
+          boxShadow: {
+            card:'0 2px 8px 0 rgba(44,34,32,0.08)',
+            topbar:'0 1px 0 0 rgba(44,34,32,0.08)',
+            sidebar:'4px 0 16px 0 rgba(44,34,32,0.06)',
+            event:'0 1px 3px 0 rgba(44,34,32,0.10)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #faf8f6; color: #2c2220; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+    .font-display { font-family: 'Playfair Display', serif; }
+    :focus-visible { outline: 2px solid #d4614f; outline-offset: 2px; border-radius: 4px; }
+    :focus:not(:focus-visible) { outline: none; }
+
+    /* ── Calendar grid ───────────────────────────────── */
+    /*
+     * The calendar is a CSS grid:
+     * - 1 column for time labels (48px wide)
+     * - 6 columns for days (Mon-Sat), equal width
+     * - Rows: 1 header + 22 half-hour slots (08:00–19:00)
+     * - Each slot = 48px tall
+     *
+     * Events are positioned absolutely within each day column
+     * using top/height calculated from start time and duration.
+     */
+    .cal-grid {
+      display: grid;
+      grid-template-columns: 52px repeat(6, 1fr);
+      grid-auto-rows: 48px;
+      position: relative;
+    }
+    .cal-header-row {
+      display: contents;
+    }
+    .cal-time-col {
+      grid-column: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding-right: 8px;
+      padding-top: 2px;
+      font-size: 11px;
+      color: #9c8e88;
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+    }
+    .cal-slot {
+      border-top: 1px solid #f0ebe8;
+      position: relative;
+    }
+    .cal-slot:nth-child(even) {
+      border-top: 1px dashed #f0ebe8;
+    }
+    /* Day columns */
+    .cal-day-col {
+      position: relative;
+      border-left: 1px solid #f0ebe8;
+    }
+    /* Event chip — absolutely positioned */
+    .cal-event {
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      border-radius: 8px;
+      padding: 6px 8px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 1px 3px 0 rgba(44,34,32,0.10);
+      transition: box-shadow 0.15s, transform 0.15s;
+      border-left-width: 3px;
+      border-left-style: solid;
+    }
+    .cal-event:hover {
+      box-shadow: 0 4px 12px -2px rgba(44,34,32,0.18);
+      transform: translateX(1px);
+      z-index: 10;
+    }
+    .cal-event:focus-visible {
+      outline: 2px solid #d4614f;
+      outline-offset: 2px;
+    }
+    /* Current time indicator */
+    .now-line {
+      position: absolute;
+      left: 0; right: 0;
+      height: 2px;
+      background: #d4614f;
+      z-index: 20;
+    }
+    .now-line::before {
+      content: '';
+      position: absolute;
+      left: -4px;
+      top: -4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #d4614f;
+    }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+  <!-- SIDEBAR (abbreviated — same as dashboard) -->
+  <aside class="hidden lg:flex flex-col w-64 bg-surface border-r border-border shadow-sidebar shrink-0 overflow-y-auto" aria-label="Admin navigation">
+    <div class="h-16 flex items-center gap-3 px-5 border-b border-border shrink-0">
+      <span class="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center text-white font-display font-bold text-base shrink-0" aria-hidden="true">B</span>
+      <div>
+        <p class="text-sm font-semibold text-text-primary font-display">Belza</p>
+        <p class="text-xs text-muted">Admin Panel</p>
+      </div>
+    </div>
+    <nav class="flex-1 p-3 space-y-1" aria-label="Primary navigation">
+      <a href="/admin/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </a>
+      <a href="/admin/appointments" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary-50 text-primary-700 font-semibold text-sm transition-colors" aria-current="page">
+        <svg class="w-5 h-5 shrink-0 text-primary-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Appointments
+      </a>
+      <a href="/admin/clients" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        Clients
+      </a>
+      <a href="/admin/services" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt transition-colors">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Services
+      </a>
+    </nav>
+    <div class="p-3 border-t border-border shrink-0">
+      <button type="button" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-alt transition-colors" aria-label="Account menu for Elena Martinez">
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Elena&backgroundColor=d4614f&textColor=fff&radius=50" alt="" width="32" height="32" class="w-8 h-8 rounded-full shrink-0" aria-hidden="true" />
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-text-primary truncate">Elena Martinez</p>
+          <p class="text-xs text-muted">Senior Stylist</p>
+        </div>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- TOP BAR -->
+    <header class="h-16 bg-surface border-b border-border flex items-center justify-between px-4 sm:px-6 shadow-topbar shrink-0 z-10" role="banner">
+      <div class="flex items-center gap-3">
+        <button type="button" class="lg:hidden p-2 -ml-2 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors" aria-label="Open navigation menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div>
+          <h1 class="text-base font-semibold text-text-primary">Appointments</h1>
+          <p class="text-xs text-muted hidden sm:block">Week of 15–21 June 2026</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <!-- View switcher -->
+        <div class="hidden sm:flex items-center bg-surface-alt rounded-lg p-0.5 border border-border" role="group" aria-label="Calendar view">
+          <button type="button" aria-pressed="false" class="px-3 py-1.5 rounded-md text-xs font-medium text-muted hover:text-text-primary transition-colors">Day</button>
+          <button type="button" aria-pressed="true"  class="px-3 py-1.5 rounded-md text-xs font-semibold bg-surface text-text-primary shadow-xs">Week</button>
+          <button type="button" aria-pressed="false" class="px-3 py-1.5 rounded-md text-xs font-medium text-muted hover:text-text-primary transition-colors">Month</button>
+        </div>
+        <!-- Nav arrows -->
+        <button type="button" aria-label="Previous week" class="p-2 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        <button type="button" class="px-3 py-1.5 text-xs font-medium text-text-secondary border border-border rounded-lg hover:bg-surface-alt transition-colors">
+          Today
+        </button>
+        <button type="button" aria-label="Next week" class="p-2 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        <button type="button" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-pill hover:bg-primary-600 transition-colors ml-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          New
+        </button>
+      </div>
+    </header>
+
+    <!-- Stylist filter row -->
+    <div class="bg-surface border-b border-border px-4 sm:px-6 py-2.5 flex items-center gap-3 shrink-0 overflow-x-auto" role="group" aria-label="Filter by stylist">
+      <span class="text-xs font-semibold text-muted whitespace-nowrap">Stylist:</span>
+      <button type="button" aria-pressed="true" class="flex items-center gap-1.5 px-3 py-1.5 rounded-pill text-xs font-semibold bg-primary-500 text-white whitespace-nowrap">
+        All
+      </button>
+      <button type="button" aria-pressed="false" class="flex items-center gap-1.5 px-3 py-1.5 rounded-pill text-xs font-medium bg-surface border border-border text-text-secondary hover:bg-surface-alt transition-colors whitespace-nowrap">
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Elena&backgroundColor=d4614f&textColor=fff&radius=50" alt="" width="16" height="16" class="w-4 h-4 rounded-full" aria-hidden="true" />
+        Elena M.
+      </button>
+      <button type="button" aria-pressed="false" class="flex items-center gap-1.5 px-3 py-1.5 rounded-pill text-xs font-medium bg-surface border border-border text-text-secondary hover:bg-surface-alt transition-colors whitespace-nowrap">
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Kai&backgroundColor=faedd0&textColor=c16a12&radius=50" alt="" width="16" height="16" class="w-4 h-4 rounded-full" aria-hidden="true" />
+        Kai T.
+      </button>
+      <button type="button" aria-pressed="false" class="flex items-center gap-1.5 px-3 py-1.5 rounded-pill text-xs font-medium bg-surface border border-border text-text-secondary hover:bg-surface-alt transition-colors whitespace-nowrap">
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Sara&backgroundColor=f3ede9&textColor=6b5e59&radius=50" alt="" width="16" height="16" class="w-4 h-4 rounded-full" aria-hidden="true" />
+        Sara L.
+      </button>
+    </div>
+
+    <!-- CALENDAR AREA -->
+    <main class="flex-1 overflow-auto" aria-label="Weekly calendar view">
+      <div class="min-w-[640px]">
+
+        <!-- Day headers row -->
+        <div class="sticky top-0 z-30 bg-surface border-b border-border flex" aria-label="Week days">
+          <!-- Time col spacer -->
+          <div class="w-[52px] shrink-0 border-r border-border"></div>
+          <!-- Day headers: Mon Jun 15 to Sat Jun 21 -->
+          <div class="flex-1 grid grid-cols-6">
+            <div class="py-3 px-2 text-center border-r border-border last:border-r-0">
+              <p class="text-xs text-muted font-medium">Mon</p>
+              <p class="text-lg font-semibold text-text-primary mt-0.5 leading-none">15</p>
+            </div>
+            <div class="py-3 px-2 text-center border-r border-border last:border-r-0">
+              <p class="text-xs text-muted font-medium">Tue</p>
+              <p class="text-lg font-semibold text-text-primary mt-0.5 leading-none">16</p>
+            </div>
+            <!-- TODAY: Wednesday 17 -->
+            <div class="py-3 px-2 text-center border-r border-border last:border-r-0 bg-primary-50">
+              <p class="text-xs text-primary-600 font-semibold">Wed</p>
+              <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary-500 text-white text-lg font-semibold mt-0.5 leading-none">17</span>
+            </div>
+            <div class="py-3 px-2 text-center border-r border-border last:border-r-0">
+              <p class="text-xs text-muted font-medium">Thu</p>
+              <p class="text-lg font-semibold text-text-primary mt-0.5 leading-none">18</p>
+            </div>
+            <div class="py-3 px-2 text-center border-r border-border last:border-r-0">
+              <p class="text-xs text-muted font-medium">Fri</p>
+              <p class="text-lg font-semibold text-text-primary mt-0.5 leading-none">19</p>
+            </div>
+            <div class="py-3 px-2 text-center border-r border-border last:border-r-0">
+              <p class="text-xs text-muted font-medium">Sat</p>
+              <p class="text-lg font-semibold text-text-primary mt-0.5 leading-none">20</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Time grid -->
+        <div class="flex">
+          <!-- Time labels column -->
+          <div class="w-[52px] shrink-0 border-r border-border">
+            <!-- 08:00 → 19:00 in 30min slots = 22 rows × 48px each -->
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">8 AM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-transparent" aria-hidden="true">·</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">9 AM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">10 AM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">11 AM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">12 PM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">1 PM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">2 PM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">3 PM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">4 PM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">5 PM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"><span class="text-xs text-muted">6 PM</span></div>
+            <div class="h-12 flex items-start justify-end pr-2 pt-1"></div>
+          </div>
+
+          <!-- Day columns: each has absolute-positioned events -->
+          <div class="flex-1 grid grid-cols-6">
+
+            <!-- Monday 15 -->
+            <div class="relative border-r border-border last:border-r-0 h-[1056px]">
+              <!-- 22 rows × 48px = 1056px total height -->
+              <!-- Background slot lines -->
+              <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+                <div class="border-t border-border-subtle h-12"></div>
+                <div class="border-t border-dashed border-border-subtle h-12"></div>
+              </div>
+
+              <!--
+                EVENTS: top = (startMinutesFrom08:00 / 30) * 48px
+                        height = (durationMinutes / 30) * 48px
+
+                Example: 09:00 start = (60/30)*48 = 96px from top
+                         90min duration = (90/30)*48 = 144px height
+              -->
+              <!-- Maria G: 09:30–10:30 haircut — 90min=144px, top=3*48=144px -->
+              <button class="cal-event bg-success-100 border-l-success-500"
+                      style="top:144px; height:96px; border-left-color:#22c55e;"
+                      aria-label="Monday 15 June, 9:30–10:30 — Maria Gonzalez — Precision Haircut"
+                      type="button">
+                <p class="text-xs font-semibold text-success-700 truncate">9:30 AM</p>
+                <p class="text-xs font-medium text-success-900 truncate mt-0.5">Maria G.</p>
+                <p class="text-xs text-success-600 truncate">Haircut · 1h</p>
+              </button>
+
+              <!-- Lunch break: 13:00–14:00 -->
+              <div class="cal-event bg-surface-alt cursor-default shadow-none"
+                   style="top:480px; height:96px; border-left-color:#cfc4bf;"
+                   aria-label="Monday 15 June — Lunch break 1:00–2:00 PM" role="img">
+                <p class="text-xs text-muted font-medium">Lunch Break</p>
+              </div>
+            </div>
+
+            <!-- Tuesday 16 -->
+            <div class="relative border-r border-border h-[1056px]">
+              <!-- Background slots (same pattern, omitted for brevity) -->
+
+              <!-- Elena: 10:00–12:30 Balayage — 150min=240px, top=4*48=192px -->
+              <button class="cal-event bg-primary-100"
+                      style="top:192px; height:240px; border-left-color:#d4614f;"
+                      aria-label="Tuesday 16 June, 10:00 AM–12:30 PM — Sofia Andersen — Balayage and Toner — Elena M."
+                      type="button">
+                <p class="text-xs font-semibold text-primary-700 truncate">10:00 AM</p>
+                <p class="text-xs font-medium text-primary-900 truncate mt-0.5">Sofia Andersen</p>
+                <p class="text-xs text-primary-600 truncate">Balayage · 2h 30m</p>
+                <p class="text-xs text-primary-500 truncate mt-1">Elena M.</p>
+              </button>
+
+              <!-- Kai: 14:00–15:00 haircut — 60min=96px, top=12*48=576px -->
+              <button class="cal-event bg-accent-100"
+                      style="top:576px; height:96px; border-left-color:#d98818;"
+                      aria-label="Tuesday 16 June, 2:00–3:00 PM — James Park — Root Touch-Up — Kai T."
+                      type="button">
+                <p class="text-xs font-semibold text-accent-700 truncate">2:00 PM</p>
+                <p class="text-xs font-medium text-text-primary truncate mt-0.5">James Park</p>
+                <p class="text-xs text-accent-600 truncate">Root Touch · 1h</p>
+              </button>
+            </div>
+
+            <!-- Wednesday 17 — TODAY: highlighted column + current time line -->
+            <div class="relative border-r border-border h-[1056px] bg-primary-50/30">
+
+              <!-- Current time line: 10:25 AM → (145min from 08:00 / 30)*48 = 232px from top -->
+              <div class="now-line" style="top: 232px;" aria-label="Current time: 10:25 AM" role="img"></div>
+
+              <!-- Sofia: 10:00-12:30 in progress — shown on dashboard too -->
+              <button class="cal-event bg-primary-100 ring-2 ring-primary-400"
+                      style="top:192px; height:240px; border-left-color:#d4614f;"
+                      aria-label="Today, 10:00 AM–12:30 PM — Sofia Andersen — Balayage and Toner — in progress — Elena M."
+                      type="button">
+                <div class="flex items-center gap-1 mb-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse" aria-hidden="true"></span>
+                  <p class="text-xs font-semibold text-primary-700">10:00 AM</p>
+                </div>
+                <p class="text-xs font-medium text-primary-900 truncate">Sofia Andersen</p>
+                <p class="text-xs text-primary-600 truncate">Balayage · 2h 30m</p>
+                <p class="text-xs text-primary-500 truncate mt-1">Elena M.</p>
+              </button>
+
+              <!-- James Park: 13:30–16:30 Keratin — 180min=288px, top=11*48=528px -->
+              <button class="cal-event bg-warning-100"
+                      style="top:528px; height:288px; border-left-color:#fbbf24;"
+                      aria-label="Today, 1:30–4:30 PM — James Park — Keratin Treatment — Sara L."
+                      type="button">
+                <p class="text-xs font-semibold text-warning-700 truncate">1:30 PM</p>
+                <p class="text-xs font-medium text-text-primary truncate mt-0.5">James Park</p>
+                <p class="text-xs text-warning-600 truncate">Keratin · 3h</p>
+                <p class="text-xs text-text-secondary truncate mt-1">Sara L.</p>
+              </button>
+
+              <!-- Nina: 15:00–16:30 Facial — 90min=144px, top=14*48=672px -->
+              <button class="cal-event bg-success-100"
+                      style="top:672px; height:144px; border-left-color:#22c55e;"
+                      aria-label="Today, 3:00–4:30 PM — Nina Koch — Luxury Facial — Elena M."
+                      type="button">
+                <p class="text-xs font-semibold text-success-700 truncate">3:00 PM</p>
+                <p class="text-xs font-medium text-success-900 truncate mt-0.5">Nina Koch</p>
+                <p class="text-xs text-success-600 truncate">Facial · 1h 30m</p>
+              </button>
+            </div>
+
+            <!-- Thursday 18 -->
+            <div class="relative border-r border-border h-[1056px]">
+              <button class="cal-event bg-primary-100"
+                      style="top:96px; height:192px; border-left-color:#d4614f;"
+                      aria-label="Thursday 18 June, 9:00–11:00 AM — Laura Martin — Full Colour — Kai T."
+                      type="button">
+                <p class="text-xs font-semibold text-primary-700 truncate">9:00 AM</p>
+                <p class="text-xs font-medium text-primary-900 truncate mt-0.5">Laura Martin</p>
+                <p class="text-xs text-primary-600 truncate">Full Colour · 2h</p>
+              </button>
+              <button class="cal-event bg-accent-100"
+                      style="top:432px; height:96px; border-left-color:#d98818;"
+                      aria-label="Thursday 18 June, 1:00–2:00 PM — Tom B. — Haircut — Sara L."
+                      type="button">
+                <p class="text-xs font-semibold text-accent-700 truncate">1:00 PM</p>
+                <p class="text-xs font-medium text-text-primary truncate mt-0.5">Tom B.</p>
+                <p class="text-xs text-accent-600 truncate">Haircut · 1h</p>
+              </button>
+            </div>
+
+            <!-- Friday 19 -->
+            <div class="relative border-r border-border h-[1056px]">
+              <button class="cal-event bg-danger-50"
+                      style="top:144px; height:192px; border-left-color:#ef4444;"
+                      aria-label="Friday 19 June, 9:30–11:30 AM — (cancelled) Anya K. — Highlights"
+                      type="button">
+                <p class="text-xs font-semibold text-danger-600 truncate line-through">9:30 AM</p>
+                <p class="text-xs font-medium text-danger-700 truncate mt-0.5 line-through">Anya K.</p>
+                <p class="text-xs text-danger-500 truncate">Highlights — cancelled</p>
+              </button>
+              <button class="cal-event bg-success-100"
+                      style="top:432px; height:144px; border-left-color:#22c55e;"
+                      aria-label="Friday 19 June, 1:00–2:30 PM — Mia Peters — Blow-Dry — Elena M."
+                      type="button">
+                <p class="text-xs font-semibold text-success-700 truncate">1:00 PM</p>
+                <p class="text-xs font-medium text-success-900 truncate mt-0.5">Mia Peters</p>
+                <p class="text-xs text-success-600 truncate">Blow-Dry · 1h 30m</p>
+              </button>
+            </div>
+
+            <!-- Saturday 20 -->
+            <div class="relative h-[1056px]">
+              <button class="cal-event bg-primary-100"
+                      style="top:48px; height:192px; border-left-color:#d4614f;"
+                      aria-label="Saturday 20 June, 8:30–10:30 AM — Carmen L. — Balayage — Kai T."
+                      type="button">
+                <p class="text-xs font-semibold text-primary-700 truncate">8:30 AM</p>
+                <p class="text-xs font-medium text-primary-900 truncate mt-0.5">Carmen L.</p>
+                <p class="text-xs text-primary-600 truncate">Balayage · 2h</p>
+              </button>
+              <button class="cal-event bg-accent-100"
+                      style="top:336px; height:96px; border-left-color:#d98818;"
+                      aria-label="Saturday 20 June, 11:00–12:00 noon — David R. — Cut — Sara L."
+                      type="button">
+                <p class="text-xs font-semibold text-accent-700 truncate">11:00 AM</p>
+                <p class="text-xs font-medium text-text-primary truncate mt-0.5">David R.</p>
+                <p class="text-xs text-accent-600 truncate">Cut · 1h</p>
+              </button>
+              <button class="cal-event bg-primary-100"
+                      style="top:576px; height:144px; border-left-color:#d4614f;"
+                      aria-label="Saturday 20 June, 2:00–3:30 PM — Priya N. — Facial"
+                      type="button">
+                <p class="text-xs font-semibold text-primary-700 truncate">2:00 PM</p>
+                <p class="text-xs font-medium text-primary-900 truncate mt-0.5">Priya N.</p>
+                <p class="text-xs text-primary-600 truncate">Facial · 1h 30m</p>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+</body>
+</html>

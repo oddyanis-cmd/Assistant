@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<!--
+  ─────────────────────────────────────────────────────────────────
+  BELZA SALON — Screen (e): Admin Dashboard
+  KPI cards + today's appointments + sidebar
+  Mobile-first, WCAG AA, semantic HTML
+  Author: Dana (Designer)
+  ─────────────────────────────────────────────────────────────────
+  Implementation notes:
+  - Sidebar collapses to icon-only on md and below (toggled via JS/state).
+  - KPI values fetched from GET /api/admin/stats?range=today|week|month.
+  - Appointments list fetched from GET /api/admin/appointments?date=today.
+  - The chart placeholder area should use Recharts or Victory Charts.
+  - Mini calendar in sidebar for date picking uses same component as booking.
+  ─────────────────────────────────────────────────────────────────
+-->
+<html lang="en" class="antialiased">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Belza Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:    { DEFAULT:'#d4614f', 50:'#fdf5f3', 100:'#fbe9e4', 200:'#f6d1c9', 300:'#efafa3', 400:'#e48070', 500:'#d4614f', 600:'#c04535', 700:'#a0372a' },
+            accent:     { DEFAULT:'#d98818', 100:'#faedd0', 300:'#ecbd5e', 500:'#d98818', 600:'#c16a12' },
+            background: '#faf8f6',
+            surface:    '#ffffff',
+            'surface-alt':'#f3ede9',
+            muted:      { DEFAULT:'#9c8e88', subtle:'#c4b9b4', strong:'#6b5e59' },
+            success:    { DEFAULT:'#16a34a', 50:'#f0fdf4', 100:'#dcfce7', 500:'#22c55e', 600:'#16a34a', 700:'#15803d' },
+            warning:    { DEFAULT:'#d97706', 50:'#fffbeb', 100:'#fef3c7', 600:'#d97706' },
+            danger:     { DEFAULT:'#dc2626', 50:'#fef2f2', 100:'#fee2e2', 600:'#dc2626', 700:'#b91c1c' },
+            text:       { primary:'#2c2220', secondary:'#6b5e59', tertiary:'#9c8e88', inverse:'#faf8f6' },
+            border:     { DEFAULT:'#e8ddd9', strong:'#cfc4bf', subtle:'#f0ebe8' },
+          },
+          fontFamily: { sans:['Inter','sans-serif'], display:['"Playfair Display"','serif'] },
+          borderRadius: { card:'16px', pill:'999px', lg:'12px', xl:'16px' },
+          boxShadow: {
+            card:'0 2px 8px 0 rgba(44,34,32,0.08)',
+            'card-hover':'0 8px 24px -4px rgba(44,34,32,0.14)',
+            topbar:'0 1px 0 0 rgba(44,34,32,0.08)',
+            sidebar:'4px 0 16px 0 rgba(44,34,32,0.06)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #faf8f6; color: #2c2220; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+    .font-display { font-family: 'Playfair Display', serif; }
+    :focus-visible { outline: 2px solid #d4614f; outline-offset: 2px; border-radius: 4px; }
+    :focus:not(:focus-visible) { outline: none; }
+    /* Sidebar width */
+    .sidebar { width: 256px; transition: width 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+    /* Chart placeholder bar animation */
+    @keyframes bar-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    .chart-bar { transform-origin: bottom; animation: bar-grow 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════════════════════════ -->
+  <aside
+    class="sidebar hidden lg:flex flex-col bg-surface border-r border-border shadow-sidebar shrink-0 overflow-y-auto"
+    aria-label="Admin navigation sidebar"
+    role="navigation"
+  >
+    <!-- Logo mark -->
+    <div class="h-16 flex items-center gap-3 px-5 border-b border-border shrink-0">
+      <span class="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center text-white font-display font-bold text-base shrink-0" aria-hidden="true">B</span>
+      <div>
+        <p class="text-sm font-semibold text-text-primary font-display">Belza</p>
+        <p class="text-xs text-muted">Admin Panel</p>
+      </div>
+    </div>
+
+    <!-- Nav links -->
+    <nav class="flex-1 p-3 space-y-1" aria-label="Primary navigation">
+
+      <a href="/admin/dashboard"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary-50 text-primary-700 font-semibold text-sm transition-colors"
+         aria-current="page">
+        <svg class="w-5 h-5 shrink-0 text-primary-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </a>
+
+      <a href="/admin/appointments"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Appointments
+        <span class="ml-auto flex items-center justify-center w-5 h-5 rounded-full bg-primary-500 text-white text-xs font-bold" aria-label="6 new appointments">6</span>
+      </a>
+
+      <a href="/admin/clients"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        Clients
+      </a>
+
+      <a href="/admin/services"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Services
+      </a>
+
+      <a href="/admin/team"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Team
+      </a>
+
+      <!-- Divider -->
+      <div class="my-2 border-t border-border-subtle" aria-hidden="true"></div>
+
+      <a href="/admin/analytics"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        Analytics
+      </a>
+
+      <a href="/admin/settings"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Settings
+      </a>
+
+    </nav>
+
+    <!-- User profile at bottom -->
+    <div class="p-3 border-t border-border shrink-0">
+      <button type="button" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-alt transition-colors text-left focus-visible:ring-2 focus-visible:ring-primary-500" aria-label="Account menu for Elena Martinez">
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=Elena&backgroundColor=d4614f&textColor=fff&radius=50" alt="" width="32" height="32" class="w-8 h-8 rounded-full shrink-0" aria-hidden="true" />
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-text-primary truncate">Elena Martinez</p>
+          <p class="text-xs text-muted truncate">Senior Stylist</p>
+        </div>
+        <svg class="w-4 h-4 text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       MAIN CONTENT AREA
+  ══════════════════════════════════════════════════════════════════ -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- TOP BAR -->
+    <header class="h-16 bg-surface border-b border-border flex items-center justify-between px-4 sm:px-6 shadow-topbar shrink-0 z-10" role="banner">
+
+      <div class="flex items-center gap-3">
+        <!-- Mobile menu toggle -->
+        <button type="button" class="lg:hidden p-2 -ml-2 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors" aria-label="Open navigation menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div>
+          <h1 class="text-base font-semibold text-text-primary">Dashboard</h1>
+          <p class="text-xs text-muted hidden sm:block">Wednesday, 17 June 2026</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5">
+        <button type="button" class="p-2 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors" aria-label="Search">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </button>
+        <button type="button" class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors" aria-label="Notifications — 3 unread">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary-500" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-pill hover:bg-primary-600 transition-colors ml-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          New Appointment
+        </button>
+      </div>
+    </header>
+
+    <!-- SCROLLABLE CONTENT -->
+    <main class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+
+      <!-- ── WELCOME + DATE RANGE SELECTOR ───────────────────── -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <p class="text-xs text-muted uppercase tracking-widest mb-1">Good morning</p>
+          <h2 class="text-2xl font-semibold text-text-primary font-display">Elena ✦</h2>
+        </div>
+        <!-- Date range tabs -->
+        <div class="flex items-center gap-1 bg-surface-alt p-1 rounded-xl border border-border" role="tablist" aria-label="Stats time range">
+          <button role="tab" aria-selected="true"  class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-surface text-text-primary shadow-xs">Today</button>
+          <button role="tab" aria-selected="false" class="px-4 py-1.5 rounded-lg text-xs font-medium text-muted hover:text-text-primary transition-colors">Week</button>
+          <button role="tab" aria-selected="false" class="px-4 py-1.5 rounded-lg text-xs font-medium text-muted hover:text-text-primary transition-colors">Month</button>
+        </div>
+      </div>
+
+      <!-- ── KPI CARDS ────────────────────────────────────────── -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- KPI 1: Revenue -->
+        <article class="bg-surface rounded-card border border-border-subtle shadow-card p-5" aria-label="Today's revenue: €840">
+          <div class="flex items-start justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center text-primary-600" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span class="px-2 py-0.5 text-xs font-semibold text-success-600 bg-success-100 rounded-pill">+8%</span>
+          </div>
+          <p class="text-xs font-semibold text-muted uppercase tracking-wider mb-1">Revenue</p>
+          <p class="text-2xl font-semibold text-text-primary font-display">€840</p>
+        </article>
+
+        <!-- KPI 2: Appointments -->
+        <article class="bg-surface rounded-card border border-border-subtle shadow-card p-5" aria-label="Today's appointments: 14 total, 8 completed, 6 upcoming">
+          <div class="flex items-start justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-accent-100 flex items-center justify-center text-accent-600" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <span class="text-xs text-muted">Today</span>
+          </div>
+          <p class="text-xs font-semibold text-muted uppercase tracking-wider mb-1">Appointments</p>
+          <p class="text-2xl font-semibold text-text-primary font-display">14</p>
+          <p class="text-xs text-text-secondary mt-1">8 done · 6 upcoming</p>
+        </article>
+
+        <!-- KPI 3: New Clients -->
+        <article class="bg-surface rounded-card border border-border-subtle shadow-card p-5" aria-label="New clients today: 3">
+          <div class="flex items-start justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-success-100 flex items-center justify-center text-success-600" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+            </div>
+            <span class="px-2 py-0.5 text-xs font-semibold text-success-600 bg-success-100 rounded-pill">New</span>
+          </div>
+          <p class="text-xs font-semibold text-muted uppercase tracking-wider mb-1">New Clients</p>
+          <p class="text-2xl font-semibold text-text-primary font-display">3</p>
+        </article>
+
+        <!-- KPI 4: Avg Service Value -->
+        <article class="bg-surface rounded-card border border-border-subtle shadow-card p-5" aria-label="Average service value today: €60">
+          <div class="flex items-start justify-between mb-3">
+            <div class="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center text-primary-600" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            </div>
+            <span class="px-2 py-0.5 text-xs font-semibold text-warning-600 bg-warning-100 rounded-pill">-3%</span>
+          </div>
+          <p class="text-xs font-semibold text-muted uppercase tracking-wider mb-1">Avg. Value</p>
+          <p class="text-2xl font-semibold text-text-primary font-display">€60</p>
+        </article>
+
+      </div>
+
+      <!-- ── MAIN GRID: APPOINTMENTS + CHART ─────────────────── -->
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6">
+
+        <!-- Today's Appointments -->
+        <section aria-labelledby="todays-appts-title" class="bg-surface rounded-card border border-border-subtle shadow-card">
+
+          <!-- Section header -->
+          <div class="flex items-center justify-between px-6 py-4 border-b border-border-subtle">
+            <h2 id="todays-appts-title" class="text-base font-semibold text-text-primary">Today's Appointments</h2>
+            <div class="flex items-center gap-2">
+              <!-- Filter pills -->
+              <div class="hidden sm:flex items-center gap-1" role="group" aria-label="Filter by status">
+                <button type="button" aria-pressed="true" class="px-3 py-1 rounded-pill text-xs font-semibold bg-primary-500 text-white">All</button>
+                <button type="button" aria-pressed="false" class="px-3 py-1 rounded-pill text-xs font-medium bg-surface-alt text-text-secondary hover:bg-primary-50 hover:text-primary-600 transition-colors">Upcoming</button>
+                <button type="button" aria-pressed="false" class="px-3 py-1 rounded-pill text-xs font-medium bg-surface-alt text-text-secondary hover:bg-primary-50 hover:text-primary-600 transition-colors">Done</button>
+              </div>
+              <a href="/admin/appointments" class="text-xs text-primary-600 hover:underline font-medium">View all</a>
+            </div>
+          </div>
+
+          <!-- Appointment list -->
+          <ul class="divide-y divide-border-subtle" role="list" aria-label="Today's appointments">
+
+            <!-- Appointment: Completed -->
+            <li class="flex items-center gap-4 px-6 py-4 hover:bg-surface-alt/50 transition-colors">
+              <div class="shrink-0 text-center w-12">
+                <time datetime="2026-06-17T08:30" class="text-xs font-semibold text-muted block">08:30</time>
+                <span class="text-xs text-muted">AM</span>
+              </div>
+              <div class="w-1 h-10 rounded-full bg-success-500 shrink-0" aria-hidden="true"></div>
+              <img src="https://api.dicebear.com/7.x/initials/svg?seed=MG&backgroundColor=dcfce7&textColor=16a34a&radius=50" alt="" width="36" height="36" class="w-9 h-9 rounded-full shrink-0" aria-hidden="true" />
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-text-primary truncate">Maria Gonzalez</p>
+                <p class="text-xs text-text-secondary truncate">Precision Haircut · 60min · Kai T.</p>
+              </div>
+              <span class="shrink-0 px-2.5 py-0.5 rounded-pill text-xs font-semibold bg-success-100 text-success-700" role="status">Done</span>
+              <button type="button" aria-label="More options for Maria Gonzalez's appointment" class="shrink-0 p-1.5 rounded-lg text-muted hover:text-text-primary hover:bg-surface-alt transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>
+              </button>
+            </li>
+
+            <!-- Appointment: In progress -->
+            <li class="flex items-center gap-4 px-6 py-4 bg-primary-50/40 hover:bg-primary-50/60 transition-colors">
+              <div class="shrink-0 text-center w-12">
+                <time datetime="2026-06-17T10:00" class="text-xs font-semibold text-primary-700 block">10:00</time>
+                <span class="text-xs text-primary-600">AM</span>
+              </div>
+              <div class="w-1 h-10 rounded-full bg-primary-500 shrink-0" aria-hidden="true"></div>
+              <img src="https://api.dicebear.com/7.x/initials/svg?seed=SA&backgroundColor=fbe9e4&textColor=c04535&radius=50" alt="" width="36" height="36" class="w-9 h-9 rounded-full shrink-0" aria-hidden="true" />
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-text-primary truncate">Sofia Andersen</p>
+                <p class="text-xs text-text-secondary truncate">Balayage &amp; Toner · 2h 30min · Elena M.</p>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                <span class="flex items-center gap-1 text-xs text-primary-600 font-medium">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse" aria-hidden="true"></span>
+                  In Progress
+                </span>
+              </div>
+              <button type="button" aria-label="More options for Sofia Andersen's appointment" class="shrink-0 p-1.5 rounded-lg text-muted hover:text-text-primary hover:bg-surface-alt transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>
+              </button>
+            </li>
+
+            <!-- Appointment: Confirmed -->
+            <li class="flex items-center gap-4 px-6 py-4 hover:bg-surface-alt/50 transition-colors">
+              <div class="shrink-0 text-center w-12">
+                <time datetime="2026-06-17T13:30" class="text-xs font-semibold text-muted block">1:30</time>
+                <span class="text-xs text-muted">PM</span>
+              </div>
+              <div class="w-1 h-10 rounded-full bg-accent-500 shrink-0" aria-hidden="true"></div>
+              <img src="https://api.dicebear.com/7.x/initials/svg?seed=JP&backgroundColor=faedd0&textColor=c16a12&radius=50" alt="" width="36" height="36" class="w-9 h-9 rounded-full shrink-0" aria-hidden="true" />
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-text-primary truncate">James Park</p>
+                <p class="text-xs text-text-secondary truncate">Keratin Treatment · 3h · Sara L.</p>
+              </div>
+              <span class="shrink-0 px-2.5 py-0.5 rounded-pill text-xs font-semibold bg-primary-100 text-primary-700" role="status">Confirmed</span>
+              <button type="button" aria-label="More options for James Park's appointment" class="shrink-0 p-1.5 rounded-lg text-muted hover:text-text-primary hover:bg-surface-alt transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>
+              </button>
+            </li>
+
+            <!-- Appointment: No-show -->
+            <li class="flex items-center gap-4 px-6 py-4 hover:bg-surface-alt/50 transition-colors opacity-60">
+              <div class="shrink-0 text-center w-12">
+                <time datetime="2026-06-17T11:30" class="text-xs font-semibold text-muted block">11:30</time>
+                <span class="text-xs text-muted">AM</span>
+              </div>
+              <div class="w-1 h-10 rounded-full bg-danger-500 shrink-0" aria-hidden="true"></div>
+              <img src="https://api.dicebear.com/7.x/initials/svg?seed=LM&backgroundColor=fee2e2&textColor=dc2626&radius=50" alt="" width="36" height="36" class="w-9 h-9 rounded-full shrink-0" aria-hidden="true" />
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-text-primary truncate">Louise Martin</p>
+                <p class="text-xs text-text-secondary truncate">Full Colour · 1h 30min · Kai T.</p>
+              </div>
+              <span class="shrink-0 px-2.5 py-0.5 rounded-pill text-xs font-semibold bg-danger-100 text-danger-700" role="status">No-show</span>
+              <button type="button" aria-label="More options for Louise Martin's appointment" class="shrink-0 p-1.5 rounded-lg text-muted hover:text-text-primary hover:bg-surface-alt transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>
+              </button>
+            </li>
+
+            <!-- Appointment: Upcoming -->
+            <li class="flex items-center gap-4 px-6 py-4 hover:bg-surface-alt/50 transition-colors">
+              <div class="shrink-0 text-center w-12">
+                <time datetime="2026-06-17T15:00" class="text-xs font-semibold text-muted block">3:00</time>
+                <span class="text-xs text-muted">PM</span>
+              </div>
+              <div class="w-1 h-10 rounded-full bg-primary-300 shrink-0" aria-hidden="true"></div>
+              <img src="https://api.dicebear.com/7.x/initials/svg?seed=NK&backgroundColor=f3ede9&textColor=6b5e59&radius=50" alt="" width="36" height="36" class="w-9 h-9 rounded-full shrink-0" aria-hidden="true" />
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-text-primary truncate">Nina Koch</p>
+                <p class="text-xs text-text-secondary truncate">Luxury Facial · 90min · Elena M.</p>
+              </div>
+              <span class="shrink-0 px-2.5 py-0.5 rounded-pill text-xs font-semibold bg-surface-alt text-muted-strong" role="status">Upcoming</span>
+              <button type="button" aria-label="More options for Nina Koch's appointment" class="shrink-0 p-1.5 rounded-lg text-muted hover:text-text-primary hover:bg-surface-alt transition-colors">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/></svg>
+              </button>
+            </li>
+
+          </ul>
+
+          <!-- Footer: show more -->
+          <div class="px-6 py-4 border-t border-border-subtle text-center">
+            <button type="button" class="text-sm text-primary-600 hover:text-primary-700 font-medium hover:underline transition-colors">
+              Show 9 more appointments
+            </button>
+          </div>
+
+        </section>
+
+        <!-- Right sidebar widgets -->
+        <div class="space-y-5">
+
+          <!-- Revenue chart placeholder -->
+          <section aria-labelledby="revenue-chart-title" class="bg-surface rounded-card border border-border-subtle shadow-card p-5">
+            <div class="flex items-center justify-between mb-4">
+              <h2 id="revenue-chart-title" class="text-sm font-semibold text-text-primary">Revenue — This Week</h2>
+              <span class="text-xs text-muted">Mon–Sun</span>
+            </div>
+
+            <!--
+              PRODUCTION: Replace with Recharts <BarChart> or similar.
+              Data: GET /api/admin/stats/weekly-revenue
+            -->
+            <div class="flex items-end gap-2 h-32" aria-label="Weekly revenue bar chart (visual placeholder)" role="img">
+              <!-- Each bar: height proportional to revenue -->
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full rounded-t bg-primary-200 chart-bar" style="height:55%; animation-delay:0ms;" aria-hidden="true"></div>
+                <span class="text-xs text-muted">M</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full rounded-t bg-primary-300 chart-bar" style="height:75%; animation-delay:80ms;" aria-hidden="true"></div>
+                <span class="text-xs text-muted">T</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full rounded-t bg-primary-500 chart-bar" style="height:90%; animation-delay:160ms;" aria-hidden="true"></div>
+                <span class="text-xs text-primary-600 font-semibold">W</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full rounded-t bg-primary-200 chart-bar" style="height:60%; animation-delay:240ms;" aria-hidden="true"></div>
+                <span class="text-xs text-muted">T</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full rounded-t bg-primary-200 chart-bar" style="height:80%; animation-delay:320ms;" aria-hidden="true"></div>
+                <span class="text-xs text-muted">F</span>
+              </div>
+              <div class="flex-1 flex flex-col items-center gap-1">
+                <div class="w-full rounded-t bg-primary-300 chart-bar" style="height:70%; animation-delay:400ms;" aria-hidden="true"></div>
+                <span class="text-xs text-muted">S</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between mt-3 pt-3 border-t border-border-subtle">
+              <div>
+                <p class="text-xs text-muted">Week total</p>
+                <p class="text-base font-semibold text-text-primary font-display">€4,260</p>
+              </div>
+              <span class="flex items-center gap-1 text-xs font-semibold text-success-600">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                +14.2%
+              </span>
+            </div>
+          </section>
+
+          <!-- Team availability -->
+          <section aria-labelledby="team-title" class="bg-surface rounded-card border border-border-subtle shadow-card p-5">
+            <h2 id="team-title" class="text-sm font-semibold text-text-primary mb-4">Team Today</h2>
+            <ul class="space-y-3" role="list">
+              <li class="flex items-center gap-3">
+                <img src="https://api.dicebear.com/7.x/initials/svg?seed=Elena&backgroundColor=d4614f&textColor=fff&radius=50" alt="" width="32" height="32" class="w-8 h-8 rounded-full shrink-0" aria-hidden="true" />
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-semibold text-text-primary">Elena M.</p>
+                  <p class="text-xs text-text-secondary">3 appts · Next: 3:00 PM</p>
+                </div>
+                <span class="flex items-center gap-1 text-xs font-medium text-success-600">
+                  <span class="w-1.5 h-1.5 rounded-full bg-success-500" aria-hidden="true"></span>
+                  Available
+                </span>
+              </li>
+              <li class="flex items-center gap-3">
+                <img src="https://api.dicebear.com/7.x/initials/svg?seed=Kai&backgroundColor=faedd0&textColor=c16a12&radius=50" alt="" width="32" height="32" class="w-8 h-8 rounded-full shrink-0" aria-hidden="true" />
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-semibold text-text-primary">Kai T.</p>
+                  <p class="text-xs text-text-secondary">5 appts · With client</p>
+                </div>
+                <span class="flex items-center gap-1 text-xs font-medium text-warning-600">
+                  <span class="w-1.5 h-1.5 rounded-full bg-warning-500 animate-pulse" aria-hidden="true"></span>
+                  Busy
+                </span>
+              </li>
+              <li class="flex items-center gap-3">
+                <img src="https://api.dicebear.com/7.x/initials/svg?seed=Sara&backgroundColor=f3ede9&textColor=6b5e59&radius=50" alt="" width="32" height="32" class="w-8 h-8 rounded-full shrink-0" aria-hidden="true" />
+                <div class="flex-1 min-w-0">
+                  <p class="text-xs font-semibold text-text-primary">Sara L.</p>
+                  <p class="text-xs text-text-secondary">4 appts · Next: 1:30 PM</p>
+                </div>
+                <span class="flex items-center gap-1 text-xs font-medium text-success-600">
+                  <span class="w-1.5 h-1.5 rounded-full bg-success-500" aria-hidden="true"></span>
+                  Available
+                </span>
+              </li>
+            </ul>
+          </section>
+
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+</body>
+</html>

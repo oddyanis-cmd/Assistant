@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<!--
+  ─────────────────────────────────────────────────────────────────
+  BELZA SALON — Screens (c) + (d): Booking Stepper
+  Showing Step 2: Date & Time Picker
+  Plus Screen (d): Booking Confirmation
+  Mobile-first, WCAG AA, keyboard navigable calendar
+  Author: Dana (Designer)
+  ─────────────────────────────────────────────────────────────────
+  Implementation notes:
+  - Use a React state machine or Zustand store for step management.
+  - The calendar is a custom component — wrap with react-aria's
+    useCalendar for full accessibility, or use @internationalized/date.
+  - Time slot buttons use role="radio" within a radiogroup.
+  - Selected time/date is persisted to booking context/store.
+  - Step 3 collects name, email, phone, notes.
+  - Step 4 shows summary and confirm button → POST /api/bookings.
+  ─────────────────────────────────────────────────────────────────
+-->
+<html lang="en" class="antialiased">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book an Appointment — Belza Salon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:    { DEFAULT:'#d4614f', 50:'#fdf5f3', 100:'#fbe9e4', 200:'#f6d1c9', 300:'#efafa3', 400:'#e48070', 500:'#d4614f', 600:'#c04535', 700:'#a0372a' },
+            accent:     { DEFAULT:'#d98818', 500:'#d98818' },
+            background: '#faf8f6',
+            surface:    '#ffffff',
+            'surface-alt':'#f3ede9',
+            muted:      { DEFAULT:'#9c8e88', subtle:'#c4b9b4', strong:'#6b5e59' },
+            success:    { DEFAULT:'#16a34a', 50:'#f0fdf4', 100:'#dcfce7', 500:'#22c55e', 600:'#16a34a' },
+            text:       { primary:'#2c2220', secondary:'#6b5e59', inverse:'#faf8f6' },
+            border:     { DEFAULT:'#e8ddd9', subtle:'#f0ebe8', strong:'#cfc4bf' },
+          },
+          fontFamily: { sans:['Inter','sans-serif'], display:['"Playfair Display"','serif'] },
+          borderRadius: { card:'16px', pill:'999px', xl:'16px' },
+          boxShadow: { card:'0 2px 8px 0 rgba(44,34,32,0.08)', 'card-hover':'0 8px 24px -4px rgba(44,34,32,0.14)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #faf8f6; color: #2c2220; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+    .font-display { font-family: 'Playfair Display', serif; }
+    :focus-visible { outline: 2px solid #d4614f; outline-offset: 2px; border-radius: 4px; }
+    :focus:not(:focus-visible) { outline: none; }
+    /* Calendar day grid */
+    .cal-day { min-height: 40px; min-width: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.875rem; cursor: pointer; transition: background-color 0.15s, color 0.15s; }
+    .cal-day:hover:not(.cal-selected):not(.cal-disabled) { background-color: #fbe9e4; color: #d4614f; }
+    .cal-selected { background-color: #d4614f !important; color: white !important; font-weight: 600; }
+    .cal-today { border: 1.5px solid #d4614f; color: #d4614f; font-weight: 600; }
+    .cal-disabled { color: #c4b9b4; cursor: not-allowed; }
+    .cal-other-month { color: #c4b9b4; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary-500 focus:text-white focus:rounded-lg">
+    Skip to main content
+  </a>
+
+  <!-- ── NAV ────────────────────────────────────────────────────── -->
+  <header role="banner">
+    <nav class="fixed top-0 left-0 right-0 z-50 h-16 bg-surface border-b border-border flex items-center px-4 sm:px-6" aria-label="Main navigation">
+      <div class="w-full max-w-5xl mx-auto flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 font-display text-xl font-bold text-text-primary" aria-label="Belza Salon — home">
+          <span class="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center text-white font-bold text-base" aria-hidden="true">B</span>
+          Belza
+        </a>
+        <!-- Close / go back -->
+        <a href="/services" class="flex items-center gap-1.5 text-sm text-text-secondary hover:text-text-primary transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          Cancel booking
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SCREEN (c): BOOKING STEP 2 — DATE & TIME PICKER
+  ════════════════════════════════════════════════════════════ -->
+  <main id="main-content" class="pt-16 pb-20 min-h-screen">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+
+      <!-- ── STEPPER ──────────────────────────────────────────── -->
+      <nav aria-label="Booking progress" class="mb-8">
+        <ol class="flex items-center max-w-lg mx-auto" role="list">
+
+          <!-- Step 1 complete -->
+          <li class="flex items-center flex-1">
+            <div class="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2">
+              <span class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-xs font-semibold shrink-0" aria-label="Step 1 Service (completed)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              </span>
+              <span class="text-xs font-medium text-primary-600 hidden sm:block whitespace-nowrap">Service</span>
+            </div>
+            <div class="flex-1 h-px bg-primary-300 mx-2 sm:mx-3" aria-hidden="true"></div>
+          </li>
+
+          <!-- Step 2 active -->
+          <li class="flex items-center flex-1" aria-current="step">
+            <div class="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2">
+              <span class="w-8 h-8 rounded-full bg-primary-500 text-white ring-4 ring-primary-100 flex items-center justify-center text-xs font-semibold shrink-0" aria-label="Step 2 Date and Time (current)">
+                2
+              </span>
+              <span class="text-xs font-semibold text-primary-600 hidden sm:block whitespace-nowrap">Date &amp; Time</span>
+            </div>
+            <div class="flex-1 h-px bg-border mx-2 sm:mx-3" aria-hidden="true"></div>
+          </li>
+
+          <!-- Step 3 upcoming -->
+          <li class="flex items-center flex-1">
+            <div class="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2">
+              <span class="w-8 h-8 rounded-full bg-surface border-2 border-border text-muted flex items-center justify-center text-xs font-semibold shrink-0" aria-label="Step 3 Your Details (upcoming)">3</span>
+              <span class="text-xs font-medium text-muted hidden sm:block whitespace-nowrap">Details</span>
+            </div>
+            <div class="flex-1 h-px bg-border mx-2 sm:mx-3" aria-hidden="true"></div>
+          </li>
+
+          <!-- Step 4 upcoming -->
+          <li class="flex items-center">
+            <div class="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2">
+              <span class="w-8 h-8 rounded-full bg-surface border-2 border-border text-muted flex items-center justify-center text-xs font-semibold shrink-0" aria-label="Step 4 Confirm (upcoming)">4</span>
+              <span class="text-xs font-medium text-muted hidden sm:block whitespace-nowrap">Confirm</span>
+            </div>
+          </li>
+
+        </ol>
+      </nav>
+
+      <!-- ── STEP HEADING ─────────────────────────────────────── -->
+      <div class="text-center mb-8">
+        <h1 class="font-display text-2xl sm:text-3xl font-bold text-text-primary" style="letter-spacing:-0.01em;">
+          Choose your date &amp; time
+        </h1>
+        <p class="text-text-secondary text-sm mt-2">Select a date, then a time that works for you.</p>
+      </div>
+
+      <!-- ── BOOKING LAYOUT: CALENDAR + TIMES + SUMMARY ────────── -->
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6">
+
+        <!-- Left: Calendar + Time slots -->
+        <div class="space-y-6">
+
+          <!-- Stylist selector (step 2 also shows who's available) -->
+          <div class="bg-surface rounded-card border border-border-subtle p-5">
+            <h2 class="text-sm font-semibold text-text-primary mb-4">Select Stylist</h2>
+            <div class="flex gap-3 flex-wrap" role="radiogroup" aria-label="Select your preferred stylist">
+
+              <!-- Any stylist -->
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="radio" name="stylist" value="any" class="sr-only" checked />
+                <span class="flex items-center gap-2.5 px-4 py-2 rounded-xl border-2 border-primary-400 bg-primary-50 text-sm font-medium text-primary-700 cursor-pointer transition-colors">
+                  <span class="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center text-primary-500" aria-hidden="true">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  </span>
+                  Any stylist
+                </span>
+              </label>
+
+              <!-- Elena -->
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="radio" name="stylist" value="elena" class="sr-only" />
+                <span class="flex items-center gap-2.5 px-4 py-2 rounded-xl border-2 border-border bg-surface text-sm font-medium text-text-secondary cursor-pointer hover:border-primary-300 hover:bg-primary-50 transition-colors">
+                  <img src="https://api.dicebear.com/7.x/initials/svg?seed=Elena&backgroundColor=d4614f&textColor=fff&radius=50" alt="" width="28" height="28" class="w-7 h-7 rounded-full" aria-hidden="true" />
+                  Elena M.
+                </span>
+              </label>
+
+              <!-- Kai -->
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="radio" name="stylist" value="kai" class="sr-only" />
+                <span class="flex items-center gap-2.5 px-4 py-2 rounded-xl border-2 border-border bg-surface text-sm font-medium text-text-secondary cursor-pointer hover:border-primary-300 hover:bg-primary-50 transition-colors">
+                  <img src="https://api.dicebear.com/7.x/initials/svg?seed=Kai&backgroundColor=faedd0&textColor=c16a12&radius=50" alt="" width="28" height="28" class="w-7 h-7 rounded-full" aria-hidden="true" />
+                  Kai T.
+                </span>
+              </label>
+
+              <!-- Sara -->
+              <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="radio" name="stylist" value="sara" class="sr-only" />
+                <span class="flex items-center gap-2.5 px-4 py-2 rounded-xl border-2 border-border bg-surface text-sm font-medium text-text-secondary cursor-pointer hover:border-primary-300 hover:bg-primary-50 transition-colors">
+                  <img src="https://api.dicebear.com/7.x/initials/svg?seed=Sara&backgroundColor=f3ede9&textColor=6b5e59&radius=50" alt="" width="28" height="28" class="w-7 h-7 rounded-full" aria-hidden="true" />
+                  Sara L.
+                </span>
+              </label>
+
+            </div>
+          </div>
+
+          <!-- Calendar -->
+          <div class="bg-surface rounded-card border border-border-subtle p-5">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-sm font-semibold text-text-primary" id="calendar-label">
+                <span aria-live="polite">June 2026</span>
+              </h2>
+              <div class="flex items-center gap-1">
+                <button type="button"
+                        aria-label="Go to previous month"
+                        class="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <button type="button"
+                        aria-label="Go to next month"
+                        class="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Calendar grid -->
+            <!--
+              ACCESSIBILITY:
+              In React, use role="grid" / role="gridcell" with aria-label on each cell.
+              The entire calendar should be keyboard-navigable with arrow keys, Enter/Space to select.
+              See: https://www.w3.org/WAI/ARIA/apg/patterns/calendar/
+            -->
+            <div role="grid" aria-labelledby="calendar-label" class="w-full">
+              <!-- Day-of-week headers -->
+              <div role="row" class="grid grid-cols-7 mb-2" aria-label="Day names">
+                <div role="columnheader" class="text-center text-xs font-semibold text-muted py-1" aria-label="Monday">M</div>
+                <div role="columnheader" class="text-center text-xs font-semibold text-muted py-1" aria-label="Tuesday">T</div>
+                <div role="columnheader" class="text-center text-xs font-semibold text-muted py-1" aria-label="Wednesday">W</div>
+                <div role="columnheader" class="text-center text-xs font-semibold text-muted py-1" aria-label="Thursday">T</div>
+                <div role="columnheader" class="text-center text-xs font-semibold text-muted py-1" aria-label="Friday">F</div>
+                <div role="columnheader" class="text-center text-xs font-semibold text-muted py-1" aria-label="Saturday">S</div>
+                <div role="columnheader" class="text-center text-xs font-semibold text-muted py-1 text-danger/60" aria-label="Sunday">S</div>
+              </div>
+
+              <!-- Week rows (June 2026 — starts on Monday) -->
+              <!-- Row 1 -->
+              <div role="row" class="grid grid-cols-7 gap-y-1">
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true" aria-label="Monday 1 June — unavailable">1</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true" aria-label="Tuesday 2 June — unavailable">2</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true" aria-label="Wednesday 3 June — unavailable">3</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true" aria-label="Thursday 4 June — unavailable">4</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true" aria-label="Friday 5 June — unavailable">5</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true" aria-label="Saturday 6 June — unavailable">6</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled text-danger/50" aria-disabled="true" aria-label="Sunday 7 June — closed">7</button></div>
+              </div>
+
+              <!-- Row 2 -->
+              <div role="row" class="grid grid-cols-7 gap-y-1">
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true">8</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true">9</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true">10</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true">11</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true">12</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true">13</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled text-danger/50" aria-disabled="true">14</button></div>
+              </div>
+
+              <!-- Row 3 -->
+              <div role="row" class="grid grid-cols-7 gap-y-1">
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true">15</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled" aria-disabled="true">16</button></div>
+                <!-- TODAY: 17 Jun — current step, selectable -->
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-today" aria-label="Wednesday 17 June — today" aria-pressed="false">17</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day" aria-label="Thursday 18 June — available">18</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day" aria-label="Friday 19 June — available">19</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day" aria-label="Saturday 20 June — available">20</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled text-danger/50" aria-disabled="true">21</button></div>
+              </div>
+
+              <!-- Row 4: 19 selected demo -->
+              <div role="row" class="grid grid-cols-7 gap-y-1">
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day" aria-label="Monday 22 June — available">22</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day" aria-label="Tuesday 23 June — available">23</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day" aria-label="Wednesday 24 June — available">24</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-selected" aria-label="Thursday 25 June — selected" aria-pressed="true">25</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day" aria-label="Friday 26 June — available">26</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day" aria-label="Saturday 27 June — available">27</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day cal-disabled text-danger/50" aria-disabled="true">28</button></div>
+              </div>
+
+              <!-- Row 5 -->
+              <div role="row" class="grid grid-cols-7 gap-y-1">
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day" aria-label="Monday 29 June — available">29</button></div>
+                <div role="gridcell" class="flex justify-center"><button type="button" class="cal-day" aria-label="Tuesday 30 June — available">30</button></div>
+                <div role="gridcell" class="flex justify-center"></div>
+                <div role="gridcell" class="flex justify-center"></div>
+                <div role="gridcell" class="flex justify-center"></div>
+                <div role="gridcell" class="flex justify-center"></div>
+                <div role="gridcell" class="flex justify-center"></div>
+              </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="flex items-center gap-5 mt-4 pt-4 border-t border-border-subtle">
+              <span class="flex items-center gap-1.5 text-xs text-muted">
+                <span class="w-4 h-4 rounded-full border-2 border-primary-500 inline-block" aria-hidden="true"></span>
+                Today
+              </span>
+              <span class="flex items-center gap-1.5 text-xs text-muted">
+                <span class="w-4 h-4 rounded-full bg-primary-500 inline-block" aria-hidden="true"></span>
+                Selected
+              </span>
+              <span class="flex items-center gap-1.5 text-xs text-muted">
+                <span class="w-4 h-4 rounded-full bg-surface-alt inline-block" aria-hidden="true"></span>
+                Unavailable
+              </span>
+            </div>
+          </div>
+
+          <!-- Time slots -->
+          <div class="bg-surface rounded-card border border-border-subtle p-5">
+            <h2 class="text-sm font-semibold text-text-primary mb-1">
+              Available times
+              <span class="font-normal text-muted">— Thursday, 25 June</span>
+            </h2>
+            <p class="text-xs text-text-secondary mb-5">All times shown in Amsterdam (CET+2). Each slot = 2h 30min for Balayage &amp; Toner.</p>
+
+            <div role="radiogroup" aria-label="Available appointment times for Thursday 25 June" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+
+              <!-- Unavailable (fully booked) -->
+              <button type="button" disabled aria-disabled="true" class="py-2.5 px-3 rounded-xl border border-border text-xs text-muted text-center cursor-not-allowed line-through bg-surface-alt/50">
+                9:00 AM
+              </button>
+
+              <!-- Available -->
+              <button type="button" role="radio" aria-checked="false" class="py-2.5 px-3 rounded-xl border border-border text-xs text-text-secondary font-medium text-center hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-colors focus-visible:ring-2 focus-visible:ring-primary-500">
+                10:00 AM
+              </button>
+
+              <!-- Selected -->
+              <button type="button" role="radio" aria-checked="true" class="py-2.5 px-3 rounded-xl border-2 border-primary-500 bg-primary-500 text-white text-xs font-semibold text-center transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2">
+                11:00 AM
+              </button>
+
+              <button type="button" role="radio" aria-checked="false" class="py-2.5 px-3 rounded-xl border border-border text-xs text-text-secondary font-medium text-center hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-colors focus-visible:ring-2 focus-visible:ring-primary-500">
+                12:00 PM
+              </button>
+
+              <button type="button" disabled aria-disabled="true" class="py-2.5 px-3 rounded-xl border border-border text-xs text-muted text-center cursor-not-allowed line-through bg-surface-alt/50">
+                1:00 PM
+              </button>
+
+              <button type="button" role="radio" aria-checked="false" class="py-2.5 px-3 rounded-xl border border-border text-xs text-text-secondary font-medium text-center hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-colors">
+                2:30 PM
+              </button>
+
+              <button type="button" role="radio" aria-checked="false" class="py-2.5 px-3 rounded-xl border border-border text-xs text-text-secondary font-medium text-center hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-colors">
+                3:30 PM
+              </button>
+
+              <button type="button" role="radio" aria-checked="false" class="py-2.5 px-3 rounded-xl border border-border text-xs text-text-secondary font-medium text-center hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 transition-colors">
+                4:30 PM
+              </button>
+
+              <button type="button" disabled aria-disabled="true" class="py-2.5 px-3 rounded-xl border border-border text-xs text-muted text-center cursor-not-allowed line-through bg-surface-alt/50">
+                5:30 PM
+              </button>
+
+            </div>
+
+            <p class="text-xs text-muted mt-4">
+              <span class="font-medium text-text-secondary">Selected:</span> Thursday 25 June · 11:00 AM – 1:30 PM · Elena M.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Right: Booking summary sidebar -->
+        <aside aria-label="Booking summary" class="space-y-4">
+
+          <div class="bg-surface rounded-card border border-border-subtle p-5 sticky top-20">
+            <h2 class="text-sm font-semibold text-text-primary mb-4">Your Booking</h2>
+
+            <!-- Service -->
+            <div class="flex items-start gap-3 pb-4 border-b border-border-subtle">
+              <div class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center text-primary-500 shrink-0" aria-hidden="true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-text-primary">Balayage &amp; Toner</p>
+                <p class="text-xs text-text-secondary mt-0.5">2h 30min</p>
+              </div>
+              <a href="/booking/step-1" class="text-xs text-primary-600 hover:underline shrink-0">Change</a>
+            </div>
+
+            <!-- Selected date/time -->
+            <dl class="space-y-2.5 mt-4 text-sm">
+              <div class="flex justify-between gap-2">
+                <dt class="text-text-secondary">Date</dt>
+                <dd class="text-text-primary font-medium text-right">Thu, 25 June 2026</dd>
+              </div>
+              <div class="flex justify-between gap-2">
+                <dt class="text-text-secondary">Time</dt>
+                <dd class="text-text-primary font-medium">11:00 – 13:30</dd>
+              </div>
+              <div class="flex justify-between gap-2">
+                <dt class="text-text-secondary">Stylist</dt>
+                <dd class="text-text-primary font-medium">Any available</dd>
+              </div>
+            </dl>
+
+            <div class="mt-4 pt-4 border-t border-border-subtle flex justify-between items-center">
+              <span class="text-sm text-text-secondary">Total</span>
+              <span class="text-lg font-semibold text-text-primary">€120</span>
+            </div>
+
+            <!-- CTA -->
+            <button
+              type="button"
+              class="w-full mt-4 py-3 bg-primary-500 text-white font-semibold text-sm rounded-pill hover:bg-primary-600 active:bg-primary-700 transition-colors focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 shadow-sm"
+            >
+              Continue to Details
+              <svg class="w-4 h-4 inline-block ml-1.5 -mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </button>
+
+            <p class="text-xs text-muted text-center mt-3">No payment required now. Cancel up to 24h before.</p>
+          </div>
+
+        </aside>
+      </div>
+
+      <!-- Mobile bottom bar: step CTA -->
+      <div class="fixed bottom-0 left-0 right-0 p-4 bg-surface border-t border-border shadow-lg lg:hidden z-40">
+        <div class="flex items-center justify-between mb-3 max-w-lg mx-auto">
+          <div>
+            <p class="text-sm font-semibold text-text-primary">Thu, 25 June · 11:00 AM</p>
+            <p class="text-xs text-text-secondary">Balayage &amp; Toner · €120</p>
+          </div>
+          <button type="button" class="px-6 py-2.5 bg-primary-500 text-white font-semibold text-sm rounded-pill hover:bg-primary-600 transition-colors">
+            Continue
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+
+  <!-- ════════════════════════════════════════════════════════════
+       SCREEN (d): BOOKING CONFIRMATION
+       (Shown as a separate section below for preview purposes)
+       In the app this is a separate page at /booking/confirmation
+  ════════════════════════════════════════════════════════════ -->
+  <section class="min-h-screen bg-surface-alt flex items-center justify-center px-4 py-20" aria-label="Booking Confirmation Screen">
+    <div class="w-full max-w-lg">
+
+      <!-- Success state -->
+      <div class="bg-surface rounded-card border border-border-subtle shadow-card p-8 text-center">
+
+        <!-- Animated checkmark ring -->
+        <div class="w-20 h-20 rounded-full bg-success-100 border-4 border-success-500 flex items-center justify-center mx-auto mb-6" role="img" aria-label="Booking confirmed">
+          <svg class="w-10 h-10 text-success-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+
+        <h1 class="font-display text-2xl font-bold text-text-primary mb-2">You're all booked!</h1>
+        <p class="text-text-secondary text-sm mb-6">
+          We've sent a confirmation to <strong class="text-text-primary">sofia@example.com</strong>. We look forward to seeing you!
+        </p>
+
+        <!-- Appointment details card -->
+        <div class="bg-surface-alt rounded-xl border border-border p-5 text-left mb-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-primary-100 flex items-center justify-center text-primary-500 shrink-0" aria-hidden="true">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-text-primary">Balayage &amp; Toner</p>
+              <p class="text-xs text-text-secondary">Reference: BLZ-2026-08341</p>
+            </div>
+          </div>
+
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+            <div>
+              <dt class="text-xs text-muted uppercase tracking-wide font-semibold mb-0.5">Date</dt>
+              <dd class="text-text-primary font-medium">Thursday, 25 June 2026</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-muted uppercase tracking-wide font-semibold mb-0.5">Time</dt>
+              <dd class="text-text-primary font-medium">11:00 – 13:30</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-muted uppercase tracking-wide font-semibold mb-0.5">Stylist</dt>
+              <dd class="text-text-primary font-medium">Elena M.</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-muted uppercase tracking-wide font-semibold mb-0.5">Price</dt>
+              <dd class="text-text-primary font-medium">€120</dd>
+            </div>
+            <div class="col-span-2">
+              <dt class="text-xs text-muted uppercase tracking-wide font-semibold mb-0.5">Location</dt>
+              <dd class="text-text-primary font-medium">Belza Salon · Keizersgracht 182, Amsterdam</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Add to calendar CTA group -->
+        <div class="flex flex-col sm:flex-row gap-3 mb-4">
+          <a href="#" class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 border border-border rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-alt hover:border-border transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Add to Calendar
+          </a>
+          <a href="https://maps.google.com/?q=Keizersgracht+182+Amsterdam" target="_blank" rel="noopener noreferrer"
+             class="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 border border-border rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-alt hover:border-border transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Get Directions
+          </a>
+        </div>
+
+        <!-- Cancellation policy -->
+        <p class="text-xs text-muted">
+          Need to cancel?
+          <a href="/my-bookings" class="text-primary-600 hover:underline font-medium">Manage booking</a>
+          — free cancellation up to 24 hours before your appointment.
+        </p>
+
+        <!-- Back to home -->
+        <div class="mt-6 pt-6 border-t border-border-subtle">
+          <a href="/" class="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
+            ← Back to Belza Salon
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+</body>
+</html>
