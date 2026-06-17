@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens from Dana's tokens.css ──────────────────────── */
+:root {
+  /* Colors: Primary */
+  --color-primary-50:  #fdf5f3;
+  --color-primary-100: #fbe9e4;
+  --color-primary-200: #f6d1c9;
+  --color-primary-300: #efafa3;
+  --color-primary-400: #e48070;
+  --color-primary-500: #d4614f;
+  --color-primary-600: #c04535;
+  --color-primary-700: #a0372a;
+  --color-primary:     var(--color-primary-500);
+
+  /* Colors: Accent */
+  --color-accent-50:  #fdf8ee;
+  --color-accent-100: #faedd0;
+  --color-accent-200: #f4d89d;
+  --color-accent-300: #ecbd5e;
+  --color-accent-400: #e5a330;
+  --color-accent-500: #d98818;
+  --color-accent-600: #c16a12;
+  --color-accent:     var(--color-accent-500);
+
+  /* Colors: Backgrounds & Surfaces */
+  --color-background:  #faf8f6;
+  --color-surface:     #ffffff;
+  --color-surface-alt: #f3ede9;
+
+  /* Colors: Muted */
+  --color-muted:        #9c8e88;
+  --color-muted-subtle: #c4b9b4;
+  --color-muted-strong: #6b5e59;
+
+  /* Colors: Semantic */
+  --color-success:       #16a34a;
+  --color-success-bg:    #f0fdf4;
+  --color-success-light: #dcfce7;
+  --color-warning:       #d97706;
+  --color-warning-bg:    #fffbeb;
+  --color-danger:        #dc2626;
+  --color-danger-bg:     #fef2f2;
+  --color-danger-light:  #fee2e2;
+
+  /* Colors: Text */
+  --color-text-primary:   #2c2220;
+  --color-text-secondary: #6b5e59;
+  --color-text-tertiary:  #9c8e88;
+  --color-text-inverse:   #faf8f6;
+  --color-text-link:      #c04535;
+
+  /* Colors: Borders */
+  --color-border:        #e8ddd9;
+  --color-border-strong: #cfc4bf;
+  --color-border-subtle: #f0ebe8;
+
+  /* Typography */
+  --font-sans:    'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, ui-serif, serif;
+
+  /* Spacing */
+  --sidebar-width:  256px;
+  --topbar-height:  64px;
+
+  /* Radii */
+  --radius-card: 16px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-card:       0 2px 8px 0 rgba(44,34,32,0.08);
+  --shadow-card-hover: 0 8px 24px -4px rgba(44,34,32,0.14);
+
+  /* Transitions */
+  --transition: 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Mobile overrides */
+@media (max-width: 639px) {
+  :root {
+    --text-display-2xl: 2.5rem;
+    --text-display-xl:  2rem;
+    --text-display-lg:  1.75rem;
+  }
+}
+
+/* ── Base styles ────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #faf8f6;
+  color: #2c2220;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible {
+  outline: 2px solid #d4614f;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ── Utility classes ────────────────────────────────────────────── */
+.text-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.card {
+  background:    var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow:    var(--shadow-card);
+  border:        1px solid var(--color-border-subtle);
+  transition:    box-shadow var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f3ede9 25%,
+    #f0ebe8 50%,
+    #f3ede9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
