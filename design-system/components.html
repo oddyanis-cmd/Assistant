@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<!--
+  ─────────────────────────────────────────────────────────────────
+  BELZA SALON — Core Component Library
+  Copy-pasteable HTML + Tailwind markup for Felix (Developer)
+  Author: Dana (Designer)
+
+  HOW TO USE:
+  - Each section is a self-contained component with all variants.
+  - Tailwind classes reference the custom theme in tailwind.config.js.
+  - Custom colors use the bracket notation, e.g. bg-[#d4614f] as fallback
+    but are referenced by their semantic name when the theme is loaded.
+  - Run: npx tailwindcss -i ./input.css -o ./output.css --watch
+  ─────────────────────────────────────────────────────────────────
+-->
+<html lang="en" class="antialiased">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Belza Salon — Component Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:    { DEFAULT:'#d4614f', 50:'#fdf5f3', 100:'#fbe9e4', 200:'#f6d1c9', 300:'#efafa3', 400:'#e48070', 500:'#d4614f', 600:'#c04535', 700:'#a0372a', 800:'#852f25', 900:'#6f2b23' },
+            accent:     { DEFAULT:'#d98818', 50:'#fdf8ee', 100:'#faedd0', 200:'#f4d89d', 300:'#ecbd5e', 500:'#d98818', 600:'#c16a12' },
+            background: '#faf8f6',
+            surface:    '#ffffff',
+            'surface-alt':'#f3ede9',
+            muted:      { DEFAULT:'#9c8e88', subtle:'#c4b9b4', strong:'#6b5e59' },
+            success:    { DEFAULT:'#16a34a', 50:'#f0fdf4', 100:'#dcfce7', 500:'#22c55e', 600:'#16a34a' },
+            warning:    { DEFAULT:'#d97706', 50:'#fffbeb', 100:'#fef3c7', 600:'#d97706' },
+            danger:     { DEFAULT:'#dc2626', 50:'#fef2f2', 100:'#fee2e2', 600:'#dc2626' },
+            text:       { primary:'#2c2220', secondary:'#6b5e59', tertiary:'#9c8e88', inverse:'#faf8f6', link:'#c04535' },
+            border:     { DEFAULT:'#e8ddd9', strong:'#cfc4bf', subtle:'#f0ebe8' },
+          },
+          fontFamily: { sans:['Inter','sans-serif'], display:['"Playfair Display"','serif'] },
+          borderRadius: { card:'16px', pill:'999px', xs:'4px', sm:'6px', md:'10px', lg:'12px', xl:'16px', '2xl':'20px' },
+          boxShadow: {
+            card:'0 2px 8px 0 rgba(44,34,32,0.08)',
+            'card-hover':'0 8px 24px -4px rgba(44,34,32,0.14)',
+            topbar:'0 1px 0 0 rgba(44,34,32,0.08)',
+            sidebar:'4px 0 16px 0 rgba(44,34,32,0.06)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #faf8f6; color: #2c2220; font-family: 'Inter', sans-serif; }
+    :focus-visible { outline: 2px solid #d4614f; outline-offset: 2px; border-radius: 4px; }
+    :focus:not(:focus-visible) { outline: none; }
+    .skeleton { background: linear-gradient(90deg,#f3ede9 25%,#f0ebe8 50%,#f3ede9 75%); background-size: 200% 100%; animation: shimmer 1.5s ease-in-out infinite; }
+    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .section-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: #2c2220; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #e8ddd9; }
+  </style>
+</head>
+<body class="p-8 space-y-16 max-w-5xl mx-auto">
+
+  <!-- ── SECTION 1: BUTTONS ──────────────────────────────────────── -->
+  <section aria-labelledby="btn-title">
+    <h2 id="btn-title" class="section-title">Buttons</h2>
+    <div class="flex flex-wrap gap-4 items-center mt-6">
+
+      <!-- Primary Button -->
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-500 text-white font-medium text-sm rounded-pill
+               shadow-sm hover:bg-primary-600 active:bg-primary-700
+               focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+               transition-colors duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        Book Now
+      </button>
+
+      <!-- Primary with icon -->
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-500 text-white font-medium text-sm rounded-pill
+               shadow-sm hover:bg-primary-600 active:bg-primary-700
+               focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+               transition-colors duration-200"
+        aria-label="Add appointment"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+        New Appointment
+      </button>
+
+      <!-- Secondary Button -->
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 px-6 py-2.5
+               bg-surface border border-border-strong text-text-primary font-medium text-sm rounded-pill
+               hover:bg-surface-alt hover:border-border
+               focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+               transition-colors duration-200 shadow-xs"
+      >
+        View All Services
+      </button>
+
+      <!-- Ghost Button -->
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 px-5 py-2.5
+               bg-transparent text-primary-600 font-medium text-sm rounded-pill
+               hover:bg-primary-50 active:bg-primary-100
+               focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+               transition-colors duration-200"
+      >
+        Learn More
+      </button>
+
+      <!-- Icon-only button -->
+      <button
+        type="button"
+        aria-label="Edit appointment"
+        class="inline-flex items-center justify-center w-9 h-9
+               bg-surface border border-border text-text-secondary rounded-lg
+               hover:bg-surface-alt hover:text-text-primary hover:border-border-strong
+               focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+               transition-colors duration-200 shadow-xs"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+        </svg>
+      </button>
+
+      <!-- Danger Button -->
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 px-5 py-2.5
+               bg-danger-50 border border-danger-100 text-danger font-medium text-sm rounded-pill
+               hover:bg-danger-100
+               focus-visible:ring-2 focus-visible:ring-danger focus-visible:ring-offset-2
+               transition-colors duration-200"
+      >
+        Cancel Booking
+      </button>
+
+      <!-- Loading state -->
+      <button
+        type="button"
+        disabled
+        class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary-500 text-white font-medium text-sm rounded-pill
+               opacity-80 cursor-not-allowed"
+        aria-busy="true"
+      >
+        <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        </svg>
+        Booking...
+      </button>
+
+    </div>
+  </section>
+
+
+  <!-- ── SECTION 2: INPUTS & SELECTS ────────────────────────────── -->
+  <section aria-labelledby="input-title">
+    <h2 id="input-title" class="section-title">Inputs &amp; Selects</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6 max-w-2xl">
+
+      <!-- Standard text input -->
+      <div class="flex flex-col gap-1.5">
+        <label for="name-input" class="text-xs font-semibold text-text-secondary uppercase tracking-wider">
+          Full Name
+        </label>
+        <input
+          id="name-input"
+          type="text"
+          placeholder="Sofia Andersen"
+          class="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-sm text-text-primary placeholder-muted
+                 hover:border-border-strong
+                 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100
+                 transition-all duration-200"
+          aria-required="true"
+        />
+      </div>
+
+      <!-- Email input -->
+      <div class="flex flex-col gap-1.5">
+        <label for="email-input" class="text-xs font-semibold text-text-secondary uppercase tracking-wider">
+          Email Address
+        </label>
+        <div class="relative">
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" aria-hidden="true">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </span>
+          <input
+            id="email-input"
+            type="email"
+            placeholder="sofia@example.com"
+            class="w-full pl-10 pr-4 py-2.5 bg-surface border border-border rounded-xl text-sm text-text-primary placeholder-muted
+                   hover:border-border-strong
+                   focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100
+                   transition-all duration-200"
+          />
+        </div>
+      </div>
+
+      <!-- Input: Error state -->
+      <div class="flex flex-col gap-1.5">
+        <label for="phone-input" class="text-xs font-semibold text-text-secondary uppercase tracking-wider">
+          Phone Number
+        </label>
+        <input
+          id="phone-input"
+          type="tel"
+          value="not-a-number"
+          aria-invalid="true"
+          aria-describedby="phone-error"
+          class="w-full px-4 py-2.5 bg-danger-50 border border-danger-600 rounded-xl text-sm text-text-primary
+                 focus:outline-none focus:ring-2 focus:ring-danger"
+        />
+        <p id="phone-error" role="alert" class="text-xs text-danger flex items-center gap-1">
+          <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          Please enter a valid phone number
+        </p>
+      </div>
+
+      <!-- Select -->
+      <div class="flex flex-col gap-1.5">
+        <label for="service-select" class="text-xs font-semibold text-text-secondary uppercase tracking-wider">
+          Service
+        </label>
+        <div class="relative">
+          <select
+            id="service-select"
+            class="w-full appearance-none px-4 py-2.5 pr-10 bg-surface border border-border rounded-xl text-sm text-text-primary
+                   hover:border-border-strong
+                   focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100
+                   transition-all duration-200 cursor-pointer"
+          >
+            <option value="" disabled selected>Select a service…</option>
+            <option value="haircut">Haircut &amp; Style</option>
+            <option value="color">Hair Colour</option>
+            <option value="highlights">Highlights / Balayage</option>
+            <option value="keratin">Keratin Treatment</option>
+            <option value="facial">Luxury Facial</option>
+          </select>
+          <span class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- Textarea -->
+      <div class="flex flex-col gap-1.5 sm:col-span-2">
+        <label for="notes-input" class="text-xs font-semibold text-text-secondary uppercase tracking-wider">
+          Special Requests (optional)
+        </label>
+        <textarea
+          id="notes-input"
+          rows="3"
+          placeholder="Any allergies, preferences, or notes for your stylist…"
+          class="w-full px-4 py-2.5 bg-surface border border-border rounded-xl text-sm text-text-primary placeholder-muted resize-none
+                 hover:border-border-strong
+                 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100
+                 transition-all duration-200"
+        ></textarea>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── SECTION 3: CARD ────────────────────────────────────────── -->
+  <section aria-labelledby="card-title">
+    <h2 id="card-title" class="section-title">Cards</h2>
+    <div class="flex flex-wrap gap-6 mt-6">
+
+      <!-- Basic card -->
+      <div class="bg-surface rounded-card shadow-card border border-border-subtle p-6 w-64">
+        <p class="text-xs font-semibold text-muted uppercase tracking-wider mb-1">Total Revenue</p>
+        <p class="text-3xl font-semibold text-text-primary font-display">€8,420</p>
+        <p class="text-sm text-success mt-1 flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+          </svg>
+          +12.4% vs last month
+        </p>
+      </div>
+
+      <!-- Hover/interactive card -->
+      <div class="bg-surface rounded-card shadow-card hover:shadow-card-hover border border-border-subtle p-6 w-64 transition-shadow duration-300 cursor-pointer group">
+        <div class="flex items-start justify-between mb-3">
+          <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center text-primary-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <span class="text-xs text-muted">Today</span>
+        </div>
+        <p class="text-xs font-semibold text-muted uppercase tracking-wider mb-1">Appointments</p>
+        <p class="text-3xl font-semibold text-text-primary">14</p>
+        <p class="text-sm text-text-secondary mt-1">8 completed · 6 upcoming</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── SECTION 4: SERVICE CARD ────────────────────────────────── -->
+  <section aria-labelledby="service-card-title">
+    <h2 id="service-card-title" class="section-title">Service Card</h2>
+    <div class="flex flex-wrap gap-6 mt-6">
+
+      <!--
+        Service card: image + name + duration + price + Book CTA.
+        In production, replace the placeholder div with <Image> from next/image.
+        aspect-[4/3] ensures no layout shift while image loads.
+      -->
+      <article class="bg-surface rounded-card shadow-card hover:shadow-card-hover border border-border-subtle overflow-hidden w-72 transition-shadow duration-300 group">
+        <!-- Image placeholder (swap for next/image) -->
+        <div class="relative aspect-[4/3] bg-surface-alt overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=300&fit=crop&auto=format"
+            alt="Stylist performing a precision haircut on a client"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
+            width="400" height="300"
+          />
+          <!-- Category badge -->
+          <span class="absolute top-3 left-3 px-2.5 py-1 bg-surface/90 backdrop-blur-sm rounded-pill text-xs font-semibold text-text-secondary border border-border-subtle">
+            Hair
+          </span>
+        </div>
+
+        <div class="p-5">
+          <h3 class="text-base font-semibold text-text-primary mb-1">Precision Haircut</h3>
+          <p class="text-sm text-text-secondary mb-4 line-clamp-2">Expert cut tailored to your face shape and lifestyle. Includes wash and blow-dry finish.</p>
+
+          <div class="flex items-center gap-4 text-sm text-text-secondary mb-4">
+            <!-- Duration -->
+            <span class="flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-muted shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 6v6l4 2"/>
+              </svg>
+              <span>60 min</span>
+            </span>
+            <!-- Divider -->
+            <span class="w-1 h-1 rounded-full bg-border-strong" aria-hidden="true"></span>
+            <!-- Rating -->
+            <span class="flex items-center gap-1">
+              <svg class="w-3.5 h-3.5 text-accent-500 fill-current" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+              </svg>
+              4.9
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-lg font-semibold text-text-primary">€55</span>
+            <button
+              type="button"
+              class="px-5 py-2 bg-primary-500 text-white font-medium text-sm rounded-pill
+                     hover:bg-primary-600 active:bg-primary-700
+                     focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+                     transition-colors duration-200"
+              aria-label="Book Precision Haircut — 60 min — €55"
+            >
+              Book
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Service card: skeleton loading state -->
+      <article class="bg-surface rounded-card shadow-card border border-border-subtle overflow-hidden w-72" aria-busy="true" aria-label="Loading service">
+        <div class="aspect-[4/3] skeleton"></div>
+        <div class="p-5 space-y-3">
+          <div class="skeleton h-4 w-3/4 rounded"></div>
+          <div class="skeleton h-3 w-full rounded"></div>
+          <div class="skeleton h-3 w-2/3 rounded"></div>
+          <div class="flex items-center justify-between mt-4">
+            <div class="skeleton h-6 w-12 rounded"></div>
+            <div class="skeleton h-9 w-20 rounded-full"></div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+
+  <!-- ── SECTION 5: APPOINTMENT LIST ITEM ──────────────────────── -->
+  <section aria-labelledby="appt-title">
+    <h2 id="appt-title" class="section-title">Appointment List Item</h2>
+
+    <ul class="space-y-3 mt-6 max-w-lg" role="list" aria-label="Today's appointments">
+
+      <!-- Confirmed appointment -->
+      <li class="bg-surface rounded-xl border border-border-subtle shadow-xs p-4 flex items-center gap-4">
+        <!-- Time column -->
+        <div class="shrink-0 text-center w-12">
+          <p class="text-xs font-semibold text-muted uppercase tracking-wide">10:00</p>
+          <p class="text-xs text-muted">AM</p>
+        </div>
+        <!-- Color bar -->
+        <div class="w-1 h-10 rounded-full bg-primary-400 shrink-0" aria-hidden="true"></div>
+        <!-- Content -->
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-text-primary truncate">Sofia Andersen</p>
+          <p class="text-xs text-text-secondary truncate">Balayage + Toner · 2h 30min</p>
+        </div>
+        <!-- Stylist avatar -->
+        <div class="shrink-0">
+          <img
+            src="https://api.dicebear.com/7.x/initials/svg?seed=Elena&backgroundColor=d4614f&textColor=fff&radius=50"
+            alt="Stylist: Elena"
+            width="32" height="32"
+            class="w-8 h-8 rounded-full object-cover"
+          />
+        </div>
+        <!-- Status badge -->
+        <span class="shrink-0 px-2.5 py-0.5 rounded-pill text-xs font-semibold bg-primary-100 text-primary-700" role="status">
+          Confirmed
+        </span>
+        <!-- Actions -->
+        <button type="button" aria-label="More options for Sofia Andersen's appointment" class="shrink-0 text-muted hover:text-text-primary transition-colors">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/>
+          </svg>
+        </button>
+      </li>
+
+      <!-- Completed appointment -->
+      <li class="bg-surface rounded-xl border border-border-subtle shadow-xs p-4 flex items-center gap-4 opacity-70">
+        <div class="shrink-0 text-center w-12">
+          <p class="text-xs font-semibold text-muted uppercase tracking-wide">08:30</p>
+          <p class="text-xs text-muted">AM</p>
+        </div>
+        <div class="w-1 h-10 rounded-full bg-success-500 shrink-0" aria-hidden="true"></div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-text-primary truncate">Maria Gonzalez</p>
+          <p class="text-xs text-text-secondary truncate">Precision Haircut · 60min</p>
+        </div>
+        <span class="shrink-0 px-2.5 py-0.5 rounded-pill text-xs font-semibold bg-success-100 text-success-700" role="status">
+          Completed
+        </span>
+      </li>
+
+      <!-- No-show appointment -->
+      <li class="bg-surface rounded-xl border border-border-subtle shadow-xs p-4 flex items-center gap-4">
+        <div class="shrink-0 text-center w-12">
+          <p class="text-xs font-semibold text-muted uppercase tracking-wide">11:30</p>
+          <p class="text-xs text-muted">AM</p>
+        </div>
+        <div class="w-1 h-10 rounded-full bg-danger-500 shrink-0" aria-hidden="true"></div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-text-primary truncate">James Park</p>
+          <p class="text-xs text-text-secondary truncate">Keratin Treatment · 3h</p>
+        </div>
+        <span class="shrink-0 px-2.5 py-0.5 rounded-pill text-xs font-semibold bg-danger-100 text-danger-700" role="status">
+          No-show
+        </span>
+      </li>
+
+    </ul>
+  </section>
+
+
+  <!-- ── SECTION 6: CALENDAR EVENT CHIP ────────────────────────── -->
+  <section aria-labelledby="chip-title">
+    <h2 id="chip-title" class="section-title">Calendar Event Chip</h2>
+    <div class="flex flex-wrap gap-3 mt-6">
+
+      <!--
+        These chips are positioned absolutely inside a calendar grid cell.
+        Width is set by the parent grid column; height is proportional to duration.
+        min-h here for demo purposes.
+      -->
+
+      <!-- Confirmed chip -->
+      <div class="relative w-40 min-h-[72px] rounded-lg bg-primary-100 border-l-4 border-primary-500 px-2.5 py-2 cursor-pointer hover:bg-primary-200 transition-colors focus-within:ring-2 focus-within:ring-primary-500">
+        <button type="button" class="block w-full text-left focus:outline-none" aria-label="10:00 AM — Sofia Andersen — Balayage">
+          <p class="text-xs font-semibold text-primary-700 truncate">10:00 AM</p>
+          <p class="text-xs font-medium text-primary-900 truncate mt-0.5">Sofia Andersen</p>
+          <p class="text-xs text-primary-600 truncate">Balayage</p>
+        </button>
+      </div>
+
+      <!-- Completed chip -->
+      <div class="relative w-40 min-h-[56px] rounded-lg bg-success-100 border-l-4 border-success-500 px-2.5 py-2">
+        <p class="text-xs font-semibold text-success-700 truncate">08:30 AM</p>
+        <p class="text-xs font-medium text-success-900 truncate mt-0.5">Maria Gonzalez</p>
+        <p class="text-xs text-success-600 truncate">Haircut</p>
+      </div>
+
+      <!-- Warning / pending chip -->
+      <div class="relative w-40 min-h-[56px] rounded-lg bg-warning-100 border-l-4 border-warning-500 px-2.5 py-2">
+        <p class="text-xs font-semibold text-warning-600 truncate">2:00 PM</p>
+        <p class="text-xs font-medium text-text-primary truncate mt-0.5">Nina Roberts</p>
+        <p class="text-xs text-text-secondary truncate">Facial</p>
+      </div>
+
+      <!-- Blocked / break slot -->
+      <div class="relative w-40 min-h-[40px] rounded-lg bg-surface-alt border-l-4 border-border-strong px-2.5 py-2">
+        <p class="text-xs font-semibold text-muted">Lunch Break</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── SECTION 7: BOOKING STEPPER ────────────────────────────── -->
+  <section aria-labelledby="stepper-title">
+    <h2 id="stepper-title" class="section-title">Booking Stepper / Progress Indicator</h2>
+
+    <!-- Step 2 of 4 active for demo -->
+    <div class="mt-6 max-w-xl">
+      <nav aria-label="Booking steps">
+        <ol class="flex items-center" role="list">
+
+          <!-- Step 1: Completed -->
+          <li class="flex items-center flex-1">
+            <div class="flex items-center gap-2">
+              <span class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-xs font-semibold shrink-0" aria-label="Step 1: Service selected (completed)">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+              </span>
+              <span class="hidden sm:block text-xs font-medium text-primary-600">Service</span>
+            </div>
+            <div class="flex-1 h-px bg-primary-300 mx-2" aria-hidden="true"></div>
+          </li>
+
+          <!-- Step 2: Active -->
+          <li class="flex items-center flex-1" aria-current="step">
+            <div class="flex items-center gap-2">
+              <span class="w-8 h-8 rounded-full bg-primary-500 text-white ring-4 ring-primary-100 flex items-center justify-center text-xs font-semibold shrink-0" aria-label="Step 2: Date & Time (current)">
+                2
+              </span>
+              <span class="hidden sm:block text-xs font-semibold text-primary-600">Date &amp; Time</span>
+            </div>
+            <div class="flex-1 h-px bg-border mx-2" aria-hidden="true"></div>
+          </li>
+
+          <!-- Step 3: Upcoming -->
+          <li class="flex items-center flex-1">
+            <div class="flex items-center gap-2">
+              <span class="w-8 h-8 rounded-full bg-surface border-2 border-border text-muted flex items-center justify-center text-xs font-semibold shrink-0" aria-label="Step 3: Your Details (upcoming)">
+                3
+              </span>
+              <span class="hidden sm:block text-xs font-medium text-muted">Details</span>
+            </div>
+            <div class="flex-1 h-px bg-border mx-2" aria-hidden="true"></div>
+          </li>
+
+          <!-- Step 4: Upcoming -->
+          <li class="flex items-center">
+            <div class="flex items-center gap-2">
+              <span class="w-8 h-8 rounded-full bg-surface border-2 border-border text-muted flex items-center justify-center text-xs font-semibold shrink-0" aria-label="Step 4: Confirm (upcoming)">
+                4
+              </span>
+              <span class="hidden sm:block text-xs font-medium text-muted">Confirm</span>
+            </div>
+          </li>
+
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+
+  <!-- ── SECTION 8: BADGE / STATUS PILL ────────────────────────── -->
+  <section aria-labelledby="badge-title">
+    <h2 id="badge-title" class="section-title">Badges &amp; Status Pills</h2>
+    <div class="flex flex-wrap gap-3 items-center mt-6">
+
+      <span class="px-3 py-1 rounded-pill text-xs font-semibold bg-primary-100 text-primary-700">Confirmed</span>
+      <span class="px-3 py-1 rounded-pill text-xs font-semibold bg-success-100 text-success-700">Completed</span>
+      <span class="px-3 py-1 rounded-pill text-xs font-semibold bg-warning-100 text-warning-600">Pending</span>
+      <span class="px-3 py-1 rounded-pill text-xs font-semibold bg-danger-100 text-danger-700">Cancelled</span>
+      <span class="px-3 py-1 rounded-pill text-xs font-semibold bg-surface-alt text-muted-strong">No-show</span>
+
+      <!-- Count badge (used on nav items) -->
+      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-500 text-white text-xs font-bold leading-none" aria-label="5 notifications">5</span>
+
+      <!-- Dot indicator -->
+      <span class="flex items-center gap-1.5 text-xs font-medium text-success-600">
+        <span class="w-2 h-2 rounded-full bg-success-500" aria-hidden="true"></span>
+        Open
+      </span>
+      <span class="flex items-center gap-1.5 text-xs font-medium text-muted">
+        <span class="w-2 h-2 rounded-full bg-muted" aria-hidden="true"></span>
+        Closed
+      </span>
+
+      <!-- Service category pill -->
+      <span class="px-3 py-1 rounded-pill text-xs font-semibold border border-border bg-surface text-text-secondary">Hair</span>
+      <span class="px-3 py-1 rounded-pill text-xs font-semibold border border-border bg-surface text-text-secondary">Skin</span>
+      <span class="px-3 py-1 rounded-pill text-xs font-semibold border border-primary-200 bg-primary-50 text-primary-700">Nails</span>
+
+    </div>
+  </section>
+
+
+  <!-- ── SECTION 9: SIDEBAR NAV ITEM ───────────────────────────── -->
+  <section aria-labelledby="nav-title">
+    <h2 id="nav-title" class="section-title">Sidebar Nav Items</h2>
+
+    <nav aria-label="Demo sidebar navigation" class="mt-6 w-64 bg-surface border border-border rounded-card p-3 space-y-1">
+
+      <!-- Active item -->
+      <a href="#"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary-50 text-primary-700 font-semibold text-sm transition-colors"
+         aria-current="page"
+      >
+        <svg class="w-5 h-5 shrink-0 text-primary-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        Dashboard
+        <span class="ml-auto text-xs bg-primary-500 text-white rounded-full w-5 h-5 flex items-center justify-center font-bold" aria-label="3 notifications">3</span>
+      </a>
+
+      <!-- Default item -->
+      <a href="#"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500"
+      >
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        Appointments
+      </a>
+
+      <a href="#"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500"
+      >
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        Clients
+      </a>
+
+      <a href="#"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-text-secondary font-medium text-sm hover:bg-surface-alt hover:text-text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary-500"
+      >
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+        Services
+      </a>
+
+      <!-- Disabled item -->
+      <a href="#"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-muted font-medium text-sm cursor-not-allowed opacity-50"
+         aria-disabled="true"
+         tabindex="-1"
+      >
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        Analytics
+        <span class="ml-auto text-xs bg-surface-alt text-muted px-2 py-0.5 rounded-pill font-medium">Soon</span>
+      </a>
+
+    </nav>
+  </section>
+
+
+  <!-- ── SECTION 10: TOP BAR ────────────────────────────────────── -->
+  <section aria-labelledby="topbar-title">
+    <h2 id="topbar-title" class="section-title">Top Bar (Admin)</h2>
+
+    <div class="mt-6 border border-border rounded-card overflow-hidden">
+      <header class="h-16 bg-surface border-b border-border flex items-center justify-between px-6 shadow-topbar" role="banner">
+
+        <!-- Left: page title (on mobile, would show hamburger) -->
+        <div class="flex items-center gap-3">
+          <button type="button" class="lg:hidden p-2 -ml-2 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors" aria-label="Open navigation menu">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+          <div>
+            <h1 class="text-base font-semibold text-text-primary">Dashboard</h1>
+            <p class="text-xs text-muted hidden sm:block">Tuesday, 17 June 2026</p>
+          </div>
+        </div>
+
+        <!-- Right: actions -->
+        <div class="flex items-center gap-2">
+
+          <!-- Search -->
+          <button type="button" class="p-2 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors" aria-label="Search">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </button>
+
+          <!-- Notifications -->
+          <button type="button" class="relative p-2 rounded-lg text-text-secondary hover:bg-surface-alt transition-colors" aria-label="Notifications — 3 unread">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary-500" aria-hidden="true"></span>
+          </button>
+
+          <!-- New appointment CTA -->
+          <button type="button" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-primary-500 text-white text-sm font-medium rounded-pill hover:bg-primary-600 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            New
+          </button>
+
+          <!-- User avatar -->
+          <button type="button" class="flex items-center gap-2 p-1 rounded-full hover:bg-surface-alt transition-colors" aria-label="Account menu for Elena Martinez">
+            <img
+              src="https://api.dicebear.com/7.x/initials/svg?seed=Elena&backgroundColor=d4614f&textColor=fff&radius=50"
+              alt=""
+              width="32" height="32"
+              class="w-8 h-8 rounded-full"
+              aria-hidden="true"
+            />
+            <span class="hidden sm:block text-sm font-medium text-text-primary pr-1">Elena</span>
+          </button>
+
+        </div>
+      </header>
+    </div>
+  </section>
+
+
+  <!-- ── SECTION 11: EMPTY & LOADING STATES ────────────────────── -->
+  <section aria-labelledby="states-title">
+    <h2 id="states-title" class="section-title">Empty &amp; Loading States</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+
+      <!-- Empty state -->
+      <div class="bg-surface rounded-card border border-border-subtle p-10 flex flex-col items-center text-center gap-4" role="status">
+        <div class="w-16 h-16 rounded-2xl bg-surface-alt flex items-center justify-center text-muted" aria-hidden="true">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="text-base font-semibold text-text-primary">No appointments today</p>
+          <p class="text-sm text-text-secondary mt-1">Your schedule is clear. Ready to take bookings?</p>
+        </div>
+        <button type="button" class="px-5 py-2 bg-primary-500 text-white text-sm font-medium rounded-pill hover:bg-primary-600 transition-colors">
+          Create Appointment
+        </button>
+      </div>
+
+      <!-- Loading skeleton card -->
+      <div class="bg-surface rounded-card border border-border-subtle p-6 space-y-4" aria-busy="true" aria-label="Loading appointments">
+        <!-- Skeleton header -->
+        <div class="flex items-center gap-3">
+          <div class="skeleton w-10 h-10 rounded-full shrink-0"></div>
+          <div class="flex-1 space-y-2">
+            <div class="skeleton h-3.5 w-2/3 rounded"></div>
+            <div class="skeleton h-3 w-1/2 rounded"></div>
+          </div>
+        </div>
+        <!-- Skeleton rows -->
+        <div class="space-y-3 pt-2">
+          <div class="skeleton h-12 w-full rounded-xl"></div>
+          <div class="skeleton h-12 w-full rounded-xl"></div>
+          <div class="skeleton h-12 w-4/5 rounded-xl"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</body>
+</html>
