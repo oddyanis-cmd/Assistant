@@ -6,6 +6,8 @@ node_modules/
 # Next.js build output
 .next/
 out/
+*.tsbuildinfo
+next-env.d.ts
 
 # Environment — never commit secrets
 .env
