@@ -139,6 +139,7 @@ export interface Appointment {
   end_at: string;
   notes: string | null;
   created_by: string | null;
+  public_token: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -284,7 +285,7 @@ export interface Database {
       clients: { Row: Client; Insert: Omit<Client, "id" | "created_at" | "updated_at">; Update: Partial<Client> };
       service_categories: { Row: ServiceCategory; Insert: Omit<ServiceCategory, "id">; Update: Partial<ServiceCategory> };
       services: { Row: Service; Insert: Omit<Service, "id" | "created_at" | "updated_at">; Update: Partial<Service> };
-      appointments: { Row: Appointment; Insert: Omit<Appointment, "id" | "created_at" | "updated_at">; Update: Partial<Appointment> };
+      appointments: { Row: Appointment; Insert: Omit<Appointment, "id" | "public_token" | "created_at" | "updated_at">; Update: Partial<Appointment> };
       payments: { Row: Payment; Insert: Omit<Payment, "id" | "created_at" | "updated_at">; Update: Partial<Payment> };
       invoices: { Row: Invoice; Insert: Omit<Invoice, "id" | "created_at">; Update: Partial<Invoice> };
       promotions: { Row: Promotion; Insert: Omit<Promotion, "id" | "created_at">; Update: Partial<Promotion> };
@@ -300,6 +301,32 @@ export interface Database {
       has_permission: {
         Args: { uid: string; perm: string };
         Returns: boolean;
+      };
+      get_available_slots: {
+        Args: {
+          p_service_id: string;
+          p_staff_id: string | null;
+          p_date: string;
+        };
+        Returns: Array<{
+          staff_id: string;
+          staff_name: string;
+          slot_start: string;
+        }>;
+      };
+      create_appointment: {
+        Args: {
+          p_service_id: string;
+          p_staff_id: string | null;
+          p_start_at: string;
+          p_notes?: string | null;
+          p_client_name?: string | null;
+          p_client_phone?: string | null;
+        };
+        Returns: Array<{
+          appointment_id: string;
+          public_token: string;
+        }>;
       };
     };
   };

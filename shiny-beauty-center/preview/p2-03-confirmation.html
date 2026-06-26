@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shiny Beauty Center — Booking Confirmed</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose:    { 50:"#fff1f2",100:"#ffe4e6",200:"#fecdd3",300:"#fda4af",400:"#fb7185",500:"#f43f5e",600:"#e11d48" },
+            nude:    { 50:"#fdf8f6",100:"#f9ede8",200:"#f2d9d0",400:"#d99f8b" },
+            cream:   { 50:"#fefdfb",100:"#fdf8f0" },
+            charcoal:{ 100:"#e2e3e6",400:"#7c7e89",500:"#62636e",700:"#41424b",800:"#37383f",900:"#2d2e35" },
+          },
+          fontFamily: { sans:["Inter","system-ui","sans-serif"] }
+        }
+      }
+    }
+  </script>
+  <style>body { font-family: 'Inter', system-ui, sans-serif; }</style>
+</head>
+<body class="bg-cream-50 text-charcoal-900 min-h-screen">
+
+<!-- Header -->
+<header class="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-nude-100 px-4 py-3 flex items-center">
+  <div class="flex items-center gap-2">
+    <svg width="28" height="28" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="#fda4af" stroke-width="1.5"/><path d="M18 8 C13 8, 9 12, 9 18 C9 24, 13 28, 18 28" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M18 8 C23 8, 27 12, 27 18 C27 24, 23 28, 18 28" stroke="#fda4af" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="18" cy="18" r="3" fill="#f43f5e" opacity="0.7"/></svg>
+    <span class="text-lg font-light text-charcoal-900">Shiny <em class="text-rose-500 not-italic">Beauty</em></span>
+  </div>
+</header>
+
+<!-- Main confirmation content -->
+<main class="flex flex-col items-center justify-center px-6 py-12 text-center min-h-[calc(100vh-4rem)] pb-24">
+
+  <!-- Animated success circle -->
+  <div class="w-20 h-20 rounded-full bg-gradient-to-br from-rose-100 to-nude-100 flex items-center justify-center mb-6 shadow-sm">
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <circle cx="18" cy="18" r="17" fill="#fecdd3" />
+      <path d="M11 18l5 5 9-9" stroke="#e11d48" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <h1 class="text-3xl font-light text-charcoal-900 mb-3">Booking Confirmed!</h1>
+  <p class="text-charcoal-500 mb-8">Your appointment has been booked successfully.</p>
+
+  <!-- Booking reference card -->
+  <div class="bg-white rounded-2xl border border-nude-100 shadow-sm p-6 mb-8 w-full max-w-xs">
+    <p class="text-xs text-charcoal-400 mb-2">Booking Reference</p>
+    <p class="text-2xl font-mono font-semibold text-rose-600 tracking-widest uppercase mb-4">a3f9c2e1</p>
+
+    <!-- Appointment summary -->
+    <div class="space-y-2 text-left border-t border-nude-100 pt-4">
+      <div class="flex justify-between text-sm">
+        <span class="text-charcoal-400">Service</span>
+        <span class="font-medium text-charcoal-800">Swedish Massage</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-charcoal-400">Specialist</span>
+        <span class="font-medium text-charcoal-800">Layla Al-Rashidi</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-charcoal-400">Date</span>
+        <span class="font-medium text-charcoal-800">Tue, Jul 1</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-charcoal-400">Time</span>
+        <span class="font-medium text-charcoal-800">11:30 AM</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-charcoal-400">Price</span>
+        <span class="font-medium text-charcoal-800">220 SAR</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- What's next box -->
+  <div class="bg-rose-50 border border-rose-100 rounded-2xl p-5 text-left w-full max-w-xs mb-6">
+    <h2 class="font-semibold text-charcoal-800 mb-2">What's next?</h2>
+    <p class="text-sm text-charcoal-500 leading-relaxed">
+      We'll see you at the salon. Please arrive 5 minutes early.
+      If you need to change anything, visit My Appointments.
+    </p>
+  </div>
+
+  <!-- Pay at salon badge (payments flag is off) -->
+  <div class="flex items-center gap-2 text-xs text-charcoal-400 mb-8">
+    <span class="w-5 h-5 rounded-full bg-nude-100 flex items-center justify-center text-[10px]">✓</span>
+    Pay at Salon
+  </div>
+
+  <!-- CTAs -->
+  <div class="flex flex-col gap-3 w-full max-w-xs">
+    <a href="#" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-rose-500 text-white font-semibold text-sm hover:bg-rose-600 transition-colors w-full">
+      View My Appointments
+    </a>
+    <a href="#" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-rose-300 text-rose-700 bg-white font-semibold text-sm hover:bg-rose-50 transition-colors w-full">
+      Book Another Service
+    </a>
+  </div>
+</main>
+
+<!-- Bottom Nav -->
+<nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-sm border-t border-nude-100">
+  <div class="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
+    <a href="#" class="flex flex-col items-center gap-0.5 px-3 py-2 text-charcoal-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg><span class="text-[10px]">Home</span></a>
+    <a href="#" class="flex flex-col items-center gap-0.5 px-3 py-2 text-charcoal-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path stroke-linecap="round" d="M20 4L8.12 15.88M14.47 14.48L20 20"/></svg><span class="text-[10px]">Services</span></a>
+    <a href="#" class="flex flex-col items-center gap-0.5 px-3 py-2 text-rose-500"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" fill="#f43f5e" fill-opacity="0.15"/><path stroke-linecap="round" d="M16 2v4M8 2v4M3 10h18"/></svg><span class="text-[10px] text-rose-500">Bookings</span></a>
+    <a href="#" class="flex flex-col items-center gap-0.5 px-3 py-2 text-charcoal-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path stroke-linecap="round" d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span class="text-[10px]">Profile</span></a>
+  </div>
+</nav>
+
+</body>
+</html>

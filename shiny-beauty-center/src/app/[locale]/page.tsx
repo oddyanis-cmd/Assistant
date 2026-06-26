@@ -2,12 +2,13 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { Logo } from "@/components/ui/Logo";
+import { BottomNav } from "@/components/ui/BottomNav";
 
 export default function HomePage() {
   const t = useTranslations();
 
   return (
-    <div className="min-h-screen bg-brand-gradient flex flex-col">
+    <div className="min-h-screen bg-brand-gradient flex flex-col pb-16">
       {/* Header */}
       <header className="w-full px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
         <Logo />
@@ -45,8 +46,8 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/auth/signup" className="btn-primary text-base px-8 py-4">
-              {t("nav.book")}
+            <Link href="/services" className="btn-primary text-base px-8 py-4">
+              {t("nav.services")}
             </Link>
             <Link href="/auth/signin" className="btn-secondary text-base px-8 py-4">
               {t("nav.sign_in")}
@@ -87,6 +88,8 @@ export default function HomePage() {
         <p>© {new Date().getFullYear()} Shiny Beauty Center. All rights reserved.</p>
         <p className="mt-1">{t("auth.privacy_note")}</p>
       </footer>
+
+      <BottomNav />
     </div>
   );
 }
