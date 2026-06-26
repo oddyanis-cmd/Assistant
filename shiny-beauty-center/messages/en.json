@@ -1,0 +1,64 @@
+{
+  "app": {
+    "name": "Shiny Beauty Center",
+    "tagline": "Luxury Beauty, Exclusively for Women",
+    "locale_toggle": "عربي",
+    "loading": "Loading…"
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "book": "Book Appointment",
+    "my_bookings": "My Bookings",
+    "sign_in": "Sign In",
+    "sign_up": "Join Us",
+    "sign_out": "Sign Out",
+    "admin": "Admin",
+    "portal": "Staff Portal"
+  },
+  "auth": {
+    "sign_in_title": "Welcome Back",
+    "sign_in_subtitle": "Sign in to your Shiny Beauty account",
+    "sign_up_title": "Join Shiny Beauty",
+    "sign_up_subtitle": "Create your exclusive account",
+    "email_label": "Email Address",
+    "email_placeholder": "your@email.com",
+    "phone_label": "Phone Number",
+    "phone_placeholder": "+966 5x xxx xxxx",
+    "password_label": "Password",
+    "password_placeholder": "••••••••",
+    "full_name_label": "Full Name",
+    "full_name_placeholder": "Your name",
+    "sign_in_button": "Sign In",
+    "sign_up_button": "Create Account",
+    "or_divider": "or",
+    "no_account": "Don't have an account?",
+    "have_account": "Already have an account?",
+    "forgot_password": "Forgot your password?",
+    "signing_in": "Signing in…",
+    "signing_up": "Creating account…",
+    "error_generic": "Something went wrong. Please try again.",
+    "check_email": "Check your email to confirm your account.",
+    "privacy_note": "Your personal information is protected and will never be shared."
+  },
+  "admin": {
+    "title": "Admin Portal",
+    "users_title": "Users & Roles",
+    "users_subtitle": "Manage user accounts, roles, and permissions",
+    "roles_title": "Roles",
+    "permissions_title": "Permissions",
+    "no_permission": "You don't have permission to view this page.",
+    "user_count": "{count} users",
+    "role_count": "{count} roles",
+    "permission_count": "{count} permissions"
+  },
+  "errors": {
+    "not_found": "Page not found",
+    "not_found_body": "The page you're looking for doesn't exist.",
+    "unauthorized": "Unauthorized",
+    "unauthorized_body": "You need to sign in to access this page.",
+    "forbidden": "Forbidden",
+    "forbidden_body": "You don't have permission to access this page.",
+    "back_home": "Back to Home"
+  }
+}

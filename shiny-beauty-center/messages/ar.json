@@ -1,0 +1,64 @@
+{
+  "app": {
+    "name": "مركز شايني للتجميل",
+    "tagline": "تجربة فاخرة في عالم الجمال، للنساء حصراً",
+    "locale_toggle": "English",
+    "loading": "جاري التحميل…"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "services": "خدماتنا",
+    "book": "احجز موعداً",
+    "my_bookings": "حجوزاتي",
+    "sign_in": "تسجيل الدخول",
+    "sign_up": "انضمي إلينا",
+    "sign_out": "تسجيل الخروج",
+    "admin": "الإدارة",
+    "portal": "بوابة الموظفين"
+  },
+  "auth": {
+    "sign_in_title": "أهلاً بعودتك",
+    "sign_in_subtitle": "سجّلي الدخول إلى حسابك في شايني",
+    "sign_up_title": "انضمي إلى شايني",
+    "sign_up_subtitle": "أنشئي حسابك الحصري",
+    "email_label": "البريد الإلكتروني",
+    "email_placeholder": "بريدك@الإلكتروني.com",
+    "phone_label": "رقم الجوال",
+    "phone_placeholder": "+966 5x xxx xxxx",
+    "password_label": "كلمة المرور",
+    "password_placeholder": "••••••••",
+    "full_name_label": "الاسم الكامل",
+    "full_name_placeholder": "اسمك الكريم",
+    "sign_in_button": "تسجيل الدخول",
+    "sign_up_button": "إنشاء الحساب",
+    "or_divider": "أو",
+    "no_account": "ليس لديك حساب؟",
+    "have_account": "هل لديك حساب بالفعل؟",
+    "forgot_password": "نسيت كلمة المرور؟",
+    "signing_in": "جاري تسجيل الدخول…",
+    "signing_up": "جاري إنشاء الحساب…",
+    "error_generic": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "check_email": "تحققي من بريدك الإلكتروني لتأكيد حسابك.",
+    "privacy_note": "بياناتك الشخصية محمية ولن يتم مشاركتها أبداً."
+  },
+  "admin": {
+    "title": "بوابة الإدارة",
+    "users_title": "المستخدمون والأدوار",
+    "users_subtitle": "إدارة حسابات المستخدمين والأدوار والصلاحيات",
+    "roles_title": "الأدوار",
+    "permissions_title": "الصلاحيات",
+    "no_permission": "ليس لديك صلاحية لعرض هذه الصفحة.",
+    "user_count": "{count} مستخدم",
+    "role_count": "{count} دور",
+    "permission_count": "{count} صلاحية"
+  },
+  "errors": {
+    "not_found": "الصفحة غير موجودة",
+    "not_found_body": "الصفحة التي تبحثين عنها غير موجودة.",
+    "unauthorized": "غير مصرح",
+    "unauthorized_body": "يجب تسجيل الدخول للوصول إلى هذه الصفحة.",
+    "forbidden": "ممنوع الوصول",
+    "forbidden_body": "ليس لديك صلاحية للوصول إلى هذه الصفحة.",
+    "back_home": "العودة إلى الرئيسية"
+  }
+}

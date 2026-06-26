@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: ui-sans-serif, system-ui, sans-serif;
+    --font-arabic: "Noto Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  }
+
+  /* RTL-aware scroll and selection */
+  html[dir="rtl"] {
+    text-align: right;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Focus ring — accessible and on-brand */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-rose-400 ring-offset-2;
+  }
+}
+
+@layer components {
+  /* Brand button variants */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full
+      bg-rose-500 text-white font-semibold text-sm
+      hover:bg-rose-600 active:bg-rose-700
+      transition-colors duration-200
+      disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full
+      border border-rose-300 text-rose-700 bg-white font-semibold text-sm
+      hover:bg-rose-50 active:bg-rose-100
+      transition-colors duration-200
+      disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg
+      text-charcoal-600 font-medium text-sm
+      hover:bg-charcoal-100 active:bg-charcoal-200
+      transition-colors duration-200;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-nude-100 p-6;
+  }
+
+  /* Form field */
+  .field-input {
+    @apply w-full px-4 py-3 rounded-xl border border-nude-200
+      bg-white text-charcoal-900 placeholder-charcoal-400
+      focus:border-rose-400 focus:ring-2 focus:ring-rose-100
+      transition duration-200 outline-none text-sm;
+  }
+
+  .field-label {
+    @apply block text-sm font-medium text-charcoal-700 mb-1.5;
+  }
+
+  /* Brand gradient background */
+  .bg-brand-gradient {
+    @apply bg-gradient-to-br from-rose-50 via-cream-50 to-blush-50;
+  }
+}
