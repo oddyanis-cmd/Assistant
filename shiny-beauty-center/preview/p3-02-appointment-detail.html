@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Appointment Detail — Shiny Beauty Center Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose: { 50:"#fff1f2",100:"#ffe4e6",200:"#fecdd3",300:"#fda4af",400:"#fb7185",500:"#f43f5e",600:"#e11d48",700:"#be123c" },
+            nude: { 50:"#fdf8f6",100:"#f9ede8",200:"#f2d9d0",400:"#d99f8b",600:"#b36251" },
+            cream: { 50:"#fefdfb",100:"#fdf8f0",400:"#eecb96",700:"#b2753a" },
+            charcoal: { 100:"#e2e3e6",200:"#c5c6cc",400:"#7c7e89",500:"#62636e",600:"#4e4f5a",700:"#41424b",800:"#37383f",900:"#2d2e35" },
+          },
+          fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: "Inter", system-ui, sans-serif; background: linear-gradient(135deg, #fff1f2 0%, #fdf8f0 50%, #fef7f0 100%); min-height: 100vh; }
+    .card { background: #fff; border-radius: 1rem; border: 1px solid #f2d9d0; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+    .btn-ghost { display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border-radius:.5rem;color:#4e4f5a;font-weight:500;font-size:.875rem; }
+    .btn-ghost:hover { background:#e2e3e6; }
+    .btn-primary { display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:9999px;background:#f43f5e;color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;border:none; }
+    .btn-primary:hover { background:#e11d48; }
+    .btn-secondary { display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:9999px;border:1px solid #fda4af;color:#be123c;background:#fff;font-weight:600;font-size:.875rem;cursor:pointer; }
+    .field-input { width:100%;padding:.75rem 1rem;border-radius:.75rem;border:1px solid #f2d9d0;background:#fff;font-size:.875rem;outline:none; }
+    .field-input:focus { border-color:#fb7185;box-shadow:0 0 0 2px #ffe4e6; }
+    .field-label { display:block;font-size:.875rem;font-weight:500;color:#41424b;margin-bottom:.375rem; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-rose-100 shadow-sm">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center text-white font-bold text-sm">S</div>
+        <span class="font-semibold text-charcoal-900 text-sm">Shiny Beauty</span>
+      </div>
+      <span class="text-xs font-medium text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">Staff Portal</span>
+    </div>
+    <nav class="flex items-center gap-1">
+      <a href="p3-01-staff-schedule.html" class="btn-ghost text-rose-600">My Schedule</a>
+      <a href="p3-03-availability.html" class="btn-ghost">Availability</a>
+      <a href="p3-04-notifications.html" class="btn-ghost">Notifications</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <button class="btn-ghost text-sm">عربي</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-8">
+
+  <!-- Back link -->
+  <div class="mb-6">
+    <a href="p3-01-staff-schedule.html" class="text-sm text-charcoal-500 hover:text-rose-600 flex items-center gap-1">
+      ‹ Back to Schedule
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Main detail - LEFT -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <!-- Appointment info -->
+      <div class="card">
+        <div class="flex items-start justify-between mb-4">
+          <h1 class="text-xl font-semibold text-charcoal-900">Bridal Hair &amp; Makeup</h1>
+          <span class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-50 text-blue-700">confirmed</span>
+        </div>
+        <dl class="space-y-3">
+          <div class="flex gap-4">
+            <dt class="text-sm text-charcoal-500 w-24 flex-shrink-0">Time</dt>
+            <dd class="text-sm font-medium text-charcoal-800">Thu, 26 Jun 2026 at 09:30 AM</dd>
+          </div>
+          <div class="flex gap-4">
+            <dt class="text-sm text-charcoal-500 w-24 flex-shrink-0">Ends</dt>
+            <dd class="text-sm text-charcoal-600">Thu, 26 Jun 2026 at 10:30 AM</dd>
+          </div>
+          <div class="flex gap-4">
+            <dt class="text-sm text-charcoal-500 w-24 flex-shrink-0">Notes</dt>
+            <dd class="text-sm text-charcoal-600 italic">Traditional Saudi bridal look with veil styling — please coordinate with henna artist.</dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="card">
+        <h2 class="text-base font-semibold text-charcoal-800 mb-3">Actions</h2>
+        <div class="flex flex-wrap gap-3">
+          <!-- Check In (since status is confirmed) -->
+          <button class="btn-primary">Check In Client</button>
+          <button class="btn-secondary">Mark No-Show</button>
+        </div>
+        <p class="text-xs text-charcoal-400 mt-3 italic">
+          Status transitions are logged to the audit trail.
+        </p>
+      </div>
+
+      <!-- Client visit history -->
+      <div class="card">
+        <h2 class="text-base font-semibold text-charcoal-800 mb-4">Visit History</h2>
+        <ul class="space-y-2">
+          <li class="flex items-center justify-between py-2 border-b border-nude-100">
+            <div>
+              <p class="text-sm font-medium text-charcoal-700">Bridal Trial Makeup</p>
+              <p class="text-xs text-charcoal-400">12 Jun 2026</p>
+            </div>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-700">completed</span>
+          </li>
+          <li class="flex items-center justify-between py-2 border-b border-nude-100">
+            <div>
+              <p class="text-sm font-medium text-charcoal-700">Keratin Smoothing Treatment</p>
+              <p class="text-xs text-charcoal-400">28 May 2026</p>
+            </div>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-700">completed</span>
+          </li>
+          <li class="flex items-center justify-between py-2 border-b border-nude-100">
+            <div>
+              <p class="text-sm font-medium text-charcoal-700">Classic Manicure</p>
+              <p class="text-xs text-charcoal-400">3 May 2026</p>
+            </div>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-700">completed</span>
+          </li>
+          <li class="flex items-center justify-between py-2">
+            <div>
+              <p class="text-sm font-medium text-charcoal-700">Facial Hydration Treatment</p>
+              <p class="text-xs text-charcoal-400">10 Apr 2026</p>
+            </div>
+            <span class="text-xs font-medium px-2 py-0.5 rounded-full bg-charcoal-100 text-charcoal-500">cancelled</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Sidebar: client info + notes - RIGHT -->
+    <div class="space-y-6">
+
+      <!-- Client info -->
+      <div class="card">
+        <h2 class="text-base font-semibold text-charcoal-800 mb-4">Client</h2>
+        <div class="space-y-2">
+          <p class="font-semibold text-charcoal-800">Nour Al-Rashidi</p>
+          <p class="text-sm text-charcoal-500">+966 55 123 4567</p>
+          <div class="mt-3 pt-3 border-t border-nude-100">
+            <p class="text-xs font-medium text-charcoal-500 uppercase tracking-wider mb-1">Client Notes</p>
+            <p class="text-sm text-charcoal-700 leading-relaxed">
+              Sensitive scalp — use gentle, sulfate-free products only. Prefers Arabic styling.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Private staff notes -->
+      <div class="card">
+        <h2 class="text-base font-semibold text-charcoal-800 mb-4">Private Notes</h2>
+
+        <!-- Existing note -->
+        <div class="space-y-3 mb-4">
+          <div class="bg-nude-50 rounded-xl p-3">
+            <p class="text-sm text-charcoal-700 leading-relaxed">
+              Client requested the same veil draping style as shown in the bridal magazine photo she emailed — check the appointment file.
+            </p>
+            <p class="text-xs text-charcoal-400 mt-1">Lina Al-Harbi · 25 Jun 2026</p>
+          </div>
+        </div>
+
+        <!-- Add note form -->
+        <div class="mt-4">
+          <label class="field-label">Add Private Note</label>
+          <div class="flex gap-2">
+            <textarea
+              placeholder="Note visible to staff only…"
+              rows="2"
+              class="field-input resize-none flex-1"
+            ></textarea>
+            <button class="btn-primary self-end">Add Note</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<footer class="text-center py-4 text-xs text-charcoal-400 border-t border-nude-100 mt-8">
+  Shiny Beauty Center — Staff Portal · Lina Al-Harbi
+</footer>
+
+</body>
+</html>

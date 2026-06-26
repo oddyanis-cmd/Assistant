@@ -24,6 +24,7 @@ export default async function PortalPage({ params }: PortalPageProps) {
   const isAdmin = can(user, "manage_permissions");
   const canViewDashboard = can(user, "view_dashboard");
   const canViewBookings = can(user, "view_all_bookings") || can(user, "view_own_bookings");
+  const isStaff = can(user, "view_own_bookings") || can(user, "view_all_bookings");
 
   return (
     <div className="min-h-screen bg-brand-gradient flex flex-col">
@@ -55,8 +56,43 @@ export default async function PortalPage({ params }: PortalPageProps) {
           </div>
         </div>
 
-        {/* Quick navigation — Phase 2+ stubs */}
+        {/* Quick navigation */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Staff portal — live in Phase 3 */}
+          {isStaff && (
+            <Link href="/staff/schedule" className="card hover:shadow-md transition-shadow group border-rose-200">
+              <div className="text-rose-400 text-xl mb-2">◑</div>
+              <h3 className="font-semibold text-charcoal-800 group-hover:text-rose-600">
+                My Schedule
+              </h3>
+              <p className="text-sm text-charcoal-500 mt-1">
+                View and manage your daily appointments
+              </p>
+            </Link>
+          )}
+          {isStaff && (
+            <Link href="/staff/availability" className="card hover:shadow-md transition-shadow group border-rose-200">
+              <div className="text-rose-400 text-xl mb-2">◷</div>
+              <h3 className="font-semibold text-charcoal-800 group-hover:text-rose-600">
+                My Availability
+              </h3>
+              <p className="text-sm text-charcoal-500 mt-1">
+                Set working hours and request time off
+              </p>
+            </Link>
+          )}
+          {isStaff && (
+            <Link href="/staff/notifications" className="card hover:shadow-md transition-shadow group border-rose-200">
+              <div className="text-rose-400 text-xl mb-2">◎</div>
+              <h3 className="font-semibold text-charcoal-800 group-hover:text-rose-600">
+                Notifications
+              </h3>
+              <p className="text-sm text-charcoal-500 mt-1">
+                Your in-app inbox and updates
+              </p>
+            </Link>
+          )}
+
           {canViewDashboard && (
             <PortalCard
               title="Dashboard"
@@ -65,7 +101,7 @@ export default async function PortalPage({ params }: PortalPageProps) {
               comingSoon
             />
           )}
-          {canViewBookings && (
+          {canViewBookings && !isStaff && (
             <PortalCard
               title="Appointments"
               description="Manage bookings and schedule"
@@ -77,7 +113,7 @@ export default async function PortalPage({ params }: PortalPageProps) {
             <Link href="/admin/users" className="card hover:shadow-md transition-shadow group">
               <div className="text-rose-400 text-xl mb-2">◈</div>
               <h3 className="font-semibold text-charcoal-800 group-hover:text-rose-600">
-                Users & Roles
+                Users &amp; Roles
               </h3>
               <p className="text-sm text-charcoal-500 mt-1">
                 Manage accounts, roles, and permissions

@@ -6,7 +6,14 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 const intlMiddleware = createMiddleware(routing);
 
 // Routes that require authentication (prefix matching)
-const PROTECTED_PREFIXES = ["/en/portal", "/ar/portal", "/en/admin", "/ar/admin"];
+const PROTECTED_PREFIXES = [
+  "/en/portal",
+  "/ar/portal",
+  "/en/admin",
+  "/ar/admin",
+  "/en/staff",
+  "/ar/staff",
+];
 // Routes that should redirect to portal if already authenticated
 const AUTH_ROUTES = ["/en/auth", "/ar/auth"];
 

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Availability — Shiny Beauty Center Staff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose: { 50:"#fff1f2",100:"#ffe4e6",200:"#fecdd3",300:"#fda4af",400:"#fb7185",500:"#f43f5e",600:"#e11d48",700:"#be123c" },
+            nude: { 50:"#fdf8f6",100:"#f9ede8",200:"#f2d9d0",400:"#d99f8b",600:"#b36251" },
+            cream: { 50:"#fefdfb",100:"#fdf8f0",400:"#eecb96",700:"#b2753a" },
+            charcoal: { 100:"#e2e3e6",200:"#c5c6cc",400:"#7c7e89",500:"#62636e",600:"#4e4f5a",700:"#41424b",800:"#37383f",900:"#2d2e35" },
+          },
+          fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: "Inter", system-ui, sans-serif; background: linear-gradient(135deg, #fff1f2 0%, #fdf8f0 50%, #fef7f0 100%); min-height: 100vh; }
+    .card { background: #fff; border-radius: 1rem; border: 1px solid #f2d9d0; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+    .btn-ghost { display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border-radius:.5rem;color:#4e4f5a;font-weight:500;font-size:.875rem; }
+    .btn-ghost:hover { background:#e2e3e6; }
+    .btn-primary { display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:9999px;background:#f43f5e;color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;border:none; }
+    .btn-secondary { display:inline-flex;align-items:center;gap:.5rem;padding:.375rem .75rem;border-radius:9999px;border:1px solid #fda4af;color:#be123c;background:#fff;font-weight:600;font-size:.75rem;cursor:pointer; }
+    .field-input { width:100%;padding:.375rem .75rem;border-radius:.75rem;border:1px solid #f2d9d0;background:#fff;font-size:.875rem;outline:none; }
+    .field-input:focus { border-color:#fb7185; }
+    .field-label { display:block;font-size:.875rem;font-weight:500;color:#41424b;margin-bottom:.375rem; }
+    input[type="time"] { width:7rem; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-rose-100 shadow-sm">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center text-white font-bold text-sm">S</div>
+        <span class="font-semibold text-charcoal-900 text-sm">Shiny Beauty</span>
+      </div>
+      <span class="text-xs font-medium text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">Staff Portal</span>
+    </div>
+    <nav class="flex items-center gap-1">
+      <a href="p3-01-staff-schedule.html" class="btn-ghost">My Schedule</a>
+      <a href="#" class="btn-ghost text-rose-600 font-semibold bg-rose-50">Availability</a>
+      <a href="p3-04-notifications.html" class="btn-ghost">Notifications</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <button class="btn-ghost text-sm">عربي</button>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-8">
+
+  <div class="mb-6">
+    <h1 class="text-2xl font-light text-charcoal-900">My Availability</h1>
+    <p class="text-charcoal-500 text-sm mt-1">Your weekly working hours</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Working hours editor - LEFT -->
+    <div class="lg:col-span-2">
+      <div class="card">
+        <h2 class="text-base font-semibold text-charcoal-800 mb-4">Working Hours</h2>
+        <div class="space-y-3">
+
+          <!-- Sunday - Off -->
+          <div class="rounded-xl border border-nude-100 p-4 bg-nude-50/50">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="w-4 h-4 accent-rose-500" />
+                <span class="text-sm font-medium text-charcoal-700 w-24">Sunday</span>
+              </label>
+              <span class="text-xs text-charcoal-400 italic">Day Off</span>
+              <button class="btn-secondary ml-auto">Save Hours</button>
+            </div>
+          </div>
+
+          <!-- Monday - Available -->
+          <div class="rounded-xl border border-rose-200 p-4 bg-rose-50/30">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 accent-rose-500" />
+                <span class="text-sm font-medium text-charcoal-700 w-24">Monday</span>
+              </label>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-charcoal-500">Start</span>
+                <input type="time" value="09:00" class="field-input" style="width:8rem;" />
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-charcoal-500">End</span>
+                <input type="time" value="17:00" class="field-input" style="width:8rem;" />
+              </div>
+              <button class="btn-secondary ml-auto">Save Hours</button>
+            </div>
+          </div>
+
+          <!-- Tuesday -->
+          <div class="rounded-xl border border-rose-200 p-4 bg-rose-50/30">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 accent-rose-500" />
+                <span class="text-sm font-medium text-charcoal-700 w-24">Tuesday</span>
+              </label>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-charcoal-500">Start</span>
+                <input type="time" value="09:00" class="field-input" style="width:8rem;" />
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-charcoal-500">End</span>
+                <input type="time" value="17:00" class="field-input" style="width:8rem;" />
+              </div>
+              <button class="btn-secondary ml-auto">Save Hours</button>
+            </div>
+          </div>
+
+          <!-- Wednesday -->
+          <div class="rounded-xl border border-rose-200 p-4 bg-rose-50/30">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 accent-rose-500" />
+                <span class="text-sm font-medium text-charcoal-700 w-24">Wednesday</span>
+              </label>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-charcoal-500">Start</span>
+                <input type="time" value="10:00" class="field-input" style="width:8rem;" />
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-charcoal-500">End</span>
+                <input type="time" value="18:00" class="field-input" style="width:8rem;" />
+              </div>
+              <button class="btn-secondary ml-auto">Save Hours</button>
+            </div>
+            <div class="mt-2 text-xs font-medium px-3 py-1.5 rounded-lg bg-green-50 text-green-700">
+              Working hours updated.
+            </div>
+          </div>
+
+          <!-- Thursday -->
+          <div class="rounded-xl border border-rose-200 p-4 bg-rose-50/30">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked class="w-4 h-4 accent-rose-500" />
+                <span class="text-sm font-medium text-charcoal-700 w-24">Thursday</span>
+              </label>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-charcoal-500">Start</span>
+                <input type="time" value="09:00" class="field-input" style="width:8rem;" />
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-charcoal-500">End</span>
+                <input type="time" value="17:00" class="field-input" style="width:8rem;" />
+              </div>
+              <button class="btn-secondary ml-auto">Save Hours</button>
+            </div>
+          </div>
+
+          <!-- Friday - Off -->
+          <div class="rounded-xl border border-nude-100 p-4 bg-nude-50/50">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="w-4 h-4 accent-rose-500" />
+                <span class="text-sm font-medium text-charcoal-700 w-24">Friday</span>
+              </label>
+              <span class="text-xs text-charcoal-400 italic">Day Off</span>
+              <button class="btn-secondary ml-auto">Save Hours</button>
+            </div>
+          </div>
+
+          <!-- Saturday - Off -->
+          <div class="rounded-xl border border-nude-100 p-4 bg-nude-50/50">
+            <div class="flex items-center gap-3 flex-wrap">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" class="w-4 h-4 accent-rose-500" />
+                <span class="text-sm font-medium text-charcoal-700 w-24">Saturday</span>
+              </label>
+              <span class="text-xs text-charcoal-400 italic">Day Off</span>
+              <button class="btn-secondary ml-auto">Save Hours</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Time off sidebar - RIGHT -->
+    <div class="space-y-6">
+
+      <!-- Time off request form -->
+      <div class="card">
+        <h2 class="text-base font-semibold text-charcoal-800 mb-1">Request Time Off</h2>
+        <p class="text-xs text-charcoal-400 mb-4">Subject to manager approval</p>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="field-label">From</label>
+            <input type="date" value="2026-07-01" class="field-input" />
+          </div>
+          <div>
+            <label class="field-label">To</label>
+            <input type="date" value="2026-07-03" class="field-input" />
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label class="field-label">Reason (optional)</label>
+          <textarea
+            placeholder="Reason for time off…"
+            rows="3"
+            class="field-input resize-none"
+          ></textarea>
+        </div>
+
+        <button class="btn-primary w-full">Submit Request</button>
+      </div>
+
+      <!-- Existing requests -->
+      <div class="card">
+        <h2 class="text-base font-semibold text-charcoal-800 mb-4">Time Off Requests</h2>
+        <ul class="space-y-3">
+
+          <li class="rounded-xl border border-nude-100 p-3 bg-nude-50/50">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-sm font-medium text-charcoal-700">3 Jul 2026 – 5 Jul 2026</p>
+                <p class="text-xs text-charcoal-500 mt-0.5 italic">Family event</p>
+              </div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-cream-100 text-cream-700">Pending</span>
+            </div>
+          </li>
+
+          <li class="rounded-xl border border-nude-100 p-3 bg-nude-50/50">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-sm font-medium text-charcoal-700">15 Jun 2026</p>
+                <p class="text-xs text-charcoal-500 mt-0.5 italic">Medical appointment</p>
+              </div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-700">Approved</span>
+            </div>
+          </li>
+
+          <li class="rounded-xl border border-nude-100 p-3 bg-nude-50/50">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <p class="text-sm font-medium text-charcoal-700">1 May 2026 – 7 May 2026</p>
+              </div>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700">Rejected</span>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>
+
+<footer class="text-center py-4 text-xs text-charcoal-400 border-t border-nude-100 mt-8">
+  Shiny Beauty Center — Staff Portal · Lina Al-Harbi
+</footer>
+
+</body>
+</html>

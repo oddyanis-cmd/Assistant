@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff Schedule — Shiny Beauty Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose: { 50:"#fff1f2",100:"#ffe4e6",200:"#fecdd3",300:"#fda4af",400:"#fb7185",500:"#f43f5e",600:"#e11d48",700:"#be123c" },
+            blush: { 50:"#fef7f0",100:"#fdeee0" },
+            nude: { 50:"#fdf8f6",100:"#f9ede8",200:"#f2d9d0",300:"#e8bfb0",400:"#d99f8b",600:"#b36251" },
+            cream: { 50:"#fefdfb",100:"#fdf8f0",400:"#eecb96",700:"#b2753a" },
+            charcoal: { 100:"#e2e3e6",200:"#c5c6cc",300:"#a0a1aa",400:"#7c7e89",500:"#62636e",600:"#4e4f5a",700:"#41424b",800:"#37383f",900:"#2d2e35" },
+          },
+          fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] },
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: "Inter", system-ui, sans-serif; background: linear-gradient(135deg, #fff1f2 0%, #fdf8f0 50%, #fef7f0 100%); min-height: 100vh; }
+    .card { background: #fff; border-radius: 1rem; border: 1px solid #f2d9d0; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+    .btn-ghost { display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border-radius:.5rem;color:#4e4f5a;font-weight:500;font-size:.875rem;transition:background .2s; }
+    .btn-ghost:hover { background:#e2e3e6; }
+    .btn-primary { display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:9999px;background:#f43f5e;color:#fff;font-weight:600;font-size:.875rem;transition:background .2s; }
+    .btn-secondary { display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:9999px;border:1px solid #fda4af;color:#be123c;background:#fff;font-weight:600;font-size:.875rem; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-rose-100 shadow-sm">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center text-white font-bold text-sm">S</div>
+        <span class="font-semibold text-charcoal-900 text-sm">Shiny Beauty</span>
+      </div>
+      <span class="hidden sm:block text-xs font-medium text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">Staff Portal</span>
+    </div>
+
+    <nav class="flex items-center gap-1">
+      <a href="#" class="btn-ghost text-rose-600 font-semibold bg-rose-50">My Schedule</a>
+      <a href="p3-03-availability.html" class="btn-ghost">Availability</a>
+      <a href="p3-04-notifications.html" class="btn-ghost">Notifications</a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button class="btn-ghost text-sm">عربي</button>
+      <a href="#" class="btn-ghost text-sm hidden sm:flex">Portal</a>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="max-w-5xl mx-auto px-4 py-8">
+
+  <!-- Page header -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-light text-charcoal-900">My Schedule</h1>
+    <p class="text-charcoal-500 text-sm mt-1">
+      Your appointments for
+      <span class="font-medium text-charcoal-700">Thursday, 26 June 2026</span>
+    </p>
+  </div>
+
+  <!-- Day navigation -->
+  <div class="flex items-center gap-2 mb-6">
+    <a href="#" class="btn-ghost px-4 py-2 text-xl">‹</a>
+
+    <div class="flex-1 text-center">
+      <div class="inline-flex items-center gap-2 bg-white rounded-xl px-4 py-2 border border-nude-200 shadow-sm">
+        <span class="text-sm font-medium text-charcoal-700">Thursday, 26 June 2026</span>
+        <span class="text-[10px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">Today</span>
+      </div>
+    </div>
+
+    <a href="#" class="btn-ghost px-4 py-2 text-xl">›</a>
+  </div>
+
+  <!-- Appointment list -->
+  <div class="space-y-3">
+
+    <!-- Appointment 1 — Confirmed -->
+    <a href="p3-02-appointment-detail.html" class="block card hover:shadow-md transition-all duration-200 hover:border-rose-200 group" style="padding:1.25rem 1.5rem;">
+      <div class="flex items-start gap-4">
+        <!-- Time -->
+        <div class="flex-shrink-0 w-20 text-center">
+          <div class="text-sm font-semibold text-charcoal-800">09:30 AM</div>
+          <div class="text-xs text-charcoal-400 mt-0.5">10:30 AM</div>
+        </div>
+        <!-- Timeline -->
+        <div class="flex flex-col items-center gap-1 flex-shrink-0">
+          <div class="w-2.5 h-2.5 rounded-full mt-1 bg-blue-400"></div>
+          <div class="w-px flex-1 bg-nude-200 h-8"></div>
+        </div>
+        <!-- Content -->
+        <div class="flex-1">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <p class="font-semibold text-charcoal-800 group-hover:text-rose-700">Bridal Hair & Makeup</p>
+              <p class="text-sm text-charcoal-500 mt-0.5">Nour Al-Rashidi</p>
+            </div>
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-blue-50 text-blue-700">confirmed</span>
+          </div>
+          <p class="text-xs text-charcoal-400 mt-2 italic">Traditional Saudi bridal look requested</p>
+        </div>
+        <div class="text-charcoal-300 group-hover:text-rose-400 self-center text-lg">›</div>
+      </div>
+    </a>
+
+    <!-- Appointment 2 — Checked In -->
+    <a href="#" class="block card hover:shadow-md transition-all duration-200 hover:border-rose-200 group" style="padding:1.25rem 1.5rem; border-color:#fecdd3;">
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0 w-20 text-center">
+          <div class="text-sm font-semibold text-charcoal-800">11:00 AM</div>
+          <div class="text-xs text-charcoal-400 mt-0.5">12:00 PM</div>
+        </div>
+        <div class="flex flex-col items-center gap-1 flex-shrink-0">
+          <div class="w-2.5 h-2.5 rounded-full mt-1 bg-rose-400"></div>
+          <div class="w-px flex-1 bg-nude-200 h-8"></div>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <p class="font-semibold text-charcoal-800 group-hover:text-rose-700">Deep Conditioning Treatment</p>
+              <p class="text-sm text-charcoal-500 mt-0.5">Fatima Al-Zahraa</p>
+            </div>
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-rose-100 text-rose-700">checked in</span>
+          </div>
+        </div>
+        <div class="text-charcoal-300 group-hover:text-rose-400 self-center text-lg">›</div>
+      </div>
+    </a>
+
+    <!-- Appointment 3 — Pending -->
+    <a href="#" class="block card hover:shadow-md transition-all duration-200 hover:border-rose-200 group" style="padding:1.25rem 1.5rem;">
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0 w-20 text-center">
+          <div class="text-sm font-semibold text-charcoal-800">02:00 PM</div>
+          <div class="text-xs text-charcoal-400 mt-0.5">03:00 PM</div>
+        </div>
+        <div class="flex flex-col items-center gap-1 flex-shrink-0">
+          <div class="w-2.5 h-2.5 rounded-full mt-1 bg-cream-400"></div>
+          <div class="w-px flex-1 bg-nude-200 h-8"></div>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <p class="font-semibold text-charcoal-800 group-hover:text-rose-700">Ombre Highlights</p>
+              <p class="text-sm text-charcoal-500 mt-0.5">Sara Al-Mutairi</p>
+            </div>
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-cream-100 text-cream-700">pending</span>
+          </div>
+          <p class="text-xs text-charcoal-400 mt-2 italic">Allergic to ammonia — use ammonia-free products</p>
+        </div>
+        <div class="text-charcoal-300 group-hover:text-rose-400 self-center text-lg">›</div>
+      </div>
+    </a>
+
+    <!-- Appointment 4 — Completed -->
+    <a href="#" class="block card hover:shadow-md transition-all duration-200 hover:border-rose-200 group" style="padding:1.25rem 1.5rem;">
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0 w-20 text-center">
+          <div class="text-sm font-semibold text-charcoal-800">04:30 PM</div>
+          <div class="text-xs text-charcoal-400 mt-0.5">05:30 PM</div>
+        </div>
+        <div class="flex flex-col items-center gap-1 flex-shrink-0">
+          <div class="w-2.5 h-2.5 rounded-full mt-1 bg-green-400"></div>
+          <div class="w-px flex-1 bg-nude-200 h-8"></div>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <p class="font-semibold text-charcoal-800 group-hover:text-rose-700">Classic Manicure & Gel Polish</p>
+              <p class="text-sm text-charcoal-500 mt-0.5">Layla Hassan</p>
+            </div>
+            <span class="text-xs font-medium px-2.5 py-1 rounded-full bg-green-50 text-green-700">completed</span>
+          </div>
+        </div>
+        <div class="text-charcoal-300 group-hover:text-rose-400 self-center text-lg">›</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- Summary -->
+  <div class="mt-4 text-center text-xs text-charcoal-400">
+    4 appointments scheduled
+  </div>
+
+</main>
+
+<footer class="text-center py-4 text-xs text-charcoal-400 border-t border-nude-100 mt-8">
+  Shiny Beauty Center — Staff Portal · Lina Al-Harbi
+</footer>
+
+</body>
+</html>

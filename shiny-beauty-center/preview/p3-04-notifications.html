@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>الإشعارات — بوابة موظفات شايني للتجميل</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose: { 50:"#fff1f2",100:"#ffe4e6",200:"#fecdd3",300:"#fda4af",400:"#fb7185",500:"#f43f5e",600:"#e11d48",700:"#be123c" },
+            nude: { 50:"#fdf8f6",100:"#f9ede8",200:"#f2d9d0",400:"#d99f8b",600:"#b36251" },
+            cream: { 50:"#fefdfb",100:"#fdf8f0",400:"#eecb96",700:"#b2753a" },
+            charcoal: { 100:"#e2e3e6",200:"#c5c6cc",400:"#7c7e89",500:"#62636e",600:"#4e4f5a",700:"#41424b",800:"#37383f",900:"#2d2e35" },
+          },
+          fontFamily: { sans: ["Noto Sans Arabic", "system-ui", "sans-serif"] },
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: "Noto Sans Arabic", system-ui, sans-serif;
+      background: linear-gradient(135deg, #fff1f2 0%, #fdf8f0 50%, #fef7f0 100%);
+      min-height: 100vh;
+      direction: rtl;
+    }
+    .card { background: #fff; border-radius: 1rem; border: 1px solid #f2d9d0; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+    .btn-ghost { display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1rem;border-radius:.5rem;color:#4e4f5a;font-weight:500;font-size:.875rem; }
+    .btn-ghost:hover { background:#e2e3e6; }
+    .btn-primary { display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border-radius:9999px;background:#f43f5e;color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;border:none; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-rose-100 shadow-sm">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-rose-500 flex items-center justify-center text-white font-bold text-sm">ش</div>
+        <span class="font-semibold text-charcoal-900 text-sm">مركز شايني</span>
+      </div>
+      <span class="text-xs font-medium text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">بوابة الموظفين</span>
+    </div>
+
+    <nav class="flex items-center gap-1">
+      <a href="p3-01-staff-schedule.html" class="btn-ghost">جدول مواعيدي</a>
+      <a href="p3-03-availability.html" class="btn-ghost">توافري</a>
+      <a href="#" class="btn-ghost text-rose-600 font-semibold bg-rose-50">الإشعارات</a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <button class="btn-ghost text-sm">English</button>
+      <a href="#" class="btn-ghost text-sm hidden sm:flex">البوابة</a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-8">
+
+  <!-- Page header -->
+  <div class="mb-6 flex items-start justify-between">
+    <div>
+      <h1 class="text-2xl font-light text-charcoal-900">الإشعارات</h1>
+      <p class="text-charcoal-500 text-sm mt-1">
+        صندوق الوارد الخاص بك
+        <span class="ms-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-700">
+          3 غير مقروء
+        </span>
+      </p>
+    </div>
+    <button class="btn-ghost text-sm">تحديد الكل كمقروء</button>
+  </div>
+
+  <!-- Notification list -->
+  <div class="space-y-2">
+
+    <!-- Unread — New booking assigned -->
+    <div class="rounded-2xl border p-4 bg-white border-rose-200 shadow-sm">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3 flex-1">
+          <div class="flex-shrink-0 mt-1.5">
+            <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-charcoal-800 mb-0.5">تم تعيين حجز جديد</p>
+            <p class="text-sm text-charcoal-700 leading-relaxed">
+              لديك موعد جديد: صبغة أومبري مع سارة المطيري بتاريخ الجمعة، 27 يونيو 2026 الساعة 02:00 مساءً.
+            </p>
+            <p class="text-xs text-charcoal-400 mt-1.5">منذ 5 دقائق</p>
+          </div>
+        </div>
+        <button class="text-xs text-rose-600 hover:text-rose-700 underline-offset-2 hover:underline flex-shrink-0">
+          تحديد كمقروء
+        </button>
+      </div>
+    </div>
+
+    <!-- Unread — Check-in reminder -->
+    <div class="rounded-2xl border p-4 bg-white border-rose-200 shadow-sm">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3 flex-1">
+          <div class="flex-shrink-0 mt-1.5">
+            <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-charcoal-800 mb-0.5">تم تعيين حجز جديد</p>
+            <p class="text-sm text-charcoal-700 leading-relaxed">
+              لديك موعد جديد: تسريح الشعر العروس مع نور الراشدي بتاريخ الخميس، 26 يونيو 2026 الساعة 09:30 صباحاً.
+            </p>
+            <p class="text-xs text-charcoal-400 mt-1.5">منذ ساعتين</p>
+          </div>
+        </div>
+        <button class="text-xs text-rose-600 hover:text-rose-700 underline-offset-2 hover:underline flex-shrink-0">
+          تحديد كمقروء
+        </button>
+      </div>
+    </div>
+
+    <!-- Unread — Schedule updated -->
+    <div class="rounded-2xl border p-4 bg-white border-rose-200 shadow-sm">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3 flex-1">
+          <div class="flex-shrink-0 mt-1.5">
+            <div class="w-2 h-2 rounded-full bg-rose-500"></div>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-charcoal-800 mb-0.5">تم تعيين حجز جديد</p>
+            <p class="text-sm text-charcoal-700 leading-relaxed">
+              لديك موعد جديد: علاج الكيراتين مع ليلى حسن بتاريخ الثلاثاء، 24 يونيو 2026 الساعة 11:00 صباحاً.
+            </p>
+            <p class="text-xs text-charcoal-400 mt-1.5">منذ يوم</p>
+          </div>
+        </div>
+        <button class="text-xs text-rose-600 hover:text-rose-700 underline-offset-2 hover:underline flex-shrink-0">
+          تحديد كمقروء
+        </button>
+      </div>
+    </div>
+
+    <!-- Read — older -->
+    <div class="rounded-2xl border p-4 bg-nude-50/60 border-nude-100">
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 mt-1.5">
+          <div class="w-2 h-2 rounded-full bg-charcoal-200"></div>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-charcoal-600 mb-0.5">تم تعيين حجز جديد</p>
+          <p class="text-sm text-charcoal-500 leading-relaxed">
+            لديك موعد جديد: مانيكير كلاسيك مع فاطمة الزهراء بتاريخ الاثنين، 23 يونيو 2026 الساعة 03:00 مساءً.
+          </p>
+          <p class="text-xs text-charcoal-400 mt-1.5">منذ 3 أيام</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read — older 2 -->
+    <div class="rounded-2xl border p-4 bg-nude-50/60 border-nude-100">
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 mt-1.5">
+          <div class="w-2 h-2 rounded-full bg-charcoal-200"></div>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-charcoal-600 mb-0.5">تم تعيين حجز جديد</p>
+          <p class="text-sm text-charcoal-500 leading-relaxed">
+            لديك موعد جديد: تقشير الوجه العميق مع منى السلمان بتاريخ الثلاثاء، 17 يونيو 2026 الساعة 10:00 صباحاً.
+          </p>
+          <p class="text-xs text-charcoal-400 mt-1.5">منذ 9 أيام</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read — system -->
+    <div class="rounded-2xl border p-4 bg-nude-50/60 border-nude-100">
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 mt-1.5">
+          <div class="w-2 h-2 rounded-full bg-charcoal-200"></div>
+        </div>
+        <div>
+          <p class="text-sm text-charcoal-500 leading-relaxed">
+            أهلاً بك في بوابة موظفات مركز شايني للتجميل! ستتلقين هنا إشعارات الحجوزات والتحديثات المهمة.
+          </p>
+          <p class="text-xs text-charcoal-400 mt-1.5">منذ شهر</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer class="text-center py-4 text-xs text-charcoal-400 border-t border-nude-100 mt-8">
+  مركز شايني للتجميل — بوابة الموظفين · لينا الحربي
+</footer>
+
+</body>
+</html>

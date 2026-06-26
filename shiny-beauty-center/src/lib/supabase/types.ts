@@ -270,6 +270,31 @@ export interface AuditLog {
   created_at: string;
 }
 
+// Phase 3 additions
+export type TimeOffStatus = "pending" | "approved" | "rejected";
+
+export interface StaffTimeOff {
+  id: string;
+  staff_id: string;
+  date_from: string;
+  date_to: string;
+  reason: string | null;
+  status: TimeOffStatus;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClientNote {
+  id: string;
+  client_id: string;
+  staff_id: string;
+  note: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // ---- Database shape for @supabase/supabase-js generics -------------------
 export interface Database {
   public: {
@@ -296,6 +321,8 @@ export interface Database {
       reviews: { Row: Review; Insert: Omit<Review, "id" | "created_at">; Update: Partial<Review> };
       notifications: { Row: Notification; Insert: Omit<Notification, "id" | "created_at">; Update: Partial<Notification> };
       audit_log: { Row: AuditLog; Insert: Omit<AuditLog, "id" | "created_at">; Update: never };
+      staff_time_off: { Row: StaffTimeOff; Insert: Omit<StaffTimeOff, "id" | "created_at" | "updated_at">; Update: Partial<StaffTimeOff> };
+      client_notes: { Row: ClientNote; Insert: Omit<ClientNote, "id" | "created_at" | "updated_at">; Update: Partial<ClientNote> };
     };
     Functions: {
       has_permission: {
@@ -327,6 +354,31 @@ export interface Database {
           appointment_id: string;
           public_token: string;
         }>;
+      };
+      staff_transition_appointment: {
+        Args: { p_appointment_id: string; p_new_status: string };
+        Returns: void;
+      };
+      staff_upsert_availability: {
+        Args: {
+          p_day_of_week: number;
+          p_start_time: string;
+          p_end_time: string;
+          p_is_available?: boolean;
+        };
+        Returns: void;
+      };
+      staff_request_time_off: {
+        Args: { p_date_from: string; p_date_to: string; p_reason?: string | null };
+        Returns: string;
+      };
+      staff_add_client_note: {
+        Args: { p_client_id: string; p_note: string };
+        Returns: string;
+      };
+      notify_staff_new_assignment: {
+        Args: { p_appointment_id: string };
+        Returns: void;
       };
     };
   };
