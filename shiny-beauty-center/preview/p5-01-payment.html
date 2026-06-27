@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shiny Beauty Center — Payment Step (Phase 5)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose:    { 50:"#fff1f2",100:"#ffe4e6",200:"#fecdd3",300:"#fda4af",400:"#fb7185",500:"#f43f5e",600:"#e11d48" },
+            blush:   { 50:"#fef7f0",100:"#fdeee0" },
+            nude:    { 50:"#fdf8f6",100:"#f9ede8",200:"#f2d9d0",300:"#e8bfb0",400:"#d99f8b" },
+            cream:   { 50:"#fefdfb",100:"#fdf8f0" },
+            charcoal:{ 50:"#f6f6f7",100:"#e2e3e6",400:"#7c7e89",500:"#62636e",600:"#4e4f5a",700:"#41424b",800:"#37383f",900:"#2d2e35" },
+          },
+          fontFamily: { sans:["Inter","system-ui","sans-serif"] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    /* Toggle panels */
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .tab-btn.active { background: #f43f5e; color: white; }
+  </style>
+</head>
+<body class="bg-cream-50 text-charcoal-900 min-h-screen">
+
+<!-- Header -->
+<header class="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-nude-100 px-4 py-3 flex items-center justify-between">
+  <div class="flex items-center gap-2">
+    <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="17" stroke="#fda4af" stroke-width="1.5"/>
+      <path d="M18 8 C13 8, 9 12, 9 18 C9 24, 13 28, 18 28" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M18 8 C23 8, 27 12, 27 18 C27 24, 23 28, 18 28" stroke="#fda4af" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle cx="18" cy="18" r="3" fill="#f43f5e" opacity="0.7"/>
+    </svg>
+    <span class="text-lg font-light text-charcoal-900">Shiny <em class="text-rose-500 not-italic">Beauty</em></span>
+  </div>
+  <span class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-2.5 py-1 rounded-full font-medium">Phase 5 — Payments</span>
+</header>
+
+<!-- View toggles -->
+<div class="max-w-lg mx-auto px-4 pt-4">
+  <div class="flex gap-2 mb-6">
+    <button onclick="showPanel('payment-step')" id="tab-payment" class="tab-btn active text-xs px-3 py-1.5 rounded-full border border-rose-200 font-medium transition-all">
+      Payment Step
+    </button>
+    <button onclick="showPanel('processing')" id="tab-processing" class="tab-btn text-xs px-3 py-1.5 rounded-full border border-nude-200 font-medium transition-all text-charcoal-600">
+      Processing
+    </button>
+    <button onclick="showPanel('success')" id="tab-success" class="tab-btn text-xs px-3 py-1.5 rounded-full border border-nude-200 font-medium transition-all text-charcoal-600">
+      Payment Success
+    </button>
+    <button onclick="showPanel('failed')" id="tab-failed" class="tab-btn text-xs px-3 py-1.5 rounded-full border border-nude-200 font-medium transition-all text-charcoal-600">
+      Payment Failed
+    </button>
+    <button onclick="showPanel('flag-off')" id="tab-flag-off" class="tab-btn text-xs px-3 py-1.5 rounded-full border border-nude-200 font-medium transition-all text-charcoal-600">
+      Flag OFF
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════ PANEL 1 — Payment Step ══════════════ -->
+<div id="panel-payment-step" class="panel active max-w-lg mx-auto px-4 pb-24">
+  <h1 class="text-2xl font-light text-charcoal-900 mb-6">Book Appointment</h1>
+
+  <!-- Step bar (5 steps when payments enabled) -->
+  <div class="flex items-center mb-8">
+    <!-- Step 1: Service (done) -->
+    <div class="flex items-center flex-1">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-rose-500 text-white flex-shrink-0">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <span class="text-[10px] ms-1 font-medium text-charcoal-400 hidden sm:inline">Service</span>
+      <div class="flex-1 h-px mx-2 bg-rose-300"></div>
+    </div>
+    <!-- Step 2: Specialist (done) -->
+    <div class="flex items-center flex-1">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-rose-500 text-white flex-shrink-0">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <span class="text-[10px] ms-1 font-medium text-charcoal-400 hidden sm:inline">Specialist</span>
+      <div class="flex-1 h-px mx-2 bg-rose-300"></div>
+    </div>
+    <!-- Step 3: Date & Time (done) -->
+    <div class="flex items-center flex-1">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-rose-500 text-white flex-shrink-0">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <span class="text-[10px] ms-1 font-medium text-charcoal-400 hidden sm:inline">Date &amp; Time</span>
+      <div class="flex-1 h-px mx-2 bg-rose-300"></div>
+    </div>
+    <!-- Step 4: Confirm (done) -->
+    <div class="flex items-center flex-1">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-rose-500 text-white flex-shrink-0">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <span class="text-[10px] ms-1 font-medium text-charcoal-400 hidden sm:inline">Confirm</span>
+      <div class="flex-1 h-px mx-2 bg-rose-300"></div>
+    </div>
+    <!-- Step 5: Payment (active) -->
+    <div class="flex items-center">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-rose-500 text-white flex-shrink-0">5</div>
+      <span class="text-[10px] ms-1 font-medium text-rose-600 hidden sm:inline">Payment</span>
+    </div>
+  </div>
+
+  <h2 class="text-lg font-medium text-charcoal-800 mb-6">Complete Payment</h2>
+
+  <!-- Order summary card -->
+  <div class="bg-white border border-nude-200 rounded-2xl p-4 shadow-sm space-y-3 mb-6">
+    <div class="flex items-baseline justify-between gap-4">
+      <span class="text-sm text-charcoal-500 flex-shrink-0">Service</span>
+      <span class="text-sm font-medium text-charcoal-900 text-end">Hydrating Facial Treatment</span>
+    </div>
+    <div class="flex items-baseline justify-between gap-4">
+      <span class="text-sm text-charcoal-500 flex-shrink-0">Specialist</span>
+      <span class="text-sm font-medium text-charcoal-900 text-end">Layla Al-Rashidi</span>
+    </div>
+    <div class="flex items-baseline justify-between gap-4">
+      <span class="text-sm text-charcoal-500 flex-shrink-0">Date</span>
+      <span class="text-sm font-medium text-charcoal-900 text-end">Monday, July 7, 2026</span>
+    </div>
+    <div class="flex items-baseline justify-between gap-4">
+      <span class="text-sm text-charcoal-500 flex-shrink-0">Time</span>
+      <span class="text-sm font-medium text-charcoal-900 text-end">10:30 AM</span>
+    </div>
+    <div class="pt-3 border-t border-nude-100 flex items-baseline justify-between">
+      <span class="text-sm font-semibold text-charcoal-700">Total</span>
+      <span class="text-lg font-bold text-rose-600">350 SAR</span>
+    </div>
+  </div>
+
+  <!-- Security badge -->
+  <div class="flex items-center justify-center gap-2 mb-6 text-xs text-charcoal-400">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M7 1L2 3v4c0 3 2.5 5.5 5 6 2.5-.5 5-3 5-6V3L7 1z" stroke="#7c7e89" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+      <path d="M4.5 7l2 2 3-3" stroke="#7c7e89" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    Secured by Tap Payments — 256-bit encryption
+  </div>
+
+  <!-- Tap logo area -->
+  <div class="border border-nude-200 rounded-xl p-4 mb-6 flex items-center justify-between bg-nude-50">
+    <div>
+      <p class="text-xs text-charcoal-400 mb-1">Payment powered by</p>
+      <!-- Tap wordmark approximation -->
+      <div class="flex items-center gap-1.5">
+        <div class="w-6 h-6 rounded bg-rose-500 flex items-center justify-center">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 11 L7 3 L11 11" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.5 8h5" stroke="white" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="font-semibold text-charcoal-700 text-sm tracking-wide">tap</span>
+        <span class="text-xs text-charcoal-400">payments</span>
+      </div>
+    </div>
+    <div class="flex gap-1.5 items-center">
+      <!-- Card icons placeholder -->
+      <div class="w-9 h-6 rounded bg-charcoal-100 flex items-center justify-center">
+        <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+          <rect width="20" height="14" rx="2" fill="#1a1f71"/>
+          <circle cx="8" cy="7" r="4" fill="#eb001b" opacity="0.9"/>
+          <circle cx="12" cy="7" r="4" fill="#f79e1b" opacity="0.9"/>
+        </svg>
+      </div>
+      <div class="w-9 h-6 rounded bg-charcoal-100 flex items-center justify-center">
+        <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
+          <rect width="20" height="14" rx="2" fill="#016fd0"/>
+          <text x="3" y="10" font-size="7" fill="white" font-family="sans-serif" font-weight="bold">VISA</text>
+        </svg>
+      </div>
+      <div class="w-9 h-6 rounded bg-charcoal-100 flex items-center justify-center text-[8px] font-bold text-charcoal-600">mada</div>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="flex gap-3">
+    <button class="flex-1 px-4 py-3 rounded-xl border border-nude-300 text-charcoal-700 font-medium text-sm hover:bg-nude-50 transition-colors">
+      Back
+    </button>
+    <button onclick="showPanel('processing')" class="flex-1 px-4 py-3 rounded-xl bg-rose-500 text-white font-medium text-sm hover:bg-rose-600 transition-colors flex items-center justify-center gap-2">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <rect x="1" y="4" width="14" height="10" rx="1.5" stroke="white" stroke-width="1.2"/>
+        <path d="M1 7h14" stroke="white" stroke-width="1.2"/>
+      </svg>
+      Pay Now
+    </button>
+  </div>
+  <p class="text-center text-xs text-charcoal-400 mt-4">You will be redirected to Tap's secure payment page.</p>
+
+  <!-- Flag status note -->
+  <div class="mt-8 bg-green-50 border border-green-200 rounded-xl p-3 text-xs text-green-700 flex gap-2">
+    <span class="font-mono bg-green-100 px-1.5 py-0.5 rounded">NEXT_PUBLIC_PAYMENTS_ENABLED=true</span>
+    <span>— Payment step shown; appointment stays PENDING until webhook confirms.</span>
+  </div>
+</div>
+
+<!-- ══════════════ PANEL 2 — Processing ══════════════ -->
+<div id="panel-processing" class="panel max-w-lg mx-auto px-4 pb-24">
+  <main class="flex flex-col items-center justify-center py-16 text-center">
+    <!-- Spinner -->
+    <div class="w-20 h-20 rounded-full bg-nude-100 flex items-center justify-center mb-6 shadow-sm">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="17" fill="#fdeee0"/>
+        <circle cx="18" cy="18" r="5" fill="#fda4af"/>
+      </svg>
+    </div>
+    <h1 class="text-3xl font-light text-charcoal-900 mb-3">Payment Processing</h1>
+    <p class="text-charcoal-500 mb-8 max-w-xs">We're confirming your payment. Your appointment will be confirmed shortly.</p>
+
+    <div class="card mb-8 w-full max-w-xs">
+      <p class="text-xs text-charcoal-400 mb-1">Booking Reference</p>
+      <p class="text-xl font-mono font-semibold text-rose-600 tracking-widest uppercase">a3f9c1</p>
+    </div>
+
+    <div class="flex flex-col gap-3 w-full max-w-xs">
+      <button onclick="showPanel('success')" class="w-full px-4 py-3 rounded-xl bg-rose-500 text-white font-medium text-sm hover:bg-rose-600 transition-colors">View My Appointments</button>
+      <button onclick="showPanel('payment-step')" class="w-full px-4 py-3 rounded-xl border border-nude-300 text-charcoal-700 font-medium text-sm hover:bg-nude-50 transition-colors">Book Another Service</button>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════════ PANEL 3 — Success ══════════════ -->
+<div id="panel-success" class="panel max-w-lg mx-auto px-4 pb-24">
+  <main class="flex flex-col items-center justify-center py-16 text-center">
+    <!-- Success checkmark -->
+    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-rose-100 to-nude-100 flex items-center justify-center mb-6 shadow-sm">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="17" fill="#fecdd3"/>
+        <path d="M11 18l5 5 9-9" stroke="#e11d48" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1 class="text-3xl font-light text-charcoal-900 mb-3">Payment Confirmed!</h1>
+    <p class="text-charcoal-500 mb-8">Your payment was successful. Your appointment is now confirmed.</p>
+
+    <div class="card mb-8 w-full max-w-xs">
+      <p class="text-xs text-charcoal-400 mb-1">Booking Reference</p>
+      <p class="text-xl font-mono font-semibold text-rose-600 tracking-widest uppercase">a3f9c1</p>
+    </div>
+
+    <!-- Webhook flow diagram -->
+    <div class="bg-rose-50 border border-rose-100 rounded-2xl p-4 text-start w-full max-w-xs mb-8">
+      <p class="text-xs font-semibold text-charcoal-700 mb-2">What happened behind the scenes</p>
+      <ol class="text-xs text-charcoal-500 space-y-1 list-decimal list-inside">
+        <li>Appointment created → <span class="font-mono bg-white px-1 rounded">PENDING</span></li>
+        <li>Payment row + invoice inserted</li>
+        <li>Tap charge initiated — user redirected</li>
+        <li>Tap webhook → signature verified</li>
+        <li>Appointment → <span class="font-mono bg-white px-1 rounded text-rose-600">CONFIRMED</span></li>
+        <li>Loyalty points awarded</li>
+      </ol>
+    </div>
+
+    <div class="flex flex-col gap-3 w-full max-w-xs">
+      <button class="w-full px-4 py-3 rounded-xl bg-rose-500 text-white font-medium text-sm hover:bg-rose-600 transition-colors">View My Appointments</button>
+      <button onclick="showPanel('payment-step')" class="w-full px-4 py-3 rounded-xl border border-rose-200 bg-rose-50 text-rose-600 font-medium text-sm hover:bg-rose-100 transition-colors">Book Another Service</button>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════════ PANEL 4 — Failed ══════════════ -->
+<div id="panel-failed" class="panel max-w-lg mx-auto px-4 pb-24">
+  <main class="flex flex-col items-center justify-center py-16 text-center">
+    <!-- X icon -->
+    <div class="w-20 h-20 rounded-full bg-nude-100 flex items-center justify-center mb-6 shadow-sm">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="17" fill="#f2d9d0"/>
+        <path d="M13 13l10 10M23 13l-10 10" stroke="#d99f8b" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="text-3xl font-light text-charcoal-900 mb-3">Payment Failed</h1>
+    <p class="text-charcoal-500 mb-8 max-w-xs">Your payment could not be processed. Your booking is held for 15 minutes — please try again.</p>
+
+    <div class="bg-nude-50 border border-nude-200 rounded-2xl p-4 text-start w-full max-w-xs mb-8">
+      <p class="text-xs font-semibold text-charcoal-700 mb-1">Appointment status</p>
+      <p class="text-xs text-charcoal-500">Your appointment remains <span class="font-mono bg-white px-1 rounded">PENDING</span> — it will not block the slot for others. Complete payment to confirm.</p>
+    </div>
+
+    <div class="flex flex-col gap-3 w-full max-w-xs">
+      <button onclick="showPanel('payment-step')" class="w-full px-4 py-3 rounded-xl bg-rose-500 text-white font-medium text-sm hover:bg-rose-600 transition-colors">Try Again</button>
+      <button class="w-full px-4 py-3 rounded-xl border border-nude-300 text-charcoal-700 font-medium text-sm hover:bg-nude-50 transition-colors">View My Appointments</button>
+    </div>
+  </main>
+</div>
+
+<!-- ══════════════ PANEL 5 — Flag OFF ══════════════ -->
+<div id="panel-flag-off" class="panel max-w-lg mx-auto px-4 pb-24">
+  <h1 class="text-2xl font-light text-charcoal-900 mb-6">Book Appointment</h1>
+
+  <!-- Step bar (4 steps when flag OFF) -->
+  <div class="flex items-center mb-8">
+    <div class="flex items-center flex-1">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-rose-500 text-white flex-shrink-0">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <span class="text-[10px] ms-1 font-medium text-charcoal-400 hidden sm:inline">Service</span>
+      <div class="flex-1 h-px mx-2 bg-rose-300"></div>
+    </div>
+    <div class="flex items-center flex-1">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-rose-500 text-white flex-shrink-0">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <span class="text-[10px] ms-1 font-medium text-charcoal-400 hidden sm:inline">Specialist</span>
+      <div class="flex-1 h-px mx-2 bg-rose-300"></div>
+    </div>
+    <div class="flex items-center flex-1">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-rose-500 text-white flex-shrink-0">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <span class="text-[10px] ms-1 font-medium text-charcoal-400 hidden sm:inline">Date &amp; Time</span>
+      <div class="flex-1 h-px mx-2 bg-rose-300"></div>
+    </div>
+    <div class="flex items-center">
+      <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold bg-rose-500 text-white flex-shrink-0">4</div>
+      <span class="text-[10px] ms-1 font-medium text-rose-600 hidden sm:inline">Confirm</span>
+    </div>
+  </div>
+
+  <h2 class="text-lg font-medium text-charcoal-800 mb-6">Review Your Booking</h2>
+
+  <div class="bg-white border border-nude-200 rounded-2xl p-4 shadow-sm space-y-3 mb-6">
+    <div class="flex items-baseline justify-between gap-4">
+      <span class="text-sm text-charcoal-500 flex-shrink-0">Service</span>
+      <span class="text-sm font-medium text-charcoal-900 text-end">Hydrating Facial Treatment</span>
+    </div>
+    <div class="flex items-baseline justify-between gap-4">
+      <span class="text-sm text-charcoal-500 flex-shrink-0">Specialist</span>
+      <span class="text-sm font-medium text-charcoal-900 text-end">Layla Al-Rashidi</span>
+    </div>
+    <div class="flex items-baseline justify-between gap-4">
+      <span class="text-sm text-charcoal-500 flex-shrink-0">Date</span>
+      <span class="text-sm font-medium text-charcoal-900 text-end">Monday, July 7, 2026</span>
+    </div>
+    <div class="flex items-baseline justify-between gap-4">
+      <span class="text-sm text-charcoal-500 flex-shrink-0">Time</span>
+      <span class="text-sm font-medium text-charcoal-900 text-end">10:30 AM</span>
+    </div>
+    <div class="flex items-baseline justify-between gap-4">
+      <span class="text-sm text-charcoal-500 flex-shrink-0">Price</span>
+      <span class="text-sm font-medium text-charcoal-900 text-end">350 SAR</span>
+    </div>
+    <div class="pt-2 border-t border-nude-100">
+      <span class="text-xs text-charcoal-400 bg-nude-50 px-3 py-1.5 rounded-full">Payment at salon</span>
+    </div>
+  </div>
+
+  <div class="mb-6">
+    <label class="text-sm font-medium text-charcoal-700 block mb-1.5">Notes (optional)</label>
+    <textarea rows="3" class="w-full border border-nude-200 rounded-xl px-3 py-2.5 text-sm text-charcoal-900 resize-none focus:outline-none focus:border-rose-300 bg-white" placeholder="Any special requests or information for your specialist…"></textarea>
+  </div>
+
+  <div class="flex gap-3">
+    <button class="flex-1 px-4 py-3 rounded-xl border border-nude-300 text-charcoal-700 font-medium text-sm hover:bg-nude-50 transition-colors">Back</button>
+    <button class="flex-1 px-4 py-3 rounded-xl bg-rose-500 text-white font-medium text-sm hover:bg-rose-600 transition-colors">Confirm Booking</button>
+  </div>
+
+  <!-- Flag off state note -->
+  <div class="mt-8 bg-charcoal-50 border border-charcoal-100 rounded-xl p-3 text-xs text-charcoal-600 flex gap-2">
+    <span class="font-mono bg-charcoal-100 px-1.5 py-0.5 rounded text-charcoal-700">NEXT_PUBLIC_PAYMENTS_ENABLED=false</span>
+    <span>— No payment step; appointment → CONFIRMED immediately. Behavior identical to Phases 1-4.</span>
+  </div>
+</div>
+
+<!-- Bottom nav -->
+<nav class="fixed bottom-0 inset-x-0 bg-white border-t border-nude-100 flex justify-around py-2 z-40 max-w-lg mx-auto">
+  <button class="flex flex-col items-center gap-0.5 px-4 py-1 text-charcoal-400">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 9.5L11 3l8 6.5V19a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="currentColor" stroke-width="1.5"/></svg>
+    <span class="text-[10px]">Home</span>
+  </button>
+  <button class="flex flex-col items-center gap-0.5 px-4 py-1 text-charcoal-400">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M8 11h3m0 0V8m0 3l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="text-[10px]">Services</span>
+  </button>
+  <button class="flex flex-col items-center gap-0.5 px-4 py-1 text-rose-500">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 2v4M15 2v4M3 10h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="text-[10px] font-semibold">Book</span>
+  </button>
+  <button class="flex flex-col items-center gap-0.5 px-4 py-1 text-charcoal-400">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M3 19c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span class="text-[10px]">Profile</span>
+  </button>
+</nav>
+
+<style>
+  /* card utility matching app */
+  .card { background: white; border: 1px solid #f2d9d0; border-radius: 1rem; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+</style>
+
+<script>
+  function showPanel(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.classList.remove('bg-rose-500', 'text-white');
+      b.classList.add('text-charcoal-600');
+    });
+    document.getElementById('panel-' + id).classList.add('active');
+    const btn = document.getElementById('tab-' + id.replace('-step','').replace('-','').replace('-',''));
+    // map id to tab id
+    const tabMap = {
+      'payment-step': 'tab-payment',
+      'processing':   'tab-processing',
+      'success':      'tab-success',
+      'failed':       'tab-failed',
+      'flag-off':     'tab-flag-off',
+    };
+    const tabEl = document.getElementById(tabMap[id]);
+    if (tabEl) {
+      tabEl.classList.add('active');
+      tabEl.classList.remove('text-charcoal-600');
+    }
+  }
+</script>
+
+</body>
+</html>

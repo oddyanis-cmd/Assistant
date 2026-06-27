@@ -184,6 +184,7 @@
     "step_staff": "Specialist",
     "step_datetime": "Date & Time",
     "step_confirm": "Confirm",
+    "step_payment": "Payment",
     "choose_staff": "Choose a Specialist",
     "no_preference": "No Preference",
     "no_preference_desc": "We'll assign the best available specialist",
@@ -197,7 +198,15 @@
     "date_label": "Date",
     "time_label": "Time",
     "price_label": "Price",
+    "total_label": "Total",
     "payment_note": "Payment at salon",
+    "payment_note_online": "Secure online payment",
+    "payment_title": "Complete Payment",
+    "payment_secure_note": "Secured by Tap Payments — 256-bit encryption",
+    "payment_provider_note": "You will be redirected to Tap's secure payment page.",
+    "payment_processing": "Redirecting…",
+    "pay_now_button": "Pay Now",
+    "continue_to_payment": "Continue to Payment",
     "confirm_button": "Confirm Booking",
     "confirming": "Confirming…",
     "notes_label": "Notes (optional)",
@@ -327,6 +336,15 @@
       "5": "Friday",
       "6": "Saturday"
     }
+  },
+  "payment": {
+    "success_title": "Payment Confirmed!",
+    "success_body": "Your payment was successful. Your appointment is now confirmed.",
+    "failed_title": "Payment Failed",
+    "failed_body": "Your payment could not be processed. Your booking is held for 15 minutes — please try again.",
+    "processing_title": "Payment Processing",
+    "processing_body": "We're confirming your payment. Your appointment will be confirmed shortly.",
+    "retry_button": "Try Again"
   },
   "errors": {
     "not_found": "Page not found",

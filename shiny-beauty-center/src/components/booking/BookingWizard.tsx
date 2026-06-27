@@ -6,8 +6,11 @@ import { useRouter } from "@/i18n/navigation";
 import type { Service } from "@/lib/supabase/types";
 import type { StaffWithProfile } from "@/lib/catalog";
 import { fetchAvailableSlots, createAppointmentAction } from "@/lib/appointments";
+import { initiateBookingPayment } from "@/lib/payments/actions";
 
-type Step = "service" | "staff" | "datetime" | "confirm";
+// Steps include an optional "payment" step inserted after "confirm" when
+// paymentsEnabled is true.
+type Step = "service" | "staff" | "datetime" | "confirm" | "payment";
 
 interface Slot {
   staff_id: string;
@@ -21,6 +24,11 @@ interface BookingWizardProps {
   preselectedServiceId: string | null;
   locale: string;
   isAr: boolean;
+  /** Injected from server so the client never reads env directly */
+  paymentsEnabled: boolean;
+  /** Full name of the authenticated user, for pre-filling Tap customer */
+  clientName?: string;
+  clientEmail?: string;
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -61,15 +69,35 @@ function getDateOptions() {
 
 // ── Step indicator ──────────────────────────────────────────────────────────
 
-function StepBar({ step }: { step: Step }) {
+function StepBar({
+  step,
+  paymentsEnabled,
+}: {
+  step: Step;
+  paymentsEnabled: boolean;
+}) {
   const t = useTranslations("booking");
-  const steps: Step[] = ["service", "staff", "datetime", "confirm"];
-  const labels = [
-    t("step_service"),
-    t("step_staff"),
-    t("step_datetime"),
-    t("step_confirm"),
-  ];
+
+  const baseSteps: Step[] = ["service", "staff", "datetime", "confirm"];
+  const steps: Step[] = paymentsEnabled
+    ? [...baseSteps, "payment"]
+    : baseSteps;
+
+  const labels: string[] = paymentsEnabled
+    ? [
+        t("step_service"),
+        t("step_staff"),
+        t("step_datetime"),
+        t("step_confirm"),
+        t("step_payment"),
+      ]
+    : [
+        t("step_service"),
+        t("step_staff"),
+        t("step_datetime"),
+        t("step_confirm"),
+      ];
+
   const current = steps.indexOf(step);
 
   return (
@@ -85,7 +113,12 @@ function StepBar({ step }: { step: Step }) {
           >
             {i < current ? (
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" />
+                <path
+                  d="M2 6l3 3 5-5"
+                  stroke="white"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
               </svg>
             ) : (
               i + 1
@@ -119,6 +152,9 @@ export function BookingWizard({
   preselectedServiceId,
   locale,
   isAr,
+  paymentsEnabled,
+  clientName = "Guest",
+  clientEmail,
 }: BookingWizardProps) {
   const t = useTranslations("booking");
   const router = useRouter();
@@ -130,13 +166,19 @@ export function BookingWizard({
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
     preselectedServiceId
   );
-  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null); // null = no preference
+  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  // Set after appointment is created (before payment step)
+  const [createdAppointmentId, setCreatedAppointmentId] = useState<
+    string | null
+  >(null);
+  const [publicToken, setPublicToken] = useState<string | null>(null);
 
   const selectedService = services.find((s) => s.id === selectedServiceId);
 
@@ -157,9 +199,9 @@ export function BookingWizard({
     setLoadingSlots(false);
   }
 
-  // ── Confirm booking ───────────────────────────────────────────────────────
+  // ── Confirm booking (flag OFF path: create + confirm immediately) ─────────
 
-  function handleConfirm() {
+  function handleConfirmNoPayment() {
     if (!selectedSlot || !selectedServiceId) return;
     setError(null);
 
@@ -182,12 +224,74 @@ export function BookingWizard({
     });
   }
 
+  // ── Confirm booking (flag ON path: create PENDING, then pay) ─────────────
+
+  function handleConfirmWithPayment() {
+    if (!selectedSlot || !selectedServiceId || !selectedService) return;
+    setError(null);
+
+    startTransition(async () => {
+      // Step 1: create the appointment in PENDING state
+      const result = await createAppointmentAction({
+        serviceId: selectedServiceId,
+        staffId: selectedSlot.staff_id,
+        startAt: selectedSlot.slot_start,
+        notes: notes.trim() || undefined,
+        pending: true,
+      });
+
+      if ("error" in result) {
+        setError(result.error);
+        return;
+      }
+
+      setCreatedAppointmentId(result.appointmentId);
+      setPublicToken(result.publicToken);
+      setStep("payment");
+    });
+  }
+
+  function handleConfirm() {
+    if (paymentsEnabled) {
+      handleConfirmWithPayment();
+    } else {
+      handleConfirmNoPayment();
+    }
+  }
+
+  // ── Payment step: initiate Tap charge ─────────────────────────────────────
+
+  function handlePay() {
+    if (!createdAppointmentId || !selectedService) return;
+    setError(null);
+
+    startTransition(async () => {
+      const result = await initiateBookingPayment({
+        appointmentId: createdAppointmentId,
+        serviceId: selectedService.id,
+        servicePrice: Number(selectedService.price),
+        serviceNameEn: selectedService.name_en,
+        clientName,
+        clientEmail,
+        locale,
+      });
+
+      if ("error" in result) {
+        setError(result.error);
+        return;
+      }
+
+      // Redirect to Tap hosted payment page
+      window.location.href = result.paymentUrl;
+    });
+  }
+
   // ── Step: choose service ──────────────────────────────────────────────────
 
   if (step === "service") {
     return (
       <div>
-        <StepBar step="service" />
+        <StepBar step="service" paymentsEnabled={paymentsEnabled} />
         <h2 className="text-lg font-medium text-charcoal-800 mb-4">
           {t("step_service")}
         </h2>
@@ -229,13 +333,12 @@ export function BookingWizard({
   if (step === "staff") {
     return (
       <div>
-        <StepBar step="staff" />
+        <StepBar step="staff" paymentsEnabled={paymentsEnabled} />
         <h2 className="text-lg font-medium text-charcoal-800 mb-4">
           {t("choose_staff")}
         </h2>
 
         <div className="space-y-3">
-          {/* No preference option */}
           <button
             onClick={() => {
               setSelectedStaffId(null);
@@ -297,10 +400,7 @@ export function BookingWizard({
           ))}
         </div>
 
-        <button
-          onClick={() => setStep("service")}
-          className="mt-6 btn-ghost w-full"
-        >
+        <button onClick={() => setStep("service")} className="mt-6 btn-ghost w-full">
           {t("back")}
         </button>
       </div>
@@ -311,9 +411,7 @@ export function BookingWizard({
 
   if (step === "datetime") {
     const dateOptions = getDateOptions();
-    const selectedStaffMember = staff.find((s) => s.id === selectedStaffId);
 
-    // Group slots by time for display (when no-preference, multiple staff per time)
     const slotsByTime = slots.reduce<Record<string, Slot[]>>((acc, slot) => {
       const key = slot.slot_start;
       if (!acc[key]) acc[key] = [];
@@ -325,10 +423,9 @@ export function BookingWizard({
 
     return (
       <div>
-        <StepBar step="datetime" />
+        <StepBar step="datetime" paymentsEnabled={paymentsEnabled} />
 
         <div className="space-y-6">
-          {/* Date picker */}
           <div>
             <h2 className="text-sm font-semibold text-charcoal-700 mb-3">
               {t("choose_date")}
@@ -350,7 +447,6 @@ export function BookingWizard({
             </div>
           </div>
 
-          {/* Time slots */}
           {selectedDate && (
             <div>
               <h2 className="text-sm font-semibold text-charcoal-700 mb-3">
@@ -369,12 +465,10 @@ export function BookingWizard({
                 <div className="grid grid-cols-3 gap-2">
                   {uniqueTimes.map((timeKey) => {
                     const slotGroup = slotsByTime[timeKey];
-                    // Pick the first slot (or the preferred staff's slot)
                     const slot =
                       slotGroup.find((s) => s.staff_id === selectedStaffId) ??
                       slotGroup[0];
-                    const isSelected =
-                      selectedSlot?.slot_start === timeKey;
+                    const isSelected = selectedSlot?.slot_start === timeKey;
 
                     return (
                       <button
@@ -397,10 +491,7 @@ export function BookingWizard({
         </div>
 
         <div className="flex gap-3 mt-8">
-          <button
-            onClick={() => setStep("staff")}
-            className="btn-ghost flex-1"
-          >
+          <button onClick={() => setStep("staff")} className="btn-ghost flex-1">
             {t("back")}
           </button>
           <button
@@ -423,12 +514,11 @@ export function BookingWizard({
         ? selectedService.name_ar
         : selectedService.name_en
       : "";
-    const staffName =
-      selectedSlot?.staff_name ?? t("no_preference");
+    const staffName = selectedSlot?.staff_name ?? t("no_preference");
 
     return (
       <div>
-        <StepBar step="confirm" />
+        <StepBar step="confirm" paymentsEnabled={paymentsEnabled} />
         <h2 className="text-lg font-medium text-charcoal-800 mb-6">
           {t("review_title")}
         </h2>
@@ -447,14 +537,8 @@ export function BookingWizard({
           <Row label={t("specialist_label")} value={staffName} />
           {selectedSlot && (
             <>
-              <Row
-                label={t("date_label")}
-                value={formatDate(selectedSlot.slot_start)}
-              />
-              <Row
-                label={t("time_label")}
-                value={formatTime(selectedSlot.slot_start)}
-              />
+              <Row label={t("date_label")} value={formatDate(selectedSlot.slot_start)} />
+              <Row label={t("time_label")} value={formatTime(selectedSlot.slot_start)} />
             </>
           )}
           {selectedService && (
@@ -463,10 +547,12 @@ export function BookingWizard({
               value={`${selectedService.price} SAR`}
             />
           )}
-          {/* Payment note — hidden when payments flag is on (Phase 3) */}
+          {/* Payment note — toggles based on flag */}
           <div className="pt-2 border-t border-nude-100">
             <span className="text-xs text-charcoal-400 bg-nude-50 px-3 py-1.5 rounded-full">
-              {t("payment_note")}
+              {paymentsEnabled
+                ? t("payment_note_online")
+                : t("payment_note")}
             </span>
           </div>
         </div>
@@ -496,9 +582,108 @@ export function BookingWizard({
             disabled={isPending}
             className="btn-primary flex-1"
           >
-            {isPending ? t("confirming") : t("confirm_button")}
+            {isPending
+              ? t("confirming")
+              : paymentsEnabled
+              ? t("continue_to_payment")
+              : t("confirm_button")}
           </button>
         </div>
+      </div>
+    );
+  }
+
+  // ── Step: payment (paymentsEnabled === true only) ─────────────────────────
+
+  if (step === "payment") {
+    const svcName = selectedService
+      ? isAr
+        ? selectedService.name_ar
+        : selectedService.name_en
+      : "";
+    const price = selectedService ? Number(selectedService.price) : 0;
+
+    return (
+      <div>
+        <StepBar step="payment" paymentsEnabled={paymentsEnabled} />
+        <h2 className="text-lg font-medium text-charcoal-800 mb-6">
+          {t("payment_title")}
+        </h2>
+
+        {error && (
+          <div
+            role="alert"
+            className="mb-4 px-4 py-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-sm"
+          >
+            {error}
+          </div>
+        )}
+
+        {/* Order summary */}
+        <div className="card space-y-4 mb-6">
+          <Row label={t("service_label")} value={svcName} />
+          {selectedSlot && (
+            <>
+              <Row label={t("date_label")} value={formatDate(selectedSlot.slot_start)} />
+              <Row label={t("time_label")} value={formatTime(selectedSlot.slot_start)} />
+            </>
+          )}
+          <div className="pt-2 border-t border-nude-100 flex items-baseline justify-between">
+            <span className="text-sm font-semibold text-charcoal-700">
+              {t("total_label")}
+            </span>
+            <span className="text-lg font-bold text-rose-600">
+              {price} SAR
+            </span>
+          </div>
+        </div>
+
+        {/* Secure payment badge */}
+        <div className="flex items-center justify-center gap-2 mb-6 text-xs text-charcoal-400">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path
+              d="M7 1L2 3v4c0 3 2.5 5.5 5 6 2.5-.5 5-3 5-6V3L7 1z"
+              stroke="#7c7e89"
+              strokeWidth="1.2"
+              fill="none"
+              strokeLinejoin="round"
+            />
+            <path d="M4.5 7l2 2 3-3" stroke="#7c7e89" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+          {t("payment_secure_note")}
+        </div>
+
+        {/* Tap payment button */}
+        <div className="flex gap-3">
+          <button
+            onClick={() => setStep("confirm")}
+            disabled={isPending}
+            className="btn-ghost flex-1"
+          >
+            {t("back")}
+          </button>
+          <button
+            onClick={handlePay}
+            disabled={isPending}
+            className="btn-primary flex-1 flex items-center justify-center gap-2"
+          >
+            {isPending ? (
+              t("payment_processing")
+            ) : (
+              <>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <rect x="1" y="4" width="14" height="10" rx="1.5" stroke="white" strokeWidth="1.2" />
+                  <path d="M1 7h14" stroke="white" strokeWidth="1.2" />
+                </svg>
+                {t("pay_now_button")}
+              </>
+            )}
+          </button>
+        </div>
+
+        <p className="text-center text-xs text-charcoal-400 mt-4">
+          {t("payment_provider_note")}
+        </p>
       </div>
     );
   }

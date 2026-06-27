@@ -7,6 +7,7 @@ import { BookingWizard } from "@/components/booking/BookingWizard";
 import { getActiveStaff, getServiceById, getServices } from "@/lib/catalog";
 import { getCurrentUserWithPermissions } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
+import { featureFlags } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "Book Appointment",
@@ -49,10 +50,7 @@ export default async function BookPage({ params, searchParams }: BookPageProps) 
             <p className="text-charcoal-500 text-sm">
               {t("booking.sign_in_required")}
             </p>
-            <Link
-              href="/auth/signin"
-              className="btn-primary w-full"
-            >
+            <Link href="/auth/signin" className="btn-primary w-full">
               {t("booking.sign_in_button")}
             </Link>
             <Link href="/services" className="btn-ghost w-full">
@@ -64,6 +62,9 @@ export default async function BookPage({ params, searchParams }: BookPageProps) 
       </div>
     );
   }
+
+  const clientName = user.profile?.full_name ?? "Guest";
+  const clientEmail = user.email ?? undefined;
 
   return (
     <div className="min-h-screen bg-cream-50 flex flex-col pb-20">
@@ -82,6 +83,9 @@ export default async function BookPage({ params, searchParams }: BookPageProps) 
           preselectedServiceId={preselectedService?.id ?? null}
           locale={locale}
           isAr={isAr}
+          paymentsEnabled={featureFlags.paymentsEnabled}
+          clientName={clientName}
+          clientEmail={clientEmail}
         />
       </main>
 

@@ -349,11 +349,21 @@ export interface Database {
           p_notes?: string | null;
           p_client_name?: string | null;
           p_client_phone?: string | null;
+          /** Pass true when payments are enabled; appointment starts PENDING */
+          p_pending?: boolean;
         };
         Returns: Array<{
           appointment_id: string;
           public_token: string;
         }>;
+      };
+      confirm_appointment_payment: {
+        Args: {
+          p_appointment_id: string;
+          p_payment_id: string;
+          p_invoice_id?: string | null;
+        };
+        Returns: void;
       };
       staff_transition_appointment: {
         Args: { p_appointment_id: string; p_new_status: string };

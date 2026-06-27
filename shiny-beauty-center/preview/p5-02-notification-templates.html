@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shiny Beauty Center — Notification Templates (Phase 5)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            rose:    { 50:"#fff1f2",100:"#ffe4e6",200:"#fecdd3",300:"#fda4af",400:"#fb7185",500:"#f43f5e",600:"#e11d48",700:"#be123c" },
+            nude:    { 50:"#fdf8f6",100:"#f9ede8",200:"#f2d9d0",300:"#e8bfb0",400:"#d99f8b" },
+            cream:   { 50:"#fefdfb",100:"#fdf8f0" },
+            charcoal:{ 50:"#f6f6f7",100:"#e2e3e6",200:"#c5c6cc",400:"#7c7e89",500:"#62636e",600:"#4e4f5a",700:"#41424b",800:"#37383f",900:"#2d2e35" },
+          },
+          fontFamily: {
+            sans: ["Inter","system-ui","sans-serif"],
+            arabic: ["Noto Sans Arabic","Tahoma","Arial","sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; background: #fefdfb; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .tab-btn { transition: all 0.15s; }
+    .tab-btn.active { background: #f43f5e; color: #fff; }
+    /* Email preview iframe */
+    .email-frame { width: 100%; min-height: 640px; border: none; background: #fefdfb; }
+    /* WhatsApp bubble */
+    .wa-bubble { background: #dcf8c6; border-radius: 12px 12px 4px 12px; padding: 12px 14px;
+                 font-size: 13.5px; line-height: 1.6; max-width: 380px; white-space: pre-wrap;
+                 word-wrap: break-word; box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+    .wa-bubble-ar { border-radius: 12px 12px 12px 4px; direction: rtl;
+                    font-family: "Noto Sans Arabic", Tahoma, sans-serif; }
+    .wa-time { font-size: 11px; color: #888; text-align: right; margin-top: 4px; }
+    .wa-screen { background: #e5ddd5; border-radius: 12px; padding: 20px;
+                 min-height: 500px; display: flex; flex-direction: column; gap: 12px; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<!-- Header -->
+<header class="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-nude-100 px-4 py-3 flex items-center justify-between">
+  <div class="flex items-center gap-2">
+    <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+      <circle cx="18" cy="18" r="17" stroke="#fda4af" stroke-width="1.5"/>
+      <path d="M18 8 C13 8, 9 12, 9 18 C9 24, 13 28, 18 28" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <path d="M18 8 C23 8, 27 12, 27 18 C27 24, 23 28, 18 28" stroke="#fda4af" stroke-width="2" stroke-linecap="round" fill="none"/>
+      <circle cx="18" cy="18" r="3" fill="#f43f5e" opacity="0.7"/>
+    </svg>
+    <span class="text-lg font-light text-charcoal-900">Shiny <em class="text-rose-500 not-italic">Beauty</em></span>
+  </div>
+  <span class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-2.5 py-1 rounded-full font-medium">Phase 5 — Notification Templates</span>
+</header>
+
+<!-- Tab bar -->
+<div class="max-w-4xl mx-auto px-4 pt-6 pb-2">
+  <h1 class="text-2xl font-light text-charcoal-900 mb-1">Notification Templates</h1>
+  <p class="text-sm text-charcoal-500 mb-6">Email &amp; WhatsApp — Confirmation + Reminder (EN + AR/RTL)</p>
+
+  <div class="flex flex-wrap gap-2 mb-6">
+    <button onclick="showTab('email-confirmed-en')" class="tab-btn active text-xs font-medium px-3 py-1.5 rounded-full border border-rose-200 text-charcoal-600">Email — Confirmed (EN)</button>
+    <button onclick="showTab('email-confirmed-ar')" class="tab-btn text-xs font-medium px-3 py-1.5 rounded-full border border-nude-200 text-charcoal-600">Email — Confirmed (AR)</button>
+    <button onclick="showTab('email-reminder24-en')" class="tab-btn text-xs font-medium px-3 py-1.5 rounded-full border border-nude-200 text-charcoal-600">Email — 24h Reminder (EN)</button>
+    <button onclick="showTab('email-reminder2-ar')" class="tab-btn text-xs font-medium px-3 py-1.5 rounded-full border border-nude-200 text-charcoal-600">Email — 2h Reminder (AR)</button>
+    <button onclick="showTab('wa-confirmed-en')" class="tab-btn text-xs font-medium px-3 py-1.5 rounded-full border border-nude-200 text-charcoal-600">WhatsApp — Confirmed (EN)</button>
+    <button onclick="showTab('wa-confirmed-ar')" class="tab-btn text-xs font-medium px-3 py-1.5 rounded-full border border-nude-200 text-charcoal-600">WhatsApp — Confirmed (AR)</button>
+    <button onclick="showTab('wa-reminder-ar')" class="tab-btn text-xs font-medium px-3 py-1.5 rounded-full border border-nude-200 text-charcoal-600">WhatsApp — 24h (AR)</button>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- Email panels                                                             -->
+<!-- ====================================================================== -->
+
+<!-- Email: Booking Confirmed EN -->
+<div id="email-confirmed-en" class="panel active max-w-4xl mx-auto px-4 pb-12">
+  <div class="text-xs text-charcoal-400 mb-2">Subject: <strong>Booking Confirmed — Deep Tissue Massage</strong></div>
+  <div class="border border-nude-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+    <div style="background:#fefdfb; padding: 0 0 0 0;">
+      <iframe class="email-frame" srcdoc="<!DOCTYPE html>
+<html lang='en' dir='ltr'>
+<head>
+  <meta charset='UTF-8'/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #fefdfb; font-family: Inter, 'Helvetica Neue', Arial, sans-serif; color: #2d2e35; }
+    .wrapper { max-width: 560px; margin: 0 auto; padding: 24px 16px 48px; }
+    .header { text-align: center; padding: 32px 0 24px; }
+    .logo-text { font-size: 22px; font-weight: 300; color: #2d2e35; }
+    .logo-em { color: #f43f5e; font-style: normal; }
+    .card { background: #fff; border: 1px solid #f2d9d0; border-radius: 16px; padding: 28px 24px; margin-bottom: 16px; }
+    .badge { display: inline-block; background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; border-radius: 999px; font-size: 12px; font-weight: 600; padding: 4px 12px; margin-bottom: 16px; }
+    h1 { font-size: 22px; font-weight: 400; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #62636e; margin-bottom: 24px; }
+    .detail-row { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f9ede8; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-icon { font-size: 16px; width: 24px; flex-shrink: 0; margin-top: 1px; }
+    .detail-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #7c7e89; margin-bottom: 2px; }
+    .detail-value { font-size: 14px; font-weight: 500; }
+    .ref-box { background: #fff1f2; border: 1px solid #fecdd3; border-radius: 10px; padding: 14px 18px; text-align: center; margin-top: 16px; }
+    .ref-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #7c7e89; margin-bottom: 4px; }
+    .ref-value { font-size: 20px; font-family: monospace; font-weight: 700; color: #e11d48; letter-spacing: 0.15em; text-transform: uppercase; }
+    .note-box { background: #fff1f2; border: 1px solid #ffe4e6; border-radius: 10px; padding: 14px 18px; font-size: 13px; color: #4e4f5a; line-height: 1.6; margin-top: 16px; }
+    .footer { text-align: center; font-size: 12px; color: #7c7e89; margin-top: 32px; line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <div class='wrapper'>
+    <div class='header'>
+      <div class='logo-text'>Shiny <span class='logo-em'>Beauty</span> Center</div>
+    </div>
+    <div class='card'>
+      <div class='badge'>Booking Confirmed</div>
+      <h1>Hello Sarah!</h1>
+      <p class='subtitle'>Your appointment has been confirmed.</p>
+      <div class='detail-row'><span class='detail-icon'>📋</span><div><div class='detail-label'>Service</div><div class='detail-value'>Deep Tissue Massage</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>📅</span><div><div class='detail-label'>Date &amp; Time</div><div class='detail-value'>Saturday, July 5, 2026 at 02:00 PM</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>💅</span><div><div class='detail-label'>Specialist</div><div class='detail-value'>Lina Al-Rashidi</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>📍</span><div><div class='detail-label'>Location</div><div class='detail-value'>Shiny Beauty Center</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>💰</span><div><div class='detail-label'>Price</div><div class='detail-value'>250 SAR</div></div></div>
+      <div class='ref-box'><div class='ref-label'>Booking Reference</div><div class='ref-value'>SBC-2A9F</div></div>
+      <div class='note-box'>Please arrive 5 minutes early. If you need to make any changes, please contact us as soon as possible. We look forward to seeing you! 💖</div>
+    </div>
+    <div class='footer'>Shiny Beauty Center — Luxury Beauty, Exclusively for Women<br/>If you need to change your appointment, please visit our website or contact us.</div>
+  </div>
+</body>
+</html>"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- Email: Booking Confirmed AR -->
+<div id="email-confirmed-ar" class="panel max-w-4xl mx-auto px-4 pb-12">
+  <div class="text-xs text-charcoal-400 mb-2">Subject: <strong dir="rtl">تأكيد حجزكِ — تدليك عميق للأنسجة</strong></div>
+  <div class="border border-nude-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+    <iframe class="email-frame" srcdoc="<!DOCTYPE html>
+<html lang='ar' dir='rtl'>
+<head>
+  <meta charset='UTF-8'/>
+  <link href='https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600&display=swap' rel='stylesheet'/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #fefdfb; font-family: 'Noto Sans Arabic', Tahoma, Arial, sans-serif; color: #2d2e35; direction: rtl; }
+    .wrapper { max-width: 560px; margin: 0 auto; padding: 24px 16px 48px; }
+    .header { text-align: center; padding: 32px 0 24px; }
+    .logo-text { font-size: 22px; font-weight: 300; color: #2d2e35; }
+    .logo-em { color: #f43f5e; font-style: normal; }
+    .card { background: #fff; border: 1px solid #f2d9d0; border-radius: 16px; padding: 28px 24px; margin-bottom: 16px; }
+    .badge { display: inline-block; background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; border-radius: 999px; font-size: 12px; font-weight: 600; padding: 4px 12px; margin-bottom: 16px; }
+    h1 { font-size: 22px; font-weight: 400; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #62636e; margin-bottom: 24px; }
+    .detail-row { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f9ede8; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-icon { font-size: 16px; width: 24px; flex-shrink: 0; margin-top: 1px; }
+    .detail-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #7c7e89; margin-bottom: 2px; }
+    .detail-value { font-size: 14px; font-weight: 500; }
+    .ref-box { background: #fff1f2; border: 1px solid #fecdd3; border-radius: 10px; padding: 14px 18px; text-align: center; margin-top: 16px; }
+    .ref-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #7c7e89; margin-bottom: 4px; }
+    .ref-value { font-size: 20px; font-family: monospace; font-weight: 700; color: #e11d48; letter-spacing: 0.15em; text-transform: uppercase; }
+    .note-box { background: #fff1f2; border: 1px solid #ffe4e6; border-radius: 10px; padding: 14px 18px; font-size: 13px; color: #4e4f5a; line-height: 1.6; margin-top: 16px; }
+    .footer { text-align: center; font-size: 12px; color: #7c7e89; margin-top: 32px; line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <div class='wrapper'>
+    <div class='header'>
+      <div class='logo-text'>مركز شايني <span class='logo-em'>للتجميل</span></div>
+    </div>
+    <div class='card'>
+      <div class='badge'>تأكيد الحجز</div>
+      <h1>أهلاً سارة!</h1>
+      <p class='subtitle'>تم تأكيد موعدك بنجاح.</p>
+      <div class='detail-row'><span class='detail-icon'>📋</span><div><div class='detail-label'>الخدمة</div><div class='detail-value'>تدليك عميق للأنسجة</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>📅</span><div><div class='detail-label'>الموعد</div><div class='detail-value'>السبت، ٥ يوليو ٢٠٢٦ الساعة ٢:٠٠ م</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>💅</span><div><div class='detail-label'>المتخصصة</div><div class='detail-value'>لينا الراشدي</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>📍</span><div><div class='detail-label'>الموقع</div><div class='detail-value'>مركز شايني للتجميل</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>💰</span><div><div class='detail-label'>السعر</div><div class='detail-value'>٢٥٠ ريال</div></div></div>
+      <div class='ref-box'><div class='ref-label'>رقم الحجز</div><div class='ref-value'>SBC-2A9F</div></div>
+      <div class='note-box'>يرجى الحضور قبل 5 دقائق من موعدك. إذا احتجتِ تغيير أي شيء، يُرجى التواصل معنا في أقرب وقت ممكن. نتطلع لرؤيتكِ! 💖</div>
+    </div>
+    <div class='footer'>مركز شايني للتجميل — تجربة فاخرة في عالم الجمال، للنساء حصراً<br/>إذا احتجتِ تغيير موعدك، يرجى زيارة موقعنا أو التواصل معنا.</div>
+  </div>
+</body>
+</html>"></iframe>
+  </div>
+</div>
+
+<!-- Email: 24h Reminder EN -->
+<div id="email-reminder24-en" class="panel max-w-4xl mx-auto px-4 pb-12">
+  <div class="text-xs text-charcoal-400 mb-2">Subject: <strong>Reminder — Your appointment is tomorrow: Deep Tissue Massage</strong></div>
+  <div class="border border-nude-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+    <iframe class="email-frame" srcdoc="<!DOCTYPE html>
+<html lang='en' dir='ltr'>
+<head>
+  <meta charset='UTF-8'/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #fefdfb; font-family: Inter, 'Helvetica Neue', Arial, sans-serif; color: #2d2e35; }
+    .wrapper { max-width: 560px; margin: 0 auto; padding: 24px 16px 48px; }
+    .header { text-align: center; padding: 32px 0 24px; }
+    .logo-text { font-size: 22px; font-weight: 300; color: #2d2e35; }
+    .logo-em { color: #f43f5e; font-style: normal; }
+    .card { background: #fff; border: 1px solid #f2d9d0; border-radius: 16px; padding: 28px 24px; margin-bottom: 16px; }
+    .badge { display: inline-block; background: #fdeee0; color: #b36251; border: 1px solid #f2d9d0; border-radius: 999px; font-size: 12px; font-weight: 600; padding: 4px 12px; margin-bottom: 16px; }
+    h1 { font-size: 22px; font-weight: 400; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #62636e; margin-bottom: 24px; }
+    .detail-row { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f9ede8; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-icon { font-size: 16px; width: 24px; flex-shrink: 0; margin-top: 1px; }
+    .detail-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #7c7e89; margin-bottom: 2px; }
+    .detail-value { font-size: 14px; font-weight: 500; }
+    .note-box { background: #fdeee0; border: 1px solid #f2d9d0; border-radius: 10px; padding: 14px 18px; font-size: 13px; color: #4e4f5a; line-height: 1.6; margin-top: 16px; }
+    .footer { text-align: center; font-size: 12px; color: #7c7e89; margin-top: 32px; line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <div class='wrapper'>
+    <div class='header'><div class='logo-text'>Shiny <span class='logo-em'>Beauty</span> Center</div></div>
+    <div class='card'>
+      <div class='badge'>Appointment Reminder — Tomorrow</div>
+      <h1>Hi Sarah!</h1>
+      <p class='subtitle'>Your appointment is tomorrow at Shiny Beauty Center.</p>
+      <div class='detail-row'><span class='detail-icon'>📋</span><div><div class='detail-label'>Service</div><div class='detail-value'>Deep Tissue Massage</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>📅</span><div><div class='detail-label'>Date &amp; Time</div><div class='detail-value'>Saturday, July 5, 2026 at 02:00 PM</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>💅</span><div><div class='detail-label'>Specialist</div><div class='detail-value'>Lina Al-Rashidi</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>📍</span><div><div class='detail-label'>Location</div><div class='detail-value'>Shiny Beauty Center</div></div></div>
+      <div class='note-box'>This is your 24-hour reminder. We look forward to seeing you tomorrow! ✨</div>
+    </div>
+    <div class='footer'>Shiny Beauty Center — Luxury Beauty, Exclusively for Women<br/>If you need to change your appointment, please visit our website or contact us.</div>
+  </div>
+</body>
+</html>"></iframe>
+  </div>
+</div>
+
+<!-- Email: 2h Reminder AR -->
+<div id="email-reminder2-ar" class="panel max-w-4xl mx-auto px-4 pb-12">
+  <div class="text-xs text-charcoal-400 mb-2 font-arabic" dir="rtl">Subject: <strong>تذكير — موعدكِ بعد ساعتين: تدليك عميق للأنسجة</strong></div>
+  <div class="border border-nude-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+    <iframe class="email-frame" srcdoc="<!DOCTYPE html>
+<html lang='ar' dir='rtl'>
+<head>
+  <meta charset='UTF-8'/>
+  <link href='https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600&display=swap' rel='stylesheet'/>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #fefdfb; font-family: 'Noto Sans Arabic', Tahoma, Arial, sans-serif; color: #2d2e35; direction: rtl; }
+    .wrapper { max-width: 560px; margin: 0 auto; padding: 24px 16px 48px; }
+    .header { text-align: center; padding: 32px 0 24px; }
+    .logo-text { font-size: 22px; font-weight: 300; }
+    .logo-em { color: #f43f5e; font-style: normal; }
+    .card { background: #fff; border: 1px solid #f2d9d0; border-radius: 16px; padding: 28px 24px; margin-bottom: 16px; }
+    .badge { display: inline-block; background: #fdeee0; color: #b36251; border: 1px solid #f2d9d0; border-radius: 999px; font-size: 12px; font-weight: 600; padding: 4px 12px; margin-bottom: 16px; }
+    h1 { font-size: 22px; font-weight: 400; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #62636e; margin-bottom: 24px; }
+    .detail-row { display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #f9ede8; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-icon { font-size: 16px; width: 24px; flex-shrink: 0; margin-top: 1px; }
+    .detail-label { font-size: 11px; color: #7c7e89; margin-bottom: 2px; }
+    .detail-value { font-size: 14px; font-weight: 500; }
+    .note-box { background: #fdeee0; border: 1px solid #f2d9d0; border-radius: 10px; padding: 14px 18px; font-size: 13px; color: #4e4f5a; line-height: 1.6; margin-top: 16px; }
+    .footer { text-align: center; font-size: 12px; color: #7c7e89; margin-top: 32px; line-height: 1.8; }
+  </style>
+</head>
+<body>
+  <div class='wrapper'>
+    <div class='header'><div class='logo-text'>مركز شايني <span class='logo-em'>للتجميل</span></div></div>
+    <div class='card'>
+      <div class='badge'>تذكير بالموعد — 2 ساعة</div>
+      <h1>مرحباً سارة!</h1>
+      <p class='subtitle'>موعدكِ قريباً جداً!</p>
+      <div class='detail-row'><span class='detail-icon'>📋</span><div><div class='detail-label'>الخدمة</div><div class='detail-value'>تدليك عميق للأنسجة</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>📅</span><div><div class='detail-label'>الوقت</div><div class='detail-value'>السبت، ٥ يوليو ٢٠٢٦ الساعة ٢:٠٠ م</div></div></div>
+      <div class='detail-row'><span class='detail-icon'>📍</span><div><div class='detail-label'>الموقع</div><div class='detail-value'>مركز شايني للتجميل</div></div></div>
+      <div class='note-box'>موعدكِ بعد ساعتين تقريباً. نتطلع لرؤيتكِ قريباً! 💖</div>
+    </div>
+    <div class='footer'>مركز شايني للتجميل — تجربة فاخرة في عالم الجمال، للنساء حصراً</div>
+  </div>
+</body>
+</html>"></iframe>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- WhatsApp panels                                                          -->
+<!-- ====================================================================== -->
+
+<!-- WA: Booking Confirmed EN -->
+<div id="wa-confirmed-en" class="panel max-w-4xl mx-auto px-4 pb-12">
+  <div class="text-xs text-charcoal-400 mb-3">WhatsApp message — Booking Confirmed (English)</div>
+  <div class="wa-screen">
+    <!-- Date bubble -->
+    <div class="text-center text-xs text-charcoal-500 bg-white/60 rounded-full px-3 py-1 self-center">Saturday, July 5, 2026</div>
+    <div class="flex justify-end">
+      <div>
+        <div class="wa-bubble">✨ <strong>Shiny Beauty Center — Booking Confirmed</strong>
+
+Hello Sarah!
+
+Your appointment has been confirmed. Here are your details:
+
+📋 <strong>Service:</strong> Deep Tissue Massage
+📅 <strong>Date &amp; Time:</strong> Saturday, July 5, 2026, 02:00 PM
+💅 <strong>Specialist:</strong> Lina Al-Rashidi
+📍 <strong>Location:</strong> Shiny Beauty Center
+💰 <strong>Price:</strong> 250 SAR
+🔖 <strong>Booking Ref:</strong> SBC-2A9F
+
+Please arrive 5 minutes early.
+
+We look forward to seeing you! 💖</div>
+        <div class="wa-time">2:00 PM ✓✓</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WA: Booking Confirmed AR -->
+<div id="wa-confirmed-ar" class="panel max-w-4xl mx-auto px-4 pb-12">
+  <div class="text-xs text-charcoal-400 mb-3" dir="rtl">رسالة واتساب — تأكيد الحجز (عربي)</div>
+  <div class="wa-screen" dir="rtl">
+    <div class="text-center text-xs text-charcoal-500 bg-white/60 rounded-full px-3 py-1 self-center">السبت، ٥ يوليو ٢٠٢٦</div>
+    <div class="flex justify-start">
+      <div>
+        <div class="wa-bubble wa-bubble-ar">✨ <strong>مركز شايني للتجميل — تأكيد الحجز</strong>
+
+أهلاً سارة!
+
+تم تأكيد موعدك بنجاح. إليكِ التفاصيل:
+
+📋 <strong>الخدمة:</strong> تدليك عميق للأنسجة
+📅 <strong>الموعد:</strong> السبت، ٥ يوليو ٢٠٢٦ الساعة ٢:٠٠ م
+💅 <strong>المتخصصة:</strong> لينا الراشدي
+📍 <strong>الموقع:</strong> مركز شايني للتجميل
+💰 <strong>السعر:</strong> ٢٥٠ ريال
+🔖 <strong>رقم الحجز:</strong> SBC-2A9F
+
+يرجى الحضور قبل 5 دقائق من موعدك.
+
+نتطلع لرؤيتكِ! 💖</div>
+        <div class="wa-time" dir="ltr">2:00 PM ✓✓</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WA: 24h Reminder AR -->
+<div id="wa-reminder-ar" class="panel max-w-4xl mx-auto px-4 pb-12">
+  <div class="text-xs text-charcoal-400 mb-3" dir="rtl">رسالة واتساب — تذكير ٢٤ ساعة (عربي)</div>
+  <div class="wa-screen" dir="rtl">
+    <div class="text-center text-xs text-charcoal-500 bg-white/60 rounded-full px-3 py-1 self-center">الجمعة، ٤ يوليو ٢٠٢٦</div>
+    <div class="flex justify-start">
+      <div>
+        <div class="wa-bubble wa-bubble-ar">⏰ <strong>تذكير — موعدكِ غداً</strong>
+
+مرحباً سارة!
+
+نذكّركِ بأن لديكِ موعداً غداً في <strong>مركز شايني للتجميل</strong>.
+
+📋 <strong>الخدمة:</strong> تدليك عميق للأنسجة
+📅 <strong>الموعد:</strong> السبت، ٥ يوليو ٢٠٢٦ الساعة ٢:٠٠ م
+💅 <strong>المتخصصة:</strong> لينا الراشدي
+📍 <strong>الموقع:</strong> مركز شايني للتجميل
+
+نراكِ غداً! ✨</div>
+        <div class="wa-time" dir="ltr">2:00 PM ✓✓</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- Architecture notes                                                        -->
+<!-- ====================================================================== -->
+<div class="max-w-4xl mx-auto px-4 pb-16">
+  <div class="bg-white border border-nude-200 rounded-2xl p-6 mt-2">
+    <h2 class="font-semibold text-charcoal-800 mb-4 text-sm">Architecture Notes</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-charcoal-600">
+      <div>
+        <h3 class="font-medium text-charcoal-800 mb-2">Flag-off safety</h3>
+        <p>When <code class="bg-nude-100 px-1 rounded text-xs">NEXT_PUBLIC_NOTIFICATIONS_ENABLED=false</code>:</p>
+        <ul class="mt-1 space-y-1 list-disc list-inside text-xs">
+          <li>All send calls return immediately with <code class="bg-nude-100 px-1 rounded">{ok: true, externalId: null}</code></li>
+          <li>A single <code class="bg-nude-100 px-1 rounded">console.log</code> line is emitted</li>
+          <li>No SDK is imported or instantiated</li>
+          <li>Booking flows are never blocked</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-medium text-charcoal-800 mb-2">Dedup approach</h3>
+        <p>Cron route uses the <code class="bg-nude-100 px-1 rounded text-xs">notifications</code> table as a sent-log:</p>
+        <ul class="mt-1 space-y-1 list-disc list-inside text-xs">
+          <li>Inserts a sentinel row with subject <code class="bg-nude-100 px-1 rounded">__reminder_24h__:&lt;appt_id&gt;</code></li>
+          <li>If row already exists → skip (dedup)</li>
+          <li>Postgres unique constraint on (user_id, subject) prevents race conditions</li>
+          <li>Cron runs every 15 min; windows are ±8 min around 24h/2h thresholds</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-medium text-charcoal-800 mb-2">Providers</h3>
+        <ul class="mt-1 space-y-1 list-disc list-inside text-xs">
+          <li><strong>Email:</strong> Resend (primary) or SMTP fallback</li>
+          <li><strong>WhatsApp:</strong> WATI (Gulf-friendly BSP)</li>
+          <li>Both lazily constructed — no crash on missing keys</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-medium text-charcoal-800 mb-2">Triggers</h3>
+        <ul class="mt-1 space-y-1 list-disc list-inside text-xs">
+          <li>Pay-at-salon: confirmation fires in <code class="bg-nude-100 px-1 rounded">createAppointmentAction</code></li>
+          <li>Online payment: confirmation fires in <code class="bg-nude-100 px-1 rounded">tap-webhook/route.ts</code></li>
+          <li>Both use <code class="bg-nude-100 px-1 rounded">sendBookingConfirmation()</code></li>
+          <li>Reminders: <code class="bg-nude-100 px-1 rounded">GET /api/cron/reminders</code> via Vercel cron</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+</body>
+</html>

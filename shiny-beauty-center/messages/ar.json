@@ -184,6 +184,7 @@
     "step_staff": "المتخصصة",
     "step_datetime": "التاريخ والوقت",
     "step_confirm": "التأكيد",
+    "step_payment": "الدفع",
     "choose_staff": "اختاري متخصصة",
     "no_preference": "بدون تفضيل",
     "no_preference_desc": "سنحدد أفضل متخصصة متاحة",
@@ -197,7 +198,15 @@
     "date_label": "التاريخ",
     "time_label": "الوقت",
     "price_label": "السعر",
+    "total_label": "الإجمالي",
     "payment_note": "الدفع في الصالون",
+    "payment_note_online": "دفع آمن عبر الإنترنت",
+    "payment_title": "إتمام الدفع",
+    "payment_secure_note": "مؤمّن بواسطة Tap Payments — تشفير 256-bit",
+    "payment_provider_note": "ستُنقلين إلى صفحة الدفع الآمنة الخاصة بـ Tap.",
+    "payment_processing": "جاري التحويل…",
+    "pay_now_button": "ادفعي الآن",
+    "continue_to_payment": "المتابعة للدفع",
     "confirm_button": "تأكيد الحجز",
     "confirming": "جاري التأكيد…",
     "notes_label": "ملاحظات (اختياري)",
@@ -327,6 +336,15 @@
       "5": "الجمعة",
       "6": "السبت"
     }
+  },
+  "payment": {
+    "success_title": "تم تأكيد الدفع!",
+    "success_body": "تمت عملية الدفع بنجاح. تم تأكيد موعدك الآن.",
+    "failed_title": "فشل الدفع",
+    "failed_body": "تعذّر إتمام الدفع. حجزك محفوظ لمدة 15 دقيقة — يرجى المحاولة مرة أخرى.",
+    "processing_title": "جاري معالجة الدفع",
+    "processing_body": "نقوم بتأكيد دفعتك. سيتم تأكيد موعدك قريباً.",
+    "retry_button": "إعادة المحاولة"
   },
   "errors": {
     "not_found": "الصفحة غير موجودة",

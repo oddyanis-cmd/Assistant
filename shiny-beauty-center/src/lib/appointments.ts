@@ -5,6 +5,7 @@
 "use server";
 
 import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { sendBookingConfirmation } from "@/lib/notifications/booking";
 import type { Appointment, AppointmentStatus } from "@/lib/supabase/types";
 
 // ---------------------------------------------------------------------------
@@ -158,6 +159,12 @@ export async function createAppointmentAction(params: {
   staffId: string | null;
   startAt: string;
   notes?: string;
+  /**
+   * Pass true when payments are enabled so the appointment is created in
+   * PENDING status; the webhook will promote it to CONFIRMED after payment.
+   * When false (default / pay-at-salon), the appointment starts CONFIRMED.
+   */
+  pending?: boolean;
 }): Promise<{ appointmentId: string; publicToken: string } | { error: string }> {
   const supabase = await getSupabaseServerClient();
   if (!supabase) return { error: "Not configured" };
@@ -168,6 +175,7 @@ export async function createAppointmentAction(params: {
     p_staff_id: params.staffId,
     p_start_at: params.startAt,
     p_notes: params.notes ?? null,
+    p_pending: params.pending ?? false,
   });
 
   if (error) return { error: error.message };
@@ -176,5 +184,14 @@ export async function createAppointmentAction(params: {
     data as Array<{ appointment_id: string; public_token: string }>
   )?.[0];
   if (!row) return { error: "Unexpected empty response" };
+
+  // When pay-at-salon (pending = false), the appointment is CONFIRMED immediately.
+  // Fire notification asynchronously — never block the booking response on it.
+  if (!params.pending) {
+    sendBookingConfirmation({ appointmentId: row.appointment_id }).catch(
+      (err) => console.error("[appointments] notification error:", err)
+    );
+  }
+
   return { appointmentId: row.appointment_id, publicToken: row.public_token };
 }

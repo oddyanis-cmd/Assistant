@@ -37,6 +37,20 @@ export function isSupabaseConfigured(): boolean {
   return Boolean(supabaseConfig.url && supabaseConfig.anonKey);
 }
 
+// ---- Tap Payments ---------------------------------------------------------
+/**
+ * Returns the Tap publishable key for client-side use (NEXT_PUBLIC_*).
+ * Safe to call at build time — returns empty string when not set.
+ */
+export const tapConfig = {
+  publicKey: envString("NEXT_PUBLIC_TAP_PUBLIC_KEY"),
+} as const;
+
+/** True only when both the flag AND the publishable key are present. */
+export function isTapClientConfigured(): boolean {
+  return featureFlags.paymentsEnabled && Boolean(tapConfig.publicKey);
+}
+
 // ---- App ------------------------------------------------------------------
 export const appConfig = {
   url: envString("NEXT_PUBLIC_APP_URL", "http://localhost:3000"),
