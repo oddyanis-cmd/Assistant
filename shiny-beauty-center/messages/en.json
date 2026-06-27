@@ -407,6 +407,9 @@
     "unauthorized_body": "You need to sign in to access this page.",
     "forbidden": "Forbidden",
     "forbidden_body": "You don't have permission to access this page.",
-    "back_home": "Back to Home"
+    "back_home": "Back to Home",
+    "error_title": "Something went wrong",
+    "error_body": "An unexpected error occurred. You can try again or return home.",
+    "error_retry": "Try again"
   }
 }
