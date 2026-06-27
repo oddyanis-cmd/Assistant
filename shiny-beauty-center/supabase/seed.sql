@@ -130,6 +130,12 @@ on conflict (id) do nothing;
 
 -- Helper: insert role_permission by role name + permission key
 -- We use a DO block to resolve UUIDs from names
+create or replace function pg_temp.grant_perms(p_role uuid, p_keys text[]) returns void language sql as $fn$
+  insert into public.role_permissions (role_id, permission_id)
+  select p_role, id from public.permissions where key = any(p_keys)
+  on conflict do nothing;
+$fn$;
+
 do $$
 declare
   r_admin  uuid := '00000001-0000-0000-0000-000000000001';
@@ -140,23 +146,6 @@ declare
   r_hr     uuid := '00000001-0000-0000-0000-000000000006';
   r_staff  uuid := '00000001-0000-0000-0000-000000000007';
   r_client uuid := '00000001-0000-0000-0000-000000000008';
-
-  procedure grant_perms(role_id uuid, perm_keys text[]) as $$
-  declare
-    pkey text;
-    perm_id uuid;
-  begin
-    foreach pkey in array perm_keys loop
-      select id into perm_id from public.permissions where key = pkey;
-      if perm_id is not null then
-        insert into public.role_permissions (role_id, permission_id)
-        values (role_id, perm_id)
-        on conflict do nothing;
-      end if;
-    end loop;
-  end;
-  $$;
-
 begin
 
   -- ---- ADMIN: all permissions ----
@@ -165,7 +154,7 @@ begin
   on conflict do nothing;
 
   -- ---- MANAGER ----
-  call grant_perms(r_mgr, array[
+  perform pg_temp.grant_perms(r_mgr, array[
     -- Appointments (all)
     'view_all_bookings','create_booking','edit_booking','reschedule_booking',
     'cancel_booking','assign_staff_to_booking','confirm_booking','check_in_client',
@@ -196,7 +185,7 @@ begin
   ]);
 
   -- ---- SALES ----
-  call grant_perms(r_sales, array[
+  perform pg_temp.grant_perms(r_sales, array[
     'view_all_bookings','create_booking','reschedule_booking','cancel_booking',
     'confirm_booking','check_in_client','mark_no_show',
     'view_services',
@@ -209,7 +198,7 @@ begin
   ]);
 
   -- ---- CUSTOMER SERVICE ----
-  call grant_perms(r_cs, array[
+  perform pg_temp.grant_perms(r_cs, array[
     'view_all_bookings','create_booking','reschedule_booking','cancel_booking',
     'confirm_booking','check_in_client','mark_no_show','manage_waitlist',
     'view_services',
@@ -220,7 +209,7 @@ begin
   ]);
 
   -- ---- FINANCE ----
-  call grant_perms(r_fin, array[
+  perform pg_temp.grant_perms(r_fin, array[
     'view_all_bookings',
     'view_all_clients','view_client_details','view_client_history',
     'view_financial_reports','view_revenue','manage_invoices','process_payments',
@@ -231,7 +220,7 @@ begin
   ]);
 
   -- ---- HR ----
-  call grant_perms(r_hr, array[
+  perform pg_temp.grant_perms(r_hr, array[
     'view_staff','view_staff_schedule',
     'view_employees','manage_employee_records','manage_attendance',
     'manage_leave_requests','manage_payroll','view_hr_reports',
@@ -240,7 +229,7 @@ begin
   ]);
 
   -- ---- STAFF (stylists) ----
-  call grant_perms(r_staff, array[
+  perform pg_temp.grant_perms(r_staff, array[
     'view_own_bookings','check_in_client','mark_no_show',
     'view_services',
     'view_client_details','view_client_history',
@@ -249,7 +238,7 @@ begin
   ]);
 
   -- ---- CLIENT (end-customers) ----
-  call grant_perms(r_client, array[
+  perform pg_temp.grant_perms(r_client, array[
     'view_own_bookings','create_booking','reschedule_booking','cancel_booking',
     'view_services'
   ]);
