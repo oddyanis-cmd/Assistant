@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Users &amp; Permissions — Shiny Beauty Center Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        rose: { 50:'#fff1f2',100:'#ffe4e6',200:'#fecdd3',300:'#fda4af',400:'#fb7185',500:'#f43f5e' },
+        nude: { 50:'#fdf8f6',100:'#f9ede8',200:'#f2d9d0',700:'#944f40' },
+        cream:{ 50:'#fefdfb',100:'#fdf8f0',200:'#faeedd' },
+        charcoal:{ 50:'#f6f6f7',100:'#e2e3e6',400:'#7c7e89',500:'#62636e',600:'#4e4f5a',700:'#41424b',800:'#37383f',900:'#2d2e35' },
+      },
+      fontFamily: { sans: ['Inter','system-ui','sans-serif'] },
+    }
+  }
+}
+</script>
+<style>
+  body { font-family:'Inter',system-ui,sans-serif; }
+  .card { background:#fff; border-radius:1rem; border:1px solid #f2d9d0; padding:1.5rem; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+</style>
+</head>
+<body class="bg-gradient-to-br from-rose-50 via-cream-100 to-nude-50 min-h-screen">
+
+<div class="flex min-h-screen">
+  <!-- Sidebar (condensed) -->
+  <aside class="w-56 shrink-0 bg-white/80 border-r border-rose-100 px-3 py-6 flex flex-col gap-1">
+    <div class="flex items-center gap-2 px-3 mb-6">
+      <span class="text-lg font-light text-rose-500">✦ Shiny</span>
+      <span class="text-[10px] font-semibold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">Admin</span>
+    </div>
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-charcoal-600">
+      <span class="w-5 text-center text-rose-400">◑</span> Dashboard
+    </a>
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-charcoal-600">
+      <span class="w-5 text-center text-rose-400">◷</span> All-Staff Calendar
+    </a>
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium bg-rose-500 text-white shadow-sm">
+      <span class="w-5 text-center">◈</span> Users &amp; Permissions
+    </a>
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-charcoal-600">
+      <span class="w-5 text-center text-rose-400">◎</span> Reports
+    </a>
+    <a href="#" class="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-charcoal-600">
+      <span class="w-5 text-center text-rose-400">◐</span> Time-Off Approval
+    </a>
+  </aside>
+
+  <!-- Main -->
+  <main class="flex-1 px-8 py-8 space-y-6">
+
+    <div>
+      <h1 class="text-2xl font-light text-charcoal-900">Users &amp; Permissions</h1>
+      <p class="text-charcoal-500 text-sm mt-1">Assign roles and manage individual permission overrides</p>
+    </div>
+
+    <!-- Stub note -->
+    <div class="rounded-xl bg-cream-50 border border-cream-200 px-4 py-3 text-xs text-charcoal-600">
+      <span class="font-semibold me-1">Note:</span>
+      User invitation requires Supabase Admin API. To invite, use the Supabase dashboard or trigger a magic-link email.
+    </div>
+
+    <!-- Two-column: user list + manage panel -->
+    <div class="grid grid-cols-3 gap-6">
+      <!-- User list -->
+      <div class="col-span-2 space-y-3">
+
+        <div class="card flex items-center justify-between gap-4 p-4 border-rose-300 shadow-md">
+          <div class="min-w-0">
+            <p class="font-medium text-charcoal-800">Nour Al-Rashidi</p>
+            <p class="text-xs text-charcoal-400">nour@shinybeauty.sa</p>
+            <div class="flex flex-wrap gap-1 mt-1.5">
+              <span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] font-medium">Manager</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-700">Active</span>
+            <a href="#" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-50 text-rose-700">Close</a>
+          </div>
+        </div>
+
+        <div class="card flex items-center justify-between gap-4 p-4">
+          <div class="min-w-0">
+            <p class="font-medium text-charcoal-800">Layla Hassan</p>
+            <p class="text-xs text-charcoal-400">layla@shinybeauty.sa</p>
+            <div class="flex flex-wrap gap-1 mt-1.5">
+              <span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] font-medium">Staff</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-700">Active</span>
+            <a href="#" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-charcoal-600 hover:bg-charcoal-100">Manage</a>
+          </div>
+        </div>
+
+        <div class="card flex items-center justify-between gap-4 p-4">
+          <div class="min-w-0">
+            <p class="font-medium text-charcoal-800">Fatima Al-Amri</p>
+            <p class="text-xs text-charcoal-400">fatima@shinybeauty.sa</p>
+            <div class="flex flex-wrap gap-1 mt-1.5">
+              <span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] font-medium">Staff</span>
+              <span class="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] font-medium">Receptionist</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-green-100 text-green-700">Active</span>
+            <a href="#" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-charcoal-600 hover:bg-charcoal-100">Manage</a>
+          </div>
+        </div>
+
+        <div class="card flex items-center justify-between gap-4 p-4">
+          <div class="min-w-0">
+            <p class="font-medium text-charcoal-800">Hessa Al-Mutairi</p>
+            <p class="text-xs text-charcoal-400">hessa@shinybeauty.sa</p>
+            <div class="flex flex-wrap gap-1 mt-1.5">
+              <span class="text-[10px] text-charcoal-400 italic">No roles</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-medium bg-charcoal-100 text-charcoal-500">Inactive</span>
+            <a href="#" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-charcoal-600 hover:bg-charcoal-100">Manage</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Manage panel (Nour selected) -->
+      <div class="col-span-1">
+        <div class="card sticky top-24 space-y-5">
+          <div>
+            <h2 class="text-sm font-semibold text-charcoal-800 mb-0.5">Manage User</h2>
+            <p class="text-xs text-charcoal-500 truncate">Nour Al-Rashidi</p>
+          </div>
+
+          <!-- Roles -->
+          <div>
+            <h3 class="text-sm font-semibold text-charcoal-700 mb-2">Roles</h3>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-100 text-rose-700 text-xs font-medium">
+                Manager <button class="text-rose-400 font-bold leading-none">×</button>
+              </span>
+            </div>
+            <select class="w-full px-3 py-2 rounded-xl border border-nude-200 bg-white text-charcoal-700 text-sm outline-none">
+              <option value="">Assign Role…</option>
+              <option>Staff</option>
+              <option>Receptionist</option>
+              <option>Admin</option>
+            </select>
+          </div>
+
+          <!-- Permission overrides -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-sm font-semibold text-charcoal-700">Permission Overrides</h3>
+              <button class="text-xs text-rose-600 hover:underline">Expand all</button>
+            </div>
+            <p class="text-xs text-charcoal-400 mb-3">Individual overrides. Grant (+) forces the permission on; Revoke (−) forces it off.</p>
+
+            <div class="space-y-3 max-h-64 overflow-y-auto pe-1">
+              <!-- appointments module -->
+              <div>
+                <p class="text-[10px] font-bold text-charcoal-400 uppercase tracking-widest mb-1.5">appointments</p>
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between px-3 py-2 rounded-lg text-xs gap-2 bg-green-50 border border-green-200">
+                    <span class="font-mono text-charcoal-700">view_all_bookings</span>
+                    <div class="flex gap-1">
+                      <button class="px-2 py-0.5 rounded text-[10px] font-semibold bg-green-500 text-white">+</button>
+                      <button class="px-2 py-0.5 rounded text-[10px] font-semibold bg-nude-100 text-charcoal-600 hover:bg-red-100">−</button>
+                      <button class="px-2 py-0.5 rounded text-[10px] font-semibold bg-nude-100 text-charcoal-500">○</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 rounded-lg text-xs gap-2 bg-red-50 border border-red-200">
+                    <span class="font-mono text-charcoal-700">cancel_booking</span>
+                    <div class="flex gap-1">
+                      <button class="px-2 py-0.5 rounded text-[10px] font-semibold bg-nude-100 text-charcoal-600 hover:bg-green-100">+</button>
+                      <button class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-500 text-white">−</button>
+                      <button class="px-2 py-0.5 rounded text-[10px] font-semibold bg-nude-100 text-charcoal-500">○</button>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between px-3 py-2 rounded-lg text-xs gap-2 bg-nude-50 border border-nude-100">
+                    <span class="font-mono text-charcoal-700">confirm_booking</span>
+                    <div class="flex gap-1">
+                      <button class="px-2 py-0.5 rounded text-[10px] font-semibold bg-nude-100 text-charcoal-600 hover:bg-green-100">+</button>
+                      <button class="px-2 py-0.5 rounded text-[10px] font-semibold bg-nude-100 text-charcoal-600 hover:bg-red-100">−</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- finance module -->
+              <div>
+                <p class="text-[10px] font-bold text-charcoal-400 uppercase tracking-widest mb-1.5">finance</p>
+                <div class="space-y-1">
+                  <div class="flex items-center justify-between px-3 py-2 rounded-lg text-xs gap-2 bg-nude-50 border border-nude-100">
+                    <span class="font-mono text-charcoal-700">view_financial_reports</span>
+                    <div class="flex gap-1">
+                      <button class="px-2 py-0.5 rounded text-[10px] font-semibold bg-nude-100 text-charcoal-600 hover:bg-green-100">+</button>
+                      <button class="px-2 py-0.5 rounded text-[10px] font-semibold bg-nude-100 text-charcoal-600 hover:bg-red-100">−</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Effective permissions -->
+          <div>
+            <h3 class="text-sm font-semibold text-charcoal-700 mb-2">Effective Permissions</h3>
+            <div class="flex flex-wrap gap-1 max-h-24 overflow-y-auto">
+              <span class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-mono">view_dashboard</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-mono">view_all_bookings</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-mono">manage_permissions</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-mono">assign_roles</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-mono">view_staff_performance</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-mono">manage_leave_requests</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-mono">view_sales_reports</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer class="text-center py-3 text-xs text-charcoal-400 border-t border-nude-100 bg-white/50">
+  Shiny Beauty Center — Admin Portal
+</footer>
+</body>
+</html>

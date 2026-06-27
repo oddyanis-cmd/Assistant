@@ -1,184 +1,230 @@
+/**
+ * Admin Users & Permissions — /admin/users
+ * Gated on manage_permissions OR assign_roles.
+ * Lists all users with their roles; clicking "Manage" shows the permission panel.
+ */
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getCurrentUserWithPermissions, can } from "@/lib/auth";
+import { getCurrentUserWithPermissions, can, PERMISSIONS } from "@/lib/auth";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
-import { Logo } from "@/components/ui/Logo";
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
-import { Link } from "@/i18n/navigation";
+import { getUsersWithRoles } from "@/lib/metrics";
 import type { Role, Permission } from "@/lib/supabase/types";
+import { getTranslations } from "next-intl/server";
+import { UserPermissionsPanel } from "@/components/admin/UserPermissionsPanel";
 
-export const metadata: Metadata = {
-  title: "Users & Roles — Admin",
-};
+export const metadata: Metadata = { title: "Users & Permissions — Admin" };
 
 interface AdminUsersPageProps {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ manage?: string }>;
 }
 
-export default async function AdminUsersPage({ params }: AdminUsersPageProps) {
+export default async function AdminUsersPage({
+  params,
+  searchParams,
+}: AdminUsersPageProps) {
   const { locale } = await params;
-  const user = await getCurrentUserWithPermissions();
+  const { manage: manageUserId } = await searchParams;
 
+  const user = await getCurrentUserWithPermissions();
   if (!user) {
     redirect(`/${locale}/auth/signin?redirectTo=/${locale}/admin/users`);
   }
 
-  // RBAC gate: require manage_permissions
-  if (!can(user, "manage_permissions")) {
+  const t = await getTranslations("adminPortal");
+
+  const canManagePerms = can(user, PERMISSIONS.MANAGE_PERMISSIONS);
+  const canAssignRoles = can(user, PERMISSIONS.ASSIGN_ROLES);
+
+  if (!canManagePerms && !canAssignRoles) {
     return (
-      <div className="min-h-screen bg-brand-gradient flex items-center justify-center px-4">
-        <div className="card max-w-md w-full text-center">
-          <div className="text-4xl mb-4">◈</div>
-          <h1 className="text-xl font-semibold text-charcoal-800 mb-2">Access Denied</h1>
-          <p className="text-charcoal-500 text-sm mb-6">
-            You need the{" "}
-            <code className="bg-rose-50 text-rose-600 px-1 py-0.5 rounded">
-              manage_permissions
-            </code>{" "}
-            permission to view this page.
-          </p>
-          <Link href="/portal" className="btn-primary">
-            Back to Portal
-          </Link>
+      <div className="flex items-center justify-center min-h-64">
+        <div className="card max-w-sm text-center">
+          <div className="text-3xl mb-3 text-rose-300">◈</div>
+          <p className="text-charcoal-600 text-sm">{t("access_denied_body")}</p>
         </div>
       </div>
     );
   }
 
-  // Fetch roles and permissions (safe to fail when Supabase not connected)
   const supabase = await getSupabaseServerClient();
 
-  const rolesRaw = supabase
-    ? (await supabase.from("roles").select("*").order("name")).data
-    : null;
-  const roles: Role[] = (rolesRaw ?? []) as Role[];
+  // Fetch users, roles, and all permissions
+  const [users, allRoles, allPermissions] = await Promise.all([
+    getUsersWithRoles(),
+    supabase
+      ? supabase.from("roles").select("*").order("name").then((r) => (r.data ?? []) as Role[])
+      : Promise.resolve([] as Role[]),
+    supabase
+      ? supabase.from("permissions").select("*").order("module").order("key").then((r) => (r.data ?? []) as Permission[])
+      : Promise.resolve([] as Permission[]),
+  ]);
 
-  const permissionsRaw = supabase
-    ? (await supabase.from("permissions").select("*").order("module").order("key")).data
-    : null;
-  const permissions: Permission[] = (permissionsRaw ?? []) as Permission[];
+  // If managing a specific user, fetch their overrides + effective perms
+  let managedUser = users.find((u) => u.userId === manageUserId) ?? null;
+  let userOverrides: Array<{ permissionId: string; granted: boolean }> = [];
+  let userEffectivePerms: string[] = [];
 
-  // Group permissions by module
-  const permsByModule: Record<string, Permission[]> = {};
-  for (const perm of permissions) {
-    if (!permsByModule[perm.module]) permsByModule[perm.module] = [];
-    permsByModule[perm.module].push(perm);
+  if (managedUser && supabase) {
+    const { data: overrideRows } = await supabase
+      .from("user_permissions")
+      .select("permission_id, granted")
+      .eq("user_id", manageUserId!);
+    userOverrides = (overrideRows ?? []).map((r) => ({
+      permissionId: (r as { permission_id: string; granted: boolean }).permission_id,
+      granted: (r as { permission_id: string; granted: boolean }).granted,
+    }));
+
+    // Compute effective permissions
+    // 1. Role permissions
+    const roleIds = managedUser.roles.map((r) => r.id);
+    let rolePermKeys: string[] = [];
+    if (roleIds.length > 0) {
+      const { data: rpRows } = await supabase
+        .from("role_permissions")
+        .select("permission_id")
+        .in("role_id", roleIds);
+      const permIds = (rpRows ?? []).map((r) => (r as { permission_id: string }).permission_id);
+      if (permIds.length > 0) {
+        const { data: permRows } = await supabase
+          .from("permissions")
+          .select("key")
+          .in("id", permIds);
+        rolePermKeys = (permRows ?? []).map((p) => (p as { key: string }).key);
+      }
+    }
+    // 2. Apply overrides
+    const explicitGrants = new Set<string>();
+    const explicitRevokes = new Set<string>();
+    const permIdToKey = new Map(allPermissions.map((p) => [p.id, p.key]));
+    for (const o of userOverrides) {
+      const key = permIdToKey.get(o.permissionId);
+      if (key) {
+        if (o.granted) explicitGrants.add(key);
+        else explicitRevokes.add(key);
+      }
+    }
+    const effective = new Set([...rolePermKeys, ...Array.from(explicitGrants)]);
+    for (const rev of Array.from(explicitRevokes)) effective.delete(rev);
+    userEffectivePerms = Array.from(effective).sort();
   }
 
+  const labels = {
+    roles_section:    t("roles_section"),
+    permissions_section: t("permissions_section"),
+    permissions_note: t("permissions_note"),
+    grant:            t("grant"),
+    revoke:           t("revoke"),
+    clear:            t("clear"),
+    assign_role:      t("assign_role"),
+    remove_role:      t("remove_role"),
+    effective_perms:  t("effective_perms"),
+    invite_stub:      t("invite_stub"),
+  };
+
   return (
-    <div className="min-h-screen bg-brand-gradient flex flex-col">
-      <header className="px-6 py-4 flex items-center justify-between max-w-6xl mx-auto w-full border-b border-rose-100">
-        <Logo size="sm" />
-        <div className="flex items-center gap-3">
-          <LanguageSwitcher />
-          <Link href="/portal" className="btn-ghost text-sm">
-            Portal
-          </Link>
-        </div>
-      </header>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-light text-charcoal-900">{t("users_title")}</h1>
+        <p className="text-charcoal-500 text-sm mt-1">{t("users_subtitle")}</p>
+      </div>
 
-      <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-12">
-        <div className="mb-10">
-          <h1 className="text-3xl font-light text-charcoal-900 mb-2">Users &amp; Roles</h1>
-          <p className="text-charcoal-500">
-            Manage user accounts, role assignments, and permission grants.
-          </p>
-        </div>
+      {/* Invite stub notice */}
+      <div className="rounded-xl bg-cream-50 border border-cream-200 px-4 py-3 text-xs text-charcoal-600">
+        <span className="font-semibold me-1">Note:</span>
+        {t("invite_stub")}
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Roles panel */}
-          <section className="card">
-            <h2 className="text-lg font-semibold text-charcoal-800 mb-4">
-              Roles
-              <span className="ms-2 text-xs font-normal text-charcoal-400">
-                {roles.length} total
-              </span>
-            </h2>
-            {roles.length === 0 ? (
-              <EmptyState message="No roles found. Run database migrations and seed." />
-            ) : (
-              <ul className="space-y-2">
-                {roles.map((role) => (
-                  <li
-                    key={role.id}
-                    className="flex items-center justify-between p-3 rounded-xl bg-rose-50"
-                  >
-                    <div>
-                      <p className="font-medium text-charcoal-800 text-sm">{role.name}</p>
-                      {role.description && (
-                        <p className="text-xs text-charcoal-500 mt-0.5">{role.description}</p>
-                      )}
-                    </div>
-                    <span className="text-xs text-rose-600 bg-rose-100 px-2 py-0.5 rounded-full">
-                      Role
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-
-          {/* Permissions panel */}
-          <section className="card">
-            <h2 className="text-lg font-semibold text-charcoal-800 mb-4">
-              Permissions
-              <span className="ms-2 text-xs font-normal text-charcoal-400">
-                {permissions.length} total
-              </span>
-            </h2>
-            {permissions.length === 0 ? (
-              <EmptyState message="No permissions found. Run database migrations and seed." />
-            ) : (
-              <div className="space-y-4 max-h-[500px] overflow-y-auto pe-2">
-                {Object.entries(permsByModule).map(([module, perms]) => (
-                  <div key={module}>
-                    <p className="text-xs font-semibold text-charcoal-400 uppercase tracking-wider mb-2">
-                      {module}
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {perms.map((p) => (
-                        <span
-                          key={p.id}
-                          className="text-xs px-2 py-1 rounded-lg bg-nude-50 text-nude-700 border border-nude-200 font-mono"
-                          title={p.description ?? p.key}
-                        >
-                          {p.key}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
-
-        {/* Current user effective permissions */}
-        <section className="card mt-8">
-          <h2 className="text-lg font-semibold text-charcoal-800 mb-4">
-            Your Effective Permissions
-          </h2>
-          <div className="flex flex-wrap gap-1.5">
-            {user.permissions.map((perm) => (
-              <span
-                key={perm}
-                className="text-xs px-2 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 font-mono"
-              >
-                {perm}
-              </span>
-            ))}
-          </div>
-          {user.permissions.length === 0 && (
-            <EmptyState message="You have no permissions assigned yet." />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* ---- User list ---- */}
+        <div className="lg:col-span-2 space-y-3">
+          {users.length === 0 && (
+            <p className="text-sm text-charcoal-400 italic py-8 text-center card">
+              No users found. Run migrations and seed data.
+            </p>
           )}
-        </section>
-      </main>
-    </div>
-  );
-}
+          {users.map((u) => {
+            const isManaged = u.userId === manageUserId;
+            const manageHref = isManaged
+              ? `?` // de-select
+              : `?manage=${u.userId}`;
+            return (
+              <div
+                key={u.userId}
+                className={`card flex items-center justify-between gap-4 p-4 transition-all ${
+                  isManaged ? "border-rose-300 shadow-md" : ""
+                }`}
+              >
+                <div className="min-w-0">
+                  <p className="font-medium text-charcoal-800 truncate">
+                    {u.fullName ?? "—"}
+                  </p>
+                  <p className="text-xs text-charcoal-400 truncate">{u.email ?? "—"}</p>
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {u.roles.map((r) => (
+                      <span
+                        key={r.id}
+                        className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[10px] font-medium"
+                      >
+                        {r.name}
+                      </span>
+                    ))}
+                    {u.roles.length === 0 && (
+                      <span className="text-[10px] text-charcoal-400 italic">No roles</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                      u.isActive
+                        ? "bg-green-100 text-green-700"
+                        : "bg-charcoal-100 text-charcoal-500"
+                    }`}
+                  >
+                    {u.isActive ? t("active") : t("inactive")}
+                  </span>
+                  <a
+                    href={manageHref}
+                    className={`btn-ghost text-xs px-3 py-1.5 ${isManaged ? "bg-rose-50 text-rose-700" : ""}`}
+                  >
+                    {isManaged ? "Close" : t("manage")}
+                  </a>
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-function EmptyState({ message }: { message: string }) {
-  return (
-    <p className="text-sm text-charcoal-400 italic py-4 text-center">{message}</p>
+        {/* ---- Management panel ---- */}
+        <div className="lg:col-span-1">
+          {managedUser ? (
+            <div className="card sticky top-24">
+              <h2 className="text-sm font-semibold text-charcoal-800 mb-1">
+                {t("manage_user_title")}
+              </h2>
+              <p className="text-xs text-charcoal-500 mb-4 truncate">
+                {managedUser.fullName ?? managedUser.email}
+              </p>
+              <UserPermissionsPanel
+                user={managedUser}
+                allRoles={allRoles}
+                allPermissions={allPermissions}
+                userOverrides={userOverrides}
+                userEffectivePerms={userEffectivePerms}
+                locale={locale}
+                labels={labels}
+                canManagePerms={canManagePerms}
+                canAssignRoles={canAssignRoles}
+              />
+            </div>
+          ) : (
+            <div className="card text-center py-12 text-charcoal-400 text-sm">
+              Select a user to manage their roles and permissions.
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
