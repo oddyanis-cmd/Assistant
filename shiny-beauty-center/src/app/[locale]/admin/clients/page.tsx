@@ -8,6 +8,7 @@ import { getCurrentUserWithPermissions, can, PERMISSIONS } from "@/lib/auth";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import type { Client } from "@/lib/supabase/types";
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
 export const metadata: Metadata = { title: "Client Database — Admin" };
 
@@ -133,7 +134,16 @@ export default async function AdminClientsPage({
               {clients.map((client) => (
                 <tr key={client.id} className="border-b border-nude-50 hover:bg-rose-50/20">
                   <td className="py-3 px-4 font-medium text-charcoal-800">
-                    {client.full_name}
+                    {can(user, PERMISSIONS.VIEW_CLIENT_DETAILS) ? (
+                      <Link
+                        href={`/admin/clients/${client.id}` as "/"}
+                        className="hover:text-rose-600 hover:underline"
+                      >
+                        {client.full_name}
+                      </Link>
+                    ) : (
+                      client.full_name
+                    )}
                     {!client.is_active && (
                       <span className="ms-2 text-[10px] text-charcoal-400">(inactive)</span>
                     )}

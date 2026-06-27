@@ -11,6 +11,8 @@ import { getUsersWithRoles } from "@/lib/metrics";
 import type { Role, Permission } from "@/lib/supabase/types";
 import { getTranslations } from "next-intl/server";
 import { UserPermissionsPanel } from "@/components/admin/UserPermissionsPanel";
+import { InviteUserForm } from "@/components/admin/InviteUserForm";
+import { isSupabaseConfigured, supabaseConfig } from "@/lib/config";
 
 export const metadata: Metadata = { title: "Users & Permissions — Admin" };
 
@@ -109,6 +111,10 @@ export default async function AdminUsersPage({
     userEffectivePerms = Array.from(effective).sort();
   }
 
+  const supabaseReady  = isSupabaseConfigured();
+  const hasServiceRole = Boolean(supabaseConfig.serviceRoleKey);
+  const canCreateUser  = can(user, PERMISSIONS.CREATE_USER);
+
   const labels = {
     roles_section:    t("roles_section"),
     permissions_section: t("permissions_section"),
@@ -122,18 +128,41 @@ export default async function AdminUsersPage({
     invite_stub:      t("invite_stub"),
   };
 
+  const inviteLabels = {
+    invite_user:              t("invite_user"),
+    invite_email_label:       t("invite_email_label"),
+    invite_email_placeholder: t("invite_email_placeholder"),
+    invite_send:              t("invite_send"),
+    invite_sending:           t("invite_sending"),
+    invite_sent:              t("invite_sent"),
+    invite_error:             t("invite_error"),
+    invite_stub_full:         t("invite_stub_full"),
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-light text-charcoal-900">{t("users_title")}</h1>
-        <p className="text-charcoal-500 text-sm mt-1">{t("users_subtitle")}</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-light text-charcoal-900">{t("users_title")}</h1>
+          <p className="text-charcoal-500 text-sm mt-1">{t("users_subtitle")}</p>
+        </div>
+        {canCreateUser && (
+          <InviteUserForm
+            canInvite={canCreateUser}
+            supabaseReady={supabaseReady}
+            hasServiceRole={hasServiceRole}
+            labels={inviteLabels}
+          />
+        )}
       </div>
 
-      {/* Invite stub notice */}
-      <div className="rounded-xl bg-cream-50 border border-cream-200 px-4 py-3 text-xs text-charcoal-600">
-        <span className="font-semibold me-1">Note:</span>
-        {t("invite_stub")}
-      </div>
+      {/* Invite note — shown when service-role key is absent */}
+      {canCreateUser && !hasServiceRole && (
+        <div className="rounded-xl bg-cream-50 border border-cream-200 px-4 py-3 text-xs text-charcoal-600">
+          <span className="font-semibold me-1">Note:</span>
+          {t("invite_stub_full")}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ---- User list ---- */}

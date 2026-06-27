@@ -1,14 +1,17 @@
 /**
  * Service Catalog CRUD — /admin/services
- * Gated on create_service | edit_service | manage_service_categories
- * Phase 4: Full list + edit stubs. Form UI wired to read data; write actions
- * are behind a clean seam (ServiceEditModal) — connect Supabase to activate.
+ * Gated on create_service | edit_service | manage_service_categories.
+ * Full CRUD: create/edit/delete services; create/edit categories.
+ * Mutations write through Supabase server client (guarded when unconfigured).
  */
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUserWithPermissions, can, PERMISSIONS } from "@/lib/auth";
 import { getServices, getServiceCategories } from "@/lib/catalog";
+import { isSupabaseConfigured } from "@/lib/config";
 import { getTranslations } from "next-intl/server";
+import { AddServiceButton, EditServiceRow } from "@/components/admin/ServiceFormModal";
+import { CategoryFormPanel } from "@/components/admin/CategoryFormPanel";
 
 export const metadata: Metadata = { title: "Service Catalog — Admin" };
 
@@ -25,12 +28,12 @@ export default async function AdminServicesPage({ params }: ServicesPageProps) {
 
   const t = await getTranslations("adminPortal");
 
-  const canCreate  = can(user, PERMISSIONS.CREATE_SERVICE);
-  const canEdit    = can(user, PERMISSIONS.EDIT_SERVICE);
-  const canDelete  = can(user, PERMISSIONS.DELETE_SERVICE);
+  const canCreate    = can(user, PERMISSIONS.CREATE_SERVICE);
+  const canEdit      = can(user, PERMISSIONS.EDIT_SERVICE);
+  const canDelete    = can(user, PERMISSIONS.DELETE_SERVICE);
   const canManageCat = can(user, PERMISSIONS.MANAGE_SERVICE_CATEGORIES);
 
-  if (!canCreate && !canEdit && !canManageCat) {
+  if (!canCreate && !canEdit && !canDelete && !canManageCat) {
     return (
       <div className="flex items-center justify-center min-h-64">
         <div className="card max-w-sm text-center">
@@ -41,53 +44,77 @@ export default async function AdminServicesPage({ params }: ServicesPageProps) {
     );
   }
 
+  const supabaseReady = isSupabaseConfigured();
+
   const [services, categories] = await Promise.all([
     getServices(),
     getServiceCategories(),
   ]);
 
-  const catMap = new Map(categories.map((c) => [c.id, c]));
+  // Labels object passed to client components (avoids calling t() in client)
+  const svcLabels = {
+    add_service:      t("svc_add_service"),
+    edit_service:     t("svc_edit_service"),
+    delete_service:   t("svc_delete_service"),
+    delete_confirm:   t("svc_delete_confirm"),
+    saving:           t("svc_saving"),
+    save:             t("svc_save"),
+    cancel:           t("svc_cancel"),
+    name_en:          t("svc_name_en"),
+    name_ar:          t("svc_name_ar"),
+    desc_en:          t("svc_desc_en"),
+    desc_ar:          t("svc_desc_ar"),
+    price:            t("svc_price"),
+    duration:         t("svc_duration"),
+    category:         t("svc_category"),
+    active:           t("svc_active"),
+    cat_name_en:      t("svc_cat_name_en"),
+    cat_name_ar:      t("svc_cat_name_ar"),
+    cat_sort:         t("svc_cat_sort"),
+    success_created:  t("svc_success_created"),
+    success_updated:  t("svc_success_updated"),
+    success_deleted:  t("svc_success_deleted"),
+    success_cat_created: t("svc_success_cat_created"),
+    success_cat_updated: t("svc_success_cat_updated"),
+    error:            t("svc_error"),
+    no_supabase:      t("svc_no_supabase"),
+    add_category:     t("svc_add_category"),
+  };
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-light text-charcoal-900">{t("services_title")}</h1>
           <p className="text-charcoal-500 text-sm mt-1">{t("services_subtitle")}</p>
         </div>
-        {canCreate && (
-          <button className="btn-primary text-sm opacity-70 cursor-not-allowed" disabled>
-            + Add Service
-          </button>
-        )}
+        <AddServiceButton
+          locale={locale}
+          categories={categories}
+          canCreate={canCreate}
+          supabaseReady={supabaseReady}
+          labels={svcLabels}
+        />
       </div>
 
-      {/* Stub notice */}
-      <div className="rounded-xl bg-cream-50 border border-cream-200 px-4 py-3 text-xs text-charcoal-600">
-        <span className="font-semibold me-1">Note:</span>
-        {t("services_stub")}
-      </div>
+      {/* No-Supabase notice */}
+      {!supabaseReady && (
+        <div className="rounded-xl bg-cream-50 border border-cream-200 px-4 py-3 text-xs text-charcoal-600">
+          <span className="font-semibold me-1">Note:</span>
+          {t("svc_no_supabase")}
+        </div>
+      )}
 
-      {/* Categories */}
+      {/* Categories section */}
       {canManageCat && (
-        <section className="card">
-          <h2 className="text-sm font-semibold text-charcoal-700 mb-3">
-            Categories ({categories.length})
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <span
-                key={cat.id}
-                className="px-3 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium"
-              >
-                {cat.name_en} / {cat.name_ar}
-              </span>
-            ))}
-            {categories.length === 0 && (
-              <span className="text-xs text-charcoal-400 italic">No categories. Run migrations.</span>
-            )}
-          </div>
-        </section>
+        <CategoryFormPanel
+          locale={locale}
+          categories={categories}
+          canManage={canManageCat}
+          supabaseReady={supabaseReady}
+          labels={svcLabels}
+        />
       )}
 
       {/* Services table */}
@@ -99,65 +126,36 @@ export default async function AdminServicesPage({ params }: ServicesPageProps) {
         </div>
         {services.length === 0 ? (
           <p className="text-sm text-charcoal-400 italic py-8 text-center px-6">
-            No services found.
+            {supabaseReady ? "No services found." : "Connect Supabase to load services."}
           </p>
         ) : (
           <table className="w-full text-sm text-left rtl:text-right">
             <thead className="border-b border-nude-100">
               <tr>
-                {["Service", "Category", "Price (SAR)", "Duration (min)", "Active", "Actions"].map((col) => (
-                  <th key={col} className="py-3 px-4 text-xs font-semibold text-charcoal-500 uppercase tracking-wide">
-                    {col}
-                  </th>
-                ))}
+                {["Service", "Category", "Price (SAR)", "Duration (min)", "Active", "Actions"].map(
+                  (col) => (
+                    <th
+                      key={col}
+                      className="py-3 px-4 text-xs font-semibold text-charcoal-500 uppercase tracking-wide"
+                    >
+                      {col}
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody>
               {services.map((svc) => (
-                <tr key={svc.id} className="border-b border-nude-50 hover:bg-rose-50/20">
-                  <td className="py-3 px-4">
-                    <p className="font-medium text-charcoal-800">{svc.name_en}</p>
-                    <p className="text-[11px] text-charcoal-400">{svc.name_ar}</p>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-0.5 rounded-full bg-nude-100 text-nude-700 text-xs">
-                      {catMap.get(svc.category_id)?.name_en ?? "—"}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 font-medium text-charcoal-700">
-                    {Number(svc.price).toLocaleString("en-SA")}
-                  </td>
-                  <td className="py-3 px-4 text-charcoal-600">{svc.duration_minutes}</td>
-                  <td className="py-3 px-4">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                      svc.is_active ? "bg-green-100 text-green-700" : "bg-charcoal-100 text-charcoal-500"
-                    }`}>
-                      {svc.is_active ? "Active" : "Hidden"}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <div className="flex gap-2">
-                      {canEdit && (
-                        <button
-                          className="text-xs text-rose-600 hover:underline disabled:opacity-40"
-                          disabled
-                          title="Edit form — connect Supabase to activate"
-                        >
-                          Edit
-                        </button>
-                      )}
-                      {canDelete && (
-                        <button
-                          className="text-xs text-charcoal-400 hover:text-red-600 disabled:opacity-40"
-                          disabled
-                          title="Delete — connect Supabase to activate"
-                        >
-                          Delete
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
+                <EditServiceRow
+                  key={svc.id}
+                  service={svc}
+                  locale={locale}
+                  categories={categories}
+                  canEdit={canEdit}
+                  canDelete={canDelete}
+                  supabaseReady={supabaseReady}
+                  labels={svcLabels}
+                />
               ))}
             </tbody>
           </table>
