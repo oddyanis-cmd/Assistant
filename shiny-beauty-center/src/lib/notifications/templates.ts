@@ -8,6 +8,34 @@
 import type { TemplateId, TemplateData } from "./types";
 
 // ---------------------------------------------------------------------------
+// Security helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Escapes HTML special characters to prevent markup injection.
+ * Applied to every client-controlled value interpolated into email HTML.
+ */
+function escapeHtml(value: string | undefined): string {
+  if (!value) return "";
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
+}
+
+/**
+ * Strips WhatsApp formatting characters from user-derived fields.
+ * WhatsApp interprets *bold*, _italic_, ~strikethrough~ in messages.
+ * Removing these characters prevents injection of unwanted formatting.
+ */
+function escapeWhatsApp(value: string | undefined): string {
+  if (!value) return "";
+  return value.replace(/[*_~`]/g, "");
+}
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
@@ -38,20 +66,28 @@ function whatsappBookingConfirmed(
 ): string {
   const date = formatDate(data.startAt, locale);
 
+  // Escape user-derived fields to strip WhatsApp formatting injection chars
+  const clientName = escapeWhatsApp(data.clientName);
+  const serviceName = escapeWhatsApp(data.serviceName);
+  const staffName = data.staffName ? escapeWhatsApp(data.staffName) : undefined;
+  const location = data.location ? escapeWhatsApp(data.location) : undefined;
+  const price = data.price ? escapeWhatsApp(data.price) : undefined;
+  const bookingRef = data.bookingRef ? escapeWhatsApp(data.bookingRef) : undefined;
+
   if (locale === "ar") {
     return [
       `✨ *مركز شايني للتجميل — تأكيد الحجز*`,
       ``,
-      `أهلاً ${data.clientName}!`,
+      `أهلاً ${clientName}!`,
       ``,
       `تم تأكيد موعدك بنجاح. إليكِ التفاصيل:`,
       ``,
-      `📋 *الخدمة:* ${data.serviceName}`,
+      `📋 *الخدمة:* ${serviceName}`,
       `📅 *الموعد:* ${date}`,
-      data.staffName ? `💅 *المتخصصة:* ${data.staffName}` : null,
-      data.location ? `📍 *الموقع:* ${data.location}` : null,
-      data.price ? `💰 *السعر:* ${data.price}` : null,
-      data.bookingRef ? `🔖 *رقم الحجز:* ${data.bookingRef}` : null,
+      staffName ? `💅 *المتخصصة:* ${staffName}` : null,
+      location ? `📍 *الموقع:* ${location}` : null,
+      price ? `💰 *السعر:* ${price}` : null,
+      bookingRef ? `🔖 *رقم الحجز:* ${bookingRef}` : null,
       ``,
       `يرجى الحضور قبل 5 دقائق من موعدك.`,
       ``,
@@ -64,16 +100,16 @@ function whatsappBookingConfirmed(
   return [
     `✨ *Shiny Beauty Center — Booking Confirmed*`,
     ``,
-    `Hello ${data.clientName}!`,
+    `Hello ${clientName}!`,
     ``,
     `Your appointment has been confirmed. Here are your details:`,
     ``,
-    `📋 *Service:* ${data.serviceName}`,
+    `📋 *Service:* ${serviceName}`,
     `📅 *Date & Time:* ${date}`,
-    data.staffName ? `💅 *Specialist:* ${data.staffName}` : null,
-    data.location ? `📍 *Location:* ${data.location}` : null,
-    data.price ? `💰 *Price:* ${data.price}` : null,
-    data.bookingRef ? `🔖 *Booking Ref:* ${data.bookingRef}` : null,
+    staffName ? `💅 *Specialist:* ${staffName}` : null,
+    location ? `📍 *Location:* ${location}` : null,
+    price ? `💰 *Price:* ${price}` : null,
+    bookingRef ? `🔖 *Booking Ref:* ${bookingRef}` : null,
     ``,
     `Please arrive 5 minutes early.`,
     ``,
@@ -86,18 +122,23 @@ function whatsappBookingConfirmed(
 function whatsappReminder24h(data: TemplateData, locale: "en" | "ar"): string {
   const date = formatDate(data.startAt, locale);
 
+  const clientName = escapeWhatsApp(data.clientName);
+  const serviceName = escapeWhatsApp(data.serviceName);
+  const staffName = data.staffName ? escapeWhatsApp(data.staffName) : undefined;
+  const location = data.location ? escapeWhatsApp(data.location) : undefined;
+
   if (locale === "ar") {
     return [
       `⏰ *تذكير — موعدكِ غداً*`,
       ``,
-      `مرحباً ${data.clientName}!`,
+      `مرحباً ${clientName}!`,
       ``,
       `نذكّركِ بأن لديكِ موعداً غداً في *مركز شايني للتجميل*.`,
       ``,
-      `📋 *الخدمة:* ${data.serviceName}`,
+      `📋 *الخدمة:* ${serviceName}`,
       `📅 *الموعد:* ${date}`,
-      data.staffName ? `💅 *المتخصصة:* ${data.staffName}` : null,
-      data.location ? `📍 *الموقع:* ${data.location}` : null,
+      staffName ? `💅 *المتخصصة:* ${staffName}` : null,
+      location ? `📍 *الموقع:* ${location}` : null,
       ``,
       `نراكِ غداً! ✨`,
     ]
@@ -108,14 +149,14 @@ function whatsappReminder24h(data: TemplateData, locale: "en" | "ar"): string {
   return [
     `⏰ *Reminder — Your appointment is tomorrow*`,
     ``,
-    `Hi ${data.clientName}!`,
+    `Hi ${clientName}!`,
     ``,
     `This is a reminder that you have an appointment tomorrow at *Shiny Beauty Center*.`,
     ``,
-    `📋 *Service:* ${data.serviceName}`,
+    `📋 *Service:* ${serviceName}`,
     `📅 *Date & Time:* ${date}`,
-    data.staffName ? `💅 *Specialist:* ${data.staffName}` : null,
-    data.location ? `📍 *Location:* ${data.location}` : null,
+    staffName ? `💅 *Specialist:* ${staffName}` : null,
+    location ? `📍 *Location:* ${location}` : null,
     ``,
     `See you tomorrow! ✨`,
   ]
@@ -126,17 +167,21 @@ function whatsappReminder24h(data: TemplateData, locale: "en" | "ar"): string {
 function whatsappReminder2h(data: TemplateData, locale: "en" | "ar"): string {
   const date = formatDate(data.startAt, locale);
 
+  const clientName = escapeWhatsApp(data.clientName);
+  const serviceName = escapeWhatsApp(data.serviceName);
+  const location = data.location ? escapeWhatsApp(data.location) : undefined;
+
   if (locale === "ar") {
     return [
       `⏰ *تذكير — موعدكِ بعد ساعتين*`,
       ``,
-      `مرحباً ${data.clientName}!`,
+      `مرحباً ${clientName}!`,
       ``,
       `موعدكِ في *مركز شايني للتجميل* بعد ساعتين تقريباً.`,
       ``,
-      `📋 *الخدمة:* ${data.serviceName}`,
+      `📋 *الخدمة:* ${serviceName}`,
       `📅 *الوقت:* ${date}`,
-      data.location ? `📍 *الموقع:* ${data.location}` : null,
+      location ? `📍 *الموقع:* ${location}` : null,
       ``,
       `نتطلع لرؤيتكِ قريباً! 💖`,
     ]
@@ -147,13 +192,13 @@ function whatsappReminder2h(data: TemplateData, locale: "en" | "ar"): string {
   return [
     `⏰ *Reminder — Your appointment is in 2 hours*`,
     ``,
-    `Hi ${data.clientName}!`,
+    `Hi ${clientName}!`,
     ``,
     `Your appointment at *Shiny Beauty Center* is coming up in about 2 hours.`,
     ``,
-    `📋 *Service:* ${data.serviceName}`,
+    `📋 *Service:* ${serviceName}`,
     `📅 *Time:* ${date}`,
-    data.location ? `📍 *Location:* ${data.location}` : null,
+    location ? `📍 *Location:* ${location}` : null,
     ``,
     `See you soon! 💖`,
   ]
@@ -235,22 +280,30 @@ function emailBookingConfirmed(
 ): { subject: string; html: string } {
   const date = formatDate(data.startAt, locale);
 
+  // H2 FIX: escape all client-controlled values before embedding in HTML
+  const clientName = escapeHtml(data.clientName);
+  const serviceName = escapeHtml(data.serviceName);
+  const staffName = data.staffName ? escapeHtml(data.staffName) : undefined;
+  const location = data.location ? escapeHtml(data.location) : undefined;
+  const price = data.price ? escapeHtml(data.price) : undefined;
+  const bookingRef = data.bookingRef ? escapeHtml(data.bookingRef) : undefined;
+
   const isAr = locale === "ar";
   const subject = isAr
-    ? `تأكيد حجزكِ — ${data.serviceName}`
-    : `Booking Confirmed — ${data.serviceName}`;
+    ? `تأكيد حجزكِ — ${serviceName}`
+    : `Booking Confirmed — ${serviceName}`;
 
   const rows = [
-    { icon: "📋", label: isAr ? "الخدمة" : "Service", value: data.serviceName },
+    { icon: "📋", label: isAr ? "الخدمة" : "Service", value: serviceName },
     { icon: "📅", label: isAr ? "الموعد" : "Date & Time", value: date },
-    data.staffName
-      ? { icon: "💅", label: isAr ? "المتخصصة" : "Specialist", value: data.staffName }
+    staffName
+      ? { icon: "💅", label: isAr ? "المتخصصة" : "Specialist", value: staffName }
       : null,
-    data.location
-      ? { icon: "📍", label: isAr ? "الموقع" : "Location", value: data.location }
+    location
+      ? { icon: "📍", label: isAr ? "الموقع" : "Location", value: location }
       : null,
-    data.price
-      ? { icon: "💰", label: isAr ? "السعر" : "Price", value: data.price }
+    price
+      ? { icon: "💰", label: isAr ? "السعر" : "Price", value: price }
       : null,
   ]
     .filter(Boolean)
@@ -265,10 +318,10 @@ function emailBookingConfirmed(
     )
     .join("");
 
-  const refBlock = data.bookingRef
+  const refBlock = bookingRef
     ? `<div class="ref-box">
         <div class="ref-label">${isAr ? "رقم الحجز" : "Booking Reference"}</div>
-        <div class="ref-value">${data.bookingRef}</div>
+        <div class="ref-value">${bookingRef}</div>
       </div>`
     : "";
 
@@ -279,7 +332,7 @@ function emailBookingConfirmed(
   const html = emailWrapper(
     `<div class="card">
       <div class="badge">${isAr ? "تأكيد الحجز" : "Booking Confirmed"}</div>
-      <h1>${isAr ? `مرحباً ${data.clientName}!` : `Hello ${data.clientName}!`}</h1>
+      <h1>${isAr ? `مرحباً ${clientName}!` : `Hello ${clientName}!`}</h1>
       <p class="subtitle">${isAr ? "تم تأكيد موعدك بنجاح." : "Your appointment has been confirmed."}</p>
       ${rows}
       ${refBlock}
@@ -297,18 +350,25 @@ function emailReminder24h(
 ): { subject: string; html: string } {
   const date = formatDate(data.startAt, locale);
   const isAr = locale === "ar";
+
+  // H2 FIX: escape all client-controlled values
+  const clientName = escapeHtml(data.clientName);
+  const serviceName = escapeHtml(data.serviceName);
+  const staffName = data.staffName ? escapeHtml(data.staffName) : undefined;
+  const location = data.location ? escapeHtml(data.location) : undefined;
+
   const subject = isAr
-    ? `تذكير — موعدكِ غداً: ${data.serviceName}`
-    : `Reminder — Your appointment is tomorrow: ${data.serviceName}`;
+    ? `تذكير — موعدكِ غداً: ${serviceName}`
+    : `Reminder — Your appointment is tomorrow: ${serviceName}`;
 
   const rows = [
-    { icon: "📋", label: isAr ? "الخدمة" : "Service", value: data.serviceName },
+    { icon: "📋", label: isAr ? "الخدمة" : "Service", value: serviceName },
     { icon: "📅", label: isAr ? "الموعد" : "Date & Time", value: date },
-    data.staffName
-      ? { icon: "💅", label: isAr ? "المتخصصة" : "Specialist", value: data.staffName }
+    staffName
+      ? { icon: "💅", label: isAr ? "المتخصصة" : "Specialist", value: staffName }
       : null,
-    data.location
-      ? { icon: "📍", label: isAr ? "الموقع" : "Location", value: data.location }
+    location
+      ? { icon: "📍", label: isAr ? "الموقع" : "Location", value: location }
       : null,
   ]
     .filter(Boolean)
@@ -330,7 +390,7 @@ function emailReminder24h(
   const html = emailWrapper(
     `<div class="card">
       <div class="badge">${isAr ? "تذكير بالموعد — غداً" : "Appointment Reminder — Tomorrow"}</div>
-      <h1>${isAr ? `مرحباً ${data.clientName}!` : `Hi ${data.clientName}!`}</h1>
+      <h1>${isAr ? `مرحباً ${clientName}!` : `Hi ${clientName}!`}</h1>
       <p class="subtitle">${isAr ? "موعدكِ غداً في مركز شايني للتجميل." : "Your appointment is tomorrow at Shiny Beauty Center."}</p>
       ${rows}
       <div class="note-box">${noteMsg}</div>
@@ -347,15 +407,21 @@ function emailReminder2h(
 ): { subject: string; html: string } {
   const date = formatDate(data.startAt, locale);
   const isAr = locale === "ar";
+
+  // H2 FIX: escape all client-controlled values
+  const clientName = escapeHtml(data.clientName);
+  const serviceName = escapeHtml(data.serviceName);
+  const location = data.location ? escapeHtml(data.location) : undefined;
+
   const subject = isAr
-    ? `تذكير — موعدكِ بعد ساعتين: ${data.serviceName}`
-    : `Reminder — Your appointment is in 2 hours: ${data.serviceName}`;
+    ? `تذكير — موعدكِ بعد ساعتين: ${serviceName}`
+    : `Reminder — Your appointment is in 2 hours: ${serviceName}`;
 
   const rows = [
-    { icon: "📋", label: isAr ? "الخدمة" : "Service", value: data.serviceName },
+    { icon: "📋", label: isAr ? "الخدمة" : "Service", value: serviceName },
     { icon: "📅", label: isAr ? "الوقت" : "Time", value: date },
-    data.location
-      ? { icon: "📍", label: isAr ? "الموقع" : "Location", value: data.location }
+    location
+      ? { icon: "📍", label: isAr ? "الموقع" : "Location", value: location }
       : null,
   ]
     .filter(Boolean)
@@ -377,7 +443,7 @@ function emailReminder2h(
   const html = emailWrapper(
     `<div class="card">
       <div class="badge">${isAr ? "تذكير بالموعد — 2 ساعة" : "Appointment Reminder — 2 Hours"}</div>
-      <h1>${isAr ? `مرحباً ${data.clientName}!` : `Hi ${data.clientName}!`}</h1>
+      <h1>${isAr ? `مرحباً ${clientName}!` : `Hi ${clientName}!`}</h1>
       <p class="subtitle">${isAr ? "موعدكِ قريباً جداً!" : "Your appointment is coming up very soon!"}</p>
       ${rows}
       <div class="note-box">${noteMsg}</div>

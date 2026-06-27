@@ -28,7 +28,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
-import { featureFlags } from "@/lib/config";
+import { featureFlags, CURRENCY } from "@/lib/config";
 import { getSupabaseServiceClient } from "@/lib/supabase/server";
 import { send } from "@/lib/notifications/send";
 import type { TemplateData } from "@/lib/notifications/types";
@@ -40,9 +40,8 @@ import type { TemplateData } from "@/lib/notifications/types";
 function isAuthorized(request: NextRequest): boolean {
   const secret = process.env.CRON_SECRET;
   if (!secret) {
-    // No secret configured — allow in dev, deny in prod to fail safe
-    if (process.env.NODE_ENV === "production") return false;
-    return true;
+    // No secret configured — always deny (fail closed in every environment)
+    return false;
   }
   const auth = request.headers.get("authorization") ?? "";
   return auth === `Bearer ${secret}`;
@@ -170,7 +169,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         ?.profiles?.full_name ?? undefined;
 
     const price = service?.price
-      ? `${service.price.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")} SAR`
+      ? `${service.price.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")} ${CURRENCY}`
       : undefined;
 
     const templateData: TemplateData = {

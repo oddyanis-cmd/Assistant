@@ -7,6 +7,7 @@ import type { Service } from "@/lib/supabase/types";
 import type { StaffWithProfile } from "@/lib/catalog";
 import { fetchAvailableSlots, createAppointmentAction } from "@/lib/appointments";
 import { initiateBookingPayment } from "@/lib/payments/actions";
+import { CURRENCY } from "@/lib/config";
 
 // Steps include an optional "payment" step inserted after "confirm" when
 // paymentsEnabled is true.
@@ -269,8 +270,6 @@ export function BookingWizard({
       const result = await initiateBookingPayment({
         appointmentId: createdAppointmentId,
         serviceId: selectedService.id,
-        servicePrice: Number(selectedService.price),
-        serviceNameEn: selectedService.name_en,
         clientName,
         clientEmail,
         locale,
@@ -314,7 +313,7 @@ export function BookingWizard({
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-charcoal-800">{name}</span>
                   <span className="text-sm font-semibold text-rose-600">
-                    {svc.price} SAR
+                    {svc.price} {CURRENCY}
                   </span>
                 </div>
                 <div className="text-xs text-charcoal-400 mt-1">
@@ -544,7 +543,7 @@ export function BookingWizard({
           {selectedService && (
             <Row
               label={t("price_label")}
-              value={`${selectedService.price} SAR`}
+              value={`${selectedService.price} ${CURRENCY}`}
             />
           )}
           {/* Payment note — toggles based on flag */}
@@ -633,7 +632,7 @@ export function BookingWizard({
               {t("total_label")}
             </span>
             <span className="text-lg font-bold text-rose-600">
-              {price} SAR
+              {price} {CURRENCY}
             </span>
           </div>
         </div>

@@ -6,7 +6,9 @@
  * - Reads the raw request body (required for HMAC verification).
  * - Verifies the Tap signature from the `hashstring` header (or the
  *   `x-tap-signature` header, depending on Tap dashboard config).
- * - On CAPTURED/AUTHORIZED: marks payment paid, invoice paid, appointment confirmed.
+ * - On CAPTURED/AUTHORIZED: verifies payload amount + currency match the stored
+ *   payment row, then calls the atomic confirm_appointment_payment RPC which
+ *   updates payment, invoice, appointment, and awards loyalty points atomically.
  * - Idempotent: re-delivery of the same charge ID is a no-op.
  * - Returns 200 quickly; heavy work is inline (no background job needed for MVP).
  * - Returns 400 on bad signature so Tap does not retry.
@@ -17,7 +19,7 @@
 export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
-import { featureFlags } from "@/lib/config";
+import { featureFlags, CURRENCY } from "@/lib/config";
 import { verifyTapWebhook } from "@/lib/payments/tap";
 import { getSupabaseServiceClient } from "@/lib/supabase/server";
 import { sendBookingConfirmation } from "@/lib/notifications/booking";
@@ -62,9 +64,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   // Look up payment row by provider_ref (Tap charge ID)
+  // H1 FIX: also select amount and currency for verification
   const { data: paymentRow, error: lookupErr } = await svc
     .from("payments")
-    .select("id, appointment_id, invoice_id, status")
+    .select("id, appointment_id, invoice_id, status, amount, currency")
     .eq("provider_ref", chargeId)
     .maybeSingle();
 
@@ -84,6 +87,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     appointment_id: string | null;
     invoice_id: string | null;
     status: string;
+    amount: number;
+    currency: string;
   };
 
   // Idempotency: already processed
@@ -95,32 +100,57 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   const db = svc as any;
 
   if (isSuccess) {
-    // 1. Update payment → paid
-    await db
-      .from("payments")
-      .update({ status: "paid", provider_ref: chargeId })
-      .eq("id", payment.id);
+    // H1 FIX: Verify that the amount and currency in the webhook payload match
+    // what we stored when the charge was created. This prevents an attacker
+    // from sending a modified webhook with a lower amount to confirm a booking
+    // they underpaid for.
+    const payloadAmount = Number(payload.amount);
+    const storedAmount = Number(payment.amount);
+    const payloadCurrency = (payload.currency ?? "").toUpperCase();
+    const storedCurrency = (payment.currency ?? CURRENCY).toUpperCase();
 
-    // 2. Update invoice → paid
-    if (payment.invoice_id) {
-      await db
-        .from("invoices")
-        .update({ status: "paid", paid_at: new Date().toISOString() })
-        .eq("id", payment.invoice_id);
+    if (payloadAmount !== storedAmount || payloadCurrency !== storedCurrency) {
+      console.error(
+        `[tap-webhook] Amount/currency mismatch for charge ${chargeId}: ` +
+          `payload=${payloadAmount} ${payloadCurrency}, ` +
+          `stored=${storedAmount} ${storedCurrency} — leaving payment pending`
+      );
+      // Do NOT confirm. Return 200 so Tap does not retry, but leave status pending
+      // for manual investigation.
+      return NextResponse.json({ received: true }, { status: 200 });
     }
 
-    // 3. Update appointment → confirmed (only if still pending)
+    // Use the atomic RPC which handles payment + invoice + appointment + loyalty
+    // in a single transaction (idempotent: updates only when status = 'pending').
     if (payment.appointment_id) {
-      await db
-        .from("appointments")
-        .update({ status: "confirmed" })
-        .eq("id", payment.appointment_id)
-        .eq("status", "pending");
+      const { error: rpcErr } = await db.rpc("confirm_appointment_payment", {
+        p_appointment_id: payment.appointment_id,
+        p_payment_id: payment.id,
+        p_invoice_id: payment.invoice_id ?? null,
+      });
+
+      if (rpcErr) {
+        console.error("[tap-webhook] confirm_appointment_payment RPC error:", rpcErr.message);
+        return NextResponse.json({ error: "DB error" }, { status: 500 });
+      }
 
       // Fire booking confirmation notification (async, non-blocking)
       sendBookingConfirmation({ appointmentId: payment.appointment_id }).catch(
         (err) => console.error("[tap-webhook] notification error:", err)
       );
+    } else {
+      // No appointment linked — just mark payment paid directly
+      await db
+        .from("payments")
+        .update({ status: "paid", provider_ref: chargeId })
+        .eq("id", payment.id);
+
+      if (payment.invoice_id) {
+        await db
+          .from("invoices")
+          .update({ status: "paid", paid_at: new Date().toISOString() })
+          .eq("id", payment.invoice_id);
+      }
     }
 
     console.log("[tap-webhook] Confirmed appointment for charge:", chargeId);

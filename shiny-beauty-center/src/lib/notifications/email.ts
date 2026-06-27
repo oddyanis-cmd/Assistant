@@ -23,6 +23,30 @@ import { featureFlags } from "@/lib/config";
 import type { SendResult } from "./types";
 
 // ---------------------------------------------------------------------------
+// Security helpers (H3)
+// ---------------------------------------------------------------------------
+
+/**
+ * Strip CR and LF from any string that will be placed in an email header.
+ * Without this, user-controlled subjects/recipients can inject additional
+ * headers (header injection / email injection attack).
+ */
+function stripHeaderChars(value: string): string {
+  return value.replace(/[\r\n]/g, " ");
+}
+
+/**
+ * Validate that a recipient address looks like a plausible email.
+ * This is a basic sanity check — the transport layer does the real validation.
+ * The main goal is to catch obvious injection attempts (e.g. values containing
+ * newlines that passed through stripHeaderChars as spaces).
+ */
+function isValidEmail(address: string): boolean {
+  // RFC 5322-ish: local@domain, both parts non-empty, domain has at least one dot
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address);
+}
+
+// ---------------------------------------------------------------------------
 // Config helpers
 // ---------------------------------------------------------------------------
 
@@ -143,15 +167,23 @@ export async function sendEmail(
     return { ok: true, externalId: null };
   }
 
+  // H3 FIX: Validate recipient address and strip header-injection characters
+  // from header-bound fields before passing to any transport.
+  if (!isValidEmail(to)) {
+    console.error(`[notify:email] invalid recipient address — refusing send`);
+    return { ok: false, error: "Invalid recipient email address" };
+  }
+  const safeSubject = stripHeaderChars(subject);
+
   if (isResendConfigured()) {
-    const result = await sendViaResend(to, subject, html);
+    const result = await sendViaResend(to, safeSubject, html);
     if (!result.ok) {
       console.error(`[notify:email] Resend error:`, result.error);
     }
     return result;
   }
 
-  const result = await sendViaSmtp(to, subject, html);
+  const result = await sendViaSmtp(to, safeSubject, html);
   if (!result.ok) {
     console.error(`[notify:email] SMTP error:`, result.error);
   }

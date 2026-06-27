@@ -6,7 +6,7 @@
  */
 "use server";
 
-import { featureFlags, appConfig } from "@/lib/config";
+import { featureFlags, appConfig, CURRENCY } from "@/lib/config";
 import { getSupabaseServerClient, getSupabaseServiceClient } from "@/lib/supabase/server";
 import { createTapCharge, resolveChargeAmount } from "@/lib/payments/tap";
 
@@ -22,12 +22,14 @@ export interface InitiatePaymentResult {
  * Tap charge and returns the redirect URL.
  *
  * The appointment stays in PENDING status until the webhook confirms payment.
+ *
+ * SECURITY: servicePrice and serviceNameEn are NOT accepted from the client.
+ * They are looked up server-side from the services table using serviceId,
+ * ensuring the client cannot manipulate the charged amount.
  */
 export async function initiateBookingPayment(params: {
   appointmentId: string;
   serviceId: string;
-  servicePrice: number;
-  serviceNameEn: string;
   clientName: string;
   clientEmail?: string;
   clientPhone?: string;
@@ -55,8 +57,25 @@ export async function initiateBookingPayment(params: {
   if (!clientRow) return { error: "Client record not found" };
   const clientId = (clientRow as { id: string }).id;
 
-  const { amount, isDeposit } = resolveChargeAmount(params.servicePrice);
-  const currency = process.env.TAP_CURRENCY ?? "QAR";
+  // C1 FIX: Look up price and name SERVER-SIDE from the services table.
+  // Only accept active services so inactive/deleted services are rejected.
+  const { data: serviceRow, error: serviceErr } = await supabase
+    .from("services")
+    .select("price, name_en")
+    .eq("id", params.serviceId)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (serviceErr || !serviceRow) {
+    console.error("[tap] service lookup:", serviceErr?.message ?? "not found");
+    return { error: "Service not found or no longer available" };
+  }
+
+  const servicePrice = Number((serviceRow as { price: number; name_en: string }).price);
+  const serviceNameEn = (serviceRow as { price: number; name_en: string }).name_en;
+
+  const { amount, isDeposit } = resolveChargeAmount(servicePrice);
+  const currency = CURRENCY;
 
   // Redirect URL Tap sends the user back to after payment
   const locale = params.locale;
@@ -81,8 +100,8 @@ export async function initiateBookingPayment(params: {
           : undefined,
       },
       description: isDeposit
-        ? `Deposit for ${params.serviceNameEn}`
-        : `Payment for ${params.serviceNameEn}`,
+        ? `Deposit for ${serviceNameEn}`
+        : `Payment for ${serviceNameEn}`,
       redirect_url: redirectUrl,
       metadata: {
         appointment_id: params.appointmentId,
@@ -103,15 +122,17 @@ export async function initiateBookingPayment(params: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = svc as any;
 
-  // 1. Insert invoice
+  // 1. Insert invoice — use DB-authoritative price, not client-supplied value
   const { data: invoiceRow, error: invoiceErr } = await db
     .from("invoices")
     .insert({
       client_id: clientId,
       appointment_id: params.appointmentId,
-      subtotal: params.servicePrice,
+      subtotal: servicePrice,
       discount: 0,
       tax: 0,
+      total: servicePrice,
+      currency,
       status: "pending",
     })
     .select("id")
@@ -124,7 +145,7 @@ export async function initiateBookingPayment(params: {
 
   const invoiceId = (invoiceRow as { id: string }).id;
 
-  // 2. Insert payment row (pending)
+  // 2. Insert payment row (pending) — use DB-authoritative amount and currency
   const { error: paymentErr } = await db.from("payments").insert({
     appointment_id: params.appointmentId,
     invoice_id: invoiceId,

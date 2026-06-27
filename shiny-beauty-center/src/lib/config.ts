@@ -61,3 +61,11 @@ export const appConfig = {
 } as const;
 
 export type AppLocale = (typeof appConfig.locales)[number];
+
+// ---- Currency (single source of truth) ------------------------------------
+/**
+ * All charges, stored amounts, and UI labels use this currency.
+ * Defaults to QAR (Qatari Riyal) — the currency for this Qatar salon.
+ * Override via TAP_CURRENCY env var if needed.
+ */
+export const CURRENCY: string = process.env.TAP_CURRENCY ?? "QAR";

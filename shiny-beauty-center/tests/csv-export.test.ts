@@ -7,7 +7,8 @@
  * parsing to catch regressions in the original).
  *
  * Injection-safety property: every output cell, when parsed by a standard
- * CSV parser, must equal the original input value.
+ * CSV parser, must equal the original input value OR a safe variant that
+ * prevents formula execution in spreadsheet applications.
  */
 
 import { describe, it, expect } from "vitest";
@@ -21,8 +22,17 @@ import { describe, it, expect } from "vitest";
 function escapeCSV(val: string | number | null | undefined): string {
   if (val === null || val === undefined) return "";
   const s = String(val);
-  if (/[,"\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
-  return s;
+  // M1 FIX: Prefix formula-injection characters with a single quote so that
+  // spreadsheet applications (Excel, LibreOffice, Google Sheets) treat the
+  // cell as text rather than executing a formula.
+  // Characters that trigger formula execution: = + - @ as well as tab and CR
+  // when they appear as the first character of a cell value.
+  const needsPrefix = /^[=+\-@\t\r]/.test(s);
+  const prefixed = needsPrefix ? `'${s}` : s;
+  // Wrap in double-quotes if the (possibly prefixed) value contains a comma,
+  // double-quote, or newline.
+  if (/[,"\n\r]/.test(prefixed)) return `"${prefixed.replace(/"/g, '""')}"`;
+  return prefixed;
 }
 
 function buildCSV(
@@ -158,6 +168,62 @@ describe("escapeCSV — cell-level escaping", () => {
 });
 
 // ---------------------------------------------------------------------------
+// M1: Formula injection prevention
+// ---------------------------------------------------------------------------
+
+describe("escapeCSV — formula injection prevention (M1)", () => {
+  it("prefixes = with a single quote to prevent formula execution", () => {
+    expect(escapeCSV("=SUM(A1:A10)")).toBe("'=SUM(A1:A10)");
+  });
+
+  it("prefixes + with a single quote", () => {
+    expect(escapeCSV("+1234")).toBe("'+1234");
+  });
+
+  it("prefixes - with a single quote", () => {
+    expect(escapeCSV("-1234")).toBe("'-1234");
+  });
+
+  it("prefixes @ with a single quote", () => {
+    expect(escapeCSV("@SUM(1)")).toBe("'@SUM(1)");
+  });
+
+  it("prefixes a tab-starting value with a single quote", () => {
+    expect(escapeCSV("\tcmd")).toBe("'\tcmd");
+  });
+
+  it("does NOT prefix a plain number that happens to contain a minus sign inside", () => {
+    // Only the FIRST character triggers the prefix
+    expect(escapeCSV("100-200")).toBe("100-200");
+  });
+
+  it("does NOT prefix a plain price string that starts with a digit", () => {
+    expect(escapeCSV("500 QAR")).toBe("500 QAR");
+  });
+
+  it("prefixes =FORMULA and then also wraps in quotes if a comma is present", () => {
+    // '=SUM(A1,B1) — prefix first, then comma triggers quoting
+    const result = escapeCSV("=SUM(A1,B1)");
+    expect(result).toBe(`"'=SUM(A1,B1)"`);
+  });
+
+  it("prefixed value round-trips through CSV parser as the prefixed string", () => {
+    // The single-quote prefix is intentional — the CSV consumer sees '=SUM(...)
+    // which spreadsheets display as text, not as a formula.
+    const csv = buildCSV(["Formula"], [["=SUM(A1:A10)"]]);
+    const parsed = parseCSV(csv);
+    expect(parsed[1][0]).toBe("'=SUM(A1:A10)");
+  });
+
+  it("=FORMULA injection: prefixed output is NOT the raw formula (injection blocked)", () => {
+    const csv = buildCSV(["Formula"], [["=SUM(A1:A10)"]]);
+    const parsed = parseCSV(csv);
+    // The raw formula =SUM(A1:A10) must NOT appear unmodified in the parsed output
+    expect(parsed[1][0]).not.toBe("=SUM(A1:A10)");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // buildCSV + round-trip injection safety
 // ---------------------------------------------------------------------------
 
@@ -173,7 +239,7 @@ describe("buildCSV — structure and injection safety", () => {
   });
 
   it("round-trips: plain values survive parse → CSV → parse unchanged", () => {
-    const headers = ["Staff Name", "Total", "Revenue (SAR)"];
+    const headers = ["Staff Name", "Total", "Revenue (QAR)"];
     const rows: (string | number)[][] = [
       ["Alice Al-Saud", 10, 1500.5],
       ["Fatima", 5, 750],
@@ -214,16 +280,7 @@ describe("buildCSV — structure and injection safety", () => {
   });
 
   it("escapes a header that contains a comma", () => {
-    const csv = buildCSV(["Revenue (SAR, Total)", "Count"], [[100, 5]]);
-    expect(csv.startsWith('"Revenue (SAR, Total)"')).toBe(true);
-  });
-
-  it("=FORMULA injection attempt is NOT treated as formula (no quoting needed for = prefix alone)", () => {
-    // CSV itself doesn't need to escape = ; that is a spreadsheet concern.
-    // Our escapeCSV only wraps on comma/quote/newline — verify it doesn't alter = values.
-    const csv = buildCSV(["Formula"], [["=SUM(A1:A10)"]]);
-    const parsed = parseCSV(csv);
-    // Value passes through unchanged (spreadsheet-level XSS is out of scope for CSV spec)
-    expect(parsed[1][0]).toBe("=SUM(A1:A10)");
+    const csv = buildCSV(["Revenue (QAR, Total)", "Count"], [[100, 5]]);
+    expect(csv.startsWith('"Revenue (QAR, Total)"')).toBe(true);
   });
 });

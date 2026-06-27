@@ -10,13 +10,22 @@ import {
   getServicePopularity,
   getCommissionSummary,
 } from "@/lib/metrics";
+import { CURRENCY } from "@/lib/config";
 
 function escapeCSV(val: string | number | null | undefined): string {
   if (val === null || val === undefined) return "";
   const s = String(val);
-  // Wrap in quotes if contains comma, quote, or newline
-  if (/[,"\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
-  return s;
+  // M1 FIX: Prefix formula-injection characters with a single quote so that
+  // spreadsheet applications (Excel, LibreOffice, Google Sheets) treat the
+  // cell as text rather than executing a formula.
+  // Characters that trigger formula execution: = + - @ as well as tab and CR
+  // when they appear as the first character of a cell value.
+  const needsPrefix = /^[=+\-@\t\r]/.test(s);
+  const prefixed = needsPrefix ? `'${s}` : s;
+  // Wrap in double-quotes if the (possibly prefixed) value contains a comma,
+  // double-quote, or newline.
+  if (/[,"\n\r]/.test(prefixed)) return `"${prefixed.replace(/"/g, '""')}"`;
+  return prefixed;
 }
 
 function buildCSV(headers: string[], rows: (string | number | null | undefined)[][]): string {
@@ -55,7 +64,7 @@ export async function GET(
     }
     const rows = await getStaffPerformance(from, to);
     csv = buildCSV(
-      ["Staff Name", "Total Appointments", "Completed", "Revenue (SAR)", "No-Shows", "Avg Rating"],
+      ["Staff Name", "Total Appointments", "Completed", `Revenue (${CURRENCY})`, "No-Shows", "Avg Rating"],
       rows.map((r) => [
         r.staffName,
         r.totalAppts,
@@ -73,7 +82,7 @@ export async function GET(
     }
     const rows = await getServicePopularity(from, to);
     csv = buildCSV(
-      ["Service", "Category", "Bookings", "Revenue (SAR)", "Avg Price (SAR)"],
+      ["Service", "Category", "Bookings", `Revenue (${CURRENCY})`, `Avg Price (${CURRENCY})`],
       rows.map((r) => [r.serviceName, r.categoryName, r.bookingCount, r.revenue, r.avgPrice])
     );
     filename = "service-popularity.csv";
@@ -84,7 +93,7 @@ export async function GET(
     }
     const rows = await getCommissionSummary(from, to);
     csv = buildCSV(
-      ["Staff Name", "Completed Appointments", "Revenue (SAR)", "Commission (SAR)"],
+      ["Staff Name", "Completed Appointments", `Revenue (${CURRENCY})`, `Commission (${CURRENCY})`],
       rows.map((r) => [r.staffName, r.completedAppts, r.revenue, r.commission])
     );
     filename = "commission-summary.csv";
