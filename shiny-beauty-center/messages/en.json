@@ -83,7 +83,7 @@
     "peak_hours": "Peak Hours Heatmap",
     "peak_hours_subtitle": "Booking density by day & hour (last 90 days)",
     "no_data": "No data available for this period.",
-    "sar": "SAR",
+    "sar": "QAR",
     "days_short": {
       "0": "Sun",
       "1": "Mon",

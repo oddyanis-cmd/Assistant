@@ -5,6 +5,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUserWithPermissions, can, PERMISSIONS } from "@/lib/auth";
+import { CURRENCY } from "@/lib/config";
 import {
   getStaffPerformance,
   getServicePopularity,
@@ -265,7 +266,7 @@ export default async function AdminReportsPage({
                     <td className="py-3 px-3 text-charcoal-600">{row.completedAppts}</td>
                     <td className="py-3 px-3 text-charcoal-600">{row.revenue.toLocaleString("en-SA")}</td>
                     <td className="py-3 px-3 font-semibold text-rose-700">
-                      {row.commission.toLocaleString("en-SA")} SAR
+                      {row.commission.toLocaleString("en-SA")} {CURRENCY}
                     </td>
                   </tr>
                 ))}

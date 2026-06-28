@@ -132,7 +132,7 @@ export default async function AdminServicesPage({ params }: ServicesPageProps) {
           <table className="w-full text-sm text-left rtl:text-right">
             <thead className="border-b border-nude-100">
               <tr>
-                {["Service", "Category", "Price (SAR)", "Duration (min)", "Active", "Actions"].map(
+                {["Service", "Category", "Price (QAR)", "Duration (min)", "Active", "Actions"].map(
                   (col) => (
                     <th
                       key={col}

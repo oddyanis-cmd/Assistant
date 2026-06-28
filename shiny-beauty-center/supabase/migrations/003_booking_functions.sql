@@ -159,7 +159,7 @@ $$;
 --   1. Look up or create the client record (matched by user_id).
 --   2. Re-check availability (conflict-safe: advisory lock per staff+slot).
 --   3. Insert the appointment as 'confirmed' (payments off → pay at salon).
---   4. Award loyalty points (10 pts per 100 SAR, rounded down).
+--   4. Award loyalty points (10 pts per 100 QAR, rounded down).
 --   5. Return appointment id + public_token.
 -- ---------------------------------------------------------------------------
 create or replace function public.create_appointment(
@@ -282,7 +282,7 @@ begin
      p_notes, v_user_id, v_token)
   returning id into v_appt_id;
 
-  -- 9. Award loyalty points: 10 pts per 100 SAR
+  -- 9. Award loyalty points: 10 pts per 100 QAR
   if v_user_id is not null then
     v_points := floor(v_price / 100) * 10;
     if v_points > 0 then

@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import type { Service, ServiceCategory } from "@/lib/supabase/types";
 import { StarDisplay } from "@/components/reviews/StarPicker";
 import type { ReviewStats } from "@/lib/reviews";
+import { CURRENCY } from "@/lib/config";
 
 // Category emoji mapping for visual identity
 const CATEGORY_ICONS: Record<string, string> = {
@@ -125,7 +126,7 @@ export function ServicesCatalog({
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <h3 className="font-semibold text-charcoal-900 leading-snug">{name}</h3>
                   <span className="flex-shrink-0 text-sm font-semibold text-rose-600">
-                    {service.price.toLocaleString()} SAR
+                    {service.price.toLocaleString()} {CURRENCY}
                   </span>
                 </div>
 

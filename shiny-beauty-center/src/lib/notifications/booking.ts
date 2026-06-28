@@ -9,7 +9,7 @@
  *  - Uses the service-role Supabase client to look up client/service details.
  */
 
-import { featureFlags } from "@/lib/config";
+import { featureFlags, CURRENCY } from "@/lib/config";
 import { getSupabaseServiceClient } from "@/lib/supabase/server";
 import { send } from "./send";
 
@@ -95,7 +95,7 @@ export async function sendBookingConfirmation(
         ?.profiles?.full_name ?? undefined;
 
     const price = service?.price
-      ? `${service.price.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")} SAR`
+      ? `${service.price.toLocaleString(locale === "ar" ? "ar-SA" : "en-US")} ${CURRENCY}`
       : undefined;
 
     const templateData = {

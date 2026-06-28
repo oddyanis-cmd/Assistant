@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getCurrentUserWithPermissions, can, PERMISSIONS } from "@/lib/auth";
 import { getAllBookings, type CalendarBooking } from "@/lib/metrics";
+import { CURRENCY } from "@/lib/config";
 import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = { title: "All-Staff Calendar — Admin" };
@@ -248,7 +249,7 @@ export default async function AdminCalendarPage({
                 </p>
               </div>
               <div className="text-right shrink-0">
-                <p className="text-sm font-semibold text-charcoal-700">{b.price.toLocaleString("en-SA")} SAR</p>
+                <p className="text-sm font-semibold text-charcoal-700">{b.price.toLocaleString("en-SA")} {CURRENCY}</p>
               </div>
             </div>
           ))}

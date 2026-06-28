@@ -20,7 +20,7 @@ export interface TemplateData {
   bookingRef?: string;
   /** Staff/specialist name */
   staffName?: string;
-  /** Price with currency, e.g. "250 SAR" */
+  /** Price with currency, e.g. "250 QAR" */
   price?: string;
 }
 
