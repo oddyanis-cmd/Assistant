@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getCurrentUserWithPermissions, can } from "@/lib/auth";
+import { getCurrentUserWithPermissions, can, PERMISSIONS } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
@@ -13,6 +13,14 @@ interface PortalPageProps {
   params: Promise<{ locale: string }>;
 }
 
+interface NavItem {
+  title: string;
+  description: string;
+  href: string;
+  icon: string;
+  show: boolean;
+}
+
 export default async function PortalPage({ params }: PortalPageProps) {
   const { locale } = await params;
   const user = await getCurrentUserWithPermissions();
@@ -21,10 +29,128 @@ export default async function PortalPage({ params }: PortalPageProps) {
     redirect(`/${locale}/auth/signin?redirectTo=/${locale}/portal`);
   }
 
-  const isAdmin = can(user, "manage_permissions");
-  const canViewDashboard = can(user, "view_dashboard");
-  const canViewBookings = can(user, "view_all_bookings") || can(user, "view_own_bookings");
-  const isStaff = can(user, "view_own_bookings") || can(user, "view_all_bookings");
+  const isStaff =
+    can(user, PERMISSIONS.VIEW_OWN_BOOKINGS) ||
+    can(user, PERMISSIONS.VIEW_ALL_BOOKINGS);
+
+  // Staff self-service
+  const myWork: NavItem[] = [
+    {
+      title: "My Schedule",
+      description: "View and manage your daily appointments",
+      href: "/staff/schedule",
+      icon: "◑",
+      show: isStaff,
+    },
+    {
+      title: "My Availability",
+      description: "Set working hours and request time off",
+      href: "/staff/availability",
+      icon: "◷",
+      show: isStaff,
+    },
+    {
+      title: "Notifications",
+      description: "Your in-app inbox and updates",
+      href: "/staff/notifications",
+      icon: "◎",
+      show: isStaff,
+    },
+  ];
+
+  // Management / admin tools — each gated to match its destination page's guard
+  const management: NavItem[] = [
+    {
+      title: "Dashboard",
+      description: "Overview and key metrics",
+      href: "/admin/dashboard",
+      icon: "◴",
+      show: can(user, PERMISSIONS.VIEW_DASHBOARD),
+    },
+    {
+      title: "Appointments Calendar",
+      description: "All-staff calendar of bookings",
+      href: "/admin/calendar",
+      icon: "▦",
+      show: can(user, PERMISSIONS.VIEW_ALL_BOOKINGS),
+    },
+    {
+      title: "Reports",
+      description: "Sales, bookings & staff performance",
+      href: "/admin/reports",
+      icon: "▤",
+      show:
+        can(user, PERMISSIONS.VIEW_STAFF_PERFORMANCE) ||
+        can(user, PERMISSIONS.VIEW_SALES_REPORTS) ||
+        can(user, PERMISSIONS.VIEW_BOOKING_REPORTS) ||
+        can(user, PERMISSIONS.VIEW_COMMISSION),
+    },
+    {
+      title: "Clients",
+      description: "Client directory, history & notes",
+      href: "/admin/clients",
+      icon: "◍",
+      show: can(user, PERMISSIONS.VIEW_ALL_CLIENTS),
+    },
+    {
+      title: "Manage Services",
+      description: "Add, edit & price services",
+      href: "/admin/services",
+      icon: "✦",
+      show:
+        can(user, PERMISSIONS.CREATE_SERVICE) ||
+        can(user, PERMISSIONS.EDIT_SERVICE) ||
+        can(user, PERMISSIONS.DELETE_SERVICE) ||
+        can(user, PERMISSIONS.MANAGE_SERVICE_CATEGORIES),
+    },
+    {
+      title: "Reviews",
+      description: "Moderate ratings & comments",
+      href: "/admin/reviews",
+      icon: "★",
+      show: can(user, PERMISSIONS.MANAGE_REVIEWS),
+    },
+    {
+      title: "Time-off Requests",
+      description: "Approve staff leave & time off",
+      href: "/admin/time-off",
+      icon: "◵",
+      show: can(user, PERMISSIONS.MANAGE_LEAVE_REQUESTS),
+    },
+    {
+      title: "Users & Roles",
+      description: "Manage accounts, roles, and permissions",
+      href: "/admin/users",
+      icon: "◈",
+      show:
+        can(user, PERMISSIONS.MANAGE_PERMISSIONS) ||
+        can(user, PERMISSIONS.ASSIGN_ROLES),
+    },
+  ];
+
+  // Available to everyone signed in
+  const general: NavItem[] = [
+    {
+      title: "Browse Services",
+      description: "See the full services menu",
+      href: "/services",
+      icon: "◉",
+      show: true,
+    },
+    {
+      title: "My Profile",
+      description: "Update your information",
+      href: "/profile",
+      icon: "◐",
+      show: true,
+    },
+  ];
+
+  const sections = [
+    { heading: "My work", items: myWork.filter((i) => i.show) },
+    { heading: "Management", items: management.filter((i) => i.show) },
+    { heading: "General", items: general.filter((i) => i.show) },
+  ].filter((s) => s.items.length > 0);
 
   return (
     <div className="min-h-screen bg-brand-gradient flex flex-col">
@@ -56,109 +182,31 @@ export default async function PortalPage({ params }: PortalPageProps) {
           </div>
         </div>
 
-        {/* Quick navigation */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Staff portal — live in Phase 3 */}
-          {isStaff && (
-            <Link href="/staff/schedule" className="card hover:shadow-md transition-shadow group border-rose-200">
-              <div className="text-rose-400 text-xl mb-2">◑</div>
-              <h3 className="font-semibold text-charcoal-800 group-hover:text-rose-600">
-                My Schedule
-              </h3>
-              <p className="text-sm text-charcoal-500 mt-1">
-                View and manage your daily appointments
-              </p>
-            </Link>
-          )}
-          {isStaff && (
-            <Link href="/staff/availability" className="card hover:shadow-md transition-shadow group border-rose-200">
-              <div className="text-rose-400 text-xl mb-2">◷</div>
-              <h3 className="font-semibold text-charcoal-800 group-hover:text-rose-600">
-                My Availability
-              </h3>
-              <p className="text-sm text-charcoal-500 mt-1">
-                Set working hours and request time off
-              </p>
-            </Link>
-          )}
-          {isStaff && (
-            <Link href="/staff/notifications" className="card hover:shadow-md transition-shadow group border-rose-200">
-              <div className="text-rose-400 text-xl mb-2">◎</div>
-              <h3 className="font-semibold text-charcoal-800 group-hover:text-rose-600">
-                Notifications
-              </h3>
-              <p className="text-sm text-charcoal-500 mt-1">
-                Your in-app inbox and updates
-              </p>
-            </Link>
-          )}
-
-          {canViewDashboard && (
-            <PortalCard
-              title="Dashboard"
-              description="Overview and key metrics"
-              href="#"
-              comingSoon
-            />
-          )}
-          {canViewBookings && !isStaff && (
-            <PortalCard
-              title="Appointments"
-              description="Manage bookings and schedule"
-              href="#"
-              comingSoon
-            />
-          )}
-          {isAdmin && (
-            <Link href="/admin/users" className="card hover:shadow-md transition-shadow group">
-              <div className="text-rose-400 text-xl mb-2">◈</div>
-              <h3 className="font-semibold text-charcoal-800 group-hover:text-rose-600">
-                Users &amp; Roles
-              </h3>
-              <p className="text-sm text-charcoal-500 mt-1">
-                Manage accounts, roles, and permissions
-              </p>
-            </Link>
-          )}
-          <PortalCard
-            title="Services"
-            description="Browse available services"
-            href="#"
-            comingSoon
-          />
-          <PortalCard
-            title="My Profile"
-            description="Update your information"
-            href="#"
-            comingSoon
-          />
+        <div className="space-y-10">
+          {sections.map((section) => (
+            <section key={section.heading}>
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-charcoal-400 mb-3">
+                {section.heading}
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {section.items.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="card hover:shadow-md transition-shadow group border-rose-200"
+                  >
+                    <div className="text-rose-400 text-xl mb-2">{item.icon}</div>
+                    <h3 className="font-semibold text-charcoal-800 group-hover:text-rose-600">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-charcoal-500 mt-1">{item.description}</p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ))}
         </div>
       </main>
-    </div>
-  );
-}
-
-function PortalCard({
-  title,
-  description,
-  href,
-  comingSoon,
-}: {
-  title: string;
-  description: string;
-  href: string;
-  comingSoon?: boolean;
-}) {
-  return (
-    <div className="card opacity-70 relative">
-      {comingSoon && (
-        <span className="absolute top-3 end-3 text-[10px] font-medium text-charcoal-400 bg-charcoal-100 px-2 py-0.5 rounded-full">
-          Phase 2+
-        </span>
-      )}
-      <div className="text-nude-400 text-xl mb-2">◉</div>
-      <h3 className="font-semibold text-charcoal-700">{title}</h3>
-      <p className="text-sm text-charcoal-400 mt-1">{description}</p>
     </div>
   );
 }
