@@ -34,7 +34,8 @@ export default async function AdminLayout({ children, params }: AdminLayoutProps
     can(user, PERMISSIONS.VIEW_STAFF_PERFORMANCE) ||
     can(user, PERMISSIONS.VIEW_SALES_REPORTS) ||
     can(user, PERMISSIONS.CREATE_SERVICE) ||
-    can(user, PERMISSIONS.VIEW_ALL_CLIENTS);
+    can(user, PERMISSIONS.VIEW_ALL_CLIENTS) ||
+    can(user, PERMISSIONS.MANAGE_REVIEWS);
 
   if (!hasAccess) {
     return (
@@ -104,6 +105,12 @@ export default async function AdminLayout({ children, params }: AdminLayoutProps
       label: t("nav_clients"),
       icon: "◌",
       show: can(user, PERMISSIONS.VIEW_ALL_CLIENTS),
+    },
+    {
+      href: "/admin/reviews",
+      label: t("nav_reviews"),
+      icon: "★",
+      show: can(user, PERMISSIONS.MANAGE_REVIEWS),
     },
   ].filter((item) => item.show);
 

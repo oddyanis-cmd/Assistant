@@ -219,7 +219,19 @@
     "invite_sent": "Invite email sent successfully.",
     "invite_error": "Failed to send invite.",
     "invite_requires_service_role": "Inviting users requires SUPABASE_SERVICE_ROLE_KEY to be set on the server.",
-    "invite_stub_full": "User invitation uses supabase.auth.admin.inviteUserByEmail (service-role). Set SUPABASE_SERVICE_ROLE_KEY in your environment and the Invite button will send a magic-link email."
+    "invite_stub_full": "User invitation uses supabase.auth.admin.inviteUserByEmail (service-role). Set SUPABASE_SERVICE_ROLE_KEY in your environment and the Invite button will send a magic-link email.",
+    "nav_reviews": "Reviews",
+    "reviews_title": "Reviews Moderation",
+    "reviews_subtitle": "Hide or unhide client reviews",
+    "reviews_empty": "No reviews yet.",
+    "reviews_visible": "Visible",
+    "reviews_hidden": "Hidden",
+    "reviews_hide": "Hide",
+    "reviews_unhide": "Unhide",
+    "reviews_no_comment": "No comment",
+    "col_date": "Date",
+    "col_client": "Client",
+    "col_comment": "Comment"
   },
   "services": {
     "title": "Our Services",
@@ -399,6 +411,19 @@
     "processing_title": "Payment Processing",
     "processing_body": "We're confirming your payment. Your appointment will be confirmed shortly.",
     "retry_button": "Try Again"
+  },
+  "reviews": {
+    "leave_review": "How was your experience?",
+    "your_review": "Your Review",
+    "comment_placeholder": "Share your experience with us (optional)…",
+    "submit_review": "Submit Review",
+    "submitting": "Submitting…",
+    "error_no_rating": "Please select a rating before submitting.",
+    "star_1": "1 star — Poor",
+    "star_2": "2 stars — Fair",
+    "star_3": "3 stars — Good",
+    "star_4": "4 stars — Very Good",
+    "star_5": "5 stars — Excellent"
   },
   "errors": {
     "not_found": "Page not found",

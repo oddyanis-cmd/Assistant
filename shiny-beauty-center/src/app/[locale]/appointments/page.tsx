@@ -7,6 +7,8 @@ import { AppointmentsList } from "@/components/booking/AppointmentsList";
 import { getMyAppointments } from "@/lib/appointments";
 import { getCurrentUserWithPermissions } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
+import { getMyReviewForAppointment } from "@/lib/reviews";
+import type { ReviewRow } from "@/lib/reviews";
 
 export const metadata: Metadata = {
   title: "My Appointments",
@@ -50,6 +52,16 @@ export default async function AppointmentsPage({ params }: AppointmentsPageProps
 
   const { upcoming, past } = await getMyAppointments();
 
+  // Fetch existing reviews for completed past appointments (parallel)
+  const completedPast = past.filter((a) => a.status === "completed");
+  const reviewEntries = await Promise.all(
+    completedPast.map(async (a) => {
+      const review = await getMyReviewForAppointment(a.id);
+      return [a.id, review] as [string, ReviewRow | null];
+    })
+  );
+  const reviewsByAppointmentId = Object.fromEntries(reviewEntries);
+
   return (
     <div className="min-h-screen bg-cream-50 flex flex-col pb-20">
       <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-sm border-b border-nude-100 px-4 py-3 flex items-center justify-between">
@@ -66,6 +78,7 @@ export default async function AppointmentsPage({ params }: AppointmentsPageProps
           upcoming={upcoming}
           past={past}
           locale={locale}
+          reviewsByAppointmentId={reviewsByAppointmentId}
         />
       </main>
 

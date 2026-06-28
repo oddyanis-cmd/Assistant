@@ -219,7 +219,19 @@
     "invite_sent": "تم إرسال بريد الدعوة بنجاح.",
     "invite_error": "فشل إرسال الدعوة.",
     "invite_requires_service_role": "دعوة المستخدمات تتطلب تعيين SUPABASE_SERVICE_ROLE_KEY على الخادم.",
-    "invite_stub_full": "دعوة المستخدمات تستخدم supabase.auth.admin.inviteUserByEmail (service-role). قومي بتعيين SUPABASE_SERVICE_ROLE_KEY في بيئتك وسيرسل زر الدعوة رسالة magic-link."
+    "invite_stub_full": "دعوة المستخدمات تستخدم supabase.auth.admin.inviteUserByEmail (service-role). قومي بتعيين SUPABASE_SERVICE_ROLE_KEY في بيئتك وسيرسل زر الدعوة رسالة magic-link.",
+    "nav_reviews": "التقييمات",
+    "reviews_title": "إدارة التقييمات",
+    "reviews_subtitle": "إخفاء تقييمات العميلات أو إظهارها",
+    "reviews_empty": "لا توجد تقييمات بعد.",
+    "reviews_visible": "مرئي",
+    "reviews_hidden": "مخفي",
+    "reviews_hide": "إخفاء",
+    "reviews_unhide": "إظهار",
+    "reviews_no_comment": "لا يوجد تعليق",
+    "col_date": "التاريخ",
+    "col_client": "العميلة",
+    "col_comment": "التعليق"
   },
   "services": {
     "title": "خدماتنا",
@@ -399,6 +411,19 @@
     "processing_title": "جاري معالجة الدفع",
     "processing_body": "نقوم بتأكيد دفعتك. سيتم تأكيد موعدك قريباً.",
     "retry_button": "إعادة المحاولة"
+  },
+  "reviews": {
+    "leave_review": "كيف كانت تجربتك؟",
+    "your_review": "تقييمك",
+    "comment_placeholder": "شاركينا تجربتك (اختياري)…",
+    "submit_review": "إرسال التقييم",
+    "submitting": "جاري الإرسال…",
+    "error_no_rating": "يرجى اختيار تقييم قبل الإرسال.",
+    "star_1": "نجمة واحدة — ضعيف",
+    "star_2": "نجمتان — مقبول",
+    "star_3": "3 نجوم — جيد",
+    "star_4": "4 نجوم — جيد جداً",
+    "star_5": "5 نجوم — ممتاز"
   },
   "errors": {
     "not_found": "الصفحة غير موجودة",

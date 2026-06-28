@@ -5,6 +5,8 @@ import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { BottomNav } from "@/components/ui/BottomNav";
 import { ServicesCatalog } from "@/components/booking/ServicesCatalog";
 import { getServiceCategories, getServices } from "@/lib/catalog";
+import { getServiceRatingStats } from "@/lib/reviews";
+import type { ReviewStats } from "@/lib/reviews";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -22,6 +24,15 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
     getServiceCategories(),
     getServices(),
   ]);
+
+  // Fetch rating stats for all services (parallel, non-blocking)
+  const ratingEntries = await Promise.all(
+    services.map(async (s) => {
+      const stats = await getServiceRatingStats(s.id);
+      return [s.id, stats] as [string, ReviewStats];
+    })
+  );
+  const ratingsByServiceId = Object.fromEntries(ratingEntries);
 
   const isAr = locale === "ar";
 
@@ -50,6 +61,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
           services={services}
           locale={locale}
           isAr={isAr}
+          ratingsByServiceId={ratingsByServiceId}
         />
       </main>
 

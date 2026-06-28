@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import type { Service, ServiceCategory } from "@/lib/supabase/types";
+import { StarDisplay } from "@/components/reviews/StarPicker";
+import type { ReviewStats } from "@/lib/reviews";
 
 // Category emoji mapping for visual identity
 const CATEGORY_ICONS: Record<string, string> = {
@@ -30,6 +32,7 @@ interface ServicesCatalogProps {
   services: Service[];
   locale: string;
   isAr: boolean;
+  ratingsByServiceId?: Record<string, ReviewStats>;
 }
 
 export function ServicesCatalog({
@@ -37,6 +40,7 @@ export function ServicesCatalog({
   services,
   locale,
   isAr,
+  ratingsByServiceId,
 }: ServicesCatalogProps) {
   const t = useTranslations();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -130,6 +134,23 @@ export function ServicesCatalog({
                     {desc}
                   </p>
                 )}
+
+                {/* Rating display */}
+                {(() => {
+                  const stats = ratingsByServiceId?.[service.id];
+                  if (stats && stats.avgRating !== null && stats.reviewCount > 0) {
+                    return (
+                      <div className="mb-2">
+                        <StarDisplay
+                          rating={stats.avgRating}
+                          count={stats.reviewCount}
+                          size="sm"
+                        />
+                      </div>
+                    );
+                  }
+                  return null;
+                })()}
 
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-charcoal-400 bg-nude-50 px-2 py-1 rounded-full">

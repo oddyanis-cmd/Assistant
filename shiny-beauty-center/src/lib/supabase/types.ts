@@ -240,9 +240,12 @@ export interface Review {
   id: string;
   client_id: string;
   appointment_id: string | null;
+  service_id: string | null;
+  staff_id: string | null;
   rating: number;
   comment: string | null;
   is_published: boolean;
+  is_hidden: boolean;
   created_at: string;
 }
 
@@ -388,6 +391,50 @@ export interface Database {
       };
       notify_staff_new_assignment: {
         Args: { p_appointment_id: string };
+        Returns: void;
+      };
+      submit_review: {
+        Args: {
+          p_appointment_id: string;
+          p_rating: number;
+          p_comment?: string | null;
+        };
+        Returns: string; // review uuid
+      };
+      get_my_review_for_appointment: {
+        Args: { p_appointment_id: string };
+        Returns: Array<{
+          id: string;
+          rating: number;
+          comment: string | null;
+          created_at: string;
+        }>;
+      };
+      get_service_rating_stats: {
+        Args: { p_service_id: string };
+        Returns: Array<{ avg_rating: number | null; review_count: number }>;
+      };
+      get_staff_rating_stats: {
+        Args: { p_staff_id: string };
+        Returns: Array<{ avg_rating: number | null; review_count: number }>;
+      };
+      admin_get_all_reviews: {
+        Args: { p_limit?: number; p_offset?: number };
+        Returns: Array<{
+          id: string;
+          appointment_id: string | null;
+          client_name: string;
+          service_name: string;
+          staff_name: string;
+          rating: number;
+          comment: string | null;
+          is_published: boolean;
+          is_hidden: boolean;
+          created_at: string;
+        }>;
+      };
+      admin_moderate_review: {
+        Args: { p_review_id: string; p_hide: boolean };
         Returns: void;
       };
     };

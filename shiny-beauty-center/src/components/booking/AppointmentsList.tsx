@@ -7,11 +7,14 @@ import { useRouter } from "@/i18n/navigation";
 import type { AppointmentWithDetails } from "@/lib/appointments";
 import { cancelAppointment } from "@/lib/appointments";
 import type { AppointmentStatus } from "@/lib/supabase/types";
+import { LeaveReviewForm } from "@/components/reviews/LeaveReviewForm";
+import type { ReviewRow } from "@/lib/reviews";
 
 interface AppointmentsListProps {
   upcoming: AppointmentWithDetails[];
   past: AppointmentWithDetails[];
   locale: string;
+  reviewsByAppointmentId?: Record<string, ReviewRow | null>;
 }
 
 function statusBadge(status: AppointmentStatus, t: ReturnType<typeof useTranslations>) {
@@ -49,9 +52,11 @@ function formatDateTime(iso: string) {
 function AppointmentCard({
   appt,
   canCancel,
+  existingReview,
 }: {
   appt: AppointmentWithDetails;
   canCancel?: boolean;
+  existingReview?: ReviewRow | null;
 }) {
   const t = useTranslations("appointments");
   const router = useRouter();
@@ -128,6 +133,14 @@ function AppointmentCard({
           </button>
         </div>
       )}
+
+      {/* Review — only for completed appointments */}
+      {appt.status === "completed" && (
+        <LeaveReviewForm
+          appointmentId={appt.id}
+          existingReview={existingReview}
+        />
+      )}
     </div>
   );
 }
@@ -153,6 +166,7 @@ export function AppointmentsList({
   upcoming,
   past,
   locale: _locale,
+  reviewsByAppointmentId,
 }: AppointmentsListProps) {
   const t = useTranslations("appointments");
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
@@ -213,6 +227,7 @@ export function AppointmentsList({
                 tab === "upcoming" &&
                 (appt.status === "confirmed" || appt.status === "pending")
               }
+              existingReview={reviewsByAppointmentId?.[appt.id]}
             />
           ))}
         </div>

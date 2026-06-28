@@ -14,9 +14,10 @@ admin dashboard/reports/RBAC, payments + notifications behind flags) and has an
 
 ### 1. Create the database (Supabase)
 1. Create a free project at [supabase.com](https://supabase.com).
-2. In **SQL Editor**, run these files **in order** (copy-paste each):
-   `supabase/migrations/001 → 006`, then `supabase/seed.sql`, then
-   `supabase/seed_catalog.sql`. *(All verified to apply cleanly.)*
+2. In **SQL Editor**, paste the single file **`supabase/setup.sql`** and click
+   **Run** — it bundles all migrations (001–007) + both seeds, in order, and is
+   verified to apply cleanly as one script. *(Prefer step-by-step? Run
+   `migrations/001 → 007`, then `seed.sql`, then `seed_catalog.sql`.)*
 3. Project → Settings → API: copy the **URL**, **anon** key, and **service_role** key.
 
 ### 2. Configure env
