@@ -52,8 +52,10 @@ export function isTapClientConfigured(): boolean {
 // ---- App ------------------------------------------------------------------
 export const appConfig = {
   url: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
-  name: "Shiny Beauty Center",
-  tagline: "Luxury Beauty, Exclusively for Women",
+  /** Salon display name — override per client via NEXT_PUBLIC_APP_NAME. */
+  name: process.env.NEXT_PUBLIC_APP_NAME ?? "Shiny Beauty Center",
+  /** Tagline — override per client via NEXT_PUBLIC_APP_TAGLINE. */
+  tagline: process.env.NEXT_PUBLIC_APP_TAGLINE ?? "Luxury Beauty, Exclusively for Women",
   defaultLocale: "en" as const,
   locales: ["en", "ar"] as const,
 } as const;
