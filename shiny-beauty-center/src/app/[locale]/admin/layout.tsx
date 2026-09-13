@@ -35,7 +35,15 @@ export default async function AdminLayout({ children, params }: AdminLayoutProps
     can(user, PERMISSIONS.VIEW_SALES_REPORTS) ||
     can(user, PERMISSIONS.CREATE_SERVICE) ||
     can(user, PERMISSIONS.VIEW_ALL_CLIENTS) ||
-    can(user, PERMISSIONS.MANAGE_REVIEWS);
+    can(user, PERMISSIONS.MANAGE_REVIEWS) ||
+    can(user, PERMISSIONS.VIEW_FINANCIAL_REPORTS) ||
+    can(user, PERMISSIONS.VIEW_REVENUE) ||
+    can(user, PERMISSIONS.MANAGE_EXPENSES) ||
+    can(user, PERMISSIONS.VIEW_EMPLOYEES) ||
+    can(user, PERMISSIONS.MANAGE_EMPLOYEE_RECORDS) ||
+    can(user, PERMISSIONS.MANAGE_ATTENDANCE) ||
+    can(user, PERMISSIONS.MANAGE_PAYROLL) ||
+    can(user, PERMISSIONS.VIEW_HR_REPORTS);
 
   if (!hasAccess) {
     return (
@@ -111,6 +119,33 @@ export default async function AdminLayout({ children, params }: AdminLayoutProps
       label: t("nav_reviews"),
       icon: "★",
       show: can(user, PERMISSIONS.MANAGE_REVIEWS),
+    },
+    {
+      href: "/admin/finance",
+      label: t("nav_finance"),
+      icon: "▤",
+      show:
+        can(user, PERMISSIONS.VIEW_FINANCIAL_REPORTS) ||
+        can(user, PERMISSIONS.VIEW_REVENUE) ||
+        can(user, PERMISSIONS.MANAGE_INVOICES) ||
+        can(user, PERMISSIONS.MANAGE_EXPENSES),
+    },
+    {
+      href: "/admin/hr",
+      label: t("nav_hr"),
+      icon: "❉",
+      show:
+        can(user, PERMISSIONS.VIEW_EMPLOYEES) ||
+        can(user, PERMISSIONS.MANAGE_EMPLOYEE_RECORDS) ||
+        can(user, PERMISSIONS.MANAGE_ATTENDANCE) ||
+        can(user, PERMISSIONS.MANAGE_PAYROLL) ||
+        can(user, PERMISSIONS.VIEW_HR_REPORTS),
+    },
+    {
+      href: "/admin/roles",
+      label: t("nav_roles"),
+      icon: "◈",
+      show: can(user, PERMISSIONS.MANAGE_PERMISSIONS),
     },
   ].filter((item) => item.show);
 
