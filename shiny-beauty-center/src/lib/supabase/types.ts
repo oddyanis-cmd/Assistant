@@ -41,6 +41,8 @@ export interface Role {
   id: string;
   name: string;
   description: string | null;
+  /** true for the seeded built-in roles (cannot be deleted/renamed) */
+  is_system: boolean;
   created_at: string;
 }
 
@@ -79,6 +81,10 @@ export interface StaffProfile {
   bio: string | null;
   specialties: string[] | null;
   color_hex: string | null;
+  job_title: string | null;
+  employment_type: string | null; // full_time | part_time | contract
+  hired_on: string | null;
+  base_salary: number | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -124,6 +130,7 @@ export interface Service {
   description_ar: string | null;
   price: number;
   duration_minutes: number;
+  image_url: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -298,21 +305,67 @@ export interface ClientNote {
   updated_at: string;
 }
 
+// Phase 7 additions ---------------------------------------------------------
+export interface Expense {
+  id: string;
+  category: string;
+  description: string | null;
+  amount: number;
+  currency: string;
+  incurred_on: string;
+  vendor: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type AttendanceStatus = "present" | "absent" | "late" | "leave";
+export interface Attendance {
+  id: string;
+  staff_id: string;
+  work_date: string;
+  check_in: string | null;
+  check_out: string | null;
+  status: AttendanceStatus;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type PayrollStatus = "draft" | "approved" | "paid";
+export interface Payroll {
+  id: string;
+  staff_id: string;
+  period_start: string;
+  period_end: string;
+  base_amount: number;
+  commission: number;
+  deductions: number;
+  net_amount: number;
+  currency: string;
+  status: PayrollStatus;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // ---- Database shape for @supabase/supabase-js generics -------------------
 export interface Database {
   public: {
     Tables: {
       profiles: { Row: Profile; Insert: Omit<Profile, "created_at" | "updated_at">; Update: Partial<Profile> };
-      roles: { Row: Role; Insert: Omit<Role, "created_at">; Update: Partial<Role> };
+      roles: { Row: Role; Insert: Omit<Role, "is_system" | "created_at"> & { is_system?: boolean }; Update: Partial<Role> };
       permissions: { Row: Permission; Insert: Permission; Update: Partial<Permission> };
       role_permissions: { Row: RolePermission; Insert: RolePermission; Update: Partial<RolePermission> };
       user_permissions: { Row: UserPermission; Insert: Omit<UserPermission, "id" | "created_at">; Update: Partial<UserPermission> };
       user_roles: { Row: UserRole; Insert: Omit<UserRole, "created_at">; Update: Partial<UserRole> };
-      staff_profiles: { Row: StaffProfile; Insert: Omit<StaffProfile, "id" | "created_at" | "updated_at">; Update: Partial<StaffProfile> };
+      staff_profiles: { Row: StaffProfile; Insert: Omit<StaffProfile, "id" | "job_title" | "employment_type" | "hired_on" | "base_salary" | "created_at" | "updated_at"> & { job_title?: string | null; employment_type?: string | null; hired_on?: string | null; base_salary?: number | null }; Update: Partial<StaffProfile> };
       staff_availability: { Row: StaffAvailability; Insert: Omit<StaffAvailability, "id">; Update: Partial<StaffAvailability> };
       clients: { Row: Client; Insert: Omit<Client, "id" | "created_at" | "updated_at">; Update: Partial<Client> };
       service_categories: { Row: ServiceCategory; Insert: Omit<ServiceCategory, "id">; Update: Partial<ServiceCategory> };
-      services: { Row: Service; Insert: Omit<Service, "id" | "created_at" | "updated_at">; Update: Partial<Service> };
+      services: { Row: Service; Insert: Omit<Service, "id" | "image_url" | "created_at" | "updated_at"> & { image_url?: string | null }; Update: Partial<Service> };
       appointments: { Row: Appointment; Insert: Omit<Appointment, "id" | "public_token" | "created_at" | "updated_at">; Update: Partial<Appointment> };
       payments: { Row: Payment; Insert: Omit<Payment, "id" | "created_at" | "updated_at">; Update: Partial<Payment> };
       invoices: { Row: Invoice; Insert: Omit<Invoice, "id" | "created_at">; Update: Partial<Invoice> };
@@ -326,6 +379,9 @@ export interface Database {
       audit_log: { Row: AuditLog; Insert: Omit<AuditLog, "id" | "created_at">; Update: never };
       staff_time_off: { Row: StaffTimeOff; Insert: Omit<StaffTimeOff, "id" | "created_at" | "updated_at">; Update: Partial<StaffTimeOff> };
       client_notes: { Row: ClientNote; Insert: Omit<ClientNote, "id" | "created_at" | "updated_at">; Update: Partial<ClientNote> };
+      expenses: { Row: Expense; Insert: Omit<Expense, "id" | "created_at" | "updated_at">; Update: Partial<Expense> };
+      attendance: { Row: Attendance; Insert: Omit<Attendance, "id" | "created_at" | "updated_at">; Update: Partial<Attendance> };
+      payroll: { Row: Payroll; Insert: Omit<Payroll, "id" | "net_amount" | "created_at" | "updated_at">; Update: Partial<Payroll> };
     };
     Functions: {
       has_permission: {
@@ -435,6 +491,33 @@ export interface Database {
       };
       admin_moderate_review: {
         Args: { p_review_id: string; p_hide: boolean };
+        Returns: void;
+      };
+      record_manual_payment: {
+        Args: {
+          p_appointment_id: string;
+          p_amount: number;
+          p_method?: string;
+          p_reference?: string | null;
+          p_currency?: string;
+        };
+        Returns: string; // payment uuid
+      };
+      refund_payment: {
+        Args: { p_payment_id: string; p_reason?: string | null };
+        Returns: void;
+      };
+      admin_upsert_role: {
+        Args: {
+          p_id: string | null;
+          p_name: string;
+          p_description: string | null;
+          p_permissions: string[];
+        };
+        Returns: string; // role uuid
+      };
+      admin_delete_role: {
+        Args: { p_id: string };
         Returns: void;
       };
     };
