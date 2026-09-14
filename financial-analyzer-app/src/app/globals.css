@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-navy text-offwhite font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif;
+  }
+}
+
+/* Styling for the AI report, rendered from Markdown via react-markdown.
+   No @tailwindcss/typography plugin is installed, so headings/paragraphs/
+   lists are styled explicitly here to match the site's theme. */
+@layer components {
+  .markdown-report h1 {
+    @apply mt-8 mb-4 text-2xl font-serif font-semibold text-offwhite first:mt-0;
+  }
+  .markdown-report h2 {
+    @apply mt-8 mb-3 text-xl font-serif font-semibold text-gold first:mt-0;
+  }
+  .markdown-report h3 {
+    @apply mt-6 mb-2 text-lg font-serif font-semibold text-offwhite;
+  }
+  .markdown-report p {
+    @apply mb-4 leading-relaxed text-offwhite/90;
+  }
+  .markdown-report ul {
+    @apply mb-4 ml-5 list-disc space-y-1 text-offwhite/90;
+  }
+  .markdown-report ol {
+    @apply mb-4 ml-5 list-decimal space-y-1 text-offwhite/90;
+  }
+  .markdown-report li > p {
+    @apply mb-0;
+  }
+  .markdown-report strong {
+    @apply font-semibold text-offwhite;
+  }
+  .markdown-report em {
+    @apply italic;
+  }
+  .markdown-report blockquote {
+    @apply mb-4 border-l-2 border-gold/60 pl-4 italic text-offwhite/70;
+  }
+  .markdown-report a {
+    @apply text-gold underline underline-offset-2;
+  }
+  .markdown-report code {
+    @apply rounded bg-white/10 px-1.5 py-0.5 font-mono text-sm text-offwhite;
+  }
+  .markdown-report hr {
+    @apply my-6 border-white/10;
+  }
+}
