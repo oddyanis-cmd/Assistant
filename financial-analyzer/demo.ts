@@ -1,6 +1,7 @@
 /** Runnable demo: `npm run demo`. Shows the structured object the AI layer
  *  would narrate — every number here is computed by the tested engine. */
 import { analyze } from "./src/analyze";
+import { generateReport } from "./src/report";
 import type { AnalysisInput } from "./src/types";
 
 const acme: AnalysisInput = {
@@ -43,3 +44,8 @@ if (result.warnings.length) {
   console.log(`\nWarnings:`);
   result.warnings.forEach((w) => console.log(`  ⚠ ${w}`));
 }
+
+// Written report — live AI when ANTHROPIC_API_KEY is set, else a sample.
+const report = await generateReport(result, { companyName: "Acme Retail Co." });
+console.log(`\n\n===== ${report.source.toUpperCase()} REPORT${report.model ? ` (${report.model})` : ""} =====\n`);
+console.log(report.markdown);
