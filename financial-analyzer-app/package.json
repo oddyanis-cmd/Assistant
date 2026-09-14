@@ -1,0 +1,28 @@
+{
+  "name": "financial-analyzer-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Next.js web app wrapping the verified financial-analysis engine with an AI-written narrative report.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.5.25",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@anthropic-ai/sdk": "^0.125.0",
+    "react-markdown": "^10.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/react": "^19.3.0",
+    "@types/node": "^22.10.0",
+    "tailwindcss": "^3.4.19",
+    "postcss": "^8.5.28",
+    "autoprefixer": "^10.6.0"
+  }
+}

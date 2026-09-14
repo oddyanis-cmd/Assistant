@@ -126,6 +126,36 @@ export default async function PortalPage({ params }: PortalPageProps) {
         can(user, PERMISSIONS.MANAGE_PERMISSIONS) ||
         can(user, PERMISSIONS.ASSIGN_ROLES),
     },
+    {
+      title: "Finance",
+      description: "Revenue, payments, invoices & expenses",
+      href: "/admin/finance",
+      icon: "▤",
+      show:
+        can(user, PERMISSIONS.VIEW_FINANCIAL_REPORTS) ||
+        can(user, PERMISSIONS.VIEW_REVENUE) ||
+        can(user, PERMISSIONS.MANAGE_INVOICES) ||
+        can(user, PERMISSIONS.MANAGE_EXPENSES),
+    },
+    {
+      title: "HR",
+      description: "Employees, attendance & payroll",
+      href: "/admin/hr",
+      icon: "❉",
+      show:
+        can(user, PERMISSIONS.VIEW_EMPLOYEES) ||
+        can(user, PERMISSIONS.MANAGE_EMPLOYEE_RECORDS) ||
+        can(user, PERMISSIONS.MANAGE_ATTENDANCE) ||
+        can(user, PERMISSIONS.MANAGE_PAYROLL) ||
+        can(user, PERMISSIONS.VIEW_HR_REPORTS),
+    },
+    {
+      title: "Roles & Positions",
+      description: "Create positions and set their permissions",
+      href: "/admin/roles",
+      icon: "◆",
+      show: can(user, PERMISSIONS.MANAGE_PERMISSIONS),
+    },
   ];
 
   // Available to everyone signed in

@@ -132,6 +132,36 @@ export async function deleteServiceAction(
   return {};
 }
 
+/**
+ * Save (or clear) a service's photo URL. The file itself is uploaded to the
+ * `service-images` Storage bucket from the browser (RLS gates the upload on
+ * edit_service); this just persists the resulting public URL on the row.
+ */
+export async function setServiceImageAction(
+  id: string,
+  imageUrl: string | null,
+  locale: string
+): Promise<{ error?: string }> {
+  const actor = await getCurrentUserWithPermissions();
+  if (!actor || !can(actor, PERMISSIONS.EDIT_SERVICE)) {
+    return { error: "Forbidden" };
+  }
+  if (!isSupabaseConfigured()) return { error: "Supabase not configured" };
+
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) return { error: "Supabase not configured" };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
+    .from("services")
+    .update({ image_url: imageUrl })
+    .eq("id", id);
+  if (error) return { error: (error as { message: string }).message };
+  revalidatePath(`/${locale}/admin/services`);
+  revalidatePath(`/${locale}/services`);
+  return {};
+}
+
 // ---------------------------------------------------------------------------
 // Category CRUD
 // ---------------------------------------------------------------------------

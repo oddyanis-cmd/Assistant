@@ -12,6 +12,9 @@ import {
 } from "@/lib/staff";
 import { AppointmentActions } from "@/components/staff/AppointmentActions";
 import { AddClientNoteForm } from "@/components/staff/AddClientNoteForm";
+import { RecordPaymentPanel } from "@/components/staff/RecordPaymentPanel";
+import { getAppointmentBilling } from "@/lib/billing";
+import { CURRENCY } from "@/lib/config";
 import { Link } from "@/i18n/navigation";
 import type { AppointmentStatus } from "@/lib/supabase/types";
 
@@ -66,11 +69,15 @@ export default async function AppointmentDetailPage({ params }: AppointmentDetai
   const canMarkNoShow = can(user, PERMISSIONS.MARK_NO_SHOW);
   const canViewHistory = can(user, PERMISSIONS.VIEW_CLIENT_HISTORY);
   const canManageNotes = can(user, PERMISSIONS.MANAGE_CLIENT_NOTES);
+  const canProcessPayments = can(user, PERMISSIONS.PROCESS_PAYMENTS);
+  const canRefund = can(user, PERMISSIONS.ISSUE_REFUND);
 
   const [history, privateNotes] = await Promise.all([
     canViewHistory ? getClientHistory(appt.client_id) : Promise.resolve([]),
     canManageNotes ? getClientNotes(appt.client_id) : Promise.resolve([]),
   ]);
+
+  const billing = canProcessPayments ? await getAppointmentBilling(appt.id) : null;
 
   // Find today's date for the back link
   const apptDate = appt.start_at.slice(0, 10);
@@ -173,6 +180,17 @@ export default async function AppointmentDetailPage({ params }: AppointmentDetai
 
         {/* Sidebar: client info + private notes */}
         <div className="space-y-6">
+          {canProcessPayments && billing && (
+            <RecordPaymentPanel
+              appointmentId={appt.id}
+              locale={locale}
+              price={billing.price}
+              payments={billing.payments}
+              paidTotal={billing.paidTotal}
+              currency={CURRENCY}
+              canRefund={canRefund}
+            />
+          )}
           {/* Client info */}
           <div className="card">
             <h2 className="text-base font-semibold text-charcoal-800 mb-4">
