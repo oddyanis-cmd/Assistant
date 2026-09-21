@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Reveal } from "@/components/ui/Reveal";
 
 interface PracticeCase {
   title: string;
@@ -38,71 +39,68 @@ const PRACTICE_CASES: PracticeCase[] = [
   },
 ];
 
-const LEVEL_STYLES: Record<PracticeCase["level"], string> = {
-  Beginner: "bg-emerald-400/10 text-emerald-300",
-  Intermediate: "bg-gold/10 text-gold",
-  Advanced: "bg-rose-400/10 text-rose-300",
-};
-
 export default function TrainingPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-      <h1 className="font-serif text-3xl font-semibold sm:text-4xl">
-        Free training &amp; practice
-      </h1>
-      <p className="mt-4 max-w-2xl text-offwhite/70">
-        Sharpen your financial-analysis skills with practice cases built on
-        the same verified engine that powers the Pro Analyzer. No account
-        required — this area is free for everyone.
-      </p>
-      <p className="mt-2 max-w-2xl text-sm text-offwhite/50">
-        Scored quizzes and guided walkthroughs for each practice case are
-        coming soon. For now, browse the case library below.
-      </p>
-
-      <div className="mt-10 grid gap-6 sm:grid-cols-2">
-        {PRACTICE_CASES.map((practiceCase) => (
-          <div
-            key={practiceCase.title}
-            className="flex flex-col rounded-xl border border-white/10 bg-white/[0.03] p-6"
-          >
-            <div className="flex items-center gap-2">
-              <span
-                className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${LEVEL_STYLES[practiceCase.level]}`}
-              >
-                {practiceCase.level}
-              </span>
-              <span className="text-xs uppercase tracking-wide text-offwhite/50">
-                {practiceCase.business}
-              </span>
-            </div>
-            <h2 className="mt-3 font-serif text-lg font-semibold">
-              {practiceCase.title}
-            </h2>
-            <p className="mt-2 flex-1 text-sm leading-relaxed text-offwhite/70">
-              {practiceCase.description}
-            </p>
-            <span className="mt-4 inline-flex w-fit cursor-not-allowed rounded-md border border-white/15 px-3 py-1.5 text-xs font-medium text-offwhite/40">
-              Quiz coming soon
-            </span>
-          </div>
-        ))}
+    <div>
+      <div className="wrap page-head">
+        <p className="eyebrow">Free &amp; open</p>
+        <h1>Free training &amp; practice</h1>
+        <p className="lead">
+          Sharpen your financial-analysis skills with practice cases built on
+          the same verified engine that powers the Pro Analyzer. No account
+          required — this area is free for everyone.
+        </p>
+        <p className="lead" style={{ marginTop: 8, fontSize: 14, color: "var(--text-faint)" }}>
+          Scored quizzes and guided walkthroughs for each practice case are
+          coming soon. For now, browse the case library below.
+        </p>
       </div>
 
-      <div className="mt-12 rounded-xl border border-gold/30 bg-gold/[0.05] p-6 text-center">
-        <h2 className="font-serif text-xl font-semibold">
-          Want to analyze your own numbers?
-        </h2>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-offwhite/70">
-          The Pro Analyzer runs the exact same verified engine on your real
-          income statement and balance sheet, then writes a full AI report.
-        </p>
-        <Link
-          href="/pro"
-          className="mt-4 inline-block rounded-md bg-gold px-5 py-2.5 text-sm font-semibold text-navy transition hover:bg-gold-light"
+      <div className="wrap" style={{ paddingBottom: 64 }}>
+        <div
+          style={{
+            marginTop: 24,
+            display: "grid",
+            gap: 20,
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          }}
         >
-          Open the Pro Analyzer
-        </Link>
+          {PRACTICE_CASES.map((practiceCase) => (
+            <Reveal as="div" className="card" key={practiceCase.title} style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span className={`level-badge ${practiceCase.level.toLowerCase()}`}>
+                  {practiceCase.level}
+                </span>
+                <span className="eyebrow" style={{ fontSize: 11 }}>
+                  {practiceCase.business}
+                </span>
+              </div>
+              <h2 className="card-title" style={{ marginTop: 14, fontSize: 18 }}>
+                {practiceCase.title}
+              </h2>
+              <p style={{ marginTop: 8, flex: 1, fontSize: 14, lineHeight: 1.6, color: "var(--text-dim)" }}>
+                {practiceCase.description}
+              </p>
+              <span
+                className="btn btn-ghost"
+                style={{ marginTop: 16, width: "fit-content", cursor: "not-allowed", opacity: 0.55, fontSize: 12 }}
+              >
+                Quiz coming soon
+              </span>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal as="div" className="cta-band" style={{ marginTop: 48 }}>
+          <h2>Want to analyze your own numbers?</h2>
+          <p>
+            The Pro Analyzer runs the exact same verified engine on your real
+            income statement and balance sheet, then writes a full AI report.
+          </p>
+          <Link className="btn btn-primary" href="/pro">
+            Open the Pro Analyzer
+          </Link>
+        </Reveal>
       </div>
     </div>
   );

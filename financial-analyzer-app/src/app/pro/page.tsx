@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
+import { useLanguage } from "@/components/providers/LanguageProvider";
 import type {
   AnalysisInput,
   BusinessType,
@@ -90,9 +91,6 @@ interface AnalyzeApiError {
   error: string;
 }
 
-const inputClass =
-  "w-full rounded-md border border-white/15 bg-navy px-3 py-2 text-sm text-offwhite outline-none transition focus:border-gold focus:ring-1 focus:ring-gold";
-
 function num(value: string): number {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
@@ -151,16 +149,24 @@ function groupLabel(group: string): string {
   return group.charAt(0).toUpperCase() + group.slice(1);
 }
 
-function Field({ label, children }: { label: string; children: ReactNode }) {
+function Field({
+  id,
+  label,
+  children,
+}: {
+  id: string;
+  label: string;
+  children: ReactNode;
+}) {
   return (
-    <label className="block text-sm">
-      <span className="mb-1 block text-offwhite/70">{label}</span>
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
       {children}
-    </label>
+    </div>
   );
 }
 
-function TotalStat({
+function StatTile({
   label,
   value,
   tone,
@@ -170,21 +176,9 @@ function TotalStat({
   tone?: "good" | "bad";
 }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
-      <dt className="text-xs uppercase tracking-wide text-offwhite/50">
-        {label}
-      </dt>
-      <dd
-        className={`mt-1 text-lg font-semibold ${
-          tone === "good"
-            ? "text-emerald-300"
-            : tone === "bad"
-              ? "text-rose-300"
-              : "text-offwhite"
-        }`}
-      >
-        {value}
-      </dd>
+    <div className="stat-tile">
+      <div className="sl">{label}</div>
+      <div className={`sv${tone === "bad" ? " bad" : " money"}`}>{value}</div>
     </div>
   );
 }
@@ -192,6 +186,7 @@ function TotalStat({
 // TODO: gate this page behind auth + an active subscription once Supabase
 // auth and Stripe billing are wired up. It is intentionally open for now.
 export default function ProPage() {
+  const { t } = useLanguage();
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
   const [data, setData] = useState<AnalyzeApiResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -249,30 +244,28 @@ export default function ProPage() {
   const currency = data?.result.currency ?? form.currency;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-      <h1 className="font-serif text-3xl font-semibold sm:text-4xl">
-        Pro Analyzer
-      </h1>
-      <p className="mt-4 max-w-2xl text-offwhite/70">
+    <div className="wrap page-head">
+      <p className="eyebrow">{t("nav_cta")}</p>
+      <h1>Pro Analyzer</h1>
+      <p className="lead">
         Enter your income statement and balance sheet below. Every ratio is
         computed by our tested calculation engine — the AI only writes the
         narrative around the numbers you see.
       </p>
 
       {error && (
-        <div className="mt-6 rounded-md border border-rose-400/40 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
+        <div className="alert alert-error" style={{ marginTop: 24 }} role="alert">
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-8">
-        <section className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
-          <h2 className="font-serif text-xl font-semibold text-gold">
-            Company
-          </h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-3">
-            <Field label="Company name">
+      <form onSubmit={handleSubmit} style={{ marginTop: 32 }}>
+        <section className="card">
+          <h2 className="card-title">Company</h2>
+          <div className="field-grid">
+            <Field id="company-name" label="Company name">
               <input
+                id="company-name"
                 type="text"
                 value={form.companyName}
                 onChange={(e) =>
@@ -281,11 +274,11 @@ export default function ProPage() {
                     companyName: e.target.value,
                   }))
                 }
-                className={inputClass}
               />
             </Field>
-            <Field label="Business type">
+            <Field id="company-type" label="Business type">
               <select
+                id="company-type"
                 value={form.businessType}
                 onChange={(e) =>
                   setForm((prev) => ({
@@ -293,7 +286,6 @@ export default function ProPage() {
                     businessType: e.target.value as BusinessType,
                   }))
                 }
-                className={inputClass}
               >
                 {BUSINESS_TYPE_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -302,124 +294,94 @@ export default function ProPage() {
                 ))}
               </select>
             </Field>
-            <Field label="Currency">
+            <Field id="company-currency" label="Currency">
               <input
+                id="company-currency"
                 type="text"
                 value={form.currency}
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, currency: e.target.value }))
                 }
-                className={inputClass}
               />
             </Field>
           </div>
         </section>
 
-        <section className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
-          <h2 className="font-serif text-xl font-semibold text-gold">
-            Income statement
-          </h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="card">
+          <h2 className="card-title">Income statement</h2>
+          <div className="field-grid">
             {INCOME_FIELDS.map((field) => (
-              <Field key={field.key} label={field.label}>
+              <Field key={field.key} id={`income-${field.key}`} label={field.label}>
                 <input
+                  id={`income-${field.key}`}
                   type="number"
                   step="any"
                   value={form.income[field.key]}
                   onChange={(e) => updateIncome(field.key, e.target.value)}
-                  className={inputClass}
                 />
               </Field>
             ))}
           </div>
         </section>
 
-        <section className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
-          <h2 className="font-serif text-xl font-semibold text-gold">
-            Balance sheet
-          </h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="card">
+          <h2 className="card-title">Balance sheet</h2>
+          <div className="field-grid">
             {BALANCE_FIELDS.map((field) => (
-              <Field key={field.key} label={field.label}>
+              <Field key={field.key} id={`balance-${field.key}`} label={field.label}>
                 <input
+                  id={`balance-${field.key}`}
                   type="number"
                   step="any"
                   value={form.balance[field.key]}
                   onChange={(e) => updateBalance(field.key, e.target.value)}
-                  className={inputClass}
                 />
               </Field>
             ))}
           </div>
         </section>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="inline-flex items-center gap-2 rounded-md bg-gold px-6 py-3 text-sm font-semibold text-navy transition hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {loading && (
-            <span
-              className="h-4 w-4 animate-spin rounded-full border-2 border-navy/30 border-t-navy"
-              aria-hidden="true"
-            />
-          )}
+        <button type="submit" disabled={loading} className="btn btn-primary" style={{ marginTop: 22 }}>
+          {loading && <span className="spinner" aria-hidden="true" />}
           {loading ? "Analyzing…" : "Analyze"}
         </button>
       </form>
 
       {data && totals && (
-        <div className="mt-14 space-y-10">
+        <div style={{ marginTop: 56, display: "grid", gap: 40, paddingBottom: 64 }}>
           {data.report.source === "sample" && (
-            <div className="rounded-md border border-gold/40 bg-gold/10 px-4 py-3 text-sm text-gold">
+            <div className="alert alert-warning">
               Sample report — add an Anthropic API key for the full AI
               analysis.
             </div>
           )}
 
           {data.result.warnings.length > 0 && (
-            <div className="rounded-md border border-amber-400/40 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
-              <p className="font-semibold">Data-quality warnings</p>
-              <ul className="mt-1 list-disc space-y-0.5 pl-5">
-                {data.result.warnings.map((warning) => (
-                  <li key={warning}>{warning}</li>
-                ))}
-              </ul>
+            <div className="alert alert-warning">
+              <div>
+                <p style={{ fontWeight: 600 }}>Data-quality warnings</p>
+                <ul>
+                  {data.result.warnings.map((warning) => (
+                    <li key={warning}>{warning}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           )}
 
           <section>
-            <h2 className="font-serif text-2xl font-semibold">Summary</h2>
-            <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <TotalStat
-                label="Net income"
-                value={formatCurrency(totals.netIncome, currency)}
-              />
-              <TotalStat
-                label="Gross profit"
-                value={formatCurrency(totals.grossProfit, currency)}
-              />
-              <TotalStat
-                label="EBITDA"
-                value={formatCurrency(totals.ebitda, currency)}
-              />
-              <TotalStat
-                label="EBIT"
-                value={formatCurrency(totals.ebit, currency)}
-              />
-              <TotalStat
-                label="Total assets"
-                value={formatCurrency(totals.totalAssets, currency)}
-              />
-              <TotalStat
-                label="Total liabilities"
-                value={formatCurrency(totals.totalLiabilities, currency)}
-              />
-              <TotalStat
-                label="Working capital"
-                value={formatCurrency(totals.workingCapital, currency)}
-              />
-              <TotalStat
+            <h2 className="card-title" style={{ fontSize: 24, marginBottom: 4 }}>
+              Summary
+            </h2>
+            <div className="result-grid">
+              <StatTile label="Net income" value={formatCurrency(totals.netIncome, currency)} />
+              <StatTile label="Gross profit" value={formatCurrency(totals.grossProfit, currency)} />
+              <StatTile label="EBITDA" value={formatCurrency(totals.ebitda, currency)} />
+              <StatTile label="EBIT" value={formatCurrency(totals.ebit, currency)} />
+              <StatTile label="Total assets" value={formatCurrency(totals.totalAssets, currency)} />
+              <StatTile label="Total liabilities" value={formatCurrency(totals.totalLiabilities, currency)} />
+              <StatTile label="Working capital" value={formatCurrency(totals.workingCapital, currency)} />
+              <StatTile
                 label="Balance check"
                 value={
                   totals.balanceCheckPasses
@@ -428,49 +390,44 @@ export default function ProPage() {
                 }
                 tone={totals.balanceCheckPasses ? "good" : "bad"}
               />
-            </dl>
+            </div>
           </section>
 
           <section>
-            <h2 className="font-serif text-2xl font-semibold">Ratios</h2>
-            <div className="mt-4 grid gap-6 md:grid-cols-2">
+            <h2 className="card-title" style={{ fontSize: 24, marginBottom: 4 }}>
+              Ratios
+            </h2>
+            <div style={{ marginTop: 16, display: "grid", gap: 20 }}>
               {Object.entries(data.result.ratios).map(([group, metrics]) => (
-                <div
-                  key={group}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] p-6"
-                >
-                  <h3 className="font-serif text-lg font-semibold text-gold">
+                <div key={group} className="card">
+                  <h3 className="card-title" style={{ fontSize: 17 }}>
                     {groupLabel(group)}
                   </h3>
-                  <dl className="mt-4 grid grid-cols-2 gap-3">
+                  <div className="result-grid">
                     {metrics.map((metric) => (
-                      <div
+                      <StatTile
                         key={metric.key}
-                        className="rounded-lg border border-white/10 bg-white/5 p-3"
-                      >
-                        <dt className="text-xs uppercase tracking-wide text-offwhite/50">
-                          {metric.label}
-                        </dt>
-                        <dd className="mt-1 text-base font-semibold text-offwhite">
-                          {formatMetric(metric, currency)}
-                        </dd>
-                      </div>
+                        label={metric.label}
+                        value={formatMetric(metric, currency)}
+                      />
                     ))}
-                  </dl>
+                  </div>
                 </div>
               ))}
             </div>
           </section>
 
           <section>
-            <h2 className="font-serif text-2xl font-semibold">
+            <h2 className="card-title" style={{ fontSize: 24, marginBottom: 4 }}>
               AI report
               {data.report.source === "ai" && data.report.model
                 ? ` (${data.report.model})`
                 : ""}
             </h2>
-            <div className="markdown-report mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-6">
-              <ReactMarkdown>{data.report.markdown}</ReactMarkdown>
+            <div className="report-paper" style={{ marginTop: 16 }}>
+              <div className="markdown-report">
+                <ReactMarkdown>{data.report.markdown}</ReactMarkdown>
+              </div>
             </div>
           </section>
         </div>

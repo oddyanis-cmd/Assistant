@@ -8,29 +8,36 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        navy: {
-          DEFAULT: "#0b111c",
-          light: "#131c2b",
+        // Keel design tokens, mirrored as Tailwind colors for convenience
+        // (e.g. `bg-ink`, `text-accent-hi`). Opacity modifiers (`/10` etc.)
+        // are avoided on these in practice since the CSS custom properties
+        // are plain hex/rgba strings, not Tailwind's rgb-tuple format —
+        // prefer the verbatim Keel component classes (`.btn`, `.card`, …)
+        // in globals.css for anything that needs alpha blending.
+        ink: "var(--ink)",
+        "ink-2": "var(--ink-2)",
+        panel: "var(--panel)",
+        "panel-2": "var(--panel-2)",
+        line: "var(--line)",
+        text: "var(--text)",
+        "text-dim": "var(--text-dim)",
+        "text-faint": "var(--text-faint)",
+        accent: {
+          DEFAULT: "var(--accent)",
+          lo: "var(--accent-lo)",
+          hi: "var(--accent-hi)",
         },
-        gold: {
-          DEFAULT: "#c79a44",
-          light: "#dcb96a",
-          dark: "#a67f36",
-        },
-        offwhite: "#f5f1e8",
+        pos: "var(--pos)",
+        neg: "var(--neg)",
+        paper: "var(--paper)",
+        "paper-ink": "var(--paper-ink)",
       },
       fontFamily: {
-        serif: ["Georgia", "Cambria", "'Times New Roman'", "Times", "serif"],
-        sans: [
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "'Segoe UI'",
-          "Inter",
-          "Roboto",
-          "Helvetica",
-          "Arial",
-          "sans-serif",
-        ],
+        display: ["var(--font-display)"],
+        sans: ["var(--font-body)"],
+        mono: ["var(--font-mono)"],
+        // Back-compat aliases used by a couple of existing classNames.
+        serif: ["var(--font-display)"],
       },
     },
   },
