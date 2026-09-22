@@ -399,6 +399,44 @@ table.ledger tr.indent td:first-child{ padding-left:20px; color:var(--paper-ink-
 .rc-opex-row{ grid-template-columns: 1.4fr 100px 100px 90px 70px; }
 .rc-row-3{ grid-template-columns: 1fr 95px 95px 95px; }
 .rc-opex-row-3{ grid-template-columns: 1.2fr 90px 90px 90px 85px 65px; }
+
+/* ---- RC Data Entry: professional sectioned layout (pic-4 style) ---- */
+.rc-entry{ max-width:940px; }
+.rc-entry .rc-sec{ background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line); border-radius:var(--radius); padding:26px 26px 22px; margin-bottom:20px; box-shadow:0 24px 46px -32px rgba(0,0,0,.72); }
+.rc-entry .rc-sec-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+.rc-entry .rc-sec-eye{ font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--brass); white-space:nowrap; }
+.rc-entry .rc-sec-head h2{ font-family:var(--serif); font-size:23px; color:var(--paper); margin:0; }
+.rc-entry .rc-sub{ font-size:12.5px; color:var(--text-faint); margin:-4px 0 16px; max-width:72ch; line-height:1.6; }
+.rc-entry .field label{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-faint); font-weight:500; }
+.rc-entry .field input[type=text], .rc-entry .field textarea, .rc-entry select{ background:var(--ink-2); border:1px solid var(--line); border-radius:8px; color:var(--text); padding:11px 13px; font-size:14px; width:100%; }
+.rc-entry select:focus{ outline:none; border-color:var(--brass-soft); }
+.rc-entry .rc-grp{ font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--brass-soft); margin:20px 0 8px; }
+.rc-entry .rc-row input[type=number], .rc-entry .rc-row input[type=text]{ padding:9px 10px; font-size:13.5px; }
+.rc-entry .rc-row-label{ font-size:13.5px; color:var(--text-soft); }
+.rc-entry .rc-row-head{ font-family:var(--mono); }
+[dir="rtl"] .rc-entry .rc-sec-eye, [dir="rtl"] .rc-entry .field label, [dir="rtl"] .rc-entry .rc-grp{ letter-spacing:normal; }
+
+/* ---- RC pre-analysis (section by section, ratio by ratio) ---- */
+.rc-pre .pa-sec{ margin-bottom:20px; }
+.rc-pre .pa-sec:last-child{ margin-bottom:0; }
+.pa-sec-title{ display:flex; align-items:center; gap:12px; margin:0 0 6px; }
+.pa-sec-title .pa-eye{ font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--brass); white-space:nowrap; }
+.pa-sec-title h3{ font-family:var(--serif); font-size:16px; color:var(--paper); margin:0; }
+.pa-sec-title .pa-sec-verdict{ margin-inline-start:auto; }
+.pa-ratio{ padding:11px 0; border-bottom:1px solid var(--line); }
+.pa-ratio:last-child{ border-bottom:0; }
+.pa-r-top{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+.pa-r-name{ font-size:13.5px; color:var(--text-soft); flex:1; min-width:130px; }
+.pa-r-val{ font-family:var(--mono); font-size:14.5px; color:var(--paper); font-variant-numeric:tabular-nums; }
+.pa-r-trend{ font-family:var(--mono); font-size:11.5px; }
+.pa-up{ color:var(--green); } .pa-down{ color:var(--red); } .pa-flat{ color:var(--text-faint); }
+.pa-verdict{ display:inline-block; font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; padding:2px 8px; border-radius:20px; border:1px solid var(--line); }
+.pa-v-good{ color:var(--green); border-color:rgba(79,184,126,.45); }
+.pa-v-watch{ color:var(--brass); border-color:var(--brass-soft); }
+.pa-v-attn{ color:var(--red); border-color:rgba(220,132,103,.55); }
+.pa-tip{ font-size:12.5px; color:var(--text-faint); margin-top:6px; line-height:1.55; }
+.pa-tip b{ color:var(--brass); font-weight:600; }
+[dir="rtl"] .pa-sec-title .pa-eye, [dir="rtl"] .pa-verdict{ letter-spacing:normal; }
 .rc-fixed-toggle{ font-size:11px; color:var(--text-faint); display:flex; align-items:center; gap:5px; }
 .rc-fixed-toggle input{ accent-color:var(--green); }
 
@@ -4101,9 +4139,10 @@ function rcOpexRows(client){
 
 function rcViewEntry(client){
   return `
-    <div class="card">
-      <h2>Client Profile</h2>
-      <div class="field"><label>Company / Client Name</label><input type="text" data-rc="name" value="${esc(client.name)}"></div>
+    <div class="rc-entry">
+    <section class="rc-sec">
+      <div class="rc-sec-head"><span class="rc-sec-eye">01 · Client profile</span><h2>Company</h2></div>
+      <div class="field"><label>Company / Client name</label><input type="text" data-rc="name" value="${esc(client.name)}"></div>
       <div class="grid-2">
         <div class="field">
           <label>Sector / Industry</label>
@@ -4121,55 +4160,55 @@ function rcViewEntry(client){
         <div class="field"><label>Notes</label><input type="text" data-rc="notes" value="${esc(client.notes)}"></div>
       </div>
       <div class="grid-2">
-        <div class="field"><label>Period 1 Label</label><input type="text" data-rc="years.0" value="${esc(client.years[0])}"></div>
-        <div class="field"><label>Period 2 Label</label><input type="text" data-rc="years.1" value="${esc(client.years[1])}"></div>
+        <div class="field"><label>Period 1 label</label><input type="text" data-rc="years.0" value="${esc(client.years[0])}"></div>
+        <div class="field"><label>Period 2 label</label><input type="text" data-rc="years.1" value="${esc(client.years[1])}"></div>
       </div>
-      <label class="check-item"><input type="checkbox" id="rcY0Toggle" ${client.hasY0?'checked':''}> Add a third historical period (earlier prior year)</label>
+      <label class="check-item"><input type="checkbox" id="rcY0Toggle" ${client.hasY0?'checked':''}> Add a third historical period (earlier prior year) — up to 3 years of history</label>
       <div id="rcY0LabelField" style="${client.hasY0?'':'display:none;'} margin-top:10px;">
-        <div class="field"><label>Earliest Period Label</label><input type="text" data-rc="y0Label" value="${esc(client.y0Label||'2 Years Ago')}"></div>
+        <div class="field"><label>Earliest period label</label><input type="text" data-rc="y0Label" value="${esc(client.y0Label||'2 Years Ago')}"></div>
       </div>
-      <div class="card-sub">Two periods are required for every ratio and insight. The third, earlier period is optional — it only feeds the 3-year trend view and improves the forecast's growth-rate estimate.</div>
-    </div>
+      <div class="rc-sub" style="margin-top:12px;">Two periods are required for every ratio and insight. The third, earlier period is optional — it feeds the 3-year trend view and sharpens the forecast's growth-rate estimate.</div>
+    </section>
 
-    <div class="card">
-      <h2>Income Statement</h2>
-      <div class="card-sub">Figures in whatever unit you're working in — just be consistent across every field.</div>
+    <section class="rc-sec">
+      <div class="rc-sec-head"><span class="rc-sec-eye">02 · Income statement</span><h2>Revenue &amp; costs</h2></div>
+      <div class="rc-sub">Enter figures in whatever unit you work in — just stay consistent across every field and period.</div>
       ${rcRowHead(client)}
       ${rcRow(client, 'Revenue', 'income', 'revenue')}
       ${rcRow(client, 'COGS', 'income', 'cogs')}
-      <div class="card-sub" style="margin-top:16px;font-weight:600;color:var(--text-soft);">Operating Expense Lines</div>
+      <div class="rc-grp">Operating expense lines</div>
       <div id="rcOpexContainer">${rcOpexRows(client)}</div>
-      <button class="btn small" id="rcAddOpexBtn" style="margin-top:10px;">+ Add Expense Line</button>
-      <div style="margin-top:16px;">
-        ${rcRow(client, 'Interest Expense', 'income', 'interest')}
-        ${rcRow(client, 'Tax Rate (%)', 'income', 'taxRate', {percent:true})}
-      </div>
-    </div>
+      <button class="btn small" id="rcAddOpexBtn" style="margin-top:10px;">+ Add expense line</button>
+      <div class="rc-grp">Below the line</div>
+      ${rcRow(client, 'Interest expense', 'income', 'interest')}
+      ${rcRow(client, 'Tax rate (%)', 'income', 'taxRate', {percent:true})}
+    </section>
 
-    <div class="card">
-      <h2>Balance Sheet</h2>
-      <div class="card-sub" style="font-weight:600;color:var(--text-soft);">Assets</div>
+    <section class="rc-sec">
+      <div class="rc-sec-head"><span class="rc-sec-eye">03 · Balance sheet</span><h2>Assets, liabilities &amp; equity</h2></div>
+      <div class="rc-grp">Assets</div>
       ${rcRowHead(client)}
       ${rcRow(client, 'Cash', 'balance', 'cash')}
-      ${rcRow(client, 'Accounts Receivable', 'balance', 'ar')}
+      ${rcRow(client, 'Accounts receivable', 'balance', 'ar')}
       ${rcRow(client, 'Inventory', 'balance', 'inventory')}
-      ${rcRow(client, 'Other Current Assets', 'balance', 'otherCA')}
+      ${rcRow(client, 'Other current assets', 'balance', 'otherCA')}
       ${rcRow(client, 'PP&E', 'balance', 'ppe')}
-      ${rcRow(client, 'Other Long-Term Assets', 'balance', 'otherLTA')}
-      <div class="card-sub" style="margin-top:16px;font-weight:600;color:var(--text-soft);">Liabilities</div>
-      ${rcRow(client, 'Accounts Payable', 'balance', 'ap')}
-      ${rcRow(client, 'Short-Term Debt', 'balance', 'stDebt')}
-      ${rcRow(client, 'Other Current Liabilities', 'balance', 'otherCL')}
-      ${rcRow(client, 'Long-Term Debt', 'balance', 'ltDebt')}
-      <div class="card-sub" style="margin-top:16px;font-weight:600;color:var(--text-soft);">Equity</div>
-      ${rcRow(client, 'Common Stock / Paid-in Capital', 'balance', 'commonStock')}
-      <div class="lesson-box">Retained earnings and total equity are calculated automatically as Total Assets − Total Liabilities − Common Stock, the same way a real balance sheet is derived.</div>
-    </div>
+      ${rcRow(client, 'Other long-term assets', 'balance', 'otherLTA')}
+      <div class="rc-grp">Liabilities</div>
+      ${rcRow(client, 'Accounts payable', 'balance', 'ap')}
+      ${rcRow(client, 'Short-term debt', 'balance', 'stDebt')}
+      ${rcRow(client, 'Other current liabilities', 'balance', 'otherCL')}
+      ${rcRow(client, 'Long-term debt', 'balance', 'ltDebt')}
+      <div class="rc-grp">Equity</div>
+      ${rcRow(client, 'Common stock / paid-in capital', 'balance', 'commonStock')}
+      <div class="lesson-box">Retained earnings and total equity are derived automatically as Total assets − Total liabilities − Common stock, exactly as a real balance sheet reconciles.</div>
+    </section>
 
-    <div class="lesson-box">Ready to compare against a budget? Head to the <b>Budget</b> tab to set targets and see a full variance dashboard.</div>
+    <div class="lesson-box">Ready to compare against a budget? Head to the <b>Budget</b> tab to set targets and see a full variance dashboard — or jump straight to <b>Analysis</b>.</div>
 
-    <div style="display:flex;justify-content:flex-end;" class="no-print">
+    <div style="display:flex;justify-content:flex-end;gap:10px;" class="no-print">
       <button class="btn primary" id="rcToAnalysisBtn">Continue to Analysis &rarr;</button>
+    </div>
     </div>
   `;
 }
@@ -4844,6 +4883,92 @@ function drawForecastChart(client){
   });
 }
 
+/* ---------- RC PRE-ANALYSIS: section by section, ratio by ratio ----------
+   Reads only the engine's already-computed ratios (computeRatios) and grades
+   each against standard benchmarks, with a concrete optimization tip on every
+   ratio that isn't already healthy. No number is invented here. */
+function rcPreAnalysis(client){
+  const r = computeRatios(client);
+  const y2 = r.y2, y1 = r.y1;
+  function fmtVal(kind, v){
+    if(v===null || v===undefined || !isFinite(v)) return '—';
+    if(kind==='pct') return pct(v);
+    if(kind==='days') return days(v);
+    return ratio(v);
+  }
+  function verdict(item, v){
+    if(v===null || v===undefined || !isFinite(v)) return {cls:'pa-v-good', label:'n/a'};
+    const good = item.lowerBetter ? v<=item.good : v>=item.good;
+    const watch = item.lowerBetter ? v<=item.watch : v>=item.watch;
+    if(good) return {cls:'pa-v-good', label:'Healthy'};
+    if(watch) return {cls:'pa-v-watch', label:'Watch'};
+    return {cls:'pa-v-attn', label:'Attention'};
+  }
+  function trend(item){
+    const a=y1[item.key], b=y2[item.key];
+    if(a===null||b===null||a===undefined||b===undefined||!isFinite(a)||!isFinite(b)) return {cls:'pa-flat', txt:''};
+    const diff=b-a, eps=Math.abs(a)*0.02;
+    if(Math.abs(diff)<=eps) return {cls:'pa-flat', txt:'▬ stable'};
+    const improving = item.lowerBetter ? diff<0 : diff>0;
+    return {cls: improving?'pa-up':'pa-down', txt:(diff>0?'▲':'▼')+' '+(improving?'improving':'worsening')};
+  }
+  const SECTIONS = [
+    {eye:'01', title:'Profitability', items:[
+      {key:'grossMargin', name:'Gross margin', kind:'pct', good:0.35, watch:0.20, lowerBetter:false, tip:'Raise prices or renegotiate supplier COGS; drop the lowest-margin lines first.'},
+      {key:'operatingMargin', name:'Operating margin', kind:'pct', good:0.12, watch:0.04, lowerBetter:false, tip:'Trim discretionary operating costs — attack the single largest expense line for the fastest gain.'},
+      {key:'netMargin', name:'Net margin', kind:'pct', good:0.08, watch:0.02, lowerBetter:false, tip:'After operating levers, review interest cost and tax structure to protect the bottom line.'},
+      {key:'roe', name:'Return on equity', kind:'pct', good:0.15, watch:0.08, lowerBetter:false, tip:'Lift net margin or asset efficiency — avoid propping ROE up with extra debt.'},
+      {key:'roa', name:'Return on assets', kind:'pct', good:0.08, watch:0.03, lowerBetter:false, tip:'Sweat the assets: turn inventory and receivables faster, or shed idle PP&E.'}
+    ]},
+    {eye:'02', title:'Liquidity', items:[
+      {key:'current', name:'Current ratio', kind:'x', good:1.5, watch:1.0, lowerBetter:false, tip:'Below 1.0 signals short-term strain — convert receivables to cash and stage payables.'},
+      {key:'quick', name:'Quick ratio', kind:'x', good:1.0, watch:0.6, lowerBetter:false, tip:'Reduce reliance on inventory to cover current liabilities.'}
+    ]},
+    {eye:'03', title:'Solvency & leverage', items:[
+      {key:'debtEquity', name:'Debt-to-equity', kind:'x', good:1.0, watch:2.0, lowerBetter:true, tip:'High leverage magnifies risk — direct free cash flow to debt paydown.'},
+      {key:'interestCoverage', name:'Interest coverage', kind:'x', good:3, watch:1.5, lowerBetter:false, tip:'Under 1.5x is fragile — refinance or cut debt before rates bite.'}
+    ]},
+    {eye:'04', title:'Efficiency & cash cycle', items:[
+      {key:'assetTurnover', name:'Asset turnover', kind:'x', good:1.0, watch:0.5, lowerBetter:false, tip:'Generate more revenue per unit of assets through better utilization and pricing.'},
+      {key:'inventoryTurnover', name:'Inventory turnover', kind:'x', good:6, watch:3, lowerBetter:false, tip:'Slow turns tie up cash — tighten purchasing and clear dead stock.'},
+      {key:'dso', name:'Days sales outstanding', kind:'days', good:45, watch:75, lowerBetter:true, tip:'Invoice sooner, tighten terms, and chase overdue accounts.'},
+      {key:'dio', name:'Days inventory on hand', kind:'days', good:60, watch:120, lowerBetter:true, tip:'Align purchasing to demand to reduce stock-on-hand.'},
+      {key:'ccc', name:'Cash conversion cycle', kind:'days', good:30, watch:60, lowerBetter:true, tip:'Shorten the cycle: collect faster, hold less stock, pay suppliers a touch slower.'}
+    ]}
+  ];
+  const secHTML = SECTIONS.map(sec=>{
+    const rows = sec.items.map(item=>{
+      const v = y2[item.key];
+      const vd = verdict(item, v), tr = trend(item);
+      const showTip = vd.cls !== 'pa-v-good';
+      return `
+        <div class="pa-ratio">
+          <div class="pa-r-top">
+            <span class="pa-r-name">${esc(item.name)}</span>
+            <span class="pa-r-val">${fmtVal(item.kind, v)}</span>
+            ${tr.txt?`<span class="pa-r-trend ${tr.cls}">${tr.txt}</span>`:''}
+            <span class="pa-verdict ${vd.cls}">${vd.label}</span>
+          </div>
+          ${showTip?`<div class="pa-tip"><b>Optimize:</b> ${esc(item.tip)}</div>`:''}
+        </div>`;
+    }).join('');
+    let worst='pa-v-good';
+    sec.items.forEach(item=>{ const vd=verdict(item, y2[item.key]); if(vd.cls==='pa-v-attn') worst='pa-v-attn'; else if(vd.cls==='pa-v-watch' && worst!=='pa-v-attn') worst='pa-v-watch'; });
+    const worstLabel = worst==='pa-v-attn'?'Needs work':worst==='pa-v-watch'?'Mixed':'Solid';
+    return `
+      <div class="pa-sec">
+        <div class="pa-sec-title"><span class="pa-eye">${sec.eye}</span><h3>${esc(sec.title)}</h3><span class="pa-sec-verdict"><span class="pa-verdict ${worst}">${worstLabel}</span></span></div>
+        ${rows}
+      </div>`;
+  }).join('');
+  return `
+    <div class="card rc-pre">
+      <h2>Pre-Analysis — section by section, ratio by ratio</h2>
+      <div class="card-sub">A first read of ${esc(client.name)}'s ${esc(client.years[1])} figures against standard benchmarks. Every number is computed by the engine; each flagged ratio comes with a concrete way to optimize it.</div>
+      ${secHTML}
+    </div>`;
+}
+
 function rcViewAssistant(client){
   if(!viewRC_analysisNoDataCheck(client)){
     return `<div class="empty-state"><div class="big-icon">&#9673;</div>Enter or upload data first so RC Assistant has something to read.<br><button class="btn primary" style="margin-top:14px;" id="rcGoEntryEmpty2">Go to Data Entry</button></div>`;
@@ -4870,8 +4995,9 @@ function rcViewAssistant(client){
   }).join('');
 
   return `
+    ${rcPreAnalysis(client)}
     <div class="card">
-      <h2>RC Assistant</h2>
+      <h2>RC Assistant — flags & playbooks</h2>
       <div class="card-sub">Reads ${esc(client.name)}'s entered figures and checks them against common financial-analysis heuristics — ${redCount} needing attention, ${amberCount} worth watching.</div>
       ${cards}
       <div class="lesson-box">RC Assistant is a rules-based checklist, not a live chat — it re-scans your numbers every time you update them, so re-visit this tab after any data change.</div>
@@ -5608,7 +5734,7 @@ function rcViewUpload(client){
   return `
     <div class="card">
       <h2>Bring Your Own Data</h2>
-      <div class="card-sub">Two ways to get numbers in: upload your own spreadsheet, or type values directly in Data Entry.</div>
+      <div class="card-sub">Drop in a spreadsheet and the system automatically recognizes each line item, sorts it into the right section (income statement or balance sheet) and fills it in — then the assistant gives you a pre-analysis, section by section and ratio by ratio. Or type values directly in Data Entry.</div>
       <ol style="color:var(--text-soft);font-size:13.5px;line-height:1.8;padding-left:20px;">
         <li>Upload a spreadsheet (.csv or .xlsx) below — most simple layouts work: one row per line item, with one or two columns of numbers next to it. A header row is optional.</li>
         <li>Not sure yours will work, or starting from scratch? Download the template below — it's pre-filled with ${esc(client.name)}'s current numbers, if any have been entered — as a guaranteed-clean starting point.</li>
@@ -5627,10 +5753,30 @@ function rcViewUpload(client){
   `;
 }
 
-function rcUploadResultHTML(res){
-  return `<div class="lesson-box"><b>${res.matched} field${res.matched===1?'':'s'} imported.</b><br>
-    ${res.skipped.length ? ('Not recognized (skipped): ' + res.skipped.map(s=>esc(s)).join(', ')) : 'Everything on the template was recognized.'}
-    <br><br>Head to <b>Data Entry</b> to review and adjust before analyzing.</div>`;
+function rcUploadResultHTML(client, res){
+  const hasIncome = (client.income.y2.revenue>0) || (client.income.y1.revenue>0);
+  const t2 = totals(client.balance.y2), t1 = totals(client.balance.y1);
+  const hasBalance = (t2.totalAssets>0) || (t1.totalAssets>0);
+  const secLine = [
+    hasIncome ? '<span class="pa-verdict pa-v-good">Income statement &#10003;</span>' : '',
+    hasBalance ? '<span class="pa-verdict pa-v-good">Balance sheet &#10003;</span>' : ''
+  ].filter(Boolean).join(' ');
+  return `<div class="lesson-box" style="margin-top:16px;">
+    <b>${res.matched} field${res.matched===1?'':'s'} auto-filled.</b> ${secLine}
+    <br>${res.skipped.length ? ('Not recognized (skipped): ' + res.skipped.map(s=>esc(s)).join(', ')) : 'Everything the sheet contained was recognized and placed automatically.'}
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+      <button class="btn small" id="rcUploadToEntry">Review in Data Entry</button>
+      <button class="btn small primary" id="rcUploadToPre">Run Pre-Analysis &rarr;</button>
+    </div>
+  </div>`;
+}
+function showUploadResult(resultEl, client, res){
+  if(!resultEl) return;
+  resultEl.innerHTML = rcUploadResultHTML(client, res);
+  const toEntry = document.getElementById('rcUploadToEntry');
+  if(toEntry) toEntry.addEventListener('click', ()=>{ rcTab='entry'; renderMain(); });
+  const toPre = document.getElementById('rcUploadToPre');
+  if(toPre) toPre.addEventListener('click', ()=>{ rcTab='assistant'; renderMain(); });
 }
 
 function wireRCUpload(client){
@@ -5652,7 +5798,7 @@ function wireRCUpload(client){
         const rows = parseCSVText(String(reader.result));
         const res = applyTemplateRows(client, rows);
         Store.save();
-        if(resultEl) resultEl.innerHTML = rcUploadResultHTML(res);
+        if(resultEl) showUploadResult(resultEl, client, res);
       };
       reader.onerror = ()=>{ if(resultEl) resultEl.innerHTML = '<div class="lesson-box">Could not read that file. Try again, or use Data Entry to type values directly.</div>'; };
       reader.readAsText(file);
@@ -5670,7 +5816,7 @@ function wireRCUpload(client){
           const rows = window.XLSX.utils.sheet_to_json(sheet, {header:1});
           const res = applyTemplateRows(client, rows);
           Store.save();
-          if(resultEl) resultEl.innerHTML = rcUploadResultHTML(res);
+          if(resultEl) showUploadResult(resultEl, client, res);
         }catch(err){
           if(resultEl) resultEl.innerHTML = '<div class="lesson-box">Could not parse that spreadsheet. Make sure it follows the template format.</div>';
         }
