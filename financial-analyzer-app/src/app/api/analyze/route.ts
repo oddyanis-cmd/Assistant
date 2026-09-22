@@ -15,6 +15,7 @@ import type {
 interface AnalyzeRequestBody {
   input: AnalysisInput;
   companyName?: string;
+  language?: "en" | "fr" | "ar";
 }
 
 const REQUIRED_INCOME_FIELDS: (keyof IncomeStatementInput)[] = [
@@ -95,9 +96,12 @@ export async function POST(request: Request) {
       );
     }
 
+    const language =
+      body.language === "fr" || body.language === "ar" ? body.language : "en";
     const result = analyze(input);
     const report = await generateReport(result, {
       companyName: body.companyName,
+      language,
     });
 
     return NextResponse.json({ result, report });

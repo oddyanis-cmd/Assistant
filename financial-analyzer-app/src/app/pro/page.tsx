@@ -3,6 +3,8 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import type { DictKey } from "@/lib/i18n/types";
+import { en as EN } from "@/lib/i18n/merged";
 import type {
   AnalysisInput,
   BusinessType,
@@ -14,39 +16,40 @@ import type { AnalysisResult } from "@/lib/engine/analyze";
 import type { AnalysisReport } from "@/lib/engine/report";
 
 // ---- Field configuration (typed against the engine's own input types, so a
-// typo here would be a compile error rather than a silent bug). ----
+// typo here would be a compile error rather than a silent bug). Labels are
+// i18n keys resolved at render time. ----
 
 const INCOME_FIELDS = [
-  { key: "revenue", label: "Revenue" },
-  { key: "cogs", label: "Cost of goods sold (COGS)" },
-  { key: "operatingExpenses", label: "Operating expenses (excl. D&A)" },
-  { key: "depreciation", label: "Depreciation" },
-  { key: "interestExpense", label: "Interest expense" },
-  { key: "taxExpense", label: "Tax expense" },
-] as const satisfies { key: keyof IncomeStatementInput; label: string }[];
+  { key: "revenue", i18n: "f_revenue" },
+  { key: "cogs", i18n: "f_cogs" },
+  { key: "operatingExpenses", i18n: "f_opex" },
+  { key: "depreciation", i18n: "f_dep" },
+  { key: "interestExpense", i18n: "f_interest" },
+  { key: "taxExpense", i18n: "f_tax" },
+] as const satisfies { key: keyof IncomeStatementInput; i18n: DictKey }[];
 
 const BALANCE_FIELDS = [
-  { key: "cash", label: "Cash" },
-  { key: "accountsReceivable", label: "Accounts receivable" },
-  { key: "inventory", label: "Inventory" },
-  { key: "ppe", label: "Property, plant & equipment (net)" },
-  { key: "accountsPayable", label: "Accounts payable" },
-  { key: "shortTermDebt", label: "Short-term debt" },
-  { key: "longTermDebt", label: "Long-term debt" },
-  { key: "equity", label: "Equity" },
-] as const satisfies { key: keyof BalanceSheetInput; label: string }[];
+  { key: "cash", i18n: "f_cash" },
+  { key: "accountsReceivable", i18n: "f_ar" },
+  { key: "inventory", i18n: "f_inventory" },
+  { key: "ppe", i18n: "f_ppe" },
+  { key: "accountsPayable", i18n: "f_ap" },
+  { key: "shortTermDebt", i18n: "f_std" },
+  { key: "longTermDebt", i18n: "f_ltd" },
+  { key: "equity", i18n: "f_equity" },
+] as const satisfies { key: keyof BalanceSheetInput; i18n: DictKey }[];
 
 type IncomeFieldKey = (typeof INCOME_FIELDS)[number]["key"];
 type BalanceFieldKey = (typeof BALANCE_FIELDS)[number]["key"];
 
-const BUSINESS_TYPE_OPTIONS: { value: BusinessType; label: string }[] = [
-  { value: "generic", label: "Generic" },
-  { value: "retail", label: "Retail" },
-  { value: "restaurant", label: "Restaurant" },
-  { value: "saas", label: "SaaS" },
-  { value: "manufacturing", label: "Manufacturing" },
-  { value: "services", label: "Services" },
-  { value: "ecommerce", label: "E-commerce" },
+const BUSINESS_TYPE_OPTIONS: { value: BusinessType; i18n: DictKey }[] = [
+  { value: "generic", i18n: "bt_generic" },
+  { value: "retail", i18n: "bt_retail" },
+  { value: "restaurant", i18n: "bt_restaurant" },
+  { value: "saas", i18n: "bt_saas" },
+  { value: "manufacturing", i18n: "bt_manufacturing" },
+  { value: "services", i18n: "bt_services" },
+  { value: "ecommerce", i18n: "bt_ecommerce" },
 ];
 
 interface FormState {
@@ -145,10 +148,6 @@ function formatMetric(metric: Metric, currency: string): string {
   }
 }
 
-function groupLabel(group: string): string {
-  return group.charAt(0).toUpperCase() + group.slice(1);
-}
-
 function Field({
   id,
   label,
@@ -186,11 +185,22 @@ function StatTile({
 // TODO: gate this page behind auth + an active subscription once Supabase
 // auth and Stripe billing are wired up. It is intentionally open for now.
 export default function ProPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
   const [data, setData] = useState<AnalyzeApiResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Translate an engine ratio label by its stable key, falling back to the
+  // engine's own English label if a translation is somehow missing.
+  function metricLabel(metric: Metric): string {
+    const key = `m_${metric.key}` as DictKey;
+    return key in EN ? t(key) : metric.label;
+  }
+  function groupTitle(group: string): string {
+    const key = `g_${group}` as DictKey;
+    return key in EN ? t(key) : group.charAt(0).toUpperCase() + group.slice(1);
+  }
 
   function updateIncome(key: IncomeFieldKey, value: string) {
     setForm((prev) => ({ ...prev, income: { ...prev.income, [key]: value } }));
@@ -215,25 +225,18 @@ export default function ProPage() {
         body: JSON.stringify({
           input,
           companyName: form.companyName.trim() || undefined,
+          language: lang,
         }),
       });
       const payload = (await response.json()) as
         | AnalyzeApiResult
         | AnalyzeApiError;
       if (!response.ok || "error" in payload) {
-        throw new Error(
-          "error" in payload
-            ? payload.error
-            : "Something went wrong. Please try again."
-        );
+        throw new Error("error" in payload ? payload.error : t("err_generic"));
       }
       setData(payload);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Please try again."
-      );
+      setError(err instanceof Error ? err.message : t("err_generic"));
       setData(null);
     } finally {
       setLoading(false);
@@ -246,12 +249,8 @@ export default function ProPage() {
   return (
     <div className="wrap page-head">
       <p className="eyebrow">{t("nav_cta")}</p>
-      <h1>Pro Analyzer</h1>
-      <p className="lead">
-        Enter your income statement and balance sheet below. Every ratio is
-        computed by our tested calculation engine — the AI only writes the
-        narrative around the numbers you see.
-      </p>
+      <h1>{t("pro_h1")}</h1>
+      <p className="lead">{t("pro_lead")}</p>
 
       {error && (
         <div className="alert alert-error" style={{ marginTop: 24 }} role="alert">
@@ -261,9 +260,9 @@ export default function ProPage() {
 
       <form onSubmit={handleSubmit} style={{ marginTop: 32 }}>
         <section className="card">
-          <h2 className="card-title">Company</h2>
+          <h2 className="card-title">{t("sec_company")}</h2>
           <div className="field-grid">
-            <Field id="company-name" label="Company name">
+            <Field id="company-name" label={t("f_company_name")}>
               <input
                 id="company-name"
                 type="text"
@@ -276,7 +275,7 @@ export default function ProPage() {
                 }
               />
             </Field>
-            <Field id="company-type" label="Business type">
+            <Field id="company-type" label={t("f_business_type")}>
               <select
                 id="company-type"
                 value={form.businessType}
@@ -289,12 +288,12 @@ export default function ProPage() {
               >
                 {BUSINESS_TYPE_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.i18n)}
                   </option>
                 ))}
               </select>
             </Field>
-            <Field id="company-currency" label="Currency">
+            <Field id="company-currency" label={t("f_currency")}>
               <input
                 id="company-currency"
                 type="text"
@@ -308,10 +307,10 @@ export default function ProPage() {
         </section>
 
         <section className="card">
-          <h2 className="card-title">Income statement</h2>
+          <h2 className="card-title">{t("sec_income")}</h2>
           <div className="field-grid">
             {INCOME_FIELDS.map((field) => (
-              <Field key={field.key} id={`income-${field.key}`} label={field.label}>
+              <Field key={field.key} id={`income-${field.key}`} label={t(field.i18n)}>
                 <input
                   id={`income-${field.key}`}
                   type="number"
@@ -325,10 +324,10 @@ export default function ProPage() {
         </section>
 
         <section className="card">
-          <h2 className="card-title">Balance sheet</h2>
+          <h2 className="card-title">{t("sec_balance")}</h2>
           <div className="field-grid">
             {BALANCE_FIELDS.map((field) => (
-              <Field key={field.key} id={`balance-${field.key}`} label={field.label}>
+              <Field key={field.key} id={`balance-${field.key}`} label={t(field.i18n)}>
                 <input
                   id={`balance-${field.key}`}
                   type="number"
@@ -343,23 +342,20 @@ export default function ProPage() {
 
         <button type="submit" disabled={loading} className="btn btn-primary" style={{ marginTop: 22 }}>
           {loading && <span className="spinner" aria-hidden="true" />}
-          {loading ? "Analyzing…" : "Analyze"}
+          {loading ? t("btn_analyzing") : t("btn_analyze")}
         </button>
       </form>
 
       {data && totals && (
         <div style={{ marginTop: 56, display: "grid", gap: 40, paddingBottom: 64 }}>
           {data.report.source === "sample" && (
-            <div className="alert alert-warning">
-              Sample report — add an Anthropic API key for the full AI
-              analysis.
-            </div>
+            <div className="alert alert-warning">{t("r_sample")}</div>
           )}
 
           {data.result.warnings.length > 0 && (
             <div className="alert alert-warning">
               <div>
-                <p style={{ fontWeight: 600 }}>Data-quality warnings</p>
+                <p style={{ fontWeight: 600 }}>{t("r_warnings")}</p>
                 <ul>
                   {data.result.warnings.map((warning) => (
                     <li key={warning}>{warning}</li>
@@ -371,22 +367,22 @@ export default function ProPage() {
 
           <section>
             <h2 className="card-title" style={{ fontSize: 24, marginBottom: 4 }}>
-              Summary
+              {t("r_summary")}
             </h2>
             <div className="result-grid">
-              <StatTile label="Net income" value={formatCurrency(totals.netIncome, currency)} />
-              <StatTile label="Gross profit" value={formatCurrency(totals.grossProfit, currency)} />
-              <StatTile label="EBITDA" value={formatCurrency(totals.ebitda, currency)} />
-              <StatTile label="EBIT" value={formatCurrency(totals.ebit, currency)} />
-              <StatTile label="Total assets" value={formatCurrency(totals.totalAssets, currency)} />
-              <StatTile label="Total liabilities" value={formatCurrency(totals.totalLiabilities, currency)} />
-              <StatTile label="Working capital" value={formatCurrency(totals.workingCapital, currency)} />
+              <StatTile label={t("sl_net_income")} value={formatCurrency(totals.netIncome, currency)} />
+              <StatTile label={t("sl_gross_profit")} value={formatCurrency(totals.grossProfit, currency)} />
+              <StatTile label={t("sl_ebitda")} value={formatCurrency(totals.ebitda, currency)} />
+              <StatTile label={t("sl_ebit")} value={formatCurrency(totals.ebit, currency)} />
+              <StatTile label={t("sl_total_assets")} value={formatCurrency(totals.totalAssets, currency)} />
+              <StatTile label={t("sl_total_liabilities")} value={formatCurrency(totals.totalLiabilities, currency)} />
+              <StatTile label={t("sl_working_capital")} value={formatCurrency(totals.workingCapital, currency)} />
               <StatTile
-                label="Balance check"
+                label={t("sl_balance_check")}
                 value={
                   totals.balanceCheckPasses
-                    ? "Balanced"
-                    : `Off by ${formatCurrency(totals.balanceCheckDifference, currency)}`
+                    ? t("r_balanced")
+                    : `${t("r_off_by")} ${formatCurrency(totals.balanceCheckDifference, currency)}`
                 }
                 tone={totals.balanceCheckPasses ? "good" : "bad"}
               />
@@ -395,19 +391,19 @@ export default function ProPage() {
 
           <section>
             <h2 className="card-title" style={{ fontSize: 24, marginBottom: 4 }}>
-              Ratios
+              {t("r_ratios")}
             </h2>
             <div style={{ marginTop: 16, display: "grid", gap: 20 }}>
               {Object.entries(data.result.ratios).map(([group, metrics]) => (
                 <div key={group} className="card">
                   <h3 className="card-title" style={{ fontSize: 17 }}>
-                    {groupLabel(group)}
+                    {groupTitle(group)}
                   </h3>
                   <div className="result-grid">
                     {metrics.map((metric) => (
                       <StatTile
                         key={metric.key}
-                        label={metric.label}
+                        label={metricLabel(metric)}
                         value={formatMetric(metric, currency)}
                       />
                     ))}
@@ -419,7 +415,7 @@ export default function ProPage() {
 
           <section>
             <h2 className="card-title" style={{ fontSize: 24, marginBottom: 4 }}>
-              AI report
+              {t("r_ai_report")}
               {data.report.source === "ai" && data.report.model
                 ? ` (${data.report.model})`
                 : ""}

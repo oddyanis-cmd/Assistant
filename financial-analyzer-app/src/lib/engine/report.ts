@@ -18,8 +18,21 @@ export interface ReportOptions {
   companyName?: string;
   model?: string;
   apiKey?: string;
+  /** Language for the written narrative (live AI path only). Numbers/units are
+   *  never translated. Defaults to English. The offline sample stays English. */
+  language?: "en" | "fr" | "ar";
   /** override to force the sample generator even when a key exists (tests) */
   forceSample?: boolean;
+}
+
+/** Extra system directive telling the model which language to write in. The
+ *  engine still computes every number; only the prose language changes. */
+function langDirective(language?: ReportOptions["language"]): string {
+  if (language === "fr")
+    return `\n\nWRITE THE ENTIRE REPORT IN FRENCH (français) — every heading and every sentence. Keep all numbers, percentages, currency codes and units exactly as given; never translate or alter a figure.`;
+  if (language === "ar")
+    return `\n\nWRITE THE ENTIRE REPORT IN ARABIC (العربية) — every heading and every sentence, in fluent right-to-left Arabic. Keep all numbers, percentages, currency codes and units exactly as given (using Western Arabic numerals); never translate or alter a figure.`;
+  return "";
 }
 
 export interface AnalysisReport {
@@ -108,7 +121,7 @@ export async function generateReport(
   const response = await client.messages.create({
     model,
     max_tokens: 4000,
-    system: SYSTEM_PROMPT,
+    system: SYSTEM_PROMPT + langDirective(opts.language),
     messages: [{ role: "user", content: buildUserPrompt(result, opts) }],
   });
 

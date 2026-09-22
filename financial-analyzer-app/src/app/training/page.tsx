@@ -1,58 +1,35 @@
+"use client";
+
 import Link from "next/link";
 import { Reveal } from "@/components/ui/Reveal";
+import { useLanguage } from "@/components/providers/LanguageProvider";
+import type { DictKey } from "@/lib/i18n/types";
 
 interface PracticeCase {
-  title: string;
-  level: "Beginner" | "Intermediate" | "Advanced";
-  business: string;
-  description: string;
+  titleKey: DictKey;
+  descKey: DictKey;
+  levelKey: DictKey;
+  levelClass: "beginner" | "intermediate" | "advanced";
+  businessKey: DictKey;
 }
 
 const PRACTICE_CASES: PracticeCase[] = [
-  {
-    title: "Diagnose a liquidity squeeze",
-    level: "Beginner",
-    business: "Retail",
-    description:
-      "A retail chain's current ratio has been sliding for two quarters. Read the balance sheet and work out what's driving it.",
-  },
-  {
-    title: "Read a growth-stage balance sheet",
-    level: "Intermediate",
-    business: "SaaS",
-    description:
-      "High revenue growth, negative net margin. Separate the metrics that matter for a SaaS business from the ones that don't — yet.",
-  },
-  {
-    title: "Spot the leverage risk",
-    level: "Advanced",
-    business: "Manufacturing",
-    description:
-      "Interest coverage is thinning and debt-to-equity is climbing. Decide whether this manufacturer can safely fund its next expansion.",
-  },
-  {
-    title: "Working capital under pressure",
-    level: "Intermediate",
-    business: "Restaurant",
-    description:
-      "Inventory turnover looks healthy, but payables are stretching out. Trace the cash-conversion cycle to find the real story.",
-  },
+  { titleKey: "case1_t", descKey: "case1_d", levelKey: "lvl_beginner", levelClass: "beginner", businessKey: "bt_retail" },
+  { titleKey: "case2_t", descKey: "case2_d", levelKey: "lvl_intermediate", levelClass: "intermediate", businessKey: "bt_saas" },
+  { titleKey: "case3_t", descKey: "case3_d", levelKey: "lvl_advanced", levelClass: "advanced", businessKey: "bt_manufacturing" },
+  { titleKey: "case4_t", descKey: "case4_d", levelKey: "lvl_intermediate", levelClass: "intermediate", businessKey: "bt_restaurant" },
 ];
 
 export default function TrainingPage() {
+  const { t } = useLanguage();
   return (
     <div>
       <div className="wrap page-head">
-        <p className="eyebrow">Free &amp; open</p>
-        <h1>Free training &amp; practice</h1>
-        <p className="lead">
-          Sharpen your financial-analysis skills with practice cases built on
-          the same verified engine that powers the Pro Analyzer. No account
-          required — this area is free for everyone.
-        </p>
+        <p className="eyebrow">{t("tr_eye")}</p>
+        <h1>{t("tr_h1")}</h1>
+        <p className="lead">{t("tr_lead")}</p>
         <p className="lead" style={{ marginTop: 8, fontSize: 14, color: "var(--text-faint)" }}>
-          Scored quizzes and guided walkthroughs for each practice case are
-          coming soon. For now, browse the case library below.
+          {t("tr_lead2")}
         </p>
       </div>
 
@@ -66,39 +43,36 @@ export default function TrainingPage() {
           }}
         >
           {PRACTICE_CASES.map((practiceCase) => (
-            <Reveal as="div" className="card" key={practiceCase.title} style={{ display: "flex", flexDirection: "column" }}>
+            <Reveal as="div" className="card" key={practiceCase.titleKey} style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span className={`level-badge ${practiceCase.level.toLowerCase()}`}>
-                  {practiceCase.level}
+                <span className={`level-badge ${practiceCase.levelClass}`}>
+                  {t(practiceCase.levelKey)}
                 </span>
                 <span className="eyebrow" style={{ fontSize: 11 }}>
-                  {practiceCase.business}
+                  {t(practiceCase.businessKey)}
                 </span>
               </div>
               <h2 className="card-title" style={{ marginTop: 14, fontSize: 18 }}>
-                {practiceCase.title}
+                {t(practiceCase.titleKey)}
               </h2>
               <p style={{ marginTop: 8, flex: 1, fontSize: 14, lineHeight: 1.6, color: "var(--text-dim)" }}>
-                {practiceCase.description}
+                {t(practiceCase.descKey)}
               </p>
               <span
                 className="btn btn-ghost"
                 style={{ marginTop: 16, width: "fit-content", cursor: "not-allowed", opacity: 0.55, fontSize: 12 }}
               >
-                Quiz coming soon
+                {t("btn_quiz_soon")}
               </span>
             </Reveal>
           ))}
         </div>
 
         <Reveal as="div" className="cta-band" style={{ marginTop: 48 }}>
-          <h2>Want to analyze your own numbers?</h2>
-          <p>
-            The Pro Analyzer runs the exact same verified engine on your real
-            income statement and balance sheet, then writes a full AI report.
-          </p>
+          <h2>{t("tr_cta_h2")}</h2>
+          <p>{t("tr_cta_p")}</p>
           <Link className="btn btn-primary" href="/pro">
-            Open the Pro Analyzer
+            {t("tr_cta_btn")}
           </Link>
         </Reveal>
       </div>
