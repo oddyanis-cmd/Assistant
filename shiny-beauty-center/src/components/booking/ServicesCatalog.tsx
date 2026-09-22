@@ -114,12 +114,21 @@ export function ServicesCatalog({
               key={service.id}
               className="bg-white rounded-2xl border border-nude-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
             >
-              {/* Image placeholder with gradient */}
-              <div
-                className={`bg-gradient-to-br ${gradient} h-36 flex items-center justify-center`}
-              >
-                <span className="text-5xl opacity-70">{icon}</span>
-              </div>
+              {/* Service photo (or gradient placeholder) */}
+              {service.image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={service.image_url}
+                  alt={name}
+                  className="h-36 w-full object-cover"
+                />
+              ) : (
+                <div
+                  className={`bg-gradient-to-br ${gradient} h-36 flex items-center justify-center`}
+                >
+                  <span className="text-5xl opacity-70">{icon}</span>
+                </div>
+              )}
 
               {/* Content */}
               <div className="p-4">

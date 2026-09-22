@@ -6,6 +6,7 @@
 
 import { useState, useTransition } from "react";
 import type { Service, ServiceCategory } from "@/lib/supabase/types";
+import { ServiceImageUploader } from "@/components/admin/ServiceImageUploader";
 import {
   createServiceAction,
   updateServiceAction,
@@ -216,8 +217,24 @@ export function EditServiceRow({
     <>
       <tr className="border-b border-nude-50 hover:bg-rose-50/20">
         <td className="py-3 px-4">
-          <p className="font-medium text-charcoal-800">{service.name_en}</p>
-          <p className="text-[11px] text-charcoal-400">{service.name_ar}</p>
+          <div className="flex items-center gap-3">
+            {service.image_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={service.image_url}
+                alt=""
+                className="h-10 w-10 rounded-lg object-cover border border-nude-100 shrink-0"
+              />
+            ) : (
+              <div className="h-10 w-10 rounded-lg bg-nude-50 border border-nude-100 flex items-center justify-center text-nude-300 shrink-0">
+                ◉
+              </div>
+            )}
+            <div>
+              <p className="font-medium text-charcoal-800">{service.name_en}</p>
+              <p className="text-[11px] text-charcoal-400">{service.name_ar}</p>
+            </div>
+          </div>
         </td>
         <td className="py-3 px-4">
           <span className="px-2 py-0.5 rounded-full bg-nude-100 text-nude-700 text-xs">
@@ -275,6 +292,15 @@ export function EditServiceRow({
           <td colSpan={6} className="px-4 pb-4 pt-2 bg-rose-50/30">
             <div className="rounded-xl border border-rose-100 bg-white p-4">
               <h3 className="text-sm font-semibold text-charcoal-700 mb-4">{labels.edit_service}: {service.name_en}</h3>
+              <div className="mb-4">
+                <label className="field-label">Photo</label>
+                <ServiceImageUploader
+                  serviceId={service.id}
+                  imageUrl={service.image_url}
+                  locale={locale}
+                  canEdit={canEdit && supabaseReady}
+                />
+              </div>
               <ServiceFormFields
                 form={form}
                 categories={categories}
