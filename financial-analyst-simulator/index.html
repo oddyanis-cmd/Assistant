@@ -4,46 +4,47 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A financial analyst training simulator and personal analysis system — practice on realistic case files, or bring your own client data into Pro Analyzing Mode.">
-<title>Ledger &amp; Case — Financial Analyst Training Simulator</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%2310151c'/%3E%3Ccircle cx='50' cy='50' r='34' fill='none' stroke='%23c79a44' stroke-width='4'/%3E%3Ctext x='50' y='61' font-family='Georgia,serif' font-size='38' font-weight='700' fill='%23c79a44' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E">
+<title>Keel — AI Financial Analysis</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='12' fill='%230e0d0c'/%3E%3Cpath d='M13 31 C14 21 19 14 30 11 C27.5 18 24.5 25 22 31 Z' fill='%23e28a4d'/%3E%3Ccircle cx='30' cy='11' r='2' fill='%23f2ad76'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
-  /* Deep navy, not pure black — the established professional finance tone
-     (warmer and less harsh than charcoal, per current dark-UI best practice) */
-  --ink:#0b111c;
-  --ink-2:#101827;
-  --panel:#161f2f;
-  --panel-2:#1e2a3d;
-  --line:#2b3a52;
-  /* Warm ivory "paper" for financial statement panels */
-  --paper:#f3ecdc;
-  --paper-2:#e9ddc2;
-  --paper-ink:#262015;
-  --paper-ink-soft:#5c5240;
-  /* Muted financial green/red — legible, not neon */
-  --green:#4f9d76;
-  --green-deep:#396f52;
-  --green-rgb:79,157,118;
-  --red:#c15f49;
-  --red-deep:#96442f;
-  --red-rgb:193,95,73;
-  /* Antique brass/gold — the classic navy+gold finance pairing, refined rather than shiny */
-  --brass:#c6a05e;
-  --brass-soft:#a9814a;
-  --brass-rgb:198,160,94;
-  --text:#e6eaf0;
-  --text-soft:#a6b2c4;
-  --text-faint:#6c7992;
-  --serif:'Spectral', Georgia, serif;
+  /* ===== Keel design system — warm charcoal + amber, applied to the
+     analyst workspace. Same variable names, Keel values, so the whole app
+     re-skins at once. ===== */
+  --ink:#0e0d0c;
+  --ink-2:#151310;
+  --panel:#1c1813;
+  --panel-2:#241f18;
+  --line:#39312a;
+  /* Clean, document-like "paper" for statement panels + reports */
+  --paper:#eef1f4;
+  --paper-2:#dfe4ea;
+  --paper-ink:#1b232d;
+  --paper-ink-soft:#54606c;
+  /* Money green / loss red — semantic, constant across the app */
+  --green:#4fb87e;
+  --green-deep:#2f8a5b;
+  --green-rgb:79,184,126;
+  --red:#dc8467;
+  --red-deep:#b45638;
+  --red-rgb:220,132,103;
+  /* Keel amber accent (replaces the old brass/gold) */
+  --brass:#e28a4d;
+  --brass-soft:#cb7a3c;
+  --brass-rgb:226,138,77;
+  --text:#f2ede6;
+  --text-soft:#b4a998;
+  --text-faint:#7a6f60;
+  --serif:'Newsreader', Georgia, serif;
   --sans:'Inter', -apple-system, sans-serif;
   --mono:'IBM Plex Mono', 'SF Mono', monospace;
-  --radius:10px;
-  --shadow: 0 12px 30px -12px rgba(0,0,0,0.55);
+  --radius:12px;
+  --shadow: 0 12px 30px -12px rgba(0,0,0,0.6);
 }
 *{box-sizing:border-box; margin:0; padding:0;}
 html,body{height:100%;}
@@ -66,7 +67,7 @@ input,textarea,select{font-family:inherit;}
   min-height:100vh;
 }
 .sidebar{
-  background: linear-gradient(180deg, var(--ink-2), #080b12);
+  background: linear-gradient(180deg, var(--ink-2), #0a0908);
   border-right:1px solid var(--line);
   padding:22px 0 18px;
   display:flex;
@@ -545,7 +546,7 @@ html[dir="rtl"] .mobile-topbar{ flex-direction:row-reverse; }
   <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
-  <div class="mobile-brand">Ledger <span>&amp;</span> Case</div>
+  <div class="mobile-brand">Keel</div>
 </div>
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
@@ -554,8 +555,8 @@ html[dir="rtl"] .mobile-topbar{ flex-direction:row-reverse; }
 
   <aside class="sidebar">
     <div class="brand">
-      <div class="mark">Ledger <span>&amp;</span> Case</div>
-      <div class="sub">Analyst Training Desk</div>
+      <div class="mark"><span>K</span>eel</div>
+      <div class="sub">AI Financial Analysis</div>
     </div>
 
     <div class="lang-switch" id="langSwitch">
