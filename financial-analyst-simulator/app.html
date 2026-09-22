@@ -16,11 +16,11 @@
   /* ===== Keel design system — warm charcoal + amber, applied to the
      analyst workspace. Same variable names, Keel values, so the whole app
      re-skins at once. ===== */
-  --ink:#0e0d0c;
-  --ink-2:#151310;
-  --panel:#1c1813;
-  --panel-2:#241f18;
-  --line:#39312a;
+  --ink:#0a1120;
+  --ink-2:#0e1626;
+  --panel:#131f33;
+  --panel-2:#1a2942;
+  --line:#26364e;
   /* Clean, document-like "paper" for statement panels + reports */
   --paper:#eef1f4;
   --paper-2:#dfe4ea;
@@ -34,12 +34,12 @@
   --red-deep:#b45638;
   --red-rgb:220,132,103;
   /* Keel amber accent (replaces the old brass/gold) */
-  --brass:#e28a4d;
-  --brass-soft:#cb7a3c;
-  --brass-rgb:226,138,77;
-  --text:#f2ede6;
-  --text-soft:#b4a998;
-  --text-faint:#7a6f60;
+  --brass:#4f8be6;
+  --brass-soft:#3e72c9;
+  --brass-rgb:79,139,230;
+  --text:#eef2f8;
+  --text-soft:#a4b3c6;
+  --text-faint:#647087;
   --serif:'Newsreader', Georgia, serif;
   --sans:'Inter', -apple-system, sans-serif;
   --mono:'IBM Plex Mono', 'SF Mono', monospace;
@@ -55,7 +55,7 @@ body{
   line-height:1.5;
   -webkit-font-smoothing:antialiased;
 }
-::selection{ background: var(--brass); color:#1c1610; }
+::selection{ background: var(--brass); color:#0a1120; }
 a{color:inherit;}
 button{font-family:inherit; cursor:pointer;}
 input,textarea,select{font-family:inherit;}
@@ -67,7 +67,7 @@ input,textarea,select{font-family:inherit;}
   min-height:100vh;
 }
 .sidebar{
-  background: linear-gradient(180deg, var(--ink-2), #0a0908);
+  background: linear-gradient(180deg, var(--ink-2), #070c16);
   border-right:1px solid var(--line);
   padding:22px 0 18px;
   display:flex;
@@ -129,6 +129,12 @@ nav.tabs{ display:flex; flex-direction:column; gap:2px; padding:6px 10px; flex:1
 .rc-tab-btn .tab-ico{ color:var(--green); }
 .rc-tab-btn:hover{ background:rgba(var(--green-rgb),0.16); }
 .rc-tab-btn.active{ background:var(--green-deep); color:#eef6f1; }
+/* Mode split: Training vs Pro Analyzing Mode share one shell, one visible at a time */
+.side-group{ margin-bottom:2px; }
+body[data-keel-mode="training"] .pro-only{ display:none !important; }
+body[data-keel-mode="pro"] .training-only{ display:none !important; }
+#proAccount{ font-size:11.5px; color:var(--text-faint); line-height:1.65; margin-bottom:10px; }
+#proAccount a{ color:var(--brass); text-decoration:underline; cursor:pointer; }
 .rc-tab-btn.active .tab-ico{ color:#eef6f1; }
 
 /* ---------- Mobile top bar & drawer nav (hidden on desktop) ---------- */
@@ -579,7 +585,7 @@ html[dir="rtl"] .mobile-topbar{ flex-direction:row-reverse; }
 }
 </style>
 </head>
-<body>
+<body data-keel-mode="training">
 <div class="mobile-topbar" id="mobileTopbar">
   <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -609,43 +615,52 @@ html[dir="rtl"] .mobile-topbar{ flex-direction:row-reverse; }
     </div>
 
     <nav class="tabs">
-      <div class="tab-group-label" data-i18n="nav.proMode">Pro Analyzing Mode</div>
-      <button class="tab-btn rc-tab-btn" data-view="rc"><span class="tab-ico">&#9673;</span> <span data-i18n="nav.rc">RC Realcount Analysis</span></button>
-      <div id="keelUserChip" style="display:none; margin:2px 0 6px; padding:8px 10px; border:1px solid rgba(79,184,126,.35); border-radius:8px; background:rgba(79,184,126,.10); font-size:11px; line-height:1.55; color:#cfe9db;"></div>
-
-      <div class="tab-group-label" data-i18n="nav.caseFile">Case File</div>
-      <button class="tab-btn active" data-view="select">
-        <span class="tab-ico">&#9635;</span> <span data-i18n="nav.selectCase">Select a Case</span>
-      </button>
-
-      <div class="case-badge" id="caseBadge">
-        <span class="cb-name" id="cbName">—</span>
-        <span id="cbMeta">—</span>
+      <div class="side-group pro-only">
+        <div class="tab-group-label" data-i18n="nav.proMode">Pro Analyzing Mode</div>
+        <button class="tab-btn rc-tab-btn active" data-view="rc"><span class="tab-ico">&#9673;</span> <span data-i18n="nav.rc">RC Realcount Analysis</span></button>
       </div>
 
-      <div class="xp-badge" id="xpBadge">
-        <div class="xp-rank" id="xpRank">Trainee Analyst</div>
-        <div class="pbar" style="height:6px;margin-top:6px;"><div id="xpBar" style="width:0%;"></div></div>
-        <div class="xp-num" id="xpNum">0 XP</div>
+      <div class="side-group training-only">
+        <div class="tab-group-label" data-i18n="nav.caseFile">Case File</div>
+        <button class="tab-btn active" data-view="select">
+          <span class="tab-ico">&#9635;</span> <span data-i18n="nav.selectCase">Select a Case</span>
+        </button>
+
+        <div class="case-badge" id="caseBadge">
+          <span class="cb-name" id="cbName">—</span>
+          <span id="cbMeta">—</span>
+        </div>
+
+        <div class="xp-badge" id="xpBadge">
+          <div class="xp-rank" id="xpRank">Trainee Analyst</div>
+          <div class="pbar" style="height:6px;margin-top:6px;"><div id="xpBar" style="width:0%;"></div></div>
+          <div class="xp-num" id="xpNum">0 XP</div>
+        </div>
       </div>
 
-      <div class="tab-group-label" data-i18n="nav.workspace">Workspace</div>
-      <button class="tab-btn" data-view="financials" disabled><span class="tab-ico">&#9776;</span> <span data-i18n="nav.financials">Financial Statements</span></button>
-      <button class="tab-btn" data-view="ratios" disabled><span class="tab-ico">&#8710;</span> <span data-i18n="nav.ratios">Ratios &amp; Frameworks</span></button>
-      <button class="tab-btn" data-view="diagnosis" disabled><span class="tab-ico">&#10004;</span> <span data-i18n="nav.diagnosis">Diagnose the Problem</span></button>
-      <button class="tab-btn" data-view="toolkit" disabled><span class="tab-ico">&#9635;</span> <span data-i18n="nav.toolkit">Analyst Toolkit</span></button>
-      <button class="tab-btn" data-view="assumptions" disabled><span class="tab-ico">&#9881;</span> <span data-i18n="nav.assumptions">Assumptions Model</span></button>
-      <button class="tab-btn" data-view="report" disabled><span class="tab-ico">&#9998;</span> <span data-i18n="nav.report">Report Builder</span></button>
-      <button class="tab-btn" data-view="advisory" disabled><span class="tab-ico">&#128172;</span> <span data-i18n="nav.advisory">Client Advisory</span></button>
-      <button class="tab-btn" data-view="debrief" disabled><span class="tab-ico">&#9733;</span> <span data-i18n="nav.debrief">Session Debrief</span></button>
+      <div class="side-group training-only">
+        <div class="tab-group-label" data-i18n="nav.workspace">Workspace</div>
+        <button class="tab-btn" data-view="financials" disabled><span class="tab-ico">&#9776;</span> <span data-i18n="nav.financials">Financial Statements</span></button>
+        <button class="tab-btn" data-view="ratios" disabled><span class="tab-ico">&#8710;</span> <span data-i18n="nav.ratios">Ratios &amp; Frameworks</span></button>
+        <button class="tab-btn" data-view="diagnosis" disabled><span class="tab-ico">&#10004;</span> <span data-i18n="nav.diagnosis">Diagnose the Problem</span></button>
+        <button class="tab-btn" data-view="toolkit" disabled><span class="tab-ico">&#9635;</span> <span data-i18n="nav.toolkit">Analyst Toolkit</span></button>
+        <button class="tab-btn" data-view="assumptions" disabled><span class="tab-ico">&#9881;</span> <span data-i18n="nav.assumptions">Assumptions Model</span></button>
+        <button class="tab-btn" data-view="report" disabled><span class="tab-ico">&#9998;</span> <span data-i18n="nav.report">Report Builder</span></button>
+        <button class="tab-btn" data-view="advisory" disabled><span class="tab-ico">&#128172;</span> <span data-i18n="nav.advisory">Client Advisory</span></button>
+        <button class="tab-btn" data-view="debrief" disabled><span class="tab-ico">&#9733;</span> <span data-i18n="nav.debrief">Session Debrief</span></button>
+      </div>
 
-      <div class="tab-group-label" data-i18n="nav.reference">Reference</div>
-      <button class="tab-btn" data-view="trainer"><span class="tab-ico">&#127891;</span> <span data-i18n="nav.trainer">Trainer &amp; Glossary</span></button>
-      <button class="tab-btn" data-view="progress"><span class="tab-ico">&#128202;</span> <span data-i18n="nav.progress">Progress</span></button>
+      <div class="side-group training-only">
+        <div class="tab-group-label" data-i18n="nav.reference">Reference</div>
+        <button class="tab-btn" data-view="trainer"><span class="tab-ico">&#127891;</span> <span data-i18n="nav.trainer">Trainer &amp; Glossary</span></button>
+        <button class="tab-btn" data-view="progress"><span class="tab-ico">&#128202;</span> <span data-i18n="nav.progress">Progress</span></button>
+      </div>
     </nav>
 
-    <div class="sidebar-foot" data-i18n="nav.footer">
-      Amounts shown in $000s.<br>Fictional cases for training only.
+    <div class="sidebar-foot">
+      <div class="pro-only" id="proAccount"></div>
+      <span class="training-only" data-i18n="nav.footer">Amounts shown in $000s.<br>Fictional cases for training only.</span>
+      <span class="pro-only">Your private workspace · amounts shown in $000s.</span>
     </div>
   </aside>
 
@@ -2359,7 +2374,7 @@ function wireFinancials(){
         data:{
           labels: sc.years,
           datasets:[
-            {label:'Revenue', data:[sc.income.y1.revenue, sc.income.y2.revenue], borderColor:'#c6a05e', backgroundColor:'rgba(198,160,94,0.15)', tension:0.25, fill:true},
+            {label:'Revenue', data:[sc.income.y1.revenue, sc.income.y2.revenue], borderColor:'#4f8be6', backgroundColor:'rgba(79,139,230,0.15)', tension:0.25, fill:true},
             {label:'Net Income', data:[i1.netIncome, i2.netIncome], borderColor:'#4f9d76', backgroundColor:'rgba(79,157,118,0.15)', tension:0.25, fill:true}
           ]
         },
@@ -3095,8 +3110,8 @@ function contractIllustrationSVG(){
     <g transform="rotate(8 330 230)">
       <circle cx="330" cy="230" r="34" fill="var(--brass)" opacity="0.92"/>
       <circle cx="330" cy="230" r="34" fill="none" stroke="var(--brass-soft)" stroke-width="2"/>
-      <circle cx="330" cy="230" r="24" fill="none" stroke="#1c1610" stroke-width="1" opacity="0.35" stroke-dasharray="2 3"/>
-      <text x="330" y="235" font-family="var(--serif)" font-size="13" font-weight="700" fill="#1c1610" text-anchor="middle">OK</text>
+      <circle cx="330" cy="230" r="24" fill="none" stroke="#33415a" stroke-width="1" opacity="0.35" stroke-dasharray="2 3"/>
+      <text x="330" y="235" font-family="var(--serif)" font-size="13" font-weight="700" fill="#33415a" text-anchor="middle">OK</text>
     </g>
   </svg>`;
 }
@@ -4595,7 +4610,7 @@ function drawBudgetChart(client){
   budgetChartInstance = new Chart(ctx, {
     type:'bar',
     data:{ labels, datasets:[
-      {label:'Budget', data:budgetData, backgroundColor:'rgba(198,160,94,0.55)'},
+      {label:'Budget', data:budgetData, backgroundColor:'rgba(79,139,230,0.55)'},
       {label:'Actual', data:actualData, backgroundColor:'rgba(79,157,118,0.65)'}
     ]},
     options:{
@@ -4872,7 +4887,7 @@ function drawForecastChart(client){
   fcChartInstance = new Chart(ctx, {
     type:'line',
     data:{ labels, datasets:[
-      {label:'Revenue', data:revData, borderColor:'#c6a05e', backgroundColor:'rgba(198,160,94,0.15)', tension:0.25, fill:true},
+      {label:'Revenue', data:revData, borderColor:'#4f8be6', backgroundColor:'rgba(79,139,230,0.15)', tension:0.25, fill:true},
       {label:'Net Income', data:niData, borderColor:'#4f9d76', backgroundColor:'rgba(79,157,118,0.15)', tension:0.25, fill:true}
     ]},
     options:{
@@ -5178,7 +5193,7 @@ function wireRCDashboard(client){
     dashChartInstance = new Chart(ctx, {
       type:'line',
       data:{ labels, datasets:[
-        {label:'Revenue', data:revData, borderColor:'#c6a05e', backgroundColor:'rgba(198,160,94,0.15)', tension:0.25, fill:true},
+        {label:'Revenue', data:revData, borderColor:'#4f8be6', backgroundColor:'rgba(79,139,230,0.15)', tension:0.25, fill:true},
         {label:'Net Income', data:niData, borderColor:'#4f9d76', backgroundColor:'rgba(79,157,118,0.15)', tension:0.25, fill:true}
       ]},
       options:{
@@ -5826,45 +5841,41 @@ function wireRCUpload(client){
   });
 }
 
-renderMain();
-
-/* ===================== Keel · Pro session gate ===================== */
+/* ===================== Keel · session gate + mode (training vs pro) ===================== */
 function keelGetUser(){ try{ return JSON.parse(localStorage.getItem('keel_user')||'null'); }catch(e){ return null; } }
 function keelRequirePro(){
   if(keelGetUser()) return true;
   location.href = 'login.html?next=' + encodeURIComponent('app.html#rc');
   return false;
 }
-function keelSignOut(){
-  try{ localStorage.removeItem('keel_user'); }catch(e){}
-  if(State.view==='rc'){ State.view='select'; setActiveTab('select'); renderMain(); }
-  keelRenderUserChip();
-}
-function keelRenderUserChip(){
-  var chip=document.getElementById('keelUserChip'); if(!chip) return;
+function keelSetMode(m){ try{ document.body.dataset.keelMode = m; }catch(e){} }
+function keelSignOut(){ try{ localStorage.removeItem('keel_user'); }catch(e){} location.href='index.html'; }
+function keelRenderProAccount(){
+  var box=document.getElementById('proAccount'); if(!box) return;
   var u=keelGetUser();
   if(u && u.email){
-    var plan=(u.plan||'free'); var planName=plan.charAt(0).toUpperCase()+plan.slice(1);
-    var who=u.name?String(u.name):u.email;
-    chip.style.display='block';
-    chip.innerHTML='<span style="color:#4fb87e;">&#9673;</span> '+who+
-      '<br><span style="opacity:.8">'+planName+' plan</span> · <a href="#" id="keelSignOutLink" style="color:#f2ad76; text-decoration:underline;">Sign out</a>';
+    var who = u.name ? esc(String(u.name)) : esc(u.email);
+    var plan = (u.plan||'free'); var planName = plan.charAt(0).toUpperCase()+plan.slice(1);
+    box.innerHTML = '<span style="color:var(--green)">&#9673;</span> '+who+' · '+planName+' plan<br><a id="keelSignOutLink">Sign out</a>';
     var link=document.getElementById('keelSignOutLink');
     if(link) link.addEventListener('click', function(e){ e.preventDefault(); keelSignOut(); });
-  } else { chip.style.display='none'; chip.innerHTML=''; }
+  } else { box.innerHTML=''; }
 }
-(function keelBootPro(){
+(function keelBoot(){
+  var wantPro=false, up=null;
   try{
     var params=new URLSearchParams(location.search);
-    var up=params.get('upgraded');
+    up=params.get('upgraded');
     var u=keelGetUser();
     if(up && u && ['basic','pro','unlimited','free'].indexOf(up)>-1){ u.plan=up; try{ localStorage.setItem('keel_user', JSON.stringify(u)); }catch(e){} }
-    keelRenderUserChip();
-    if(location.hash==='#rc' || up){
-      if(keelGetUser()){ State.view='rc'; setActiveTab('rc'); rcTab='entry'; renderMain(); }
-      else { location.href='login.html?next='+encodeURIComponent('app.html#rc'); }
-    }
+    wantPro = (location.hash==='#rc' || !!up);
+    if(wantPro && !keelGetUser()){ location.href='login.html?next='+encodeURIComponent('app.html#rc'); return; }
   }catch(e){}
+  if(wantPro){ keelSetMode('pro'); State.view='rc'; rcTab='entry'; }
+  else { keelSetMode('training'); State.view='select'; }
+  renderMain();
+  if(wantPro) setActiveTab('rc');
+  keelRenderProAccount();
 })();
 </script>
 </body>

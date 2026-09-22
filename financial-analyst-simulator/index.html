@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-palette="navy">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -49,6 +49,9 @@
   :root[data-palette="emerald"]{ --ink:#06110d; --ink-2:#0a1712; --panel:#0f1e19; --panel-2:#152a22; --line:#25372e; --line-soft:#16271e;
     --accent:#59c58f; --accent-lo:#43ac77; --accent-hi:#8fe0bd; --accent-soft:rgba(89,197,143,.13); --accent-glow:rgba(89,197,143,.46); --sand:#aec2b6;
     --pos:#7fd6a6; --pos-ink:#2f8a5b; --nav-bg:rgba(5,12,9,.62); --chip-bg:rgba(7,15,11,.82); }
+  :root[data-palette="navy"]{ --ink:#0a1120; --ink-2:#0e1626; --panel:#131f33; --panel-2:#1a2942; --line:#26364e; --line-soft:#16223a;
+    --accent:#4f8be6; --accent-lo:#3e72c9; --accent-hi:#86b3f2; --accent-soft:rgba(79,139,230,.14); --accent-glow:rgba(79,139,230,.5); --sand:#aab6c8;
+    --nav-bg:rgba(6,10,18,.66); --chip-bg:rgba(8,12,20,.84); }
 
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -345,6 +348,29 @@
   .dash-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
   @media(max-width:820px){ .dash-grid{grid-template-columns:1fr 1fr} }
   @media(max-width:520px){ .dash-grid{grid-template-columns:1fr} }
+  .dash-tabs span{cursor:pointer; transition:color .15s, background .15s}
+  .dash-panel{animation:dfade .45s ease both}
+  @keyframes dfade{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+  .ratio-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+  @media(max-width:820px){ .ratio-grid{grid-template-columns:1fr 1fr} }
+  @media(max-width:520px){ .ratio-grid{grid-template-columns:1fr} }
+  .r-tile{background:var(--ink-2); border:1px solid var(--line-soft); border-radius:14px; padding:15px 16px}
+  .r-tile .rl{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint)}
+  [dir="rtl"] .r-tile .rl{letter-spacing:normal}
+  .r-tile .rv{font-family:var(--font-display); font-size:26px; margin-top:6px; color:var(--pos); font-variant-numeric:tabular-nums}
+  .r-tile .dsub{font-size:11px; color:var(--text-faint); margin-top:3px}
+  .r-tile .rbar{height:5px; border-radius:4px; background:var(--line); margin-top:11px; overflow:hidden}
+  .r-tile .rbar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent-lo),var(--accent-hi)); border-radius:4px; transition:width 1s cubic-bezier(.2,.7,.3,1)}
+  .cf-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px}
+  @media(max-width:520px){ .cf-grid{grid-template-columns:1fr 1fr} }
+  .cf-wave{display:flex; align-items:stretch; gap:16px; height:190px; padding:10px 6px 0; border-top:1px solid var(--line-soft)}
+  .cf-col{flex:1; display:flex; flex-direction:column; align-items:center; gap:7px}
+  .cf-bar-wrap{flex:1; width:100%; display:flex; align-items:flex-end; justify-content:center}
+  .cf-bar{width:58%; max-width:56px; border-radius:8px 8px 0 0; height:0; transition:height 1.05s cubic-bezier(.2,.7,.3,1)}
+  .cf-pos{background:linear-gradient(180deg,var(--pos),var(--pos-ink))}
+  .cf-neg{background:linear-gradient(180deg,var(--neg),var(--neg-ink))}
+  .cf-val{font-family:var(--font-mono); font-size:12.5px; color:var(--text)}
+  .cf-lbl{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint)}
   .d-tile{background:var(--ink-2); border:1px solid var(--line-soft); border-radius:14px; padding:16px; box-shadow:inset 0 1px 0 var(--hair)}
   .d-tile .dl{font-family:var(--font-mono); font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:var(--text-faint)}
   [dir="rtl"] .d-tile .dl{letter-spacing:normal}
@@ -439,8 +465,8 @@
   <div class="cover-doc" id="coverDoc" role="button" tabindex="0" aria-label="Open the case file">
     <!-- the analysis pages inside, revealed when the file opens -->
     <div class="cd-inside" aria-hidden="true">
-      <div class="cd-eye" data-i18n="rep_eye">Analysis · Retail</div>
-      <div class="cd-co2" data-i18n="rep_co">Acme Retail Co.</div>
+      <div class="cd-eye" data-i18n="intro_sample">Sample analysis</div>
+      <div class="cd-co2" data-i18n="intro_figures">Verified figures</div>
       <div class="cd-rule"></div>
       <p class="cd-exec" data-i18n="intro_exec">Solidly profitable, well-capitalized — no red flags. The real opportunity is efficiency.</p>
       <div class="cd-rows">
@@ -459,8 +485,8 @@
         <circle cx="30" cy="11" r="1.9" fill="var(--accent-hi)"/>
       </svg>
       <span class="cd-kicker">KEEL</span>
-      <h2 class="cd-title" data-i18n="intro_doc_title">Financial Analysis</h2>
-      <span class="cd-co" data-i18n="rep_co">Acme Retail Co.</span>
+      <h2 class="cd-title" data-i18n="intro_doc_title">Financial Analyst</h2>
+      <span class="cd-co" data-i18n="intro_brandsub">AI · Verified financial analysis</span>
       <span class="cd-seal">◆</span>
     </div>
   </div>
@@ -470,7 +496,8 @@
 <!-- ===== PALETTE DOCK ===== -->
 <div class="pal-dock" id="palDock" role="group" aria-label="Colour theme">
   <span class="pl" data-i18n="theme_label">Theme</span>
-  <button data-pal="orange" style="background:#e28a4d" title="Amber (default)" aria-label="Amber"></button>
+  <button data-pal="navy" style="background:#4f8be6" title="Deep Navy (default)" aria-label="Deep Navy"></button>
+  <button data-pal="orange" style="background:#e28a4d" title="Amber" aria-label="Amber"></button>
   <button data-pal="midnight" style="background:#6ea8d8" title="Midnight Ice" aria-label="Midnight Ice"></button>
   <button data-pal="emerald" style="background:#59c58f" title="Deep Emerald" aria-label="Deep Emerald"></button>
   <button data-pal="plum" style="background:#cf8fb6" title="Royal Plum" aria-label="Royal Plum"></button>
@@ -586,9 +613,10 @@
     <div class="sec-head reveal" style="max-width:none; text-align:center; margin-inline:auto"><p class="eyebrow" data-i18n="dash_eye">Your results dashboard</p><h2 data-i18n="dash_h2">Every number, alive and at a glance.</h2><p class="lead" style="margin-inline:auto; max-width:58ch" data-i18n="dash_lead">The moment your report is ready, Keel lays it out as an interactive dashboard — animated, precise, and tuned to your business type.</p></div>
     <div class="dash reveal dash-wrap">
       <div class="dash-top">
-        <div class="dash-tabs"><span class="on" data-i18n="dash_t1">Overview</span><span data-i18n="dash_t2">Ratios</span><span data-i18n="dash_t3">Cash flow</span></div>
-        <span class="dash-live"><span class="ld"></span><span data-i18n="dash_live">Live · Acme Retail Co.</span></span>
+        <div class="dash-tabs"><span class="on" data-dtab="overview" data-i18n="dash_t1">Overview</span><span data-dtab="ratios" data-i18n="dash_t2">Ratios</span><span data-dtab="cashflow" data-i18n="dash_t3">Cash flow</span></div>
+        <span class="dash-live"><span class="ld"></span><span data-i18n="dash_live">Live · Sample company</span></span>
       </div>
+      <div class="dash-panel" data-dpanel="overview">
       <div class="dash-grid">
         <div class="d-tile"><div class="dl" data-i18n="kpi_nm">Net margin</div><div class="dv"><span class="cu" data-target="9.75" data-dec="2">9.75</span>%</div><div class="dsub" data-i18n="dash_s1">of revenue</div></div>
         <div class="d-tile"><div class="dl" data-i18n="kpi_roe">Return on equity</div><div class="dv"><span class="cu" data-target="24.38" data-dec="2">24.38</span>%</div><div class="dsub" data-i18n="dash_s2">strong</div></div>
@@ -612,6 +640,35 @@
               <div><i style="background:var(--line)"></i><span data-i18n="dash_cogs">Cost of goods</span> · <b>60%</b></div>
             </div>
           </div>
+        </div>
+      </div>
+      </div>
+
+      <div class="dash-panel" data-dpanel="ratios" hidden>
+        <div class="ratio-grid">
+          <div class="r-tile"><div class="rl" data-i18n="kpi_nm">Net margin</div><div class="rv"><span class="cu" data-target="9.75" data-dec="2">9.75</span>%</div><div class="rbar"><i data-w="49"></i></div></div>
+          <div class="r-tile"><div class="rl" data-i18n="dash_gm">Gross margin</div><div class="rv"><span class="cu" data-target="40" data-dec="0">40</span>%</div><div class="rbar"><i data-w="80"></i></div></div>
+          <div class="r-tile"><div class="rl" data-i18n="kpi_roe">Return on equity</div><div class="rv"><span class="cu" data-target="24.38" data-dec="2">24.38</span>%</div><div class="rbar"><i data-w="81"></i></div></div>
+          <div class="r-tile"><div class="rl" data-i18n="t_roic">ROIC</div><div class="rv"><span class="cu" data-target="18.44" data-dec="2">18.44</span>%</div><div class="rbar"><i data-w="61"></i></div></div>
+          <div class="r-tile"><div class="rl" data-i18n="t_cur">Current</div><div class="rv"><span class="cu" data-target="2.0" data-dec="1">2.0</span>×</div><div class="rbar"><i data-w="66"></i></div></div>
+          <div class="r-tile"><div class="rl" data-i18n="rt_quick">Quick</div><div class="rv"><span class="cu" data-target="1.3" data-dec="1">1.3</span>×</div><div class="rbar"><i data-w="52"></i></div></div>
+          <div class="r-tile"><div class="rl" data-i18n="rt_de">Debt / equity</div><div class="rv"><span class="cu" data-target="0.6" data-dec="1">0.6</span>×</div><div class="rbar"><i data-w="30"></i></div></div>
+          <div class="r-tile"><div class="rl" data-i18n="t_inv">Inventory turn</div><div class="rv"><span class="cu" data-target="5" data-dec="0">5</span>×</div><div class="rbar"><i data-w="62"></i></div></div>
+        </div>
+      </div>
+
+      <div class="dash-panel" data-dpanel="cashflow" hidden>
+        <div class="cf-grid">
+          <div class="r-tile"><div class="rl" data-i18n="cf_op">Operating</div><div class="rv"><span class="cu" data-target="182" data-dec="0">182</span></div><div class="dsub" data-i18n="cf_unit">QAR '000</div></div>
+          <div class="r-tile"><div class="rl" data-i18n="cf_inv">Investing</div><div class="rv" style="color:var(--neg)">(<span class="cu" data-target="90" data-dec="0">90</span>)</div><div class="dsub" data-i18n="cf_unit">QAR '000</div></div>
+          <div class="r-tile"><div class="rl" data-i18n="cf_fin">Financing</div><div class="rv" style="color:var(--neg)">(<span class="cu" data-target="42" data-dec="0">42</span>)</div><div class="dsub" data-i18n="cf_unit">QAR '000</div></div>
+          <div class="r-tile"><div class="rl" data-i18n="cf_net">Net change in cash</div><div class="rv"><span class="cu" data-target="50" data-dec="0">50</span></div><div class="dsub" data-i18n="cf_unit">QAR '000</div></div>
+        </div>
+        <div class="cf-wave" aria-hidden="true">
+          <div class="cf-col"><div class="cf-bar-wrap"><div class="cf-bar cf-pos" data-h="82"></div></div><span class="cf-val">+182</span><span class="cf-lbl" data-i18n="cf_op">Operating</span></div>
+          <div class="cf-col"><div class="cf-bar-wrap"><div class="cf-bar cf-neg" data-h="40"></div></div><span class="cf-val">−90</span><span class="cf-lbl" data-i18n="cf_inv">Investing</span></div>
+          <div class="cf-col"><div class="cf-bar-wrap"><div class="cf-bar cf-neg" data-h="19"></div></div><span class="cf-val">−42</span><span class="cf-lbl" data-i18n="cf_fin">Financing</span></div>
+          <div class="cf-col"><div class="cf-bar-wrap"><div class="cf-bar cf-pos" data-h="22"></div></div><span class="cf-val">+50</span><span class="cf-lbl" data-i18n="cf_net">Net</span></div>
         </div>
       </div>
     </div>
@@ -747,7 +804,7 @@
     /* ---------- i18n (EN captured from DOM; FR + AR dictionaries) ---------- */
     var FR = {
       nav_how:"Comment ça marche", nav_caps:"Fonctionnalités", nav_training:"Formation", nav_pricing:"Tarifs", nav_cta:"Essai gratuit", theme_label:"Thème",
-      intro_skip:"Passer", intro_hint:"Cliquez sur le dossier pour l'ouvrir", intro_doc_title:"Analyse financière", intro_tab:"DOSSIER", intro_exec:"Solide et bien capitalisée — aucun signal d'alerte. La vraie marge de progrès : l'efficacité.",
+      intro_skip:"Passer", intro_hint:"Cliquez sur le dossier pour l'ouvrir", intro_doc_title:"Analyste financier", intro_tab:"DOSSIER", intro_sample:"Analyse exemple", intro_figures:"Chiffres vérifiés", intro_brandsub:"IA · Analyse financière vérifiée", intro_exec:"Solide et bien capitalisée — aucun signal d'alerte. La vraie marge de progrès : l'efficacité.",
       t_gm:"Marge brute", t_nm:"Marge nette", t_roe:"Rent. capitaux", t_roic:"Rent. capital investi", t_cur:"Liquidité générale", t_inv:"Rotation stocks", t_ccc:"Cycle de trésorerie", t_ni:"Résultat net",
       hero_eyebrow:"Analyse financière par IA · Calculs vérifiés", hero_h1a:"L'analyse financière", hero_h1b:"enfin fiable.",
       hero_sub:"Saisissez les chiffres. Un moteur testé calcule chaque ratio, marge et valorisation — puis Keel rédige le rapport digne d'un analyste. Aucun chiffre inventé. Jamais.",
@@ -790,7 +847,7 @@
       cta_h2:"Lancez votre première analyse.", cta_p:"Entraînez-vous gratuitement dans l'espace de formation, ou saisissez de vrais chiffres et obtenez un rapport digne d'un analyste en quelques secondes — vos deux premiers sont offerts.", cta_btn:"Commencer — 2 rapports gratuits",
       foot_note:"Gardez le cap sur vos finances · © 2026",
       nav_about:"À propos", nav_contact:"Contact",
-      dash_eye:"Votre tableau de bord", dash_h2:"Chaque chiffre, vivant et en un coup d'œil.", dash_lead:"Dès que votre rapport est prêt, Keel l'affiche comme un tableau de bord interactif — animé, précis et adapté à votre type d'activité.", dash_t1:"Vue d'ensemble", dash_t2:"Ratios", dash_t3:"Trésorerie", dash_live:"En direct · Acme Retail Co.", dash_s1:"du chiffre d'affaires", dash_s2:"solide", dash_s3:"sain", dash_rev:"Chiffre d'affaires par trimestre (QAR '000)", dash_comp:"Composition de la marge", dash_gm:"Marge brute", dash_cogs:"Coût des marchandises",
+      dash_eye:"Votre tableau de bord", dash_h2:"Chaque chiffre, vivant et en un coup d'œil.", dash_lead:"Dès que votre rapport est prêt, Keel l'affiche comme un tableau de bord interactif — animé, précis et adapté à votre type d'activité.", dash_t1:"Vue d'ensemble", dash_t2:"Ratios", dash_t3:"Trésorerie", dash_live:"En direct · Société exemple", dash_s1:"du chiffre d'affaires", dash_s2:"solide", dash_s3:"sain", dash_rev:"Chiffre d'affaires par trimestre (QAR '000)", dash_comp:"Composition de la marge", dash_gm:"Marge brute", dash_cogs:"Coût des marchandises", cf_op:"Exploitation", cf_inv:"Investissement", cf_fin:"Financement", cf_net:"Variation nette de trésorerie", cf_unit:"QAR '000", rt_quick:"Liquidité réduite", rt_de:"Dette / capitaux",
       about_eye:"Faites connaissance", about_h2:"Créé par des gens fatigués de deviner.", about_lead:"Keel existe pour une seule raison : une analyse financière sur laquelle agir sans douter des calculs. Nous séparons le travail en deux — du code testé effectue chaque calcul, et un analyste IA l'explique — pour que les chiffres soient toujours justes et le récit toujours clair.", about_p:"Nous concevons pour les dirigeants, les opérationnels et les analystes qui veulent des réponses en quelques minutes, dans leur langue, et à un niveau présentable devant une banque ou un conseil.", val1h:"La précision d'abord", val1p:"Chaque chiffre est produit par du code testé et rapproché — jamais inventé par un modèle.", val2h:"Un langage clair et honnête", val2p:"Sans jargon ni enjolivure. Si le bilan n'est pas équilibré, nous le disons — clairement.", val3h:"Conçu pour tous", val3p:"Anglais, français et arabe complets — avec les bons indicateurs pour le commerce, le SaaS, la restauration et plus.",
       contact_eye:"Contactez-nous", contact_h2:"Des questions ? Parlons-en.", c_name:"Votre nom", c_email:"E-mail", c_msg:"Message", c_send:"Envoyer le message", c_thanks:"Merci — votre application e-mail va s'ouvrir avec le message prêt à envoyer.", contact_side:"Vous préférez l'e-mail ou souhaitez une démo ? Écrivez-nous directement — nous répondons généralement sous un jour ouvré.", c_email_l:"E-mail", c_hours:"Heures de support : dim.–jeu., 9h00–18h00 (AST)",
       foot_terms:"Conditions", price_terms:"Voir les conditions d'abonnement",
@@ -799,7 +856,7 @@
     };
     var AR = {
       nav_how:"كيف يعمل", nav_caps:"الإمكانات", nav_training:"التدريب", nav_pricing:"الأسعار", nav_cta:"جرّب مجانًا", theme_label:"السمة",
-      intro_skip:"تخطّي", intro_hint:"انقر على الملف لفتحه", intro_doc_title:"التحليل المالي", intro_tab:"ملف", intro_exec:"مربحة وذات رأسمال جيد — لا مؤشرات خطر. الفرصة الحقيقية هي الكفاءة.",
+      intro_skip:"تخطّي", intro_hint:"انقر على الملف لفتحه", intro_doc_title:"محلّل مالي", intro_tab:"ملف", intro_sample:"تحليل نموذجي", intro_figures:"أرقام موثّقة", intro_brandsub:"ذكاء اصطناعي · تحليل مالي موثّق", intro_exec:"مربحة وذات رأسمال جيد — لا مؤشرات خطر. الفرصة الحقيقية هي الكفاءة.",
       t_gm:"هامش إجمالي", t_nm:"صافي الهامش", t_roe:"العائد على حقوق الملكية", t_roic:"العائد على رأس المال", t_cur:"التداول", t_inv:"دوران المخزون", t_ccc:"دورة النقد", t_ni:"صافي الدخل",
       hero_eyebrow:"تحليل مالي بالذكاء الاصطناعي · حسابات موثوقة", hero_h1a:"تحليلٌ مالي", hero_h1b:"يمكنك الوثوق به أخيرًا.",
       hero_sub:"أدخل الأرقام. محرّكٌ مُختبَر يحسب كل نسبة وهامش وتقييم — ثم يكتب Keel التقرير بمستوى محلل محترف. بلا أرقام مُختلَقة. أبدًا.",
@@ -841,7 +898,7 @@
       cta_h2:"شغّل تحليلك الأول.", cta_p:"تدرّب مجانًا في منطقة التدريب، أو أدخل أرقامًا حقيقية واحصل على تقرير بمستوى محلل في ثوانٍ — أول تقريرين علينا.", cta_btn:"ابدأ مجانًا — تقريران",
       foot_note:"حافظ على استقرار أموالك · © 2026",
       nav_about:"من نحن", nav_contact:"اتصل بنا",
-      dash_eye:"لوحة نتائجك", dash_h2:"كل رقم، حيّ وأمام عينك.", dash_lead:"بمجرد أن يجهز تقريرك، يعرضه Keel كلوحة تحكم تفاعلية — متحركة ودقيقة ومهيّأة لنوع نشاطك.", dash_t1:"نظرة عامة", dash_t2:"النسب", dash_t3:"التدفق النقدي", dash_live:"مباشر · شركة أكمي للتجزئة", dash_s1:"من الإيرادات", dash_s2:"قوي", dash_s3:"صحي", dash_rev:"الإيرادات حسب الربع (ألف ر.ق)", dash_comp:"تكوين الهامش", dash_gm:"الهامش الإجمالي", dash_cogs:"تكلفة البضاعة",
+      dash_eye:"لوحة نتائجك", dash_h2:"كل رقم، حيّ وأمام عينك.", dash_lead:"بمجرد أن يجهز تقريرك، يعرضه Keel كلوحة تحكم تفاعلية — متحركة ودقيقة ومهيّأة لنوع نشاطك.", dash_t1:"نظرة عامة", dash_t2:"النسب", dash_t3:"التدفق النقدي", dash_live:"مباشر · شركة نموذجية", dash_s1:"من الإيرادات", dash_s2:"قوي", dash_s3:"صحي", dash_rev:"الإيرادات حسب الربع (ألف ر.ق)", dash_comp:"تكوين الهامش", dash_gm:"الهامش الإجمالي", dash_cogs:"تكلفة البضاعة", cf_op:"التشغيل", cf_inv:"الاستثمار", cf_fin:"التمويل", cf_net:"صافي التغير في النقد", cf_unit:"ألف ر.ق", rt_quick:"السيولة السريعة", rt_de:"الدين / حقوق الملكية",
       about_eye:"من نحن", about_h2:"صُنع على يد من سئموا التخمين.", about_lead:"وُجد Keel لسبب واحد: تحليل مالي تتصرف بناءً عليه دون الشك في الحسابات. نقسم العمل إلى شقّين — شيفرة مُختبَرة تُجري كل حساب، ومحلل ذكاء اصطناعي يشرحه — لتكون الأرقام صحيحة دائمًا والسرد واضحًا دائمًا.", about_p:"نبني لأصحاب الأعمال والمشغّلين والمحللين الذين يريدون إجابات في دقائق، بلغتهم، وبمستوى يصلح لعرضه على بنك أو مجلس إدارة.", val1h:"الدقة أولًا", val1p:"كل رقم يُنتَج بشيفرة مُختبَرة ومطابَقة — لا يختلقه نموذج أبدًا.", val2h:"لغة واضحة وصادقة", val2p:"بلا مصطلحات ولا تجميل. إذا لم تتوازن الميزانية، نقولها — بوضوح.", val3h:"مصمَّم للجميع", val3p:"إنجليزية وفرنسية وعربية كاملة — مع المؤشرات المناسبة للتجزئة والبرمجيات والمطاعم وغيرها.",
       contact_eye:"اتصل بنا", contact_h2:"أسئلة؟ لنتحدث.", c_name:"اسمك", c_email:"البريد الإلكتروني", c_msg:"الرسالة", c_send:"إرسال الرسالة", c_thanks:"شكرًا — سيفتح تطبيق بريدك والرسالة جاهزة للإرسال.", contact_side:"تفضّل البريد أو تريد عرضًا توضيحيًا؟ راسلنا مباشرة — نردّ عادةً خلال يوم عمل واحد.", c_email_l:"البريد", c_hours:"ساعات الدعم: الأحد–الخميس، 9:00–18:00 (بتوقيت شبه الجزيرة)",
       foot_terms:"الشروط", price_terms:"اطّلع على شروط الاشتراك",
@@ -889,7 +946,7 @@
       root.style.setProperty('--accent-glow', rgba(rgb,.48));
       root.style.setProperty('--on-accent', lum(rgb)>.5 ? '#141210' : '#f5efe8');
       markOn('custom'); try{ localStorage.setItem('keel_pal','custom'); localStorage.setItem('keel_custom',hex); }catch(e){} }
-    var pal='orange', customHex=''; try{ pal=localStorage.getItem('keel_pal')||'orange'; customHex=localStorage.getItem('keel_custom')||''; }catch(e){}
+    var pal='navy', customHex=''; try{ pal=localStorage.getItem('keel_pal')||'navy'; customHex=localStorage.getItem('keel_custom')||''; }catch(e){}
     if(pal==='custom' && customHex){ if(colorInput) colorInput.value=customHex; applyCustom(customHex); } else { setPal(pal); }
     document.getElementById('palDock').addEventListener('click', function(e){ var b=e.target.closest('button[data-pal]'); if(!b) return;
       if(b.getAttribute('data-pal')==='custom'){ if(colorInput) colorInput.click(); } else { setPal(b.getAttribute('data-pal')); } });
@@ -929,6 +986,23 @@
         if(t.classList.contains('cu')){ runCount(t); io.unobserve(t);} else { if(!reduce) t.classList.add('io'); io.unobserve(t);} }); }, {threshold:.18, rootMargin:'0px 0px -8% 0px'});
       cu.forEach(function(e){io.observe(e);}); [].slice.call(document.querySelectorAll('.reveal')).forEach(function(e){io.observe(e);});
     } else { cu.forEach(function(e){ e.textContent=parseFloat(e.getAttribute('data-target')).toFixed(parseInt(e.getAttribute('data-dec')||'0',10)); }); }
+
+    /* ---------- dashboard tabs (Overview / Ratios / Cash flow) ---------- */
+    (function(){
+      var dtabs=[].slice.call(document.querySelectorAll('.dash-tabs span[data-dtab]'));
+      var dpanels=[].slice.call(document.querySelectorAll('.dash-panel[data-dpanel]'));
+      if(!dtabs.length) return;
+      function animatePanel(p){
+        [].slice.call(p.querySelectorAll('.cu')).forEach(function(el){ runCount(el); });
+        [].slice.call(p.querySelectorAll('.rbar i[data-w]')).forEach(function(i){ i.style.width='0'; requestAnimationFrame(function(){ i.style.width=i.getAttribute('data-w')+'%'; }); });
+        [].slice.call(p.querySelectorAll('.cf-bar[data-h]')).forEach(function(b){ b.style.height='0'; requestAnimationFrame(function(){ b.style.height=b.getAttribute('data-h')+'%'; }); });
+      }
+      function show(name){
+        dtabs.forEach(function(t){ t.classList.toggle('on', t.getAttribute('data-dtab')===name); });
+        dpanels.forEach(function(p){ var on=p.getAttribute('data-dpanel')===name; p.hidden=!on; if(on) animatePanel(p); });
+      }
+      dtabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.getAttribute('data-dtab')); }); });
+    })();
 
     /* ---------- anchors ---------- */
     document.addEventListener('click', function(e){ var a=e.target.closest && e.target.closest('a[href^="#"]'); if(!a) return;
