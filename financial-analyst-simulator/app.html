@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="A financial analyst training simulator and personal analysis system — practice on realistic case files, or bring your own client data into Pro Analyzing Mode.">
 <title>Keel — AI Financial Analysis</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='12' fill='%230e0d0c'/%3E%3Cpath d='M13 31 C14 21 19 14 30 11 C27.5 18 24.5 25 22 31 Z' fill='%23e28a4d'/%3E%3Ccircle cx='30' cy='11' r='2' fill='%23f2ad76'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='12' fill='%230a1120'/%3E%3Cpath d='M13 11 V31 H33' stroke='%234f8be6' stroke-width='2.3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Crect x='16.3' y='24' width='4' height='7' rx='1' fill='%234f8be6'/%3E%3Crect x='22.3' y='20.5' width='4' height='10.5' rx='1' fill='%234f8be6'/%3E%3Crect x='28.3' y='16.5' width='4' height='14.5' rx='1' fill='%234f8be6'/%3E%3Cpath d='M15 22 L21 18 L26 20.5 L32.5 13' stroke='%2386b3f2' stroke-width='2.3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M27.5 13 H32.5 V18' stroke='%2386b3f2' stroke-width='2.3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -334,6 +334,52 @@ table.ledger tr.indent td:first-child{ padding-left:20px; color:var(--paper-ink-
   font-size:11px; color:var(--green); display:flex; align-items:center; gap:5px;
 }
 
+/* ---------- Training: premium case-file grid ---------- */
+.tcase-hero{ margin-bottom:4px; }
+.tcase-eye{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--brass); margin-bottom:10px; }
+[dir="rtl"] .tcase-eye{ letter-spacing:normal; }
+.tcase-hero h1{ font-family:var(--serif); font-size:30px; color:var(--paper); }
+.tcase-hero .meta{ font-size:13.5px; color:var(--text-soft); max-width:70ch; margin-top:8px; line-height:1.6; }
+.tcase-stats{ display:flex; gap:24px; margin-top:16px; flex-wrap:wrap; }
+.tcase-stats span{ font-family:var(--mono); font-size:12px; color:var(--text-faint); }
+.tcase-stats b{ font-family:var(--serif); font-size:18px; color:var(--paper); margin-inline-end:5px; }
+.tgrid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; margin-top:24px; }
+.tcard{ position:relative; display:flex; flex-direction:column; min-height:188px; text-align:start; background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line); border-radius:16px; padding:20px 20px 18px; cursor:pointer; overflow:hidden; color:inherit; font:inherit;
+  transition:border-color .18s, transform .18s, box-shadow .18s; opacity:0; transform:translateY(12px); animation:tcardin .5s cubic-bezier(.2,.7,.3,1) forwards; animation-delay:calc(var(--i)*55ms); }
+@keyframes tcardin{ to{ opacity:1; transform:none; } }
+@media (prefers-reduced-motion:reduce){ .tcard{ animation:none; opacity:1; transform:none; } }
+.tcard:hover{ border-color:var(--brass-soft); transform:translateY(-4px); box-shadow:0 26px 50px -30px rgba(0,0,0,.8); }
+.tcard-bar{ position:absolute; inset-inline:0; top:0; height:3px; background:var(--brass); }
+.tcard.diff-beginner .tcard-bar{ background:var(--green); }
+.tcard.diff-intermediate .tcard-bar{ background:var(--brass); }
+.tcard.diff-advanced .tcard-bar{ background:var(--red); }
+.tcard-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+.tcard-sector{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-faint); }
+[dir="rtl"] .tcard-sector{ letter-spacing:normal; }
+.tcard-diff{ font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:20px; border:1px solid var(--line); }
+.tcard-diff.diff-beginner{ color:var(--green); border-color:rgba(var(--green-rgb),.4); }
+.tcard-diff.diff-intermediate{ color:var(--brass); border-color:var(--brass-soft); }
+.tcard-diff.diff-advanced{ color:var(--red); border-color:rgba(var(--red-rgb),.5); }
+.tcard h3{ font-family:var(--serif); font-size:18px; color:var(--paper); margin-bottom:6px; }
+.tcard p{ font-size:12.8px; color:var(--text-soft); line-height:1.55; margin-bottom:16px; }
+.tcard-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
+.tcard-status{ font-family:var(--mono); font-size:11px; color:var(--text-faint); }
+.tcard-status.done{ color:var(--green); }
+.tcard-go{ font-family:var(--mono); font-size:11.5px; color:var(--brass); opacity:0; transform:translateX(-4px); transition:opacity .18s, transform .18s; }
+[dir="rtl"] .tcard-go{ transform:translateX(4px); }
+.tcard:hover .tcard-go{ opacity:1; transform:none; }
+/* Pro client cards reuse the training card look */
+.pcard{ cursor:pointer; }
+.pcard-active{ border-color:var(--green) !important; }
+.pcard-active .tcard-bar{ background:var(--green); }
+.pcard-del{ position:absolute; top:12px; inset-inline-end:12px; width:24px; height:24px; border-radius:6px; border:1px solid var(--line); background:var(--ink-2); color:var(--text-faint); font-size:15px; line-height:1; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .15s, color .15s, border-color .15s; z-index:2; padding:0; }
+.pcard:hover .pcard-del{ opacity:1; }
+.pcard-del:hover{ color:var(--red); border-color:var(--red); }
+.pcard-new{ align-items:center; justify-content:center; border-style:dashed; color:var(--text-soft); }
+.pcard-new:hover{ border-color:var(--brass); color:var(--brass); transform:translateY(-4px); }
+.pcard-new-in{ display:flex; flex-direction:column; align-items:center; gap:8px; font-family:var(--mono); font-size:13px; }
+.pcard-plus{ font-size:30px; color:var(--brass); line-height:1; }
+
 /* ---------- Tabs (secondary, workspace) ---------- */
 .subtabs{ display:flex; gap:6px; margin-bottom:20px; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:0;}
 .subtab{
@@ -590,7 +636,7 @@ html[dir="rtl"] .mobile-topbar{ flex-direction:row-reverse; }
   <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
-  <div class="mobile-brand">Keel</div>
+  <div class="mobile-brand" style="display:flex; align-items:center; gap:7px"><svg width="20" height="20" viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M13 11 V31 H33" stroke="var(--brass)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><rect x="16.3" y="24" width="4" height="7" rx="1" fill="var(--brass)"/><rect x="22.3" y="20.5" width="4" height="10.5" rx="1" fill="var(--brass)"/><rect x="28.3" y="16.5" width="4" height="14.5" rx="1" fill="var(--brass)"/><path d="M15 22 L21 18 L26 20.5 L32.5 13" stroke="var(--brass)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M27.5 13 H32.5 V18" stroke="var(--brass)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Keel</div>
 </div>
 <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
@@ -599,7 +645,7 @@ html[dir="rtl"] .mobile-topbar{ flex-direction:row-reverse; }
 
   <aside class="sidebar">
     <div class="brand">
-      <a href="index.html" class="mark" style="text-decoration:none; display:block"><span>K</span>eel</a>
+      <a href="index.html" class="mark" style="text-decoration:none; display:flex; align-items:center; gap:9px"><svg width="26" height="26" viewBox="0 0 44 44" fill="none" aria-hidden="true" style="flex:none"><rect x="1.5" y="1.5" width="41" height="41" rx="12" fill="var(--panel-2)" stroke="var(--line)"/><path d="M13 11 V31 H33" stroke="var(--brass)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><rect x="16.3" y="24" width="4" height="7" rx="1" fill="var(--brass)"/><rect x="22.3" y="20.5" width="4" height="10.5" rx="1" fill="var(--brass)"/><rect x="28.3" y="16.5" width="4" height="14.5" rx="1" fill="var(--brass)"/><path d="M15 22 L21 18 L26 20.5 L32.5 13" stroke="var(--brass)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M27.5 13 H32.5 V18" stroke="var(--brass)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span>K</span>eel</span></a>
       <div class="sub">AI Financial Analysis</div>
     </div>
 
@@ -2161,37 +2207,46 @@ function renderMain(){
 
 /* ---------- SELECT ---------- */
 function viewSelect(){
-  const cards = SCENARIOS.map(sc=>{
+  const total = SCENARIOS.length;
+  const doneCount = SCENARIOS.filter(sc=>{ const r=Store.data.scenarios[sc.id]; return r && r.completed; }).length;
+  const sectors = new Set(SCENARIOS.map(s=>s.sector)).size;
+  const cards = SCENARIOS.map((sc,idx)=>{
     const rec = Store.data.scenarios[sc.id];
     const done = rec && rec.completed;
+    const diff = sc.difficulty;
     return `
-    <div class="scenario-card" data-id="${sc.id}">
-      <div class="mini-stamp stamp-color-${sc.difficulty}">${sc.difficulty.slice(0,3).toUpperCase()}</div>
-      <span class="sector-tag">${esc(sc.sector)}</span>
+    <button class="tcard diff-${diff}" data-id="${sc.id}" style="--i:${idx}">
+      <span class="tcard-bar"></span>
+      <div class="tcard-top">
+        <span class="tcard-sector">${esc(sc.sector)}</span>
+        <span class="tcard-diff diff-${diff}">${esc(diff)}</span>
+      </div>
       <h3>${esc(sc.name)}</h3>
       <p>${esc(sc.tagline)}</p>
-      ${done ? '<div class="done-flag">&#10003; Session completed</div>' : '<div class="pill">Not started</div>'}
-    </div>`;
+      <div class="tcard-foot">
+        ${done ? '<span class="tcard-status done">&#10003; Completed</span>' : '<span class="tcard-status">Not started</span>'}
+        <span class="tcard-go">Open case &rarr;</span>
+      </div>
+    </button>`;
   }).join('');
 
   return `
-    <div class="case-header">
-      <div>
-        <h1>Choose a Case File</h1>
-        <div class="meta">Each case is a fictional company with real, internally consistent financial statements.<br>
-        Work through the financials, run the analysis, write your report, then handle the client's questions.</div>
+    <div class="tcase-hero">
+      <p class="tcase-eye">Free training · practice cases</p>
+      <h1>Choose a Case File</h1>
+      <div class="meta">Each case is a fictional company with real, internally consistent financial statements. Work the numbers, run the analysis, write the report, then field the client's questions.</div>
+      <div class="tcase-stats">
+        <span><b>${total}</b>cases</span>
+        <span><b>${sectors}</b>sectors</span>
+        <span><b>3</b>levels</span>
+        <span><b>${doneCount}</b>completed</span>
       </div>
     </div>
-    <div class="scenario-grid">${cards}</div>
-    <style>
-      .stamp-color-beginner{ color:var(--green); }
-      .stamp-color-intermediate{ color:var(--brass); }
-      .stamp-color-advanced{ color:var(--red); }
-    </style>
+    <div class="tgrid">${cards}</div>
   `;
 }
 function wireSelect(){
-  document.querySelectorAll('.scenario-card').forEach(card=>{
+  document.querySelectorAll('.tcard').forEach(card=>{
     card.addEventListener('click', ()=> selectScenario(card.dataset.id));
   });
 }
@@ -4065,26 +4120,39 @@ function generateBudgetTalkingPoints(client){
 
 function rcViewClients(){
   const ids = Store.data.rc.order.filter(id=>Store.data.rc.clients[id]);
-  const cards = ids.map(id=>{
+  const cards = ids.map((id,idx)=>{
     const c = normalizeRCClient(Store.data.rc.clients[id]);
     const active = Store.data.rc.activeId===id;
     return `
-    <div class="scenario-card" data-rcclient="${id}" style="${active?'border-color:var(--green);':''}">
-      <span class="sector-tag">${esc(c.sector||'No sector set')}</span>
+    <div class="tcard pcard${active?' pcard-active':''}" data-rcclient="${id}" style="--i:${idx}">
+      <span class="tcard-bar"></span>
+      <button class="pcard-del" data-rcdelete="${id}" title="Delete client" aria-label="Delete client">&times;</button>
+      <div class="tcard-top">
+        <span class="tcard-sector">${esc(c.sector||'No sector set')}</span>
+        ${active?'<span class="tcard-diff" style="color:var(--green);border-color:rgba(var(--green-rgb),.4)">Active</span>':''}
+      </div>
       <h3>${esc(c.name)}</h3>
       <p>${esc(c.years[0])} vs ${esc(c.years[1])} &middot; Updated ${new Date(c.updatedAt).toLocaleDateString()}</p>
-      ${active?'<div class="done-flag">&#10003; Active client</div>':'<div class="pill">Select</div>'}
-      <button class="btn small ghost" data-rcdelete="${id}" style="margin-top:10px;">Delete</button>
+      <div class="tcard-foot">
+        <span class="tcard-status${active?' done':''}">${active?'&#10003; Active client':'Select'}</span>
+        <span class="tcard-go">Open &rarr;</span>
+      </div>
     </div>`;
   }).join('');
   return `
-    <div class="scenario-grid">
-      ${cards}
-      <div class="scenario-card" id="rcNewClientCard" style="display:flex;align-items:center;justify-content:center;text-align:center;border-style:dashed;">
-        <div><div style="font-size:28px;color:var(--brass);margin-bottom:8px;">+</div>New Client</div>
-      </div>
+    <div class="tcase-hero">
+      <p class="tcase-eye">Your clients</p>
+      <h1>Client workspace</h1>
+      <div class="meta">Each client is your own company to analyze — real numbers, the same engine used across Keel. Select one to enter or upload data, or create a new one.</div>
+      <div class="tcase-stats"><span><b>${ids.length}</b>${ids.length===1?'client':'clients'}</span></div>
     </div>
-    ${ids.length===0?'<div class="lesson-box">Create your first client to start entering or uploading real financial data.</div>':''}
+    <div class="tgrid">
+      ${cards}
+      <button class="tcard pcard-new" id="rcNewClientCard" style="--i:${ids.length}">
+        <div class="pcard-new-in"><span class="pcard-plus">+</span><span>New client</span></div>
+      </button>
+    </div>
+    ${ids.length===0?'<div class="lesson-box" style="margin-top:18px;">Create your first client to start entering or uploading real financial data.</div>':''}
   `;
 }
 
