@@ -269,32 +269,58 @@
   .pal-custom{background:conic-gradient(from 140deg,#e0894c,#59c58f,#6ea8d8,#cf8fb6,#e0894c)}
   .pal-dock input[type="color"]{position:absolute; width:1px; height:1px; padding:0; margin:0; opacity:0; pointer-events:none; border:0}
 
-  /* intro / home cover */
-  .intro{position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:26px; text-align:center; padding:24px;
-    background:radial-gradient(1200px 820px at 50% 28%, var(--panel), var(--ink) 72%); transition:opacity .8s ease}
+  /* intro / home — a closed CASE FILE that opens on click */
+  .intro{position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:30px; text-align:center; padding:24px;
+    background:radial-gradient(1200px 820px at 50% 28%, var(--panel), var(--ink) 72%); transition:opacity .7s ease; perspective:1500px}
   .intro::after{content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(720px 420px at 50% 30%, var(--accent-soft), transparent 62%)}
   .intro.opening{opacity:0; pointer-events:none}
   .intro[hidden]{display:none}
-  .cover-doc{position:relative; z-index:1; cursor:pointer; width:min(430px,86vw); background:linear-gradient(180deg,#fff,var(--paper)); color:var(--paper-ink); border-radius:14px; padding:30px 30px 26px; text-align:start;
-    box-shadow:10px 12px 0 -2px var(--paper-2), 0 60px 100px -38px rgba(0,0,0,.8), 0 0 0 1px rgba(0,0,0,.05); transform-origin:center;
-    transition:transform .95s cubic-bezier(.72,0,.28,1), opacity .7s ease; animation:bob 4.6s ease-in-out infinite}
-  .cover-doc:focus-visible{outline:3px solid var(--accent-hi); outline-offset:5px}
-  .intro.opening .cover-doc{transform:scale(12); opacity:0; animation:none}
-  .cd-top{display:flex; align-items:center; justify-content:space-between}
-  .cd-kicker{font-family:var(--font-mono); font-size:11px; letter-spacing:.24em; color:var(--paper-ink-soft)}
+  /* the file — a 3D stage holding the cover + the pages inside */
+  .cover-doc{position:relative; z-index:1; cursor:pointer; width:min(410px,84vw); height:min(524px,72vh); transform-style:preserve-3d; transform-origin:center;
+    transition:transform 1s cubic-bezier(.6,0,.15,1), opacity .55s ease; animation:bob 5s ease-in-out infinite}
+  .cover-doc:focus{outline:none}
+  .cover-doc:focus-visible .cd-cover{outline:3px solid var(--accent-hi); outline-offset:6px}
+  /* the analysis pages inside, revealed when the cover swings open */
+  .cd-inside{position:absolute; inset:0; border-radius:16px; background:linear-gradient(180deg,#fff,var(--paper)); color:var(--paper-ink);
+    padding:34px 30px 28px; text-align:start; display:flex; flex-direction:column; overflow:hidden;
+    box-shadow:0 60px 100px -40px rgba(0,0,0,.8), 0 0 0 1px rgba(0,0,0,.06)}
+  .cd-eye{font-family:var(--font-mono); font-size:10px; letter-spacing:.2em; color:var(--paper-ink-soft)}
+  [dir="rtl"] .cd-eye{letter-spacing:normal}
+  .cd-co2{font-family:var(--font-display); font-size:22px; color:var(--paper-ink); margin-top:6px}
+  .cd-rule{height:1px; background:linear-gradient(90deg,var(--paper-ink-soft),transparent); margin:14px 0; opacity:.45}
+  .cd-exec{font-size:13px; line-height:1.62; color:var(--paper-ink-soft); margin:0 0 4px}
+  /* the closed front cover — hinged on the inline-start edge */
+  .cd-cover{position:absolute; inset:0; z-index:2; border-radius:16px; transform-origin:left center; transform-style:preserve-3d; backface-visibility:hidden;
+    background:linear-gradient(150deg,var(--panel-2),var(--panel) 58%,var(--ink-2)); border:1px solid var(--line);
+    box-shadow:12px 14px 0 -3px var(--paper-2), 0 60px 100px -38px rgba(0,0,0,.82), inset 0 1px 0 var(--hair);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:34px; color:var(--text);
+    transition:transform 1s cubic-bezier(.6,0,.15,1), box-shadow .9s ease}
+  [dir="rtl"] .cd-cover{transform-origin:right center}
+  .cd-cover::before{content:""; position:absolute; inset-inline-start:0; top:0; bottom:0; width:8px; border-radius:16px 0 0 16px; background:linear-gradient(180deg,var(--accent-hi),var(--accent) 45%,var(--accent-lo))}
+  [dir="rtl"] .cd-cover::before{border-radius:0 16px 16px 0}
+  .cd-tab{position:absolute; top:-15px; inset-inline-start:40px; height:19px; padding:0 15px; border-radius:8px 8px 0 0; background:linear-gradient(180deg,var(--accent-hi),var(--accent));
+    color:var(--on-accent); font-family:var(--font-mono); font-size:9.5px; font-weight:600; letter-spacing:.18em; display:flex; align-items:center}
+  [dir="rtl"] .cd-tab{letter-spacing:normal}
+  .cd-mark{width:62px; height:62px}
+  .cd-kicker{font-family:var(--font-mono); font-size:11px; letter-spacing:.34em; color:var(--accent-hi)}
   [dir="rtl"] .cd-kicker{letter-spacing:normal}
-  .cd-seal{width:26px; height:26px; border-radius:50%; border:1.5px solid var(--paper-ink-soft); color:var(--paper-ink-soft); display:flex; align-items:center; justify-content:center; font-size:12px}
-  .cd-title{font-family:var(--font-display); font-size:23px; margin-top:14px; color:var(--paper-ink)}
-  .cd-co{font-family:var(--font-mono); font-size:12px; color:var(--paper-ink-soft); margin-top:2px}
-  .cd-spark{margin-top:16px}
-  .cd-rows{margin-top:14px; display:grid; gap:8px}
-  .cd-row{display:flex; justify-content:space-between; font-size:12.5px; color:var(--paper-ink-soft); border-bottom:1px dotted rgba(35,42,47,.2); padding-bottom:6px}
-  .cd-row b{font-family:var(--font-mono); color:#2b343d; font-weight:700; font-variant-numeric:tabular-nums}
+  .cd-title{font-family:var(--font-display); font-size:29px; line-height:1.08; color:var(--text); margin:0}
+  .cd-co{font-family:var(--font-mono); font-size:12px; color:var(--text-dim); letter-spacing:.05em}
+  .cd-seal{margin-top:8px; width:40px; height:40px; border-radius:50%; border:1.5px solid var(--line); color:var(--accent-hi); display:flex; align-items:center; justify-content:center; font-size:15px}
+  .cd-rows{margin-top:auto; display:grid; gap:8px; width:100%}
+  .cd-row{display:flex; justify-content:space-between; font-size:12.5px; color:var(--paper-ink-soft); border-bottom:1px dotted rgba(35,42,47,.22); padding-bottom:6px}
+  .cd-row b{font-family:var(--font-mono); color:var(--pos-ink); font-weight:700; font-variant-numeric:tabular-nums}
+  /* open states: cover swings open, then the whole file zooms toward you */
+  .intro.open-file .cover-doc{animation:none}
+  .intro.open-file .cd-cover{transform:rotateY(-124deg); box-shadow:0 40px 80px -30px rgba(0,0,0,.5)}
+  [dir="rtl"] .intro.open-file .cd-cover{transform:rotateY(124deg)}
+  .intro.opening .cover-doc{transform:translateZ(560px) scale(1.4); opacity:0; animation:none}
   .open-hint{font-family:var(--font-mono); font-size:13px; letter-spacing:.06em; color:var(--text-dim); display:inline-flex; align-items:center; gap:.5em; animation:pulse 2.2s ease-in-out infinite}
   [dir="rtl"] .open-hint{letter-spacing:normal}
   .open-hint .ring{width:22px; height:22px; border-radius:50%; border:1.5px solid var(--text); display:inline-flex; align-items:center; justify-content:center; color:var(--text)}
-  .intro-skip{position:absolute; top:calc(18px + env(safe-area-inset-top,0px)); inset-inline-end:20px; background:transparent; border:1px solid var(--line); color:var(--text-dim); font-family:var(--font-mono); font-size:12px; border-radius:8px; padding:6px 12px; cursor:pointer; z-index:2}
+  .intro-skip{position:absolute; top:calc(18px + env(safe-area-inset-top,0px)); inset-inline-end:20px; background:transparent; border:1px solid var(--line); color:var(--text-dim); font-family:var(--font-mono); font-size:12px; border-radius:8px; padding:6px 12px; cursor:pointer; z-index:4}
   .intro-skip:hover{border-color:var(--accent); color:var(--accent-hi)}
+  .intro.open-file .open-hint{opacity:0; transition:opacity .3s}
   .intro.opening .open-hint, .intro.opening .intro-skip{opacity:0; transition:opacity .3s}
   main{opacity:1}
   main.enter{animation:enterZoom 1s .05s ease both}
@@ -410,22 +436,35 @@
 <!-- ===== INTRO / HOME ===== -->
 <div class="intro" id="intro">
   <button class="intro-skip" id="introSkip" type="button" data-i18n="intro_skip">Skip</button>
-  <div class="cover-doc" id="coverDoc" role="button" tabindex="0" aria-label="Open the report">
-    <div class="cd-top"><span class="cd-kicker">KEEL</span><span class="cd-seal">◆</span></div>
-    <div class="cd-title" data-i18n="intro_doc_title">Financial Analysis Report</div>
-    <div class="cd-co" data-i18n="rep_co">Acme Retail Co.</div>
-    <div class="cd-spark">
-      <svg viewBox="0 0 360 70" width="100%" height="56" fill="none" aria-hidden="true">
-        <path d="M4,58 L52,52 L100,56 L148,40 L196,44 L244,26 L292,30 L356,10" stroke="#3f4a50" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="356" cy="10" r="4" fill="#3f4a50"/>
-      </svg>
+  <div class="cover-doc" id="coverDoc" role="button" tabindex="0" aria-label="Open the case file">
+    <!-- the analysis pages inside, revealed when the file opens -->
+    <div class="cd-inside" aria-hidden="true">
+      <div class="cd-eye" data-i18n="rep_eye">Analysis · Retail</div>
+      <div class="cd-co2" data-i18n="rep_co">Acme Retail Co.</div>
+      <div class="cd-rule"></div>
+      <p class="cd-exec" data-i18n="intro_exec">Solidly profitable, well-capitalized — no red flags. The real opportunity is efficiency.</p>
+      <div class="cd-rows">
+        <div class="cd-row"><span data-i18n="rep_r1">Net margin</span><b>9.75%</b></div>
+        <div class="cd-row"><span data-i18n="rep_r2">Return on equity</span><b>24.38%</b></div>
+        <div class="cd-row"><span data-i18n="rep_r3">Current ratio</span><b>2.0×</b></div>
+      </div>
     </div>
-    <div class="cd-rows">
-      <div class="cd-row"><span data-i18n="rep_r1">Net margin</span><b>9.75%</b></div>
-      <div class="cd-row"><span data-i18n="rep_r2">Return on equity</span><b>24.38%</b></div>
+    <!-- the closed front cover of the file -->
+    <div class="cd-cover">
+      <span class="cd-tab" data-i18n="intro_tab">CASE FILE</span>
+      <svg class="cd-mark" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+        <rect x="1.5" y="1.5" width="41" height="41" rx="12" fill="var(--panel)" stroke="var(--line)"/>
+        <path d="M13 31 C14 21 19 14 30 11 C27.5 18 24.5 25 22 31 Z" fill="var(--accent)"/>
+        <path d="M11 31.5 q11 3 22 0" stroke="var(--line)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <circle cx="30" cy="11" r="1.9" fill="var(--accent-hi)"/>
+      </svg>
+      <span class="cd-kicker">KEEL</span>
+      <h2 class="cd-title" data-i18n="intro_doc_title">Financial Analysis</h2>
+      <span class="cd-co" data-i18n="rep_co">Acme Retail Co.</span>
+      <span class="cd-seal">◆</span>
     </div>
   </div>
-  <p class="open-hint"><span class="ring">▸</span><span data-i18n="intro_hint">Click the report to open</span></p>
+  <p class="open-hint"><span class="ring">▸</span><span data-i18n="intro_hint">Click the file to open</span></p>
 </div>
 
 <!-- ===== PALETTE DOCK ===== -->
@@ -455,6 +494,7 @@
     <nav class="nav-links">
       <a href="#how" data-i18n="nav_how">How it works</a>
       <a href="#capabilities" data-i18n="nav_caps">Capabilities</a>
+      <a href="app.html" data-i18n="nav_training">Training</a>
       <a href="#pricing" data-i18n="nav_pricing">Pricing</a>
       <a href="#about" data-i18n="nav_about">About</a>
       <a href="#contact" data-i18n="nav_contact">Contact</a>
@@ -464,7 +504,7 @@
       <button type="button" data-lang="fr">FR</button>
       <button type="button" data-lang="ar">ع</button>
     </div>
-    <a class="btn btn-primary nav-cta" href="app.html" data-i18n="nav_cta">Try free</a>
+    <a class="btn btn-primary nav-cta" href="login.html" data-i18n="nav_cta">Try free</a>
   </div>
 </div></header>
 
@@ -480,8 +520,8 @@
       <h1><span class="hl"><span class="hl-in" data-i18n="hero_h1a">Financial analysis</span></span><span class="hl"><em class="hl-in" data-i18n="hero_h1b">you can finally trust.</em></span></h1>
       <p class="hero-sub" data-i18n="hero_sub">Enter the figures. A tested engine computes every ratio, margin, and valuation — then Keel writes the analyst-grade report. No guessed numbers. Ever.</p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="app.html" data-i18n="hero_cta1">Analyze a company</a>
-        <a class="btn btn-ghost" href="#how" data-i18n="hero_cta2">See how it works</a>
+        <a class="btn btn-primary" href="login.html" data-i18n="hero_cta1">Analyze a company</a>
+        <a class="btn btn-ghost" href="app.html" data-i18n="hero_cta2b">Free training</a>
       </div>
       <div><span class="free-pill"><span class="dot"></span><span data-i18n="hero_free">Start free — 2 reports, no card.</span></span></div>
       <p class="hero-trust"><b>20+</b> <span data-i18n="hero_trust">ratios · CapEx vs OpEx · DCF / NPV / IRR · 6 business types</span></p>
@@ -596,7 +636,7 @@
       <p class="eyebrow" data-i18n="del_eye">The deliverable</p>
       <h2 data-i18n="del_h2">A report you'd pay an analyst for.</h2>
       <p class="lead" data-i18n="del_lead">Executive summary, a full profitability / liquidity / solvency / efficiency breakdown, CapEx & OpEx notes, key risks, and prioritized recommendations — in plain language, grounded entirely in verified numbers.</p>
-      <div style="margin-top:24px"><a class="btn btn-primary" href="app.html" data-i18n="del_cta">Generate a report</a></div>
+      <div style="margin-top:24px"><a class="btn btn-primary" href="login.html" data-i18n="del_cta">Generate a report</a></div>
     </div>
   </div></section>
 
@@ -605,16 +645,16 @@
     <div class="price-grid">
       <div class="tier free reveal"><span class="tag" data-i18n="free_tag">Start here</span><div class="tname" data-i18n="free_name">Free</div><div class="price"><span class="amt">$0</span></div><div class="cap-line" data-i18n="free_cap">2 reports to try</div>
         <ul><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="free_f1">Full AI analysis</span></li><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="free_f2">No card required</span></li><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="free_f3">Free training & practice tests</span></li></ul>
-        <a class="btn btn-primary" href="app.html" data-i18n="free_cta">Start free</a></div>
+        <a class="btn btn-primary" href="login.html?plan=free" data-i18n="free_cta">Start free</a></div>
       <div class="tier reveal"><div class="tname" data-i18n="basic_name">Basic</div><div class="price"><span class="amt">$5</span><span class="per" data-i18n="per">/ month</span></div><div class="cap-line" data-i18n="basic_cap">10 reports / month</div>
         <ul><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="basic_f1">Full AI analysis</span></li><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="basic_f2">All ratios & valuation</span></li><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="basic_f3">PDF & Excel export</span></li></ul>
-        <a class="btn btn-ghost" href="app.html" data-i18n="basic_cta">Choose Basic</a></div>
+        <a class="btn btn-ghost" href="login.html?plan=basic" data-i18n="basic_cta">Choose Basic</a></div>
       <div class="tier pop reveal"><span class="tag" data-i18n="pro_badge">Most popular</span><div class="tname" data-i18n="pro_name">Pro</div><div class="price"><span class="amt">$15</span><span class="per" data-i18n="per">/ month</span></div><div class="cap-line" data-i18n="pro_cap">40 reports / month</div>
         <ul><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="pro_f1">Everything in Basic</span></li><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="pro_f2">All 6 business-type templates</span></li><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="pro_f3">Priority analysis</span></li></ul>
-        <a class="btn btn-primary" href="app.html" data-i18n="pro_cta">Choose Pro</a></div>
+        <a class="btn btn-primary" href="login.html?plan=pro" data-i18n="pro_cta">Choose Pro</a></div>
       <div class="tier reveal"><div class="tname" data-i18n="unl_name">Unlimited</div><div class="price"><span class="amt">$40</span><span class="per" data-i18n="per">/ month</span></div><div class="cap-line" data-i18n="unl_cap">Unlimited reports*</div>
         <ul><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="unl_f1">Everything in Pro</span></li><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="unl_f2">No monthly cap (fair use)</span></li><li><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="unl_f3">Bulk analysis</span></li></ul>
-        <a class="btn btn-ghost" href="app.html" data-i18n="unl_cta">Go Unlimited</a></div>
+        <a class="btn btn-ghost" href="login.html?plan=unlimited" data-i18n="unl_cta">Go Unlimited</a></div>
     </div>
   </div></section>
 
@@ -655,7 +695,7 @@
   <section class="wrap"><div class="cta-band reveal">
     <h2 data-i18n="cta_h2">Run your first analysis.</h2>
     <p data-i18n="cta_p">Practice free in the training area, or drop in real financials and get an analyst-grade report in seconds — your first two are on us.</p>
-    <a class="btn btn-primary" href="app.html" data-i18n="cta_btn">Start free — 2 reports</a>
+    <a class="btn btn-primary" href="login.html" data-i18n="cta_btn">Start free — 2 reports</a>
   </div></section>
 </main>
 
@@ -706,12 +746,12 @@
 
     /* ---------- i18n (EN captured from DOM; FR + AR dictionaries) ---------- */
     var FR = {
-      nav_how:"Comment ça marche", nav_caps:"Fonctionnalités", nav_pricing:"Tarifs", nav_cta:"Essai gratuit", theme_label:"Thème",
-      intro_skip:"Passer", intro_hint:"Cliquez sur le rapport pour l'ouvrir", intro_doc_title:"Rapport d'analyse financière",
+      nav_how:"Comment ça marche", nav_caps:"Fonctionnalités", nav_training:"Formation", nav_pricing:"Tarifs", nav_cta:"Essai gratuit", theme_label:"Thème",
+      intro_skip:"Passer", intro_hint:"Cliquez sur le dossier pour l'ouvrir", intro_doc_title:"Analyse financière", intro_tab:"DOSSIER", intro_exec:"Solide et bien capitalisée — aucun signal d'alerte. La vraie marge de progrès : l'efficacité.",
       t_gm:"Marge brute", t_nm:"Marge nette", t_roe:"Rent. capitaux", t_roic:"Rent. capital investi", t_cur:"Liquidité générale", t_inv:"Rotation stocks", t_ccc:"Cycle de trésorerie", t_ni:"Résultat net",
       hero_eyebrow:"Analyse financière par IA · Calculs vérifiés", hero_h1a:"L'analyse financière", hero_h1b:"enfin fiable.",
       hero_sub:"Saisissez les chiffres. Un moteur testé calcule chaque ratio, marge et valorisation — puis Keel rédige le rapport digne d'un analyste. Aucun chiffre inventé. Jamais.",
-      hero_cta1:"Analyser une entreprise", hero_cta2:"Voir comment ça marche", hero_free:"Commencez gratuitement — 2 rapports, sans carte.",
+      hero_cta1:"Analyser une entreprise", hero_cta2:"Voir comment ça marche", hero_cta2b:"Formation gratuite", hero_free:"Commencez gratuitement — 2 rapports, sans carte.",
       hero_trust:"ratios · CapEx / OpEx · DCF / VAN / TRI · 6 types d'activité",
       chart_title:"Tendance du chiffre d'affaires et des marges", chart_tag:"▲ en hausse",
       kpi_nm:"Marge nette", kpi_roe:"Rentabilité des capitaux propres", kpi_cur:"Liquidité générale",
@@ -758,12 +798,12 @@
       kbot_open:"Demander à Keel", kbot_status:"● Assistant · en ligne"
     };
     var AR = {
-      nav_how:"كيف يعمل", nav_caps:"الإمكانات", nav_pricing:"الأسعار", nav_cta:"جرّب مجانًا", theme_label:"السمة",
-      intro_skip:"تخطّي", intro_hint:"انقر على التقرير لفتحه", intro_doc_title:"تقرير التحليل المالي",
+      nav_how:"كيف يعمل", nav_caps:"الإمكانات", nav_training:"التدريب", nav_pricing:"الأسعار", nav_cta:"جرّب مجانًا", theme_label:"السمة",
+      intro_skip:"تخطّي", intro_hint:"انقر على الملف لفتحه", intro_doc_title:"التحليل المالي", intro_tab:"ملف", intro_exec:"مربحة وذات رأسمال جيد — لا مؤشرات خطر. الفرصة الحقيقية هي الكفاءة.",
       t_gm:"هامش إجمالي", t_nm:"صافي الهامش", t_roe:"العائد على حقوق الملكية", t_roic:"العائد على رأس المال", t_cur:"التداول", t_inv:"دوران المخزون", t_ccc:"دورة النقد", t_ni:"صافي الدخل",
       hero_eyebrow:"تحليل مالي بالذكاء الاصطناعي · حسابات موثوقة", hero_h1a:"تحليلٌ مالي", hero_h1b:"يمكنك الوثوق به أخيرًا.",
       hero_sub:"أدخل الأرقام. محرّكٌ مُختبَر يحسب كل نسبة وهامش وتقييم — ثم يكتب Keel التقرير بمستوى محلل محترف. بلا أرقام مُختلَقة. أبدًا.",
-      hero_cta1:"حلّل شركة", hero_cta2:"شاهد كيف يعمل", hero_free:"ابدأ مجانًا — تقريران، بدون بطاقة.",
+      hero_cta1:"حلّل شركة", hero_cta2:"شاهد كيف يعمل", hero_cta2b:"تدريب مجاني", hero_free:"ابدأ مجانًا — تقريران، بدون بطاقة.",
       hero_trust:"نسبة · النفقات الرأسمالية والتشغيلية · التدفقات المخصومة · 6 أنواع أعمال",
       chart_title:"اتجاه الإيرادات والهوامش", chart_tag:"▲ في ارتفاع",
       kpi_nm:"صافي الهامش", kpi_roe:"العائد على حقوق الملكية", kpi_cur:"نسبة التداول",
@@ -859,10 +899,13 @@
     var intro=document.getElementById('intro'), cover=document.getElementById('coverDoc'), skip=document.getElementById('introSkip'), mainEl=document.querySelector('main');
     try{ root.style.overflow='hidden'; }catch(e){}
     var opened=false;
+    function finishIntro(){ intro.hidden=true; try{ root.style.overflow=''; }catch(e){} }
     function openIt(){ if(opened) return; opened=true;
-      if(!reduce){ mainEl.classList.add('enter'); mainEl.classList.add('reveal-h1'); intro.classList.add('opening'); }
-      var delay = reduce?40:900;
-      setTimeout(function(){ intro.hidden=true; try{ root.style.overflow=''; }catch(e){} }, delay);
+      mainEl.classList.add('enter'); mainEl.classList.add('reveal-h1');
+      if(reduce){ finishIntro(); return; }
+      intro.classList.add('open-file');                                   // 1) cover swings open
+      setTimeout(function(){ intro.classList.add('opening'); }, 760);      // 2) zoom into the file + fade
+      setTimeout(finishIntro, 1480);                                       // 3) reveal the landing
     }
     cover.addEventListener('click', openIt);
     cover.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openIt(); } });

@@ -573,6 +573,7 @@ html[dir="rtl"] .mobile-topbar{ flex-direction:row-reverse; }
     <nav class="tabs">
       <div class="tab-group-label" data-i18n="nav.proMode">Pro Analyzing Mode</div>
       <button class="tab-btn rc-tab-btn" data-view="rc"><span class="tab-ico">&#9673;</span> <span data-i18n="nav.rc">RC Realcount Analysis</span></button>
+      <div id="keelUserChip" style="display:none; margin:2px 0 6px; padding:8px 10px; border:1px solid rgba(79,184,126,.35); border-radius:8px; background:rgba(79,184,126,.10); font-size:11px; line-height:1.55; color:#cfe9db;"></div>
 
       <div class="tab-group-label" data-i18n="nav.caseFile">Case File</div>
       <button class="tab-btn active" data-view="select">
@@ -1922,6 +1923,7 @@ function closeSidebar(){
 document.querySelectorAll('.tab-btn[data-view]').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     if(btn.disabled) return;
+    if(btn.dataset.view==='rc' && !keelRequirePro()) return;   // Pro Analyzing Mode requires an account
     State.view = btn.dataset.view;
     setActiveTab(State.view);
     markVisited(State.view);
@@ -1966,6 +1968,7 @@ function buildSearchIndex(){
     const c = Store.data.rc.clients[id];
     if(!c) return;
     idx.push({kind:t('search.client'), label:c.name, sub:c.sector||'', action:()=>{
+      if(!keelRequirePro()) return;
       Store.data.rc.activeId = id; Store.save();
       State.view='rc'; setActiveTab('rc'); rcTab='entry'; renderMain();
       closeSearch();
@@ -5678,6 +5681,45 @@ function wireRCUpload(client){
 }
 
 renderMain();
+
+/* ===================== Keel · Pro session gate ===================== */
+function keelGetUser(){ try{ return JSON.parse(localStorage.getItem('keel_user')||'null'); }catch(e){ return null; } }
+function keelRequirePro(){
+  if(keelGetUser()) return true;
+  location.href = 'login.html?next=' + encodeURIComponent('app.html#rc');
+  return false;
+}
+function keelSignOut(){
+  try{ localStorage.removeItem('keel_user'); }catch(e){}
+  if(State.view==='rc'){ State.view='select'; setActiveTab('select'); renderMain(); }
+  keelRenderUserChip();
+}
+function keelRenderUserChip(){
+  var chip=document.getElementById('keelUserChip'); if(!chip) return;
+  var u=keelGetUser();
+  if(u && u.email){
+    var plan=(u.plan||'free'); var planName=plan.charAt(0).toUpperCase()+plan.slice(1);
+    var who=u.name?String(u.name):u.email;
+    chip.style.display='block';
+    chip.innerHTML='<span style="color:#4fb87e;">&#9673;</span> '+who+
+      '<br><span style="opacity:.8">'+planName+' plan</span> · <a href="#" id="keelSignOutLink" style="color:#f2ad76; text-decoration:underline;">Sign out</a>';
+    var link=document.getElementById('keelSignOutLink');
+    if(link) link.addEventListener('click', function(e){ e.preventDefault(); keelSignOut(); });
+  } else { chip.style.display='none'; chip.innerHTML=''; }
+}
+(function keelBootPro(){
+  try{
+    var params=new URLSearchParams(location.search);
+    var up=params.get('upgraded');
+    var u=keelGetUser();
+    if(up && u && ['basic','pro','unlimited','free'].indexOf(up)>-1){ u.plan=up; try{ localStorage.setItem('keel_user', JSON.stringify(u)); }catch(e){} }
+    keelRenderUserChip();
+    if(location.hash==='#rc' || up){
+      if(keelGetUser()){ State.view='rc'; setActiveTab('rc'); rcTab='entry'; renderMain(); }
+      else { location.href='login.html?next='+encodeURIComponent('app.html#rc'); }
+    }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
