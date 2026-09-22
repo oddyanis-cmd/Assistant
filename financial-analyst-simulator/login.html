@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Sign in to Keel to run Pro financial analysis on your own companies — or pick a plan. Training stays free.">
+<meta name="theme-color" content="#0e0d0c">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='12' fill='%230e0d0c'/%3E%3Cpath d='M13 31 C14 21 19 14 30 11 C27.5 18 24.5 25 22 31 Z' fill='%23e28a4d'/%3E%3Ccircle cx='30' cy='11' r='2' fill='%23f2ad76'/%3E%3C/svg%3E">
+<title>Keel — Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --text:#f2ede6; --text-dim:#b4a998; --text-faint:#7a6f60;
+    --paper:#eef1f4; --paper-2:#dfe4ea; --paper-ink:#1b232d; --paper-ink-soft:#54606c;
+    --pos:#4fb87e; --pos-ink:#2f8a5b; --neg:#dc8467; --neg-ink:#b45638; --on-accent:#231506;
+    --nav-bg:rgba(10,8,6,.62); --chip-bg:rgba(12,10,7,.82);
+    --font-display:'Newsreader','Noto Kufi Arabic',Georgia,serif;
+    --font-body:'Inter','IBM Plex Sans Arabic',system-ui,-apple-system,sans-serif;
+    --font-mono:'IBM Plex Mono','IBM Plex Sans Arabic',ui-monospace,monospace;
+    --maxw:1080px; --gutter:24px; --r:18px; --r-sm:11px;
+    --hair:rgba(255,255,255,.07);
+    --shadow-1:inset 0 1px 0 var(--hair), 0 20px 42px -28px rgba(0,0,0,.72);
+    --shadow-2:inset 0 1px 0 var(--hair), 0 44px 84px -42px rgba(0,0,0,.78);
+    --ink:#0e0d0c; --ink-2:#151310; --panel:#1c1813; --panel-2:#241f18; --line:#39312a; --line-soft:#241e17;
+    --accent:#e28a4d; --accent-lo:#cb7a3c; --accent-hi:#f2ad76; --accent-soft:rgba(226,138,77,.13); --accent-glow:rgba(226,138,77,.48); --sand:#c9b79f;
+  }
+  :root[data-palette="midnight"]{ --ink:#080b12; --ink-2:#0c131e; --panel:#121b28; --panel-2:#182333; --line:#28313f; --line-soft:#19222e;
+    --accent:#6ea8d8; --accent-lo:#5892c4; --accent-hi:#a8d2f2; --accent-soft:rgba(110,168,216,.13); --accent-glow:rgba(110,168,216,.5); --sand:#aeb9c6;
+    --nav-bg:rgba(6,9,13,.62); --chip-bg:rgba(8,11,16,.82); }
+  :root[data-palette="onyx"]{ --ink:#0a0b0d; --ink-2:#101114; --panel:#16181c; --panel-2:#1e2127; --line:#30343b; --line-soft:#1e2127;
+    --accent:#c3ccd6; --accent-lo:#a7b1bd; --accent-hi:#e6ecf2; --accent-soft:rgba(195,204,214,.12); --accent-glow:rgba(195,204,214,.34); --sand:#9aa2ab;
+    --nav-bg:rgba(6,7,9,.62); --chip-bg:rgba(8,9,11,.82); }
+  :root[data-palette="plum"]{ --ink:#100a14; --ink-2:#160d1b; --panel:#1d1424; --panel-2:#28192f; --line:#392840; --line-soft:#22182a;
+    --accent:#cf8fb6; --accent-lo:#b877a0; --accent-hi:#e9b6d4; --accent-soft:rgba(207,143,182,.14); --accent-glow:rgba(207,143,182,.5); --sand:#c3b2c0;
+    --nav-bg:rgba(9,6,11,.62); --chip-bg:rgba(11,7,13,.82); }
+  :root[data-palette="emerald"]{ --ink:#06110d; --ink-2:#0a1712; --panel:#0f1e19; --panel-2:#152a22; --line:#25372e; --line-soft:#16271e;
+    --accent:#59c58f; --accent-lo:#43ac77; --accent-hi:#8fe0bd; --accent-soft:rgba(89,197,143,.13); --accent-glow:rgba(89,197,143,.46); --sand:#aec2b6;
+    --pos:#7fd6a6; --nav-bg:rgba(5,12,9,.62); --chip-bg:rgba(7,15,11,.82); }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0; background:var(--ink); color:var(--text); font-family:var(--font-body); font-size:16px; line-height:1.62; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; min-height:100vh}
+  body::before{content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px 520px at 82% -12%, var(--accent-soft), transparent 60%),
+      radial-gradient(820px 700px at -6% 108%, rgba(70,52,32,.16), transparent 62%),
+      linear-gradient(180deg, var(--ink), var(--ink-2))}
+  a{color:inherit; text-decoration:none}
+  h1,h2,h3,h4{margin:0; font-family:var(--font-display); font-weight:600; letter-spacing:-.02em; color:var(--text)}
+  p{margin:0}
+  img{max-width:100%}
+  .eyebrow{display:inline-flex; align-items:center; gap:.65em; font-family:var(--font-mono); font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent); font-weight:500}
+  .eyebrow::before{content:""; width:18px; height:1px; background:linear-gradient(90deg,var(--accent),transparent); flex:none}
+  [dir="rtl"] .eyebrow{letter-spacing:normal}
+
+  .btn{position:relative; display:inline-flex; align-items:center; justify-content:center; gap:.5em; font-family:var(--font-body); font-weight:600; font-size:15px; padding:.9em 1.5em; border-radius:var(--r-sm);
+    border:1px solid transparent; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:transform .2s cubic-bezier(.2,.7,.3,1), box-shadow .2s, background .2s, border-color .2s, color .2s}
+  .btn-primary{background:linear-gradient(180deg,var(--accent-hi),var(--accent)); color:var(--on-accent); box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 12px 28px -14px var(--accent-glow)}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 20px 42px -14px var(--accent-glow)}
+  .btn-ghost{background:rgba(255,255,255,.015); color:var(--text); border-color:var(--line)}
+  .btn-ghost:hover{border-color:var(--accent); color:var(--accent-hi); background:var(--accent-soft); transform:translateY(-2px)}
+  .btn:focus-visible{outline:2px solid var(--accent-hi); outline-offset:3px}
+
+  /* top bar */
+  .nav{position:sticky; top:0; z-index:50; backdrop-filter:blur(14px) saturate(1.2); background:var(--nav-bg); border-bottom:1px solid var(--line-soft)}
+  .nav-in{max-width:var(--maxw); margin:0 auto; padding-inline:var(--gutter); display:flex; align-items:center; justify-content:space-between; height:66px; gap:14px}
+  .brand{display:flex; align-items:center; gap:.55em; font-family:var(--font-display); font-size:21px; font-weight:600; white-space:nowrap}
+  .mark{width:32px; height:32px; flex:none; filter:drop-shadow(0 5px 12px var(--accent-glow))}
+  .nav-right{display:flex; align-items:center; gap:14px}
+  .back-link{font-size:13.5px; color:var(--text-dim)}
+  .back-link:hover{color:var(--accent-hi)}
+  .seg{display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; background:rgba(255,255,255,.02)}
+  .seg button{font-family:var(--font-mono); font-size:12px; color:var(--text-dim); background:transparent; border:0; padding:6px 10px; cursor:pointer; transition:.15s}
+  .seg button:hover{color:var(--text)}
+  .seg button+button{border-inline-start:1px solid var(--line)}
+  .seg button.on{background:var(--accent); color:var(--on-accent)}
+  @media(max-width:520px){ .back-link{display:none} }
+
+  /* layout */
+  .auth-wrap{position:relative; z-index:1; max-width:var(--maxw); margin:0 auto; padding:clamp(26px,5vw,58px) var(--gutter) 130px; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.12fr); gap:clamp(22px,4vw,50px); align-items:start}
+  @media(max-width:900px){ .auth-wrap{grid-template-columns:1fr} }
+
+  .auth-card{background:linear-gradient(180deg,var(--panel-2),var(--panel)); border:1px solid var(--line); border-radius:var(--r); padding:clamp(24px,3.4vw,38px); box-shadow:var(--shadow-2)}
+  .auth-card h1{font-size:clamp(24px,3vw,30px); line-height:1.1}
+  .auth-card .sub{color:var(--text-dim); font-size:14.5px; margin-top:8px}
+  .auth-tabs{display:flex; gap:6px; background:var(--ink-2); border:1px solid var(--line); border-radius:12px; padding:5px; margin:22px 0}
+  .auth-tabs button{flex:1; font-family:var(--font-body); font-weight:600; font-size:14px; color:var(--text-dim); background:transparent; border:0; border-radius:8px; padding:9px; cursor:pointer; transition:.15s}
+  .auth-tabs button.on{background:var(--accent); color:var(--on-accent)}
+  .field{margin-bottom:15px}
+  .field label{display:block; font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-faint); margin-bottom:7px}
+  [dir="rtl"] .field label{letter-spacing:normal}
+  .field input{width:100%; background:var(--ink-2); border:1px solid var(--line); border-radius:10px; padding:12px 14px; color:var(--text); font-family:var(--font-body); font-size:15px}
+  .field input:focus{outline:2px solid var(--accent-hi); outline-offset:1px; border-color:var(--accent)}
+  .auth-msg{min-height:18px; font-size:13px; color:var(--neg); margin:2px 0 8px}
+  .auth-msg.ok{color:var(--pos)}
+  .submit-btn{width:100%; margin-top:4px}
+  .chosen{display:none; align-items:center; gap:.55em; font-size:13px; color:var(--accent-hi); background:var(--accent-soft); border:1px solid var(--line); border-radius:10px; padding:9px 12px; margin-bottom:16px; font-family:var(--font-mono)}
+  .chosen.show{display:inline-flex}
+  .auth-note{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); margin-top:18px; line-height:1.65; border-top:1px solid var(--line-soft); padding-top:14px}
+  [dir="rtl"] .auth-note{font-family:var(--font-body)}
+
+  /* logged-in state */
+  .welcome{display:none}
+  .welcome.show{display:block}
+  .welcome .who{font-family:var(--font-mono); font-size:13px; color:var(--pos); margin-top:10px}
+  .link-btn{background:none; border:0; color:var(--accent-hi); cursor:pointer; font:inherit; text-decoration:underline; padding:0}
+
+  /* plans column */
+  .plans .eyebrow{margin-bottom:12px}
+  .plans h2{font-size:clamp(21px,2.6vw,26px)}
+  .plans .lead{color:var(--text-dim); font-size:14px; margin-top:8px; margin-bottom:20px}
+  .plan-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:560px){ .plan-grid{grid-template-columns:1fr} }
+  .tier{position:relative; background:var(--panel); border:1px solid var(--line); border-radius:var(--r); padding:22px 20px; display:flex; flex-direction:column; box-shadow:var(--shadow-1); transition:transform .2s, border-color .2s, box-shadow .2s}
+  .tier:hover{transform:translateY(-3px); border-color:var(--accent-lo)}
+  .tier.sel{border-color:var(--accent); box-shadow:var(--shadow-2), 0 34px 76px -48px var(--accent-glow)}
+  .tier .tag{align-self:flex-start; font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; padding:4px 9px; border-radius:20px; margin-bottom:10px; color:var(--on-accent); background:var(--accent)}
+  [dir="rtl"] .tier .tag{letter-spacing:normal}
+  .tier .tname{font-family:var(--font-display); font-size:18px}
+  .tier .price{margin:8px 0 1px; display:flex; align-items:baseline; gap:.15em}
+  .tier .price .amt{font-family:var(--font-display); font-size:36px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+  .tier .price .per{color:var(--text-faint); font-size:12.5px}
+  .tier .cap-line{color:var(--accent); font-family:var(--font-mono); font-size:12px; margin-bottom:13px}
+  .tier ul{list-style:none; padding:0; margin:0 0 16px; display:grid; gap:7px}
+  .tier li{display:flex; gap:.5em; font-size:12.8px; color:var(--text-dim)}
+  .tier li svg{flex:none; margin-top:3px; color:var(--accent)}
+  .tier .btn{width:100%; justify-content:center; margin-top:auto; font-size:13.5px; padding:.72em 1em}
+  .plan-terms{text-align:center; margin-top:16px; font-size:12.5px}
+  .plan-terms a{color:var(--text-dim); text-decoration:underline}
+  .plan-terms a:hover{color:var(--accent-hi)}
+
+  /* palette dock */
+  .pal-dock{position:fixed; z-index:60; bottom:calc(16px + env(safe-area-inset-bottom,0px)); inset-inline-end:16px;
+    display:flex; align-items:center; gap:8px; background:var(--chip-bg); border:1px solid var(--line); border-radius:24px; padding:8px 12px; backdrop-filter:blur(8px); box-shadow:inset 0 1px 0 var(--hair), 0 18px 34px -20px rgba(0,0,0,.8)}
+  .pal-dock .pl{font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint)}
+  .pal-dock button{width:20px; height:20px; border-radius:50%; border:2px solid transparent; cursor:pointer; padding:0; transition:transform .15s, border-color .15s; box-shadow:inset 0 1px 2px rgba(0,0,0,.35)}
+  .pal-dock button:hover{transform:scale(1.15)}
+  .pal-dock button.on{border-color:var(--text)}
+  .pal-custom{background:conic-gradient(from 140deg,#e0894c,#59c58f,#6ea8d8,#cf8fb6,#e0894c)}
+  .pal-dock input[type="color"]{position:absolute; width:1px; height:1px; padding:0; margin:0; opacity:0; pointer-events:none; border:0}
+  @media(max-width:560px){ .pal-dock .pl{display:none} }
+</style>
+</head>
+<body>
+
+<header class="nav"><div class="nav-in">
+  <a class="brand" href="index.html" aria-label="Keel">
+    <svg class="mark" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+      <rect x="1.5" y="1.5" width="41" height="41" rx="12" fill="var(--panel)" stroke="var(--line)"/>
+      <path d="M13 31 C14 21 19 14 30 11 C27.5 18 24.5 25 22 31 Z" fill="var(--accent)"/>
+      <path d="M11 31.5 q11 3 22 0" stroke="var(--line)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <circle cx="30" cy="11" r="1.9" fill="var(--accent-hi)"/>
+    </svg>
+    <span>Keel</span>
+  </a>
+  <div class="nav-right">
+    <a class="back-link" href="index.html" data-i18n="back">← Back to site</a>
+    <div class="seg" id="langSeg" role="group" aria-label="Language">
+      <button type="button" data-lang="en" class="on">EN</button>
+      <button type="button" data-lang="fr">FR</button>
+      <button type="button" data-lang="ar">ع</button>
+    </div>
+  </div>
+</div></header>
+
+<main class="auth-wrap">
+  <!-- ===== AUTH CARD ===== -->
+  <section class="auth-card">
+    <p class="eyebrow" data-i18n="eyebrow">Pro Analyzing Mode</p>
+
+    <!-- signed-out -->
+    <div id="signedOut">
+      <h1 data-i18n="title">Sign in to analyze your own company.</h1>
+      <p class="sub" data-i18n="sub">Pro Analyzing Mode is for your real clients and numbers. Create an account or sign in to continue. Training stays free — no account needed.</p>
+
+      <div class="chosen" id="chosenPlan"><span>◆</span><span id="chosenText"></span></div>
+
+      <div class="auth-tabs" role="tablist">
+        <button type="button" id="tabLogin" class="on" data-i18n="tab_login">Sign in</button>
+        <button type="button" id="tabSignup" data-i18n="tab_signup">Create account</button>
+      </div>
+
+      <form id="authForm" novalidate>
+        <div class="field" id="nameField" hidden>
+          <label for="fName" data-i18n="f_name">Full name</label>
+          <input id="fName" type="text" autocomplete="name" placeholder="Jane Analyst">
+        </div>
+        <div class="field">
+          <label for="fEmail" data-i18n="f_email">Email</label>
+          <input id="fEmail" type="email" autocomplete="email" placeholder="you@company.com" required>
+        </div>
+        <div class="field">
+          <label for="fPass" data-i18n="f_pass">Password</label>
+          <input id="fPass" type="password" autocomplete="current-password" placeholder="••••••••" required>
+        </div>
+        <p class="auth-msg" id="authMsg" role="alert"></p>
+        <button type="submit" class="btn btn-primary submit-btn" id="submitBtn" data-i18n="btn_login">Sign in</button>
+      </form>
+
+      <p class="auth-note" data-i18n="note">Front-end preview session — your details stay in this browser so you can walk the whole flow. Real accounts (secure sign-in) and verified billing are wired next.</p>
+    </div>
+
+    <!-- signed-in -->
+    <div id="signedIn" class="welcome">
+      <h1 data-i18n="welcome_h">You're signed in.</h1>
+      <p class="who" id="whoLine"></p>
+      <p class="sub" style="margin-top:14px" data-i18n="welcome_sub">Continue into Pro Analyzing Mode to create the company you want to analyze, or pick a plan.</p>
+      <button class="btn btn-primary submit-btn" style="margin-top:20px" id="continueBtn" data-i18n="btn_continue">Continue to Pro Analyzing Mode →</button>
+      <p class="auth-note"><button class="link-btn" id="signOutBtn" data-i18n="sign_out">Sign out</button></p>
+    </div>
+  </section>
+
+  <!-- ===== PLANS ===== -->
+  <section class="plans">
+    <p class="eyebrow" data-i18n="plans_eye">Plans</p>
+    <h2 data-i18n="plans_h">Training is free. Pro is where the work happens.</h2>
+    <p class="lead" data-i18n="plans_lead">Start free with 2 reports — no card. Upgrade any time as your client list grows.</p>
+    <div class="plan-grid">
+      <article class="tier" data-plan="free">
+        <span class="tag" data-i18n="free_tag">Start here</span>
+        <div class="tname" data-i18n="free_name">Free</div>
+        <div class="price"><span class="amt">$0</span></div>
+        <div class="cap-line" data-i18n="free_cap">2 reports to try</div>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="free_f1">Full AI analysis</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="free_f3">Free training & practice</span></li>
+        </ul>
+        <button class="btn btn-ghost choose" data-plan="free" data-i18n="choose_free">Choose Free</button>
+      </article>
+
+      <article class="tier" data-plan="basic">
+        <div class="tname" data-i18n="basic_name">Basic</div>
+        <div class="price"><span class="amt">$5</span><span class="per" data-i18n="per">/ month</span></div>
+        <div class="cap-line" data-i18n="basic_cap">10 reports / month</div>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="basic_f2">All ratios & valuation</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="basic_f3">PDF & Excel export</span></li>
+        </ul>
+        <button class="btn btn-ghost choose" data-plan="basic" data-i18n="choose_basic">Choose Basic</button>
+      </article>
+
+      <article class="tier" data-plan="pro">
+        <span class="tag" data-i18n="pro_badge">Most popular</span>
+        <div class="tname" data-i18n="pro_name">Pro</div>
+        <div class="price"><span class="amt">$15</span><span class="per" data-i18n="per">/ month</span></div>
+        <div class="cap-line" data-i18n="pro_cap">40 reports / month</div>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="pro_f2">All 6 business templates</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="pro_f3">Priority analysis</span></li>
+        </ul>
+        <button class="btn btn-primary choose" data-plan="pro" data-i18n="choose_pro">Choose Pro</button>
+      </article>
+
+      <article class="tier" data-plan="unlimited">
+        <div class="tname" data-i18n="unl_name">Unlimited</div>
+        <div class="price"><span class="amt">$40</span><span class="per" data-i18n="per">/ month</span></div>
+        <div class="cap-line" data-i18n="unl_cap">Unlimited reports*</div>
+        <ul>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="unl_f2">No monthly cap (fair use)</span></li>
+          <li><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="unl_f3">Bulk analysis</span></li>
+        </ul>
+        <button class="btn btn-ghost choose" data-plan="unlimited" data-i18n="choose_unl">Go Unlimited</button>
+      </article>
+    </div>
+    <p class="plan-terms"><a href="index.html#pricing" data-i18n="see_terms">See full pricing & subscription terms</a></p>
+  </section>
+</main>
+
+<!-- palette dock -->
+<div class="pal-dock" id="palDock" role="group" aria-label="Colour theme">
+  <span class="pl" data-i18n="theme_label">Theme</span>
+  <button data-pal="orange" style="background:#e28a4d" title="Amber (default)" aria-label="Amber"></button>
+  <button data-pal="midnight" style="background:#6ea8d8" title="Midnight Ice" aria-label="Midnight Ice"></button>
+  <button data-pal="emerald" style="background:#59c58f" title="Deep Emerald" aria-label="Deep Emerald"></button>
+  <button data-pal="plum" style="background:#cf8fb6" title="Royal Plum" aria-label="Royal Plum"></button>
+  <button data-pal="onyx" style="background:#c3ccd6" title="Onyx Platinum" aria-label="Onyx Platinum"></button>
+  <button data-pal="custom" class="pal-custom" title="Custom colour" aria-label="Choose a custom colour"></button>
+  <input type="color" id="palColor" value="#e28a4d" aria-label="Pick a custom colour" tabindex="-1">
+</div>
+
+<script>
+/* ============================================================
+   Keel — Stripe payment links
+   Paste your Stripe Payment Link URL for each paid plan below.
+   Leave a value empty to run that plan in DEMO mode (grants the
+   plan locally so you can test the full flow without charging).
+   In your Stripe Payment Link settings, set the post-payment
+   redirect ("After payment") to:  <your-site>/app.html?upgraded=<plan>
+   e.g.  https://financialanalysissimulator.vercel.app/app.html?upgraded=pro
+   ============================================================ */
+var KEEL_STRIPE_LINKS = {
+  basic:     "",   // e.g. https://buy.stripe.com/xxxxxxxxbasic
+  pro:       "",   // e.g. https://buy.stripe.com/xxxxxxxxpro
+  unlimited: ""    // e.g. https://buy.stripe.com/xxxxxxxxunlimited
+};
+
+(function(){
+  "use strict";
+  var root=document.documentElement;
+
+  /* ---------- i18n ---------- */
+  var FR={
+    back:"← Retour au site", eyebrow:"Mode Analyse Pro",
+    title:"Connectez-vous pour analyser votre entreprise.",
+    sub:"Le Mode Analyse Pro sert à vos vrais clients et chiffres. Créez un compte ou connectez-vous pour continuer. La formation reste gratuite — sans compte.",
+    tab_login:"Se connecter", tab_signup:"Créer un compte",
+    f_name:"Nom complet", f_email:"E-mail", f_pass:"Mot de passe",
+    btn_login:"Se connecter", btn_signup:"Créer le compte",
+    note:"Session de démonstration côté navigateur — vos informations restent dans ce navigateur pour parcourir tout le flux. Les comptes réels et la facturation vérifiée arrivent ensuite.",
+    welcome_h:"Vous êtes connecté.", welcome_sub:"Continuez vers le Mode Analyse Pro pour créer l'entreprise à analyser, ou choisissez un forfait.",
+    btn_continue:"Continuer vers le Mode Analyse Pro →", sign_out:"Se déconnecter",
+    plans_eye:"Forfaits", plans_h:"La formation est gratuite. Le Pro, c'est le travail réel.",
+    plans_lead:"Commencez gratuitement avec 2 rapports — sans carte. Améliorez à tout moment.",
+    free_tag:"Pour commencer", free_name:"Gratuit", free_cap:"2 rapports d'essai", free_f1:"Analyse IA complète", free_f3:"Formation & pratique gratuites",
+    basic_name:"Basic", basic_cap:"10 rapports / mois", basic_f2:"Tous les ratios & valorisation", basic_f3:"Export PDF & Excel",
+    pro_badge:"Le plus populaire", pro_name:"Pro", pro_cap:"40 rapports / mois", pro_f2:"6 modèles de secteur", pro_f3:"Analyse prioritaire",
+    unl_name:"Illimité", unl_cap:"Rapports illimités*", unl_f2:"Pas de plafond mensuel (usage équitable)", unl_f3:"Analyse en lot",
+    per:"/ mois", choose_free:"Choisir Gratuit", choose_basic:"Choisir Basic", choose_pro:"Choisir Pro", choose_unl:"Passer à Illimité",
+    see_terms:"Voir les tarifs & conditions d'abonnement", theme_label:"Thème",
+    chosen_free:"Forfait Gratuit sélectionné", chosen_basic:"Forfait Basic sélectionné — 5 $/mois", chosen_pro:"Forfait Pro sélectionné — 15 $/mois", chosen_unl:"Forfait Illimité sélectionné — 40 $/mois",
+    err_email:"Saisissez une adresse e-mail valide.", err_pass:"Le mot de passe doit contenir au moins 6 caractères.", err_name:"Saisissez votre nom."
+  };
+  var AR={
+    back:"→ العودة إلى الموقع", eyebrow:"وضع التحليل الاحترافي",
+    title:"سجّل الدخول لتحليل شركتك.",
+    sub:"وضع التحليل الاحترافي مخصص لعملائك وأرقامك الحقيقية. أنشئ حسابًا أو سجّل الدخول للمتابعة. التدريب يبقى مجانيًا — دون حساب.",
+    tab_login:"تسجيل الدخول", tab_signup:"إنشاء حساب",
+    f_name:"الاسم الكامل", f_email:"البريد الإلكتروني", f_pass:"كلمة المرور",
+    btn_login:"تسجيل الدخول", btn_signup:"إنشاء الحساب",
+    note:"جلسة تجريبية داخل المتصفح — تبقى بياناتك في هذا المتصفح لتجربة كامل المسار. الحسابات الحقيقية والدفع المُوثّق قادمان لاحقًا.",
+    welcome_h:"تم تسجيل دخولك.", welcome_sub:"تابع إلى وضع التحليل الاحترافي لإنشاء الشركة التي تريد تحليلها، أو اختر خطة.",
+    btn_continue:"المتابعة إلى وضع التحليل الاحترافي →", sign_out:"تسجيل الخروج",
+    plans_eye:"الخطط", plans_h:"التدريب مجاني. والعمل الحقيقي في الاحترافي.",
+    plans_lead:"ابدأ مجانًا بتقريرين — بدون بطاقة. طوّر خطتك في أي وقت.",
+    free_tag:"ابدأ هنا", free_name:"مجاني", free_cap:"تقريران للتجربة", free_f1:"تحليل ذكاء اصطناعي كامل", free_f3:"تدريب وتمارين مجانية",
+    basic_name:"أساسي", basic_cap:"10 تقارير / شهر", basic_f2:"كل النسب والتقييم", basic_f3:"تصدير PDF و Excel",
+    pro_badge:"الأكثر شيوعًا", pro_name:"احترافي", pro_cap:"40 تقريرًا / شهر", pro_f2:"6 قوالب قطاعية", pro_f3:"تحليل ذو أولوية",
+    unl_name:"غير محدود", unl_cap:"تقارير غير محدودة*", unl_f2:"بدون حد شهري (استخدام عادل)", unl_f3:"تحليل مجمّع",
+    per:"/ شهر", choose_free:"اختيار المجاني", choose_basic:"اختيار الأساسي", choose_pro:"اختيار الاحترافي", choose_unl:"غير محدود",
+    see_terms:"عرض الأسعار وشروط الاشتراك", theme_label:"السمة",
+    chosen_free:"تم اختيار الخطة المجانية", chosen_basic:"تم اختيار الأساسي — 5$ شهريًا", chosen_pro:"تم اختيار الاحترافي — 15$ شهريًا", chosen_unl:"تم اختيار غير المحدود — 40$ شهريًا",
+    err_email:"أدخل بريدًا إلكترونيًا صحيحًا.", err_pass:"يجب أن تتكوّن كلمة المرور من 6 أحرف على الأقل.", err_name:"أدخل اسمك."
+  };
+  var DICT={fr:FR, ar:AR};
+  var els=[].slice.call(document.querySelectorAll('[data-i18n]'));
+  var EN={}; els.forEach(function(el){ EN[el.getAttribute('data-i18n')]=el.innerHTML; });
+  // strings not in the DOM
+  EN.btn_signup="Create account";
+  EN.chosen_free="Free plan selected"; EN.chosen_basic="Basic selected — $5/mo"; EN.chosen_pro="Pro selected — $15/mo"; EN.chosen_unl="Unlimited selected — $40/mo";
+  EN.err_email="Enter a valid email address."; EN.err_pass="Password must be at least 6 characters."; EN.err_name="Enter your name.";
+  function T(k){ var lang=root.lang||'en'; var d=(lang==='en')?EN:DICT[lang]; return (d&&d[k]!=null)?d[k]:EN[k]; }
+  function apply(lang){ els.forEach(function(el){ var k=el.getAttribute('data-i18n'); var v=(lang==='en')?EN[k]:(DICT[lang]&&DICT[lang][k]!=null?DICT[lang][k]:EN[k]); if(v!=null) el.innerHTML=v; }); }
+  function setLang(lang){ root.lang=lang; root.dir=(lang==='ar')?'rtl':'ltr'; apply(lang);
+    [].slice.call(document.querySelectorAll('#langSeg button')).forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-lang')===lang); });
+    try{ localStorage.setItem('keel_lang', lang); }catch(e){}
+    refreshLabels();
+  }
+  var lang='en'; try{ lang=localStorage.getItem('keel_lang')||'en'; }catch(e){}
+  setLang(lang);
+  document.getElementById('langSeg').addEventListener('click', function(e){ var b=e.target.closest('button'); if(b) setLang(b.getAttribute('data-lang')); });
+
+  /* ---------- palette ---------- */
+  var colorInput=document.getElementById('palColor');
+  function h2r(h){ h=(h||'').replace('#',''); if(h.length===3) h=h.split('').map(function(c){return c+c;}).join(''); return [parseInt(h.slice(0,2),16)||0,parseInt(h.slice(2,4),16)||0,parseInt(h.slice(4,6),16)||0]; }
+  function cl(n){ return Math.max(0,Math.min(255,Math.round(n))); }
+  function rgba(a,al){ return 'rgba('+cl(a[0])+','+cl(a[1])+','+cl(a[2])+','+al+')'; }
+  function lum(a){ var s=a.map(function(v){ v/=255; return v<=.03928? v/12.92 : Math.pow((v+.055)/1.055,2.4); }); return .2126*s[0]+.7152*s[1]+.0722*s[2]; }
+  var CV=['--accent','--accent-hi','--accent-lo','--accent-soft','--accent-glow','--on-accent'];
+  function clearCustom(){ CV.forEach(function(v){ root.style.removeProperty(v); }); }
+  function markOn(k){ [].slice.call(document.querySelectorAll('#palDock button')).forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-pal')===k); }); }
+  function setPal(p){ clearCustom(); if(p==='orange') root.removeAttribute('data-palette'); else root.setAttribute('data-palette', p); markOn(p); try{ localStorage.setItem('keel_pal', p); }catch(e){} }
+  function applyCustom(hex){ var rgb=h2r(hex); root.removeAttribute('data-palette');
+    root.style.setProperty('--accent',hex); root.style.setProperty('--accent-hi', rgba([Math.min(255,rgb[0]+30),Math.min(255,rgb[1]+30),Math.min(255,rgb[2]+30)],1));
+    root.style.setProperty('--accent-lo', rgba([rgb[0]*.85,rgb[1]*.85,rgb[2]*.85],1)); root.style.setProperty('--accent-soft', rgba(rgb,.13));
+    root.style.setProperty('--accent-glow', rgba(rgb,.48)); root.style.setProperty('--on-accent', lum(rgb)>.4?'#231506':'#fff');
+    markOn('custom'); try{ localStorage.setItem('keel_pal','custom'); localStorage.setItem('keel_pal_hex',hex); }catch(e){} }
+  document.getElementById('palDock').addEventListener('click', function(e){ var b=e.target.closest('button[data-pal]'); if(!b) return;
+    if(b.getAttribute('data-pal')==='custom'){ if(colorInput) colorInput.click(); } else setPal(b.getAttribute('data-pal')); });
+  if(colorInput) colorInput.addEventListener('input', function(){ applyCustom(this.value); });
+  try{ var savedPal=localStorage.getItem('keel_pal'); if(savedPal==='custom'){ var hx=localStorage.getItem('keel_pal_hex')||'#e28a4d'; if(colorInput) colorInput.value=hx; applyCustom(hx); } else if(savedPal) setPal(savedPal); }catch(e){}
+
+  /* ---------- session ---------- */
+  function getUser(){ try{ return JSON.parse(localStorage.getItem('keel_user')||'null'); }catch(e){ return null; } }
+  function saveUser(u){ try{ localStorage.setItem('keel_user', JSON.stringify(u)); }catch(e){} }
+  function planLabel(p){ return T('chosen_'+(p==='unlimited'?'unl':p)); }
+
+  var params=new URLSearchParams(location.search);
+  var selectedPlan=params.get('plan')||'';
+  var nextUrl=params.get('next')||'app.html#rc';
+
+  var signedOut=document.getElementById('signedOut'), signedIn=document.getElementById('signedIn');
+  var chosen=document.getElementById('chosenPlan'), chosenText=document.getElementById('chosenText');
+  var tabLogin=document.getElementById('tabLogin'), tabSignup=document.getElementById('tabSignup');
+  var nameField=document.getElementById('nameField'), submitBtn=document.getElementById('submitBtn');
+  var mode='login';
+
+  function markSelectedTier(){ [].slice.call(document.querySelectorAll('.tier')).forEach(function(t){ t.classList.toggle('sel', t.getAttribute('data-plan')===selectedPlan); }); }
+  function refreshLabels(){
+    if(!submitBtn || !chosen || !chosenText) return;   // not wired yet (called during initial setLang)
+    // submit button text depends on mode + whether a paid plan is chosen
+    var paid = (selectedPlan==='basic'||selectedPlan==='pro'||selectedPlan==='unlimited');
+    if(mode==='signup') submitBtn.textContent = paid ? T('btn_signup') : T('btn_signup');
+    else submitBtn.textContent = paid ? T('btn_login') : T('btn_login');
+    if(selectedPlan){ chosen.classList.add('show'); chosenText.textContent = planLabel(selectedPlan); }
+    else chosen.classList.remove('show');
+  }
+  function setMode(m){ mode=m; tabLogin.classList.toggle('on', m==='login'); tabSignup.classList.toggle('on', m==='signup');
+    nameField.hidden = (m!=='signup'); document.getElementById('fPass').setAttribute('autocomplete', m==='signup'?'new-password':'current-password');
+    submitBtn.setAttribute('data-i18n', m==='signup'?'btn_signup':'btn_login'); refreshLabels(); }
+  tabLogin.addEventListener('click', function(){ setMode('login'); });
+  tabSignup.addEventListener('click', function(){ setMode('signup'); });
+
+  function setSelected(plan){ selectedPlan=plan; markSelectedTier(); refreshLabels(); if(plan!=='free' && plan!=='' ) setMode('signup'); }
+  [].slice.call(document.querySelectorAll('.choose')).forEach(function(b){ b.addEventListener('click', function(){ setSelected(b.getAttribute('data-plan')); document.getElementById('fEmail').focus(); window.scrollTo({top:0, behavior:'smooth'}); }); });
+
+  /* payment / entry */
+  function proceed(user){
+    saveUser(user);
+    var plan=user.plan;
+    if(plan==='basic'||plan==='pro'||plan==='unlimited'){
+      var link=KEEL_STRIPE_LINKS[plan];
+      if(link){
+        var sep=link.indexOf('?')>-1?'&':'?';
+        location.href=link+sep+'prefilled_email='+encodeURIComponent(user.email)+'&client_reference_id='+encodeURIComponent(user.email);
+        return;
+      }
+    }
+    // free plan, or paid plan with no Stripe link configured yet (demo) -> enter the app
+    location.href=nextUrl;
+  }
+
+  document.getElementById('authForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var msg=document.getElementById('authMsg'); msg.classList.remove('ok'); msg.textContent='';
+    var email=document.getElementById('fEmail').value.trim();
+    var pass=document.getElementById('fPass').value;
+    var name=document.getElementById('fName').value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.textContent=T('err_email'); return; }
+    if(!pass || pass.length<6){ msg.textContent=T('err_pass'); return; }
+    if(mode==='signup' && !name){ msg.textContent=T('err_name'); return; }
+    var prev=getUser();
+    var plan = selectedPlan || (prev && prev.email===email ? prev.plan : '') || 'free';
+    var user={ name: name || (prev&&prev.email===email?prev.name:'') || email.split('@')[0], email:email, plan:plan, ts:Date.now() };
+    proceed(user);
+  });
+
+  /* continue / sign-out (already signed in) */
+  document.getElementById('continueBtn').addEventListener('click', function(){ var u=getUser()||{plan:'free'}; if(selectedPlan) u.plan=selectedPlan; proceed(u); });
+  document.getElementById('signOutBtn').addEventListener('click', function(){ try{ localStorage.removeItem('keel_user'); }catch(e){} showState(); });
+
+  function showState(){
+    var u=getUser();
+    if(u && u.email){
+      signedOut.style.display='none'; signedIn.classList.add('show');
+      document.getElementById('whoLine').textContent = (u.name?u.name+' · ':'') + u.email + ' · ' + (u.plan||'free');
+    } else {
+      signedOut.style.display=''; signedIn.classList.remove('show');
+      setMode(selectedPlan && selectedPlan!=='free' ? 'signup' : 'login');
+    }
+    markSelectedTier(); refreshLabels();
+  }
+  if(selectedPlan) markSelectedTier();
+  showState();
+})();
+</script>
+</body>
+</html>
