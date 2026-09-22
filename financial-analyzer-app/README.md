@@ -191,3 +191,7 @@ financial results. Newsreader (display) / Inter (body) / IBM Plex Mono
 (mono) fonts, with IBM Plex Sans Arabic + Noto Kufi Arabic RTL fallbacks.
 All defined as CSS custom properties in `src/app/globals.css`; see the
 "Design system: Keel" section above for how palette switching and RTL work.
+
+## Deployment (Vercel)
+
+Hosted on Vercel. Set the project **Root Directory** to `financial-analyzer-app` and **Framework Preset** to **Next.js**. Add `ANTHROPIC_API_KEY` (server-side, Production) to enable live AI reports; without it, reports fall back to the deterministic English sample.
