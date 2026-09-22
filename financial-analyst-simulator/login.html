@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-palette="navy">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -39,6 +39,9 @@
   :root[data-palette="emerald"]{ --ink:#06110d; --ink-2:#0a1712; --panel:#0f1e19; --panel-2:#152a22; --line:#25372e; --line-soft:#16271e;
     --accent:#59c58f; --accent-lo:#43ac77; --accent-hi:#8fe0bd; --accent-soft:rgba(89,197,143,.13); --accent-glow:rgba(89,197,143,.46); --sand:#aec2b6;
     --pos:#7fd6a6; --nav-bg:rgba(5,12,9,.62); --chip-bg:rgba(7,15,11,.82); }
+  :root[data-palette="navy"]{ --ink:#0a1120; --ink-2:#0e1626; --panel:#131f33; --panel-2:#1a2942; --line:#26364e; --line-soft:#16223a;
+    --accent:#4f8be6; --accent-lo:#3e72c9; --accent-hi:#86b3f2; --accent-soft:rgba(79,139,230,.14); --accent-glow:rgba(79,139,230,.5); --sand:#aab6c8;
+    --nav-bg:rgba(6,10,18,.66); --chip-bg:rgba(8,12,20,.84); }
 
   *{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
@@ -272,7 +275,8 @@
 <!-- palette dock -->
 <div class="pal-dock" id="palDock" role="group" aria-label="Colour theme">
   <span class="pl" data-i18n="theme_label">Theme</span>
-  <button data-pal="orange" style="background:#e28a4d" title="Amber (default)" aria-label="Amber"></button>
+  <button data-pal="navy" style="background:#4f8be6" title="Deep Navy (default)" aria-label="Deep Navy"></button>
+  <button data-pal="orange" style="background:#e28a4d" title="Amber" aria-label="Amber"></button>
   <button data-pal="midnight" style="background:#6ea8d8" title="Midnight Ice" aria-label="Midnight Ice"></button>
   <button data-pal="emerald" style="background:#59c58f" title="Deep Emerald" aria-label="Deep Emerald"></button>
   <button data-pal="plum" style="background:#cf8fb6" title="Royal Plum" aria-label="Royal Plum"></button>
@@ -380,7 +384,7 @@ var KEEL_STRIPE_LINKS = {
   document.getElementById('palDock').addEventListener('click', function(e){ var b=e.target.closest('button[data-pal]'); if(!b) return;
     if(b.getAttribute('data-pal')==='custom'){ if(colorInput) colorInput.click(); } else setPal(b.getAttribute('data-pal')); });
   if(colorInput) colorInput.addEventListener('input', function(){ applyCustom(this.value); });
-  try{ var savedPal=localStorage.getItem('keel_pal'); if(savedPal==='custom'){ var hx=localStorage.getItem('keel_pal_hex')||'#e28a4d'; if(colorInput) colorInput.value=hx; applyCustom(hx); } else if(savedPal) setPal(savedPal); }catch(e){}
+  try{ var savedPal=localStorage.getItem('keel_pal'); if(savedPal==='custom'){ var hx=localStorage.getItem('keel_pal_hex')||'#4f8be6'; if(colorInput) colorInput.value=hx; applyCustom(hx); } else setPal(savedPal||'navy'); }catch(e){}
 
   /* ---------- session ---------- */
   function getUser(){ try{ return JSON.parse(localStorage.getItem('keel_user')||'null'); }catch(e){ return null; } }
