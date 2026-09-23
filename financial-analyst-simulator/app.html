@@ -729,9 +729,11 @@ html[dir="rtl"] .mobile-topbar{ flex-direction:row-reverse; }
 
 /* =========================================================
    I18N — interface language (English / French / Arabic).
-   Covers navigation, common actions, and view titles.
-   Case-file content (scenarios, glossary, tips, playbook)
-   stays in English in this version — see Trainer note.
+   Covers navigation, common actions, view titles and every
+   workspace screen. Case-file content (scenarios, glossary,
+   tips, playbook) is translated separately via the per-item
+   `i18n` objects + the L(obj, path) helper defined below —
+   see the SCENARIOS / GLOSSARY / PLAYBOOK data further down.
    ========================================================= */
 const I18N = {
   en: {
@@ -756,7 +758,113 @@ const I18N = {
     'fin.titleBalance':'Balance Sheet','fin.subBalance':'As of period end, $000s',
     'fin.titleCash':'Statement of Cash Flows','fin.subCash':'indirect method, $000s',
     'fin.trendTitle':'Revenue & Net Income Trend','fin.continueRatios':'Continue to Ratios & Frameworks →',
-    'lang.note':'Navigation is available in English, French, and Arabic. Case-file content is currently English-only.'
+
+    'select.eyebrow':'Free training · practice cases',
+    'select.heroDesc':'Each case is a fictional company with real, internally consistent financial statements. Work the numbers, run the analysis, write the report, then field the client’s questions.',
+    'select.statCases':'cases','select.statSectors':'sectors','select.statLevels':'levels','select.statCompleted':'completed',
+    'select.openCase':'Open case →',
+    'status.completed':'Completed','status.notStarted':'Not started','status.startCase':'Start this case',
+
+    'xp.toNext':'{xp} XP · {remaining} to {rank}','xp.maxRank':'{xp} XP · Max rank',
+    'xp.earnedToNext':'{xp} XP earned · {remaining} XP to {rank}','xp.earnedMax':'{xp} XP earned · Maximum rank reached',
+
+    'ratio.tabDashboard':'Ratio Dashboard','ratio.tabDupont':'DuPont Analysis','ratio.tabBreakeven':'Break-Even','ratio.tabBudget':'Budget vs Actual',
+    'ratio.current':'Current Ratio','ratio.currentInfo':'Current Assets ÷ Current Liabilities',
+    'ratio.quick':'Quick Ratio','ratio.quickInfo':'(Current Assets − Inventory) ÷ Current Liabilities',
+    'ratio.grossMargin':'Gross Margin','ratio.grossMarginInfo':'(Revenue − COGS) ÷ Revenue',
+    'ratio.netMargin':'Net Margin','ratio.netMarginInfo':'Net Income ÷ Revenue',
+    'ratio.roa':'Return on Assets','ratio.roaInfo':'Net Income ÷ Total Assets',
+    'ratio.roe':'Return on Equity','ratio.roeInfo':'Net Income ÷ Total Equity',
+    'ratio.debtEquity':'Debt-to-Equity','ratio.debtEquityInfo':'Total Liabilities ÷ Total Equity',
+    'ratio.interestCoverage':'Interest Coverage','ratio.interestCoverageInfo':'Operating Income ÷ Interest Expense',
+    'ratio.inventoryTurnover':'Inventory Turnover','ratio.inventoryTurnoverInfo':'COGS ÷ Inventory',
+    'ratio.dso':'Days Sales Outstanding','ratio.dsoInfo':'(Accounts Receivable ÷ Revenue) × 365',
+    'ratio.assetTurnover':'Asset Turnover','ratio.assetTurnoverInfo':'Revenue ÷ Total Assets',
+    'ratio.operatingMargin':'Operating Margin','ratio.operatingMarginInfo':'Operating Income ÷ Revenue',
+    'ratio.ccc':'Cash Conversion Cycle','ratio.cccInfo':'DSO + Days Inventory Outstanding − Days Payable Outstanding',
+    'ratio.equityMultiplier':'Equity Multiplier',
+    'ratio.opLossNotMeaningful':'operating loss — ratio not meaningful',
+    'ratio.watchTitle':'Watch this one closely:','ratio.watchBody':' the standard Cash Conversion Cycle above only counts standard receivables, inventory and payables. This case also carries {curr} in unbilled receivables and retention (vs {prior} last year) — cash tied up that the standard formula doesn’t see at all. Check the Balance Sheet tab for the full picture.',
+    'ratio.readingTitle':'Reading this dashboard:','ratio.readingBody':'compare each figure against last period first, then ask which two or three ratios actually explain the client’s problem — a strong dashboard read names the two or three that matter, not all thirteen.',
+    'ratio.dupontTitle':'DuPont Breakdown','ratio.dupontSub':'ROE = Net Margin × Asset Turnover × Equity Multiplier',
+    'ratio.roeResultSuffix':'Return on Equity','ratio.vsInYear':'vs {value} in {year}',
+    'ratio.lookForTitle':'What to look for:','ratio.dupontLesson':'if ROE rose mainly because the equity multiplier (leverage) rose — not because margin or turnover improved — that’s a warning sign, not a win. Check which lever actually moved.',
+    'ratio.breakevenTitle':'Break-Even Analysis','ratio.breakevenSub':'{year} cost structure',
+    'ratio.fixedCosts':'Fixed Costs','ratio.variableCostRatio':'Variable Cost Ratio','ratio.breakevenRevenue':'Break-Even Revenue','ratio.notAchievable':'Not achievable',
+    'ratio.breakevenRevenueBarLabel':'Break-even revenue','ratio.actualRevenueBarLabel':'Actual revenue ({year})',
+    'ratio.formulaTitle':'Formula:','ratio.formulaText':'Break-Even Revenue = Fixed Costs ÷ (1 − Variable Cost Ratio).',
+    'ratio.beNotAchievable':'Variable costs alone consume 100% of revenue or more at this cost structure — no volume of sales would cover fixed costs. This points to a pricing or input-cost problem that needs fixing before break-even is even a meaningful target.',
+    'ratio.beAbove':'Actual revenue is above break-even — the business is operating with a margin of safety.',
+    'ratio.beBelow':'Actual revenue is below break-even — the business cannot cover its fixed costs at this volume.',
+    'ratio.budgetTitle':'Budget vs. Actual','ratio.budgetSub':'{year}, $000s',
+    'ratio.colLine':'Line','ratio.colBudget':'Budget','ratio.colActual':'Actual','ratio.colVariance':'Variance',
+    'ratio.varianceTitle':'Reading a variance:','ratio.varianceBody':'a favorable revenue variance and an unfavorable cost variance can offset each other in the headline number — walk the full waterfall (revenue, COGS, gross profit, opex) rather than reporting only the net effect.',
+    'ratio.continueDiagnosis':'Continue to Diagnose the Problem →',
+    'ratio.sensAxisHeader':'COGS Δ \\ Growth',
+
+    'diag.howWorksTitle':'How this works:','diag.howWorksBody':'based on everything you’ve seen in the financials and ratios, pick the option that best explains what’s really going on. This isn’t about memorizing — it’s about pattern recognition.',
+    'diag.chooseOne':'Choose one','diag.submit':'Submit Diagnosis','diag.submitted':'Diagnosis Submitted',
+    'diag.correct':'Correct.','diag.notQuite':'Not quite.','diag.continueToolkit':'Continue to Analyst Toolkit →','diag.pickOption':'Pick an option first',
+
+    'toolkit.tabCommonsize':'Common-Size Statements','toolkit.tabHorizontal':'Horizontal Analysis','toolkit.tabSensitivity':'Sensitivity Table',
+    'toolkit.pctOfRevenue':'% of revenue','toolkit.pctOfAssets':'% of total assets',
+    'toolkit.commonSizeTitle':'Common-size (vertical) analysis:','toolkit.commonSizeBody':'restating every line as a percentage of revenue (or total assets) strips out scale, so you can compare cost structure year-over-year — or against a competitor of a different size — without dollar figures getting in the way.',
+    'toolkit.horizontalTitle':'Income Statement — Horizontal Analysis','toolkit.horizontalSub':'{y1} vs {y2}, $000s',
+    'toolkit.colDollarChange':'$ Change','toolkit.colPctChange':'% Change',
+    'toolkit.horizontalLessonTitle':'Horizontal analysis:','toolkit.horizontalLessonBody':'looking at the percentage change of every line, not just the ones you expect, often surfaces the real story — a small line that grew 200% can matter more than a big line that grew 5%.',
+    'toolkit.sensitivityTitle':'Net Income Sensitivity Table','toolkit.sensitivitySub':'Next-period net income under different growth and COGS-ratio assumptions — the same "what-if" idea behind an Excel data table.',
+    'toolkit.sensitivityLessonTitle':'Reading this table:','toolkit.sensitivityLessonBody':'find today’s actual result, then look at how far a plausible swing in either direction moves net income. A business that flips from profit to loss with a small, realistic cost swing has thin margin for error — worth calling out explicitly in your report.',
+    'toolkit.continueAssumptions':'Continue to Assumptions Model →',
+
+    'assump.title':'Build Your Own Next-Period Model','assump.sub':'Adjust assumptions and watch {year} recalculate into a {year}+1 projection. This is how analysts stress-test a plan before presenting it.',
+    'assump.revenueGrowth':'Revenue growth','assump.cogsRatioChange':'COGS ratio change (pts)','assump.opexChangeLabel':'Operating expense change',
+    'assump.continueReport':'Continue to Report Builder →',
+    'assump.actualHeader':'{year} — Actual','assump.baseline':'Baseline','assump.projectedHeader':'Next Period — Projected','assump.basedOnAssumptions':'Based on your assumptions',
+    'assump.netIncomeChangeTitle':'Net income change:','assump.netIncomeChangeBody':'{delta} vs actual ({pctDelta}). Try isolating one lever at a time — move only revenue growth first, then only costs — to see which assumption the outcome is most sensitive to.',
+
+    'rpt.sub':'Write this as if it’s going to the client named in the brief. Saved automatically as you type.',
+    'rpt.execSummary':'Executive Summary','rpt.keyFindings':'Key Findings','rpt.riskAreas':'Risk Areas','rpt.recommendations':'Recommendations',
+    'rpt.execPh':'State your conclusion in 2-3 sentences. What’s really going on, in plain terms?','rpt.execHint':'Guided prompt: If the client only read this paragraph, would they understand the core issue and what to do about it?',
+    'rpt.findingsPh':'What does the data actually show? Cite specific figures and ratios.','rpt.findingsHint':'Guided prompt: Which two or three numbers most explain the situation?',
+    'rpt.risksPh':'What could go wrong if nothing changes? What’s the downside scenario?','rpt.risksHint':'Guided prompt: Is this a liquidity problem, a profitability problem, a leverage problem — or more than one?',
+    'rpt.recsPh':'What should the client actually do next? Be specific and prioritized.','rpt.recsHint':'Guided prompt: What’s the single most important action, and what would you do second?',
+    'rpt.copyBtn':'Copy Report to Clipboard','rpt.printBtn':'Print / Save as PDF',
+    'rpt.analystReportTitle':'{name} — Analyst Report','rpt.preparedFor':'Prepared for engagement review','rpt.notYetWritten':'Not yet written.',
+    'rpt.copiedToast':'Report copied to clipboard','rpt.noClipboardToast':'Clipboard not available in this browser',
+    'rpt.continueAdvisory':'Continue to Client Advisory →',
+
+    'adv.howWorksTitle':'How this works:','adv.howWorksBody':'answer each question the way you would in a real client meeting, then reveal the rubric and self-grade honestly. The goal is calibration, not a perfect score.',
+    'adv.questionLabel':'Question {n}','adv.yourAnswer':'Your answer','adv.answerPh':'Answer as if you’re in the room with the client.',
+    'adv.showRubric':'Show self-check rubric','adv.hideRubric':'Hide self-check rubric','adv.tickHonest':'Tick what your answer actually covered — be honest, this is for you.',
+    'adv.continueDebrief':'Continue to Session Debrief →',
+
+    'debrief.approachTitle':'Approach Taken','debrief.approachSub':'Workspace areas you used during this session',
+    'debrief.reportRecapTitle':'Your Report Recap','debrief.notWritten':'Not written.',
+    'debrief.diagnosisResultTitle':'Diagnosis Result','debrief.diagCorrectMsg':'You identified the core issue correctly on your first attempt.',
+    'debrief.diagWrongMsg':'Your first pick wasn’t the core issue — worth re-reading the model summary below.','debrief.diagNotAttempted':'Not attempted yet.',
+    'debrief.selfScoreTitle':'Client Advisory Self-Score','debrief.selfScoreSub':'{checked} of {total} rubric points self-checked across {q} questions',
+    'debrief.seniorFrameTitle':'How a Senior Analyst Would Frame This Case','debrief.seniorFrameSub':'Read this after writing your own report — not before. Compare, don’t copy.',
+    'debrief.reflectionTitle':'Reflection','debrief.reflectionLabel':'What would you do differently next time?','debrief.reflectionPh':'What did the model summary catch that you missed? What would you check first next time?',
+    'debrief.backToSelect':'← Choose Another Case','debrief.viewProgress':'View Overall Progress →',
+
+    'trainer.sub':'Reference material and short lessons — available any time, independent of which case you’re working.',
+    'trainer.tabLessons':'Lessons','trainer.tabTips':'Tips & Tricks','trainer.tabGuide':'Report & Statement Guide','trainer.tabPlaybook':'Step-by-Step Course','trainer.tabGlossary':'Glossary','trainer.tabPath':'Learning Path',
+    'trainer.tipsTitle':'Tips & Tricks','trainer.tipsSub':'Rules of thumb worth having memorized before you’re in front of a client',
+    'trainer.guideReportTitle':'Understanding a Report, Section by Section','trainer.guideReportSub':'What each part of an analyst report is actually for — and how to tell a strong one from a weak one',
+    'trainer.purposeLabel':'Purpose:','trainer.strongVersionLabel':'A strong version:','trainer.commonMistakeLabel':'Common mistake:',
+    'trainer.guideStatementTitle':'Understanding a Financial Statement, Section by Section','trainer.guideStatementSub':'What each block of numbers means and what to watch for in it','trainer.watchForLabel':'Watch for:',
+    'trainer.guideContractTitle':'Reading a Client Engagement Letter','trainer.guideContractSub':'Understanding analyst work isn’t just about numbers — it starts with the contract that sets the terms of the engagement',
+    'trainer.playbookIntroTitle':'How to use this:','trainer.playbookIntroBody':'each entry below is a full course on one recurring situation — when it shows up, what’s actually driving it, and the exact steps to work through before you write a recommendation. Keel Assistant links straight to these from any flagged insight on your own client data.',
+    'trainer.showSteps':'Show the steps','trainer.hideSteps':'Hide the steps',
+    'trainer.glossarySearchPh':'Search terms, e.g. ‘coverage’ or ‘margin’...','trainer.noTermsMatch':'No terms match "{q}".',
+
+    'progress.sub':'A running record of your training sessions. Stored locally in this browser.',
+    'progress.casesCompleted':'Cases Completed','progress.sectorsCovered':'Sectors Covered','progress.avgSelfScore':'Avg. Advisory Self-Score',
+    'progress.achievementsTitle':'Achievements','progress.achievementsSub':'Earned automatically as you work through case files',
+    'progress.caseStatusTitle':'Case File Status','progress.colCase':'Case','progress.colSector':'Sector','progress.colDifficulty':'Difficulty','progress.colStatus':'Status',
+    'progress.footNote':'Progress and every report, answer, and reflection you’ve written are saved to this browser’s local storage — nothing is sent anywhere. Clearing your browser data will reset it.',
+
+    'lang.note':'Navigation, screens, and case content are all available in English, French, and Arabic. Company names stay in English.'
   },
   fr: {
     'nav.proMode':'Mode Analyse Pro', 'nav.rc':'Analyse Keel',
@@ -780,7 +888,112 @@ const I18N = {
     'fin.titleBalance':'Bilan','fin.subBalance':'À la clôture, en milliers de $',
     'fin.titleCash':'Tableau des flux de trésorerie','fin.subCash':'méthode indirecte, en milliers de $',
     'fin.trendTitle':'Tendance CA & résultat net','fin.continueRatios':'Continuer vers Ratios & Méthodes →',
-    'lang.note':'La navigation est disponible en anglais, français et arabe. Le contenu des dossiers reste en anglais pour l\u2019instant.'
+    'select.eyebrow':'Formation gratuite · cas pratiques',
+    'select.heroDesc':'Chaque cas est une entreprise fictive dotée d’états financiers réalistes et cohérents. Analysez les chiffres, menez l’analyse, rédigez le rapport, puis répondez aux questions du client.',
+    'select.statCases':'cas','select.statSectors':'secteurs','select.statLevels':'niveaux','select.statCompleted':'terminés',
+    'select.openCase':'Ouvrir le cas →',
+    'status.completed':'Terminé','status.notStarted':'Non commencé','status.startCase':'Commencer ce cas',
+
+    'xp.toNext':'{xp} XP · {remaining} avant {rank}','xp.maxRank':'{xp} XP · Rang maximum',
+    'xp.earnedToNext':'{xp} XP acquis · {remaining} XP avant {rank}','xp.earnedMax':'{xp} XP acquis · Rang maximum atteint',
+
+    'ratio.tabDashboard':'Tableau de Bord des Ratios','ratio.tabDupont':'Analyse DuPont','ratio.tabBreakeven':'Seuil de Rentabilité','ratio.tabBudget':'Budget vs Réel',
+    'ratio.current':'Ratio de Liquidité Générale','ratio.currentInfo':'Actif circulant ÷ Passif circulant',
+    'ratio.quick':'Ratio de Liquidité Immédiate','ratio.quickInfo':'(Actif circulant − Stocks) ÷ Passif circulant',
+    'ratio.grossMargin':'Marge Brute','ratio.grossMarginInfo':'(Chiffre d’affaires − Coût des ventes) ÷ Chiffre d’affaires',
+    'ratio.netMargin':'Marge Nette','ratio.netMarginInfo':'Résultat net ÷ Chiffre d’affaires',
+    'ratio.roa':'Rentabilité des Actifs (ROA)','ratio.roaInfo':'Résultat net ÷ Total de l’actif',
+    'ratio.roe':'Rentabilité des Capitaux Propres (ROE)','ratio.roeInfo':'Résultat net ÷ Total des capitaux propres',
+    'ratio.debtEquity':'Dette / Capitaux Propres','ratio.debtEquityInfo':'Total du passif ÷ Total des capitaux propres',
+    'ratio.interestCoverage':'Couverture des Intérêts','ratio.interestCoverageInfo':'Résultat d’exploitation ÷ Charges d’intérêts',
+    'ratio.inventoryTurnover':'Rotation des Stocks','ratio.inventoryTurnoverInfo':'Coût des ventes ÷ Stocks',
+    'ratio.dso':'Délai de Recouvrement Clients','ratio.dsoInfo':'(Créances clients ÷ Chiffre d’affaires) × 365',
+    'ratio.assetTurnover':'Rotation de l’Actif','ratio.assetTurnoverInfo':'Chiffre d’affaires ÷ Total de l’actif',
+    'ratio.operatingMargin':'Marge d’Exploitation','ratio.operatingMarginInfo':'Résultat d’exploitation ÷ Chiffre d’affaires',
+    'ratio.ccc':'Cycle de Conversion de Trésorerie','ratio.cccInfo':'Délai clients + Délai de rotation des stocks − Délai fournisseurs',
+    'ratio.equityMultiplier':'Multiplicateur de Capitaux Propres',
+    'ratio.opLossNotMeaningful':'perte d’exploitation — ratio non significatif',
+    'ratio.watchTitle':'À surveiller de près :','ratio.watchBody':' le cycle de conversion de trésorerie standard ci-dessus ne comptabilise que les créances, stocks et dettes fournisseurs classiques. Ce dossier comporte aussi {curr} de créances non facturées et de retenues de garantie (contre {prior} l’an dernier) — de la trésorerie immobilisée que la formule standard ne voit pas du tout. Consultez l’onglet Bilan pour la vue d’ensemble.',
+    'ratio.readingTitle':'Lecture de ce tableau de bord :','ratio.readingBody':'comparez d’abord chaque indicateur à la période précédente, puis identifiez les deux ou trois ratios qui expliquent réellement le problème du client — une bonne lecture nomme les deux ou trois qui comptent, pas les treize.',
+    'ratio.dupontTitle':'Décomposition DuPont','ratio.dupontSub':'ROE = Marge nette × Rotation de l’actif × Multiplicateur de capitaux propres',
+    'ratio.roeResultSuffix':'Rentabilité des Capitaux Propres','ratio.vsInYear':'contre {value} en {year}',
+    'ratio.lookForTitle':'Ce qu’il faut repérer :','ratio.dupontLesson':'si le ROE a surtout augmenté parce que le multiplicateur de capitaux propres (l’endettement) a augmenté — et non parce que la marge ou la rotation se sont améliorées — c’est un signal d’alerte, pas une victoire. Vérifiez quel levier a réellement bougé.',
+    'ratio.breakevenTitle':'Analyse du Seuil de Rentabilité','ratio.breakevenSub':'Structure de coûts {year}',
+    'ratio.fixedCosts':'Coûts Fixes','ratio.variableCostRatio':'Taux de Coûts Variables','ratio.breakevenRevenue':'Chiffre d’Affaires au Seuil de Rentabilité','ratio.notAchievable':'Non atteignable',
+    'ratio.breakevenRevenueBarLabel':'Chiffre d’affaires au seuil de rentabilité','ratio.actualRevenueBarLabel':'Chiffre d’affaires réel ({year})',
+    'ratio.formulaTitle':'Formule :','ratio.formulaText':'Chiffre d’affaires au seuil de rentabilité = Coûts fixes ÷ (1 − Taux de coûts variables).',
+    'ratio.beNotAchievable':'Les coûts variables consomment à eux seuls 100 % du chiffre d’affaires ou plus avec cette structure de coûts — aucun volume de ventes ne couvrirait les coûts fixes. Cela pointe vers un problème de prix ou de coûts d’intrants à résoudre avant même de viser le seuil de rentabilité.',
+    'ratio.beAbove':'Le chiffre d’affaires réel dépasse le seuil de rentabilité — l’entreprise dispose d’une marge de sécurité.',
+    'ratio.beBelow':'Le chiffre d’affaires réel est inférieur au seuil de rentabilité — l’entreprise ne couvre pas ses coûts fixes à ce volume.',
+    'ratio.budgetTitle':'Budget vs. Réel','ratio.budgetSub':'{year}, en milliers de $',
+    'ratio.colLine':'Poste','ratio.colBudget':'Budget','ratio.colActual':'Réel','ratio.colVariance':'Écart',
+    'ratio.varianceTitle':'Lecture d’un écart :','ratio.varianceBody':'un écart favorable sur le chiffre d’affaires et un écart défavorable sur les coûts peuvent se compenser dans le chiffre global — parcourez toute la cascade (chiffre d’affaires, coût des ventes, marge brute, charges d’exploitation) plutôt que de ne rapporter que l’effet net.',
+    'ratio.continueDiagnosis':'Continuer vers Diagnostiquer le Problème →',
+    'ratio.sensAxisHeader':'Écart COGS \\ Croissance',
+
+    'diag.howWorksTitle':'Comment ça marche :','diag.howWorksBody':'en vous basant sur tout ce que vous avez vu dans les états financiers et les ratios, choisissez l’option qui explique le mieux ce qui se passe réellement. Il ne s’agit pas de mémoriser, mais de reconnaître un schéma.',
+    'diag.chooseOne':'Choisissez une réponse','diag.submit':'Soumettre le Diagnostic','diag.submitted':'Diagnostic Soumis',
+    'diag.correct':'Correct.','diag.notQuite':'Pas tout à fait.','diag.continueToolkit':'Continuer vers la Boîte à Outils →','diag.pickOption':'Choisissez d’abord une option',
+
+    'toolkit.tabCommonsize':'États en Pourcentage','toolkit.tabHorizontal':'Analyse Horizontale','toolkit.tabSensitivity':'Tableau de Sensibilité',
+    'toolkit.pctOfRevenue':'% du chiffre d’affaires','toolkit.pctOfAssets':'% du total de l’actif',
+    'toolkit.commonSizeTitle':'Analyse en pourcentage (verticale) :','toolkit.commonSizeBody':'exprimer chaque poste en pourcentage du chiffre d’affaires (ou du total de l’actif) élimine l’effet de taille, ce qui permet de comparer la structure de coûts d’une année sur l’autre — ou avec un concurrent de taille différente — sans que les montants en dollars ne brouillent la lecture.',
+    'toolkit.horizontalTitle':'Compte de Résultat — Analyse Horizontale','toolkit.horizontalSub':'{y1} vs {y2}, en milliers de $',
+    'toolkit.colDollarChange':'Écart $','toolkit.colPctChange':'Écart %',
+    'toolkit.horizontalLessonTitle':'Analyse horizontale :','toolkit.horizontalLessonBody':'examiner la variation en pourcentage de chaque poste, pas seulement ceux attendus, révèle souvent la vraie histoire — un petit poste qui augmente de 200 % peut compter davantage qu’un gros poste qui augmente de 5 %.',
+    'toolkit.sensitivityTitle':'Tableau de Sensibilité du Résultat Net','toolkit.sensitivitySub':'Résultat net de la prochaine période selon différentes hypothèses de croissance et de taux de coût des ventes — le même principe de simulation qu’un tableau de données Excel.',
+    'toolkit.sensitivityLessonTitle':'Lecture de ce tableau :','toolkit.sensitivityLessonBody':'repérez le résultat réel actuel, puis observez de combien un écart plausible, dans un sens ou dans l’autre, fait varier le résultat net. Une entreprise qui bascule du profit à la perte avec un écart de coût faible et réaliste a une marge d’erreur mince — à souligner explicitement dans votre rapport.',
+    'toolkit.continueAssumptions':'Continuer vers le Modèle d’Hypothèses →',
+
+    'assump.title':'Construisez Votre Propre Modèle de Période Suivante','assump.sub':'Ajustez les hypothèses et regardez {year} se recalculer en projection {year}+1. C’est ainsi que les analystes testent la résistance d’un plan avant de le présenter.',
+    'assump.revenueGrowth':'Croissance du chiffre d’affaires','assump.cogsRatioChange':'Variation du taux de coût des ventes (pts)','assump.opexChangeLabel':'Variation des charges d’exploitation',
+    'assump.continueReport':'Continuer vers la Rédaction du Rapport →',
+    'assump.actualHeader':'{year} — Réel','assump.baseline':'Référence','assump.projectedHeader':'Période Suivante — Projetée','assump.basedOnAssumptions':'Selon vos hypothèses',
+    'assump.netIncomeChangeTitle':'Variation du résultat net :','assump.netIncomeChangeBody':'{delta} par rapport au réel ({pctDelta}). Essayez d’isoler un levier à la fois — changez d’abord uniquement la croissance, puis uniquement les coûts — pour voir à quelle hypothèse le résultat est le plus sensible.',
+
+    'rpt.sub':'Rédigez comme si ce texte partait au client mentionné dans le briefing. Enregistré automatiquement au fil de la saisie.',
+    'rpt.execSummary':'Synthèse','rpt.keyFindings':'Constats Clés','rpt.riskAreas':'Zones de Risque','rpt.recommendations':'Recommandations',
+    'rpt.execPh':'Formulez votre conclusion en 2-3 phrases. Que se passe-t-il réellement, en termes simples ?','rpt.execHint':'Question guide : si le client ne lisait que ce paragraphe, comprendrait-il le problème central et ce qu’il faut faire ?',
+    'rpt.findingsPh':'Que montrent réellement les données ? Citez des chiffres et ratios précis.','rpt.findingsHint':'Question guide : quels sont les deux ou trois chiffres qui expliquent le mieux la situation ?',
+    'rpt.risksPh':'Que pourrait-il se passer si rien ne change ? Quel est le scénario défavorable ?','rpt.risksHint':'Question guide : s’agit-il d’un problème de liquidité, de rentabilité, d’endettement — ou de plusieurs à la fois ?',
+    'rpt.recsPh':'Que devrait faire le client ensuite ? Soyez précis et hiérarchisez.','rpt.recsHint':'Question guide : quelle est l’action la plus importante, et laquelle viendrait en second ?',
+    'rpt.copyBtn':'Copier le Rapport','rpt.printBtn':'Imprimer / Enregistrer en PDF',
+    'rpt.analystReportTitle':'{name} — Rapport d’Analyste','rpt.preparedFor':'Préparé pour revue de mission','rpt.notYetWritten':'Pas encore rédigé.',
+    'rpt.copiedToast':'Rapport copié dans le presse-papiers','rpt.noClipboardToast':'Presse-papiers non disponible dans ce navigateur',
+    'rpt.continueAdvisory':'Continuer vers le Conseil Client →',
+
+    'adv.howWorksTitle':'Comment ça marche :','adv.howWorksBody':'répondez à chaque question comme si vous étiez en réunion avec le client, puis révélez la grille d’auto-évaluation et notez-vous honnêtement. L’objectif est de vous calibrer, pas d’avoir un score parfait.',
+    'adv.questionLabel':'Question {n}','adv.yourAnswer':'Votre réponse','adv.answerPh':'Répondez comme si vous étiez dans la pièce avec le client.',
+    'adv.showRubric':'Afficher la grille d’auto-évaluation','adv.hideRubric':'Masquer la grille d’auto-évaluation','adv.tickHonest':'Cochez ce que votre réponse a réellement couvert — soyez honnête, c’est pour vous.',
+    'adv.continueDebrief':'Continuer vers le Bilan de Session →',
+
+    'debrief.approachTitle':'Démarche Suivie','debrief.approachSub':'Espaces de travail utilisés pendant cette session',
+    'debrief.reportRecapTitle':'Récapitulatif de Votre Rapport','debrief.notWritten':'Non rédigé.',
+    'debrief.diagnosisResultTitle':'Résultat du Diagnostic','debrief.diagCorrectMsg':'Vous avez identifié le problème central correctement dès votre premier essai.',
+    'debrief.diagWrongMsg':'Votre premier choix n’était pas le problème central — relisez la synthèse modèle ci-dessous.','debrief.diagNotAttempted':'Pas encore tenté.',
+    'debrief.selfScoreTitle':'Auto-Évaluation du Conseil Client','debrief.selfScoreSub':'{checked} sur {total} points de la grille auto-cochés sur {q} questions',
+    'debrief.seniorFrameTitle':'Comment un Analyste Senior Présenterait ce Dossier','debrief.seniorFrameSub':'Lisez ceci après avoir rédigé votre propre rapport — pas avant. Comparez, ne copiez pas.',
+    'debrief.reflectionTitle':'Réflexion','debrief.reflectionLabel':'Que feriez-vous différemment la prochaine fois ?','debrief.reflectionPh':'Qu’est-ce que la synthèse modèle a repéré que vous avez manqué ? Que vérifieriez-vous en premier la prochaine fois ?',
+    'debrief.backToSelect':'← Choisir un Autre Cas','debrief.viewProgress':'Voir la Progression Globale →',
+
+    'trainer.sub':'Documentation de référence et leçons courtes — disponibles à tout moment, indépendamment du cas en cours.',
+    'trainer.tabLessons':'Leçons','trainer.tabTips':'Astuces','trainer.tabGuide':'Guide du Rapport et des États','trainer.tabPlaybook':'Parcours Étape par Étape','trainer.tabGlossary':'Glossaire','trainer.tabPath':'Parcours d’Apprentissage',
+    'trainer.tipsTitle':'Astuces','trainer.tipsSub':'Des règles empiriques à connaître par cœur avant de rencontrer un client',
+    'trainer.guideReportTitle':'Comprendre un Rapport, Section par Section','trainer.guideReportSub':'À quoi sert vraiment chaque partie d’un rapport d’analyste — et comment distinguer une bonne version d’une faible',
+    'trainer.purposeLabel':'Objectif :','trainer.strongVersionLabel':'Une version réussie :','trainer.commonMistakeLabel':'Erreur fréquente :',
+    'trainer.guideStatementTitle':'Comprendre un État Financier, Section par Section','trainer.guideStatementSub':'Ce que signifie chaque bloc de chiffres et ce qu’il faut y surveiller','trainer.watchForLabel':'À surveiller :',
+    'trainer.guideContractTitle':'Lire une Lettre de Mission Client','trainer.guideContractSub':'Le métier d’analyste ne se limite pas aux chiffres — tout commence par le contrat qui fixe les termes de la mission',
+    'trainer.playbookIntroTitle':'Comment utiliser ceci :','trainer.playbookIntroBody':'chaque fiche ci-dessous est un parcours complet sur une situation récurrente — quand elle survient, ce qui la provoque réellement, et les étapes précises à suivre avant de rédiger une recommandation. Keel Assistant renvoie directement à ces fiches depuis tout constat signalé sur les données de vos propres clients.',
+    'trainer.showSteps':'Afficher les étapes','trainer.hideSteps':'Masquer les étapes',
+    'trainer.glossarySearchPh':'Rechercher un terme, ex. « coverage » ou « marge »…','trainer.noTermsMatch':'Aucun terme ne correspond à « {q} ».',
+
+    'progress.sub':'Un historique de vos sessions de formation. Stocké localement dans ce navigateur.',
+    'progress.casesCompleted':'Cas Terminés','progress.sectorsCovered':'Secteurs Couverts','progress.avgSelfScore':'Auto-Score Moyen en Conseil',
+    'progress.achievementsTitle':'Réussites','progress.achievementsSub':'Obtenues automatiquement au fil de vos dossiers',
+    'progress.caseStatusTitle':'État des Dossiers','progress.colCase':'Cas','progress.colSector':'Secteur','progress.colDifficulty':'Difficulté','progress.colStatus':'Statut',
+    'progress.footNote':'La progression, ainsi que chaque rapport, réponse et réflexion que vous avez rédigés, sont enregistrés localement dans ce navigateur — rien n’est envoyé ailleurs. Effacer les données de votre navigateur réinitialisera tout.',
+
+    'lang.note':'La navigation, les écrans et le contenu des dossiers sont désormais disponibles en anglais, en français et en arabe. Les noms d’entreprises restent en anglais.'
   },
   ar: {
     'nav.proMode':'وضع التحليل الاحترافي', 'nav.rc':'تحليل Keel',
@@ -804,7 +1017,113 @@ const I18N = {
     'fin.titleBalance':'الميزانية العمومية','fin.subBalance':'كما في نهاية الفترة، بالآلاف من $',
     'fin.titleCash':'قائمة التدفقات النقدية','fin.subCash':'الطريقة غير المباشرة، بالآلاف من $',
     'fin.trendTitle':'اتجاه الإيرادات وصافي الدخل','fin.continueRatios':'المتابعة إلى النسب والأطر ←',
-    'lang.note':'التنقل متاح بالإنجليزية والفرنسية والعربية. محتوى الحالات لا يزال بالإنجليزية فقط في هذه النسخة.'
+
+    'select.eyebrow':'تدريب مجاني · حالات تطبيقية',
+    'select.heroDesc':'كل حالة هي شركة افتراضية ذات قوائم مالية واقعية ومتسقة داخليًا. حلّل الأرقام، أجرِ التحليل، اكتب التقرير، ثم أجب عن أسئلة العميل.',
+    'select.statCases':'حالة','select.statSectors':'قطاع','select.statLevels':'مستويات','select.statCompleted':'مكتملة',
+    'select.openCase':'فتح الحالة ←',
+    'status.completed':'مكتملة','status.notStarted':'لم تبدأ','status.startCase':'ابدأ هذه الحالة',
+
+    'xp.toNext':'{xp} نقطة خبرة · {remaining} حتى {rank}','xp.maxRank':'{xp} نقطة خبرة · أعلى رتبة',
+    'xp.earnedToNext':'{xp} نقطة خبرة مكتسبة · {remaining} نقطة حتى {rank}','xp.earnedMax':'{xp} نقطة خبرة مكتسبة · تم بلوغ أعلى رتبة',
+
+    'ratio.tabDashboard':'لوحة النسب','ratio.tabDupont':'تحليل ديبونت','ratio.tabBreakeven':'نقطة التعادل','ratio.tabBudget':'الموازنة مقابل الفعلي',
+    'ratio.current':'نسبة التداول','ratio.currentInfo':'الأصول المتداولة ÷ الخصوم المتداولة',
+    'ratio.quick':'نسبة السيولة السريعة','ratio.quickInfo':'(الأصول المتداولة − المخزون) ÷ الخصوم المتداولة',
+    'ratio.grossMargin':'هامش الربح الإجمالي','ratio.grossMarginInfo':'(الإيرادات − تكلفة البضاعة المباعة) ÷ الإيرادات',
+    'ratio.netMargin':'هامش الربح الصافي','ratio.netMarginInfo':'صافي الدخل ÷ الإيرادات',
+    'ratio.roa':'العائد على الأصول','ratio.roaInfo':'صافي الدخل ÷ إجمالي الأصول',
+    'ratio.roe':'العائد على حقوق الملكية','ratio.roeInfo':'صافي الدخل ÷ إجمالي حقوق الملكية',
+    'ratio.debtEquity':'نسبة الدين إلى حقوق الملكية','ratio.debtEquityInfo':'إجمالي الخصوم ÷ إجمالي حقوق الملكية',
+    'ratio.interestCoverage':'تغطية الفوائد','ratio.interestCoverageInfo':'الدخل التشغيلي ÷ مصروف الفوائد',
+    'ratio.inventoryTurnover':'معدل دوران المخزون','ratio.inventoryTurnoverInfo':'تكلفة البضاعة المباعة ÷ المخزون',
+    'ratio.dso':'متوسط فترة تحصيل الذمم','ratio.dsoInfo':'(الذمم المدينة ÷ الإيرادات) × 365',
+    'ratio.assetTurnover':'معدل دوران الأصول','ratio.assetTurnoverInfo':'الإيرادات ÷ إجمالي الأصول',
+    'ratio.operatingMargin':'هامش التشغيل','ratio.operatingMarginInfo':'الدخل التشغيلي ÷ الإيرادات',
+    'ratio.ccc':'دورة تحويل النقد','ratio.cccInfo':'فترة تحصيل الذمم + فترة دوران المخزون − فترة سداد الدائنين',
+    'ratio.equityMultiplier':'مضاعف حقوق الملكية',
+    'ratio.opLossNotMeaningful':'خسارة تشغيلية — النسبة غير ذات دلالة',
+    'ratio.watchTitle':'راقب هذا الأمر عن كثب:','ratio.watchBody':' دورة تحويل النقد القياسية أعلاه تحتسب فقط الذمم والمخزون والدائنين التقليديين. تحمل هذه الحالة أيضًا {curr} من الإيرادات غير المفوترة والمحتجزات (مقابل {prior} في العام الماضي) — وهي سيولة محتجزة لا تراها الصيغة القياسية إطلاقًا. راجع تبويب الميزانية العمومية للصورة الكاملة.',
+    'ratio.readingTitle':'قراءة هذه اللوحة:','ratio.readingBody':'قارن كل رقم بالفترة السابقة أولًا، ثم حدد النسبتين أو الثلاث التي تفسر فعليًا مشكلة العميل — القراءة القوية تُسمّي النسب القليلة المهمة، لا النسب الثلاث عشرة كلها.',
+    'ratio.dupontTitle':'تحليل ديبونت','ratio.dupontSub':'العائد على حقوق الملكية = هامش الربح الصافي × معدل دوران الأصول × مضاعف حقوق الملكية',
+    'ratio.roeResultSuffix':'العائد على حقوق الملكية','ratio.vsInYear':'مقابل {value} في {year}',
+    'ratio.lookForTitle':'ما الذي يجب البحث عنه:','ratio.dupontLesson':'إذا ارتفع العائد على حقوق الملكية بشكل أساسي لأن مضاعف حقوق الملكية (الرفع المالي) ارتفع — لا لأن الهامش أو معدل الدوران تحسّن — فهذه إشارة تحذير لا إنجاز. تحقق من أي رافعة تحركت فعليًا.',
+    'ratio.breakevenTitle':'تحليل نقطة التعادل','ratio.breakevenSub':'هيكل التكاليف لعام {year}',
+    'ratio.fixedCosts':'التكاليف الثابتة','ratio.variableCostRatio':'نسبة التكاليف المتغيرة','ratio.breakevenRevenue':'إيرادات نقطة التعادل','ratio.notAchievable':'غير قابل للتحقيق',
+    'ratio.breakevenRevenueBarLabel':'إيرادات نقطة التعادل','ratio.actualRevenueBarLabel':'الإيرادات الفعلية ({year})',
+    'ratio.formulaTitle':'الصيغة:','ratio.formulaText':'إيرادات نقطة التعادل = التكاليف الثابتة ÷ (1 − نسبة التكاليف المتغيرة).',
+    'ratio.beNotAchievable':'التكاليف المتغيرة وحدها تستهلك 100% من الإيرادات أو أكثر بهذا الهيكل — لن يغطي أي حجم مبيعات التكاليف الثابتة. هذا يشير إلى مشكلة في التسعير أو تكلفة المدخلات يجب حلها قبل أن تصبح نقطة التعادل هدفًا ذا معنى أصلًا.',
+    'ratio.beAbove':'الإيرادات الفعلية أعلى من نقطة التعادل — تعمل الشركة بهامش أمان.',
+    'ratio.beBelow':'الإيرادات الفعلية أقل من نقطة التعادل — لا تستطيع الشركة تغطية تكاليفها الثابتة بهذا الحجم.',
+    'ratio.budgetTitle':'الموازنة مقابل الفعلي','ratio.budgetSub':'{year}، بالآلاف من $',
+    'ratio.colLine':'البند','ratio.colBudget':'الموازنة','ratio.colActual':'الفعلي','ratio.colVariance':'الانحراف',
+    'ratio.varianceTitle':'قراءة الانحراف:','ratio.varianceBody':'قد يعوّض انحراف إيجابي في الإيرادات انحرافًا سلبيًا في التكاليف داخل الرقم الإجمالي — تتبّع السلسلة كاملة (الإيرادات، تكلفة البضاعة المباعة، الربح الإجمالي، المصاريف التشغيلية) بدلًا من الاكتفاء بالأثر الصافي.',
+    'ratio.continueDiagnosis':'المتابعة إلى تشخيص المشكلة ←',
+    'ratio.sensAxisHeader':'فرق تكلفة البضاعة \\ النمو',
+
+    'diag.howWorksTitle':'كيف يعمل هذا:','diag.howWorksBody':'بناءً على كل ما رأيته في القوائم المالية والنسب، اختر الخيار الذي يفسر بأفضل شكل ما يحدث فعليًا. الأمر لا يتعلق بالحفظ، بل بالتعرف على النمط.',
+    'diag.chooseOne':'اختر إجابة واحدة','diag.submit':'إرسال التشخيص','diag.submitted':'تم إرسال التشخيص',
+    'diag.correct':'إجابة صحيحة.','diag.notQuite':'ليست دقيقة تمامًا.','diag.continueToolkit':'المتابعة إلى أدوات المحلل ←','diag.pickOption':'اختر خيارًا أولًا',
+
+    'toolkit.tabCommonsize':'القوائم النسبية','toolkit.tabHorizontal':'التحليل الأفقي','toolkit.tabSensitivity':'جدول الحساسية',
+    'toolkit.pctOfRevenue':'% من الإيرادات','toolkit.pctOfAssets':'% من إجمالي الأصول',
+    'toolkit.commonSizeTitle':'التحليل النسبي (الرأسي):','toolkit.commonSizeBody':'التعبير عن كل بند كنسبة مئوية من الإيرادات (أو من إجمالي الأصول) يُزيل أثر الحجم، مما يتيح مقارنة هيكل التكاليف من سنة لأخرى — أو مع منافس بحجم مختلف — دون أن تشوّش المبالغ بالدولار القراءة.',
+    'toolkit.horizontalTitle':'قائمة الدخل — التحليل الأفقي','toolkit.horizontalSub':'{y1} مقابل {y2}، بالآلاف من $',
+    'toolkit.colDollarChange':'التغير $','toolkit.colPctChange':'التغير %',
+    'toolkit.horizontalLessonTitle':'التحليل الأفقي:','toolkit.horizontalLessonBody':'النظر إلى نسبة التغير في كل بند، لا في البنود المتوقعة فقط، يكشف غالبًا القصة الحقيقية — بند صغير ينمو بنسبة 200% قد يكون أهم من بند كبير ينمو بنسبة 5%.',
+    'toolkit.sensitivityTitle':'جدول حساسية صافي الدخل','toolkit.sensitivitySub':'صافي دخل الفترة القادمة بحسب افتراضات مختلفة للنمو ونسبة تكلفة البضاعة المباعة — نفس فكرة «ماذا لو» في جدول بيانات إكسل.',
+    'toolkit.sensitivityLessonTitle':'قراءة هذا الجدول:','toolkit.sensitivityLessonBody':'حدد النتيجة الفعلية الحالية، ثم لاحظ إلى أي مدى يحرّك تغيّر معقول في أي اتجاه صافي الدخل. الشركة التي تنتقل من ربح إلى خسارة بتغيّر تكلفة صغير وواقعي لديها هامش خطأ ضئيل — يستحق الإشارة إليه صراحة في تقريرك.',
+    'toolkit.continueAssumptions':'المتابعة إلى نموذج الافتراضات ←',
+
+    'assump.title':'ابنِ نموذجك الخاص للفترة القادمة','assump.sub':'عدّل الافتراضات وشاهد {year} يُعاد حسابه كإسقاط لِـ {year}+1. هكذا يختبر المحللون متانة الخطة قبل عرضها.',
+    'assump.revenueGrowth':'نمو الإيرادات','assump.cogsRatioChange':'تغيّر نسبة تكلفة البضاعة المباعة (نقاط)','assump.opexChangeLabel':'تغيّر المصاريف التشغيلية',
+    'assump.continueReport':'المتابعة إلى إعداد التقرير ←',
+    'assump.actualHeader':'{year} — الفعلي','assump.baseline':'خط الأساس','assump.projectedHeader':'الفترة القادمة — المتوقعة','assump.basedOnAssumptions':'بناءً على افتراضاتك',
+    'assump.netIncomeChangeTitle':'التغير في صافي الدخل:','assump.netIncomeChangeBody':'{delta} مقارنة بالفعلي ({pctDelta}). جرّب عزل رافعة واحدة في كل مرة — غيّر نمو الإيرادات فقط أولًا، ثم التكاليف فقط — لترى أي افتراض تكون النتيجة أكثر حساسية له.',
+
+    'rpt.sub':'اكتب وكأن هذا النص سيُرسل إلى العميل المذكور في الإحاطة. يُحفظ تلقائيًا أثناء الكتابة.',
+    'rpt.execSummary':'الملخص التنفيذي','rpt.keyFindings':'أبرز النتائج','rpt.riskAreas':'مجالات الخطر','rpt.recommendations':'التوصيات',
+    'rpt.execPh':'اذكر استنتاجك في جملتين أو ثلاث. ما الذي يحدث فعليًا، بعبارات بسيطة؟','rpt.execHint':'سؤال موجِّه: لو قرأ العميل هذه الفقرة فقط، هل سيفهم جوهر المشكلة وما يجب فعله؟',
+    'rpt.findingsPh':'ماذا تُظهر البيانات فعليًا؟ استشهد بأرقام ونسب محددة.','rpt.findingsHint':'سؤال موجِّه: ما الرقمان أو الأرقام الثلاثة التي تفسر الوضع أكثر من غيرها؟',
+    'rpt.risksPh':'ماذا قد يحدث إذا لم يتغير شيء؟ ما سيناريو التراجع؟','rpt.risksHint':'سؤال موجِّه: هل هذه مشكلة سيولة، أم ربحية، أم رفع مالي — أم أكثر من واحدة؟',
+    'rpt.recsPh':'ماذا يجب على العميل أن يفعل تاليًا؟ كن محددًا ورتّب الأولويات.','rpt.recsHint':'سؤال موجِّه: ما الإجراء الأهم، وما الذي يليه؟',
+    'rpt.copyBtn':'نسخ التقرير','rpt.printBtn':'طباعة / حفظ كملف PDF',
+    'rpt.analystReportTitle':'{name} — تقرير المحلل','rpt.preparedFor':'أُعدّ لمراجعة المهمة','rpt.notYetWritten':'لم يُكتب بعد.',
+    'rpt.copiedToast':'تم نسخ التقرير إلى الحافظة','rpt.noClipboardToast':'الحافظة غير متاحة في هذا المتصفح',
+    'rpt.continueAdvisory':'المتابعة إلى استشارة العميل ←',
+
+    'adv.howWorksTitle':'كيف يعمل هذا:','adv.howWorksBody':'أجب عن كل سؤال كما لو كنت في اجتماع حقيقي مع العميل، ثم اكشف عن معايير التقييم الذاتي وقيّم نفسك بصدق. الهدف هو معايرة أدائك، لا الحصول على درجة كاملة.',
+    'adv.questionLabel':'السؤال {n}','adv.yourAnswer':'إجابتك','adv.answerPh':'أجب وكأنك في الغرفة مع العميل.',
+    'adv.showRubric':'إظهار معايير التقييم الذاتي','adv.hideRubric':'إخفاء معايير التقييم الذاتي','adv.tickHonest':'ضع علامة على ما غطّته إجابتك فعليًا — كن صادقًا، هذا من أجلك أنت.',
+    'adv.continueDebrief':'المتابعة إلى ملخص الجلسة ←',
+
+    'debrief.approachTitle':'المنهجية المتّبعة','debrief.approachSub':'مساحات العمل التي استخدمتها خلال هذه الجلسة',
+    'debrief.reportRecapTitle':'ملخص تقريرك','debrief.notWritten':'لم يُكتب.',
+    'debrief.diagnosisResultTitle':'نتيجة التشخيص','debrief.diagCorrectMsg':'حدّدت المشكلة الجوهرية بشكل صحيح من أول محاولة.',
+    'debrief.diagWrongMsg':'اختيارك الأول لم يكن المشكلة الجوهرية — يستحق الأمر إعادة قراءة الملخص النموذجي أدناه.','debrief.diagNotAttempted':'لم تتم المحاولة بعد.',
+    'debrief.selfScoreTitle':'التقييم الذاتي لاستشارة العميل','debrief.selfScoreSub':'{checked} من {total} نقطة تقييم مُحدَّدة ذاتيًا عبر {q} أسئلة',
+    'debrief.seniorFrameTitle':'كيف سيُؤطّر محلل أول هذه الحالة','debrief.seniorFrameSub':'اقرأ هذا بعد كتابة تقريرك الخاص — وليس قبله. قارِن، ولا تنسخ.',
+    'debrief.reflectionTitle':'التأمل','debrief.reflectionLabel':'ماذا ستفعل بشكل مختلف في المرة القادمة؟','debrief.reflectionPh':'ما الذي رصده الملخص النموذجي وفاتك أنت؟ ماذا ستتحقق منه أولًا في المرة القادمة؟',
+    'debrief.backToSelect':'→ اختيار حالة أخرى','debrief.viewProgress':'عرض التقدم الإجمالي ←',
+
+    'trainer.sub':'مواد مرجعية ودروس قصيرة — متاحة في أي وقت، بغض النظر عن الحالة التي تعمل عليها.',
+    'trainer.tabLessons':'دروس','trainer.tabTips':'نصائح','trainer.tabGuide':'دليل التقرير والقوائم','trainer.tabPlaybook':'مسار خطوة بخطوة','trainer.tabGlossary':'المصطلحات','trainer.tabPath':'مسار التعلّم',
+    'trainer.tipsTitle':'نصائح','trainer.tipsSub':'قواعد عملية يستحق حفظها قبل الجلوس أمام عميل',
+    'trainer.guideReportTitle':'فهم التقرير، قسمًا بقسم','trainer.guideReportSub':'الغرض الحقيقي من كل جزء في تقرير المحلل — وكيف تُميّز النسخة القوية من الضعيفة',
+    'trainer.purposeLabel':'الغرض:','trainer.strongVersionLabel':'نسخة قوية:','trainer.commonMistakeLabel':'خطأ شائع:',
+    'trainer.guideStatementTitle':'فهم القائمة المالية، قسمًا بقسم','trainer.guideStatementSub':'ماذا تعني كل مجموعة أرقام وما الذي يجب مراقبته فيها','trainer.watchForLabel':'راقب:',
+    'trainer.guideContractTitle':'قراءة خطاب تكليف العميل','trainer.guideContractSub':'عمل المحلل لا يقتصر على الأرقام — يبدأ بالعقد الذي يحدد شروط المهمة',
+    'trainer.playbookIntroTitle':'كيفية استخدام هذا:','trainer.playbookIntroBody':'كل فقرة أدناه هي مسار كامل حول موقف متكرر — متى يظهر، وما الذي يسببه فعليًا، والخطوات الدقيقة التي يجب اتّباعها قبل كتابة توصية. يربط مساعد Keel مباشرة بهذه الفقرات من أي ملاحظة مُشار إليها في بيانات عملائك الخاصة.',
+    'trainer.showSteps':'إظهار الخطوات','trainer.hideSteps':'إخفاء الخطوات',
+    'trainer.glossarySearchPh':'ابحث عن مصطلح، مثل «تغطية» أو «هامش»...','trainer.noTermsMatch':'لا توجد مصطلحات مطابقة لـ «{q}».',
+
+    'progress.sub':'سجل مستمر لجلسات تدريبك. يُخزَّن محليًا في هذا المتصفح.',
+    'progress.casesCompleted':'الحالات المكتملة','progress.sectorsCovered':'القطاعات المغطاة','progress.avgSelfScore':'متوسط التقييم الذاتي للاستشارة',
+    'progress.achievementsTitle':'الإنجازات','progress.achievementsSub':'تُمنح تلقائيًا أثناء عملك على ملفات الحالات',
+    'progress.caseStatusTitle':'حالة ملفات القضايا','progress.colCase':'الحالة','progress.colSector':'القطاع','progress.colDifficulty':'الصعوبة','progress.colStatus':'الوضع',
+    'progress.footNote':'يتم حفظ التقدم وكل تقرير وإجابة وتأمل كتبته محليًا في هذا المتصفح — لا يُرسل شيء إلى أي جهة. مسح بيانات المتصفح سيؤدي إلى إعادة ضبط كل ذلك.',
+
+    'lang.note':'أصبحت عناصر التنقل والشاشات ومحتوى الحالات متاحة الآن بالإنجليزية والفرنسية والعربية. تبقى أسماء الشركات بالإنجليزية.'
   }
 };
 
@@ -871,13 +1190,37 @@ const FIN_LABELS = {
   'Cash from Financing':{fr:'Flux de trésorerie de financement',ar:'التدفق النقدي من التمويل'},
   'Net Change in Cash':{fr:'Variation nette de trésorerie',ar:'صافي التغير في النقد'},
   'Beginning Cash':{fr:"Trésorerie d'ouverture",ar:'النقد في بداية الفترة'},
-  'Ending Cash':{fr:'Trésorerie de clôture',ar:'النقد في نهاية الفترة'}
+  'Ending Cash':{fr:'Trésorerie de clôture',ar:'النقد في نهاية الفترة'},
+  'COGS':{fr:'Coût des ventes',ar:'تكلفة البضاعة المباعة'},
+  'Operating Expenses':{fr:"Charges d'exploitation",ar:'المصاريف التشغيلية'},
+  'Budgeted Operating Expenses':{fr:"Charges d'exploitation budgétées",ar:'المصاريف التشغيلية المُوازَنة'}
 };
 function tl(label){ if(CURRENT_LANG==='en') return label; var m=FIN_LABELS[label]; return (m && m[CURRENT_LANG]) || label; }
 
 let CURRENT_LANG = 'en';
 function t(key){
   return (I18N[CURRENT_LANG] && I18N[CURRENT_LANG][key]) || I18N.en[key] || key;
+}
+/* tf(): translate key t() and substitute {placeholders} with values from vars.
+   Used for chrome strings that need to embed a dynamic number/year/name. */
+function tf(key, vars){
+  var s = t(key);
+  return s.replace(/\{(\w+)\}/g, function(m, k){ return (vars && vars[k]!==undefined && vars[k]!==null) ? vars[k] : m; });
+}
+/* L(obj, path): generic data-translation lookup for case scenarios, glossary
+   entries, playbook entries, lessons, tips, ranks, achievements, etc.
+   Looks for obj.i18n[CURRENT_LANG][path] (dot-path supported for nested
+   fields like 'diagnosis.correct'); falls back to the English obj[path]
+   (or obj itself, for arrays of plain-object items) if missing. */
+function L(obj, path){
+  if(!obj) return obj;
+  function get(o, p){ return p.split('.').reduce(function(v,k){ return (v==null) ? v : v[k]; }, o); }
+  var loc = obj.i18n && obj.i18n[CURRENT_LANG];
+  if(loc){
+    var lv = get(loc, path);
+    if(lv !== undefined && lv !== null) return lv;
+  }
+  return get(obj, path);
 }
 function applyI18n(){
   document.documentElement.setAttribute('lang', CURRENT_LANG);
@@ -938,6 +1281,54 @@ const SCENARIOS = [
       "The business has too much long-term debt relative to its size and should deleverage immediately.",
       "Membership pricing is too low and the club needs to raise prices to fix its cash position."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Hôtellerie et Bien-être',
+      tagline:'Un club privé haut de gamme qui semble rentable — et qui, en silence, manque de plus en plus de trésorerie.',
+      backstory:'Aurelia est un club de bien-être réservé aux membres dans une grande ville du Golfe, organisé autour d’un spa phare, d’un espace fitness et d’un salon réservé aux membres. Les revenus proviennent des abonnements annuels, des soins spa et de la restauration. L’an dernier, la direction a financé la rénovation du salon et un nouveau système CRM pour les adhésions.',
+      clientBrief:'« Les revenus des adhésions ont augmenté de près de 20 % cette année, le conseil s’attendait donc à fêter ça au champagne. Au lieu de cela, notre contrôleur de gestion nous dit que la trésorerie n’a jamais été aussi tendue. Dites-nous ce qui se passe réellement, et ce que nous devrions faire. »',
+      modelSummary:'Aurelia est un cas d’école de l’entreprise « rentable mais illiquide ». Les revenus des adhésions augmentent réellement et la marge brute est restée stable, mais le délai de recouvrement des créances a presque doublé à cause des comptes d’entreprises impayés, et la rénovation du salon a été financée par de la dette à court terme arrivant à échéance. Résultat : le résultat net a baissé alors même que le chiffre d’affaires augmentait, et la trésorerie est passée de 900 à 350. La solution n’est pas plus de croissance — c’est resserrer le recouvrement, refinancer la dette à court terme mal adaptée en financement à terme correspondant à la durée de vie de l’actif, et suspendre tout nouvel investissement jusqu’à ce que le ratio de liquidité générale se redresse.',
+      diagnosis:{
+        correct:"L’entreprise est rentable, mais sa trésorerie est immobilisée dans des créances à recouvrement lent et dans de la dette à court terme contractée pour financer des investissements — un problème de liquidité, pas de rentabilité.",
+        distractors:[
+          "Le problème central est une rentabilité en déclin — les marges se réduisent et l’entreprise n’est plus viable.",
+          "L’entreprise a trop de dette à long terme par rapport à sa taille et devrait se désendetter immédiatement.",
+          "Le prix des adhésions est trop bas et le club doit augmenter ses prix pour redresser sa trésorerie."
+        ]
+      },
+      clientQuestions:[
+        {q:"Nos revenus d’adhésion ont augmenté de près de 20 % cette année — pourquoi avons-nous l’impression d’avoir moins de trésorerie que jamais ?",
+         rubric:["Distingue le résultat comptable de la trésorerie disponible","Identifie l’accumulation des créances clients (adhésions d’entreprise impayées depuis plus de 90 jours) comme facteur principal","Note que la rénovation a été financée par de la dette à court terme arrivant bientôt à échéance","Évite de simplement répéter le chiffre de croissance du chiffre d’affaires comme si cela répondait à la question"]},
+        {q:"Devrions-nous contracter davantage de dette à court terme pour combler un manque de trésorerie sur la paie le mois prochain ?",
+         rubric:["Signale que les ratios de liquidité sont déjà tendus","Recommande de recouvrer d’abord les créances en retard, plutôt que d’ajouter de la dette à court terme","Suggère de faire correspondre l’échéance de toute nouvelle dette à ce qu’elle finance","Mentionne la réalisation d’une prévision de trésorerie à court terme avant de décider"]},
+        {q:"Le conseil souhaite ouvrir un deuxième site l’an prochain — sommes-nous financièrement prêts ?",
+         rubric:["Fait référence à l’affaiblissement de la couverture des intérêts / à la hausse de l’endettement","Indique que la liquidité devrait se redresser avant tout nouvel investissement","Recommande un test de résistance de l’expansion par rapport au service de la dette actuel","Donne une réponse conditionnelle plutôt qu’un oui ou non catégorique"]}
+      ]
+    },
+    ar:{
+      sector:'الضيافة والعافية',
+      tagline:'نادي عضوية فاخر يبدو مربحًا — بينما ينفد نقده بصمت.',
+      backstory:'أوريليا نادٍ للعافية مخصص للأعضاء في مدينة خليجية كبرى، يتمحور حول سبا رئيسي وصالة لياقة بدنية وصالة خاصة بالأعضاء. تأتي الإيرادات من الاشتراكات السنوية وجلسات السبا والمأكولات والمشروبات. في العام الماضي، موّلت الإدارة تجديد الصالة ونظام إدارة علاقات عملاء جديدًا للعضويات.',
+      clientBrief:'"نمت إيرادات العضويات بنحو 20% هذا العام، لذا توقّع مجلس الإدارة احتفالًا. لكن بدلًا من ذلك، يخبرنا المراقب المالي بأن السيولة النقدية أصبحت أكثر ضيقًا من أي وقت مضى. أخبرونا بما يحدث فعليًا، وما الذي يجب أن نفعله حيال ذلك."',
+      modelSummary:'أوريليا حالة نموذجية لشركة "مربحة لكن تفتقر إلى السيولة". نمت إيرادات العضويات فعليًا وبقي الهامش الإجمالي مستقرًا، لكن مدة تحصيل الذمم تضاعفت تقريبًا بسبب عدم سداد حسابات الشركات، وتم تمويل تجديد الصالة بدين قصير الأجل أصبح الآن مستحق السداد. النتيجة: انخفض صافي الدخل رغم ارتفاع الإيرادات، وتراجع النقد من 900 إلى 350. الحل ليس مزيدًا من النمو، بل تشديد التحصيل، وإعادة تمويل الدين قصير الأجل غير المتناسب بتمويل طويل الأجل يتماشى مع عمر الأصل، وتعليق أي إنفاق رأسمالي إضافي حتى تتعافى نسبة التداول.',
+      diagnosis:{
+        correct:"الشركة مربحة، لكن نقدها محتجز في ذمم بطيئة التحصيل ودين قصير الأجل تم الحصول عليه لتمويل إنفاق رأسمالي — وهي مشكلة سيولة، لا مشكلة ربحية.",
+        distractors:[
+          "المشكلة الجوهرية هي تراجع الربحية — الهوامش تتقلص والشركة لم تعد قابلة للاستمرار.",
+          "الشركة لديها دين طويل الأجل مفرط مقارنة بحجمها ويجب أن تخفض رفعها المالي فورًا.",
+          "أسعار العضويات منخفضة جدًا ويحتاج النادي إلى رفع الأسعار لإصلاح وضعه النقدي."
+        ]
+      },
+      clientQuestions:[
+        {q:"نمت إيرادات عضوياتنا بنحو 20% هذا العام — فلماذا نشعر أن لدينا نقدًا أقل من أي وقت مضى؟",
+         rubric:["يميّز بين الربح المحاسبي والنقد المتوفر","يحدد تراكم الذمم المدينة (عضويات الشركات غير المسددة منذ أكثر من 90 يومًا) كسبب رئيسي","يلاحظ أن التجديد مُوِّل بدين قصير الأجل مستحق قريبًا","يتجنب مجرد تكرار رقم نمو الإيرادات وكأنه يجيب عن السؤال"]},
+        {q:"هل ينبغي أن نأخذ مزيدًا من الدين قصير الأجل لتغطية فجوة في الرواتب الشهر المقبل؟",
+         rubric:["يشير إلى أن نسب السيولة متوترة بالفعل","يوصي بتحصيل الذمم المتأخرة أولًا بدلًا من إضافة دين قصير الأجل","يقترح مطابقة أجل استحقاق أي دين جديد مع ما يموّله","يذكر إجراء توقع تدفق نقدي قصير قبل اتخاذ القرار"]},
+        {q:"يرغب مجلس الإدارة في افتتاح فرع ثانٍ العام المقبل — هل نحن جاهزون ماليًا؟",
+         rubric:["يشير إلى تراجع تغطية الفوائد / ارتفاع الرفع المالي","يوضح أن السيولة يجب أن تتعافى قبل تحمّل إنفاق رأسمالي جديد","يوصي باختبار متانة التوسع مقابل خدمة الدين الحالية","يقدّم إجابة مشروطة بدلًا من نعم أو لا قاطعة"]}
+      ]
+    }
   }
 },
 {
@@ -975,6 +1366,54 @@ const SCENARIOS = [
       "The company is over-leveraged and should pay down debt before anything else.",
       "Fixed costs have grown faster than revenue, pushing the company toward its break-even point."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Commerce de Détail et E-commerce',
+      tagline:'Les ventes ont augmenté de 24 % — alors pourquoi le profit a-t-il presque disparu ?',
+      backstory:'Marchetti & Vine est un détaillant en ligne spécialisé dans les articles pour la maison, connu pour sa vaisselle d’inspiration méditerranéenne. Pour poursuivre la croissance cette année, les fondateurs ont fortement misé sur les remises saisonnières et la publicité payante sur les réseaux sociaux.',
+      clientBrief:'« Nous venons de connaître notre meilleure année en termes de chiffre d’affaires — en hausse de 24 % ! Je ne comprends pas pourquoi le compte bancaire raconte une tout autre histoire. Pouvez-vous examiner les chiffres et me dire ce qui s’est passé ? »',
+      modelSummary:'La croissance de Marchetti est réelle, mais son histoire de marge ne l’est pas. Le taux de marge brute est tombé de 40 % à 34 %, des remises plus importantes ayant dopé le volume supplémentaire, tandis que les dépenses marketing ont bondi pour financer cette croissance — laissant le résultat net proche du seuil de rentabilité malgré un chiffre d’affaires solide. Le ratio de liquidité générale reste correct, mais le ratio de liquidité immédiate (hors stocks) s’est effondré de 0,86 à environ 0,36, car une grande partie de l’actif circulant est désormais immobilisée dans des stocks à rotation lente. Le flux de trésorerie d’exploitation a été négatif sur l’année. La priorité est de corriger la stratégie de remises et la rotation des stocks avant de contracter tout nouveau financement.',
+      diagnosis:{
+        correct:"Les marges s’érodent sous l’effet de remises importantes, et le stock a augmenté plus vite que les ventes, affaiblissant la liquidité réelle (immédiate) même si les chiffres globaux semblent corrects.",
+        distractors:[
+          "La croissance du chiffre d’affaires est trop lente et l’entreprise a besoin d’une campagne marketing plus agressive.",
+          "L’entreprise est surendettée et devrait rembourser sa dette avant toute autre chose.",
+          "Les coûts fixes ont augmenté plus vite que le chiffre d’affaires, rapprochant l’entreprise de son seuil de rentabilité."
+        ]
+      },
+      clientQuestions:[
+        {q:"Notre chiffre d’affaires a augmenté de 24 % — pourquoi cela ne se traduit-il pas davantage en profit ?",
+         rubric:["Identifie la compression de la marge brute due aux remises (d’environ 40 % à 34 %)","Note que les dépenses marketing ont presque doublé pour poursuivre cette croissance","Précise clairement que la croissance du chiffre d’affaires seule ne signifie pas des marges plus saines","Suggère de revoir l’ampleur des remises et le mix des canaux, pas seulement de dépenser davantage"]},
+        {q:"Nous avons beaucoup de stock disponible — sommes-nous en bonne position si une grosse commande de fin d’année arrive ?",
+         rubric:["Distingue le ratio de liquidité générale du ratio de liquidité immédiate","Souligne que le stock peut être à rotation lente ou constitué des mauvaises références, pas facilement vendable","Note que la trésorerie disponible est très faible (180) pour financer les coûts de traitement des commandes","Recommande de vérifier la rotation des stocks avant de supposer qu’« en avoir beaucoup » est une bonne chose"]},
+        {q:"Devrions-nous contracter un prêt pour acheter plus de stock avant la prochaine saison ?",
+         rubric:["Signale que le ratio de liquidité immédiate est très faible (bien en dessous de 1,0)","Note que le flux de trésorerie d’exploitation était négatif cette année","Met en garde contre le fait d’insister avant d’avoir résolu le problème de rotation / de démarque","Construit la recommandation autour de la cause profonde, pas seulement de l’accès au financement"]}
+      ]
+    },
+    ar:{
+      sector:'التجزئة والتجارة الإلكترونية',
+      tagline:'ارتفعت المبيعات بنسبة 24% — فلماذا كاد الربح يختفي؟',
+      backstory:'ماركيتي آند فاين متجر إلكتروني متخصص في أدوات المنزل، معروف بأدوات المائدة المستوحاة من البحر الأبيض المتوسط. سعيًا وراء النمو هذا العام، اعتمد المؤسسون بشكل أكبر على التخفيضات الموسمية والإعلانات المدفوعة على وسائل التواصل الاجتماعي.',
+      clientBrief:'"للتو حققنا أفضل عام لنا من حيث الإيرادات — بارتفاع 24%! لا أفهم لماذا يروي رصيد البنك قصة مختلفة تمامًا. هل يمكنكم فحص الأرقام وإخباري بما حدث؟"',
+      modelSummary:'نمو ماركيتي حقيقي، لكن قصة هامشها ليست كذلك. تراجع الهامش الإجمالي من 40% إلى 34% مع دفع التخفيضات الأكبر للحجم الإضافي، بينما قفز الإنفاق التسويقي لتمويل هذا النمو — ما ترك صافي الدخل قريبًا من نقطة التعادل رغم قوة الإيرادات. لا تزال نسبة التداول تبدو جيدة، لكن نسبة السيولة السريعة (باستثناء المخزون) انهارت من 0.86 إلى نحو 0.36 لأن جزءًا كبيرًا من الأصول المتداولة أصبح الآن محتجزًا في مخزون بطيء الحركة. كان التدفق النقدي التشغيلي سالبًا خلال العام. الأولوية هي إصلاح استراتيجية التخفيضات ومعدل دوران المخزون قبل تحمّل أي تمويل جديد.',
+      diagnosis:{
+        correct:"تتآكل الهوامش بسبب التخفيضات الكبيرة، وتراكم المخزون أسرع من المبيعات، مما يُضعف السيولة الحقيقية (السريعة) رغم أن الأرقام الإجمالية تبدو جيدة.",
+        distractors:[
+          "نمو الإيرادات بطيء جدًا وتحتاج الشركة إلى حملة تسويقية أكثر قوة.",
+          "الشركة مثقلة بالديون بشكل مفرط ويجب أن تسدد ديونها قبل أي شيء آخر.",
+          "ارتفعت التكاليف الثابتة أسرع من الإيرادات، مما يدفع الشركة نحو نقطة التعادل."
+        ]
+      },
+      clientQuestions:[
+        {q:"نمت إيراداتنا بنسبة 24% — فلماذا لا ينعكس ذلك أكثر على الربح؟",
+         rubric:["يحدد تراجع الهامش الإجمالي بسبب التخفيضات (من نحو 40% إلى 34%)","يلاحظ أن الإنفاق التسويقي تضاعف تقريبًا لمطاردة هذا النمو","يوضح أن نمو الإيرادات وحده لا يعني هوامش أكثر صحة","يقترح مراجعة عمق التخفيضات ومزيج القنوات، لا مجرد زيادة الإنفاق"]},
+        {q:"لدينا مخزون وفير — هل نحن في وضع جيد إذا وصل طلب كبير خلال موسم الأعياد؟",
+         rubric:["يميّز بين نسبة التداول ونسبة السيولة السريعة","يشير إلى أن المخزون قد يكون بطيء الحركة أو من أصناف غير مناسبة، وليس جاهزًا للبيع بسهولة","يلاحظ أن النقد المتاح منخفض جدًا (180) لتمويل تكاليف تنفيذ الطلبات","يوصي بالتحقق من معدل دوران المخزون قبل افتراض أن «الوفرة» أمر جيد"]},
+        {q:"هل يجب أن نحصل على قرض لشراء مزيد من المخزون قبل الموسم القادم؟",
+         rubric:["يشير إلى أن نسبة السيولة السريعة ضعيفة جدًا (أقل بكثير من 1.0)","يلاحظ أن التدفق النقدي التشغيلي كان سالبًا هذا العام","يحذر من مضاعفة الاستثمار قبل إصلاح مشكلة الدوران / التخفيضات","يبني التوصية حول السبب الجذري، لا مجرد إمكانية الحصول على التمويل"]}
+      ]
+    }
   }
 },
 {
@@ -1012,6 +1451,54 @@ const SCENARIOS = [
       "Receivables are growing faster than revenue and choking off cash.",
       "The company has taken on too much long-term debt to fund expansion."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Restauration et Boissons',
+      tagline:'Un groupe de quatre restaurants vient de basculer d’un profit ténu à une perte d’exploitation.',
+      backstory:'Levantine Table exploite quatre restaurants de cuisine décontractée réputés pour leur cuisine levantine régionale. Les hausses de loyer et un marché du travail tendu ont fait grimper les coûts cette année, tandis que l’affluence a à peine progressé.',
+      clientBrief:'« Nous n’avons augmenté notre chiffre d’affaires que d’environ 4 % cette année, ce qui nous semblait correct — mais notre comptable vient de nous dire que nous avons perdu de l’argent. Cela ne tient pas debout pour nous. Que s’est-il passé, et que devons-nous faire ? »',
+      modelSummary:'L’histoire de Levantine est celle d’un effet de levier opérationnel qui joue contre eux. Les coûts fixes — la main-d’œuvre et le loyer en particulier — ont augmenté bien plus vite que la modeste hausse de 4 % du chiffre d’affaires, et le seuil de rentabilité du groupe (environ 13 600) dépasse désormais le chiffre d’affaires réel (12 500). Cet écart explique le basculement d’un profit ténu vers une perte d’exploitation, bien plus qu’une seule mauvaise décision. Les propriétaires ont comblé le manque par un apport de capital personnel plutôt que par un financement, ce qui gagne du temps mais ne corrige pas la structure de coûts sous-jacente. Toute recommandation de fermer un site nécessite des données de marge sur contribution par site qui ne figurent pas dans ces états consolidés — un point à signaler plutôt qu’à deviner.',
+      diagnosis:{
+        correct:"Les coûts fixes (loyer et main-d’œuvre) ont augmenté plus vite que le chiffre d’affaires, faisant passer l’entreprise sous son seuil de rentabilité et transformant un profit ténu en perte d’exploitation.",
+        distractors:[
+          "Des remises agressives ont comprimé les marges brutes.",
+          "Les créances augmentent plus vite que le chiffre d’affaires et étouffent la trésorerie.",
+          "L’entreprise a contracté trop de dette à long terme pour financer son expansion."
+        ]
+      },
+      clientQuestions:[
+        {q:"Nous avons légèrement augmenté notre chiffre d’affaires cette année, alors pourquoi avons-nous perdu de l’argent ?",
+         rubric:["Explique que les coûts fixes (loyer, main-d’œuvre) ont augmenté plus vite que le chiffre d’affaires","Relie cela à l’effet de levier opérationnel — des marges ténues signifient que de petits dépassements de coûts effacent le profit","Utilise le chiffre du seuil de rentabilité pour montrer que le chiffre d’affaires n’a pas atteint ce qui est nécessaire pour couvrir les coûts fixes","Évite de blâmer un seul poste sans montrer la vue d’ensemble"]},
+        {q:"Devrions-nous fermer le site le moins performant ou investir pour le redresser ?",
+         rubric:["Souligne que les données fournies sont à l’échelle de l’entreprise, pas site par site","Indique qu’une véritable recommandation nécessite des données de marge sur contribution par site","Propose une orientation générale (revue de l’économie unitaire) tout en signalant honnêtement le manque de données","Évite de fabriquer une réponse au niveau du site à partir de chiffres consolidés"]},
+        {q:"Les propriétaires ont injecté des fonds supplémentaires cette année — est-ce un plan durable ?",
+         rubric:["Indique clairement que les apports de capital masquent mais ne corrigent pas un problème de coûts structurel","Recommande de traiter directement la base de coûts fixes ou la tarification","Note que ce schéma n’est pas durable s’il se répète chaque année","Fait le lien avec l’analyse du seuil de rentabilité"]}
+      ]
+    },
+    ar:{
+      sector:'الأغذية والمشروبات',
+      tagline:'مجموعة مطاعم من أربعة فروع انتقلت للتو من ربح ضئيل إلى خسارة تشغيلية.',
+      backstory:'تدير ليفانتين تيبل أربعة مطاعم بأسلوب غير رسمي معروفة بمأكولاتها الشامية الإقليمية. دفعت زيادات الإيجار وسوق عمل ضيق التكاليف إلى الارتفاع هذا العام، بينما لم تنمُ حركة الزبائن إلا بالكاد.',
+      clientBrief:'"لم نزد إيراداتنا سوى بنحو 4% هذا العام، وهو ما بدا لنا جيدًا — لكن محاسبنا أخبرنا للتو أننا خسرنا المال. هذا لا يبدو منطقيًا بالنسبة لنا. ماذا حدث، وماذا يجب أن نفعل؟"',
+      modelSummary:'قصة ليفانتين هي رافعة تشغيلية تعمل ضدها. ارتفعت التكاليف الثابتة — العمالة والإيجار خصوصًا — بوتيرة أسرع بكثير من زيادة الإيرادات المتواضعة البالغة 4%، وأصبحت إيرادات نقطة التعادل للمجموعة (نحو 13,600) أعلى من الإيرادات الفعلية (12,500). هذه الفجوة تفسر الانتقال من ربح ضئيل إلى خسارة تشغيلية، أكثر من أي قرار سيئ منفرد. غطّى الملاك العجز بضخ رأس مال شخصي بدلًا من التمويل، ما يكسب بعض الوقت لكنه لا يعالج هيكل التكاليف الأساسي. أي توصية بإغلاق أحد الفروع تحتاج إلى بيانات هامش مساهمة على مستوى الفرع غير متوفرة في هذه القوائم الموحدة — وهذا يستحق الإشارة إليه بدلًا من التخمين.',
+      diagnosis:{
+        correct:"ارتفعت التكاليف الثابتة (الإيجار والعمالة) أسرع من الإيرادات، ما دفع الشركة إلى ما دون نقطة التعادل وحوّل ربحًا ضئيلًا إلى خسارة تشغيلية.",
+        distractors:[
+          "التخفيضات العدوانية ضغطت الهوامش الإجمالية.",
+          "الذمم المدينة تنمو أسرع من الإيرادات وتخنق التدفق النقدي.",
+          "تحمّلت الشركة دينًا طويل الأجل مفرطًا لتمويل التوسع."
+        ]
+      },
+      clientQuestions:[
+        {q:"زدنا إيراداتنا قليلًا هذا العام، فلماذا خسرنا المال؟",
+         rubric:["يشرح أن التكاليف الثابتة (الإيجار، العمالة) ارتفعت أسرع من الإيرادات","يربط ذلك بالرافعة التشغيلية — الهوامش الضئيلة تعني أن تجاوزات التكلفة الصغيرة تمحو الربح","يستخدم رقم نقطة التعادل لإظهار أن الإيرادات لم تبلغ المستوى اللازم لتغطية التكاليف الثابتة","يتجنب إلقاء اللوم على بند واحد دون عرض الصورة الكاملة"]},
+        {q:"هل يجب أن نغلق الفرع ضعيف الأداء أم نستثمر في إصلاحه؟",
+         rubric:["يشير إلى أن البيانات المتوفرة على مستوى الشركة ككل، لا فرعًا بفرع","يوضح أن التوصية الحقيقية تحتاج بيانات هامش مساهمة لكل فرع","يقترح توجهًا عامًا (مراجعة اقتصاديات الوحدة) مع الإشارة بصدق إلى فجوة البيانات","يتجنب اختلاق إجابة على مستوى الفرع من أرقام على مستوى الشركة"]},
+        {q:"ضخّ الملاك نقدًا إضافيًا هذا العام — هل هذه خطة مستدامة؟",
+         rubric:["يوضح بصراحة أن ضخ رأس المال يُخفي المشكلة لكنه لا يعالج مشكلة تكلفة هيكلية","يوصي بمعالجة قاعدة التكاليف الثابتة أو التسعير مباشرة","يلاحظ أن هذا النمط غير مستدام إذا تكرر كل عام","يربط التوصية بتحليل نقطة التعادل"]}
+      ]
+    }
   }
 },
 {
@@ -1049,6 +1536,54 @@ const SCENARIOS = [
       "Customer concentration is the single biggest risk and should be the headline finding.",
       "Gross margin is declining and that's the main threat to the business."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Technologie / SaaS',
+      tagline:'Le chiffre d’affaires a augmenté de 80 %. Le conseil est ravi. Le solde de trésorerie raconte une autre histoire.',
+      backstory:'Nexora Cloud vend des logiciels de gestion de projet à des entreprises de construction de taille moyenne sous forme d’abonnements annuels. Elle a levé un tour d’amorçage il y a dix-huit mois et entame sa deuxième année complète de montée en puissance des ventes et de la R&D.',
+      clientBrief:'« Nous venons d’afficher une croissance de 80 % du chiffre d’affaires et le conseil débouche le champagne. Mais c’est moi qui surveille le solde bancaire, et il a chuté de moitié. Ai-je tort de m’inquiéter ? »',
+      modelSummary:'La croissance de Nexora est réelle — une croissance de 80 % du chiffre d’affaires avec une marge brute passant de 70 % à environ 72 % est un signal sous-jacent solide. Mais le flux de trésorerie d’exploitation restait nettement négatif, et le solde de trésorerie est passé de 2 500 à environ 1 240 en une seule année, avant même de tenir compte des investissements continus en logiciels capitalisés et en équipement. La hausse des produits différés en parallèle de la facturation est un signe sain de réservations futures, mais cela ne change rien à l’équation de trésorerie à court terme. Au rythme de combustion actuel, l’entreprise dispose de bien moins de dix-huit mois de trésorerie disponible et devrait entamer sa prochaine levée de fonds dès maintenant, pas après que le conseil demande pourquoi la trésorerie est de nouveau basse le trimestre prochain.',
+      diagnosis:{
+        correct:"Malgré une forte croissance du chiffre d’affaires et des marges en amélioration, la consommation de trésorerie dépasse le solde disponible, et l’entreprise dispose probablement de moins de 18 mois de trésorerie sans nouveau tour de financement.",
+        distractors:[
+          "L’entreprise n’est pas rentable parce que sa structure de coûts est fondamentalement défaillante et nécessite une réduction immédiate des effectifs.",
+          "La concentration de la clientèle est le risque le plus important et devrait être le constat principal.",
+          "La marge brute est en baisse et c’est la principale menace pour l’entreprise."
+        ]
+      },
+      clientQuestions:[
+        {q:"Notre chiffre d’affaires a augmenté de 80 % — les investisseurs devraient être ravis, non ?",
+         rubric:["Reconnaît que la croissance est réellement forte et que la marge brute s’améliore","Mais signale que la consommation de trésorerie s’est accrue en valeur absolue, pas seulement en pourcentage","Soulève explicitement la question de la trésorerie disponible étant donné que le solde a environ diminué de moitié","Équilibre la bonne nouvelle avec le risque financier réel, sans se limiter à l’un ou à l’autre"]},
+        {q:"Un client représente désormais environ un tiers de nos créances — est-ce un risque ?",
+         rubric:["Identifie la concentration de la clientèle comme un risque réel, pas un détail mineur","Explique l’impact si ce client retarde son paiement ou part","Recommande de suivre spécifiquement le délai de recouvrement propre à ce compte","Suggère de diversifier la base de clients comme mesure d’atténuation"]},
+        {q:"Devons-nous lever un nouveau tour de financement prochainement ?",
+         rubric:["Calcule ou fait référence à une estimation explicite de la trésorerie disponible à partir du solde et du taux de combustion","Conclut par l’affirmative, compte tenu de la trésorerie disponible par rapport à la consommation annuelle indiquée","Recommande de démarrer le processus tôt plutôt que d’attendre que la trésorerie soit critique","Ne se contente pas de dire « croître plus vite » sans traiter le calendrier de trésorerie"]}
+      ]
+    },
+    ar:{
+      sector:'التكنولوجيا / البرمجيات كخدمة',
+      tagline:'ارتفعت الإيرادات بنسبة 80%. مجلس الإدارة مسرور. لكن رصيد النقد يروي قصة مختلفة.',
+      backstory:'تبيع نيكسورا كلاود برمجيات إدارة المشاريع لشركات إنشاءات متوسطة الحجم عبر اشتراكات سنوية. جمعت جولة تمويل تأسيسية قبل ثمانية عشر شهرًا وهي الآن في عامها الكامل الثاني من توسيع المبيعات والبحث والتطوير.',
+      clientBrief:'"سجّلنا للتو نموًا بنسبة 80% في الإيرادات ومجلس الإدارة يحتفل. لكنني أنا من يراقب رصيد البنك، وقد انخفض إلى النصف. هل أنا مخطئ في القلق؟"',
+      modelSummary:'قصة نمو نيكسورا حقيقية — نمو إيرادات بنسبة 80% مع تحسّن الهامش الإجمالي من 70% إلى نحو 72% إشارة أساسية قوية. لكن التدفق النقدي التشغيلي ظل سالبًا بشكل ملموس، وتراجع رصيد النقد من 2,500 إلى نحو 1,240 خلال عام واحد فقط، حتى قبل احتساب الاستثمار المستمر في البرمجيات المرسملة والمعدات. نمو الإيرادات المؤجلة بالتوازي مع الفوترة إشارة صحية على حجوزات مستقبلية، لكنه لا يغيّر معادلة النقد في الأجل القريب. وبمعدل الاستهلاك الحالي، تمتلك الشركة أقل بكثير من ثمانية عشر شهرًا من العمر النقدي المتبقي، ويجب أن تبدأ جولة تمويلها القادمة الآن، لا بعد أن يسأل مجلس الإدارة عن سبب انخفاض النقد مجددًا الفصل القادم.',
+      diagnosis:{
+        correct:"رغم النمو القوي في الإيرادات وتحسّن الهوامش، فإن استهلاك النقد يتجاوز الرصيد المتاح، وتمتلك الشركة على الأرجح أقل من 18 شهرًا من العمر النقدي دون جولة تمويل جديدة.",
+        distractors:[
+          "الشركة غير مربحة لأن هيكل تكاليفها معطوب جوهريًا وتحتاج إلى تقليص فوري.",
+          "تركّز العملاء هو أكبر خطر منفرد ويجب أن يكون النتيجة الرئيسية.",
+          "الهامش الإجمالي في تراجع وهذا هو التهديد الرئيسي للشركة."
+        ]
+      },
+      clientQuestions:[
+        {q:"نمت إيراداتنا بنسبة 80% — يجب أن يكون المستثمرون مسرورين، أليس كذلك؟",
+         rubric:["يقر بأن النمو قوي فعليًا وأن الهامش الإجمالي يتحسن","لكنه يشير إلى أن استهلاك النقد اتسع بالقيمة الدولارية، لا بالنسبة المئوية فقط","يثير صراحة سؤال العمر النقدي المتبقي نظرًا لتراجع الرصيد إلى النصف تقريبًا","يوازن بين الخبر الجيد والمخاطر المالية الحقيقية، دون الاكتفاء بأحدهما"]},
+        {q:"أصبح عميل واحد يمثل الآن نحو ثلث ذممنا المدينة — هل هذا يشكّل خطرًا؟",
+         rubric:["يحدد تركّز العملاء كخطر حقيقي، لا تفصيلًا ثانويًا","يشرح الأثر إذا تأخر هذا العميل في الدفع أو غادر","يوصي بمتابعة مدة تحصيل الذمم الخاصة بهذا الحساب تحديدًا","يقترح تنويع قاعدة العملاء كإجراء تخفيفي"]},
+        {q:"هل نحتاج إلى جولة تمويل جديدة قريبًا؟",
+         rubric:["يحسب أو يشير إلى تقدير صريح للعمر النقدي المتبقي بناءً على النقد المتاح ومعدل الاستهلاك","يخلص إلى نعم، بالنظر إلى النقد المتاح مقابل معدل الاستهلاك السنوي الموضح","يوصي ببدء العملية مبكرًا بدلًا من الانتظار حتى يصبح النقد منخفضًا بشكل حرج","لا يكتفي بالقول «انمُ بشكل أسرع» دون معالجة الجدول الزمني النقدي"]}
+      ]
+    }
   }
 },
 {
@@ -1086,6 +1621,54 @@ const SCENARIOS = [
       "Gross margin has collapsed and that's the main issue.",
       "Revenue growth has stalled and the company needs a new sales strategy."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Industrie et Fabrication',
+      tagline:'Les ventes augmentent, le profit augmente, et l’entreprise devient discrètement plus risquée.',
+      backstory:'Halcyon fournit des composants en acier de précision à des fabricants régionaux de matériel de construction et d’équipements lourds. Cette année, elle a financé une nouvelle ligne de production pour suivre la demande.',
+      clientBrief:'« Le chiffre d’affaires a augmenté de 17 %, le profit augmente, tout le monde ici pense que c’est notre meilleure année. Mon banquier m’a posé une question sur la couverture des intérêts à laquelle je n’ai pas su répondre, et maintenant je suis inquiet. Pouvez-vous me dire si nous sommes réellement en meilleure forme ou non ? »',
+      modelSummary:'Halcyon paraît plus solide au compte de résultat et plus fragile partout ailleurs. Le chiffre d’affaires et le résultat net ont tous deux augmenté, mais la couverture des intérêts a presque été divisée par deux (d’environ 5,5x à 2,7x), la dette contractée pour la nouvelle ligne de production ayant fait grimper les charges d’intérêts plus vite que le résultat d’exploitation. Dans le même temps, le délai de recouvrement des créances est passé d’environ 53 à 66 jours, et les stocks ont augmenté encore plus vite que les ventes, rendant le flux de trésorerie d’exploitation négatif sur l’année malgré un résultat net positif. L’histoire de croissance affichée et l’histoire sous-jacente de trésorerie et d’endettement pointent dans des directions opposées — un point à signaler à la direction avant d’approuver une nouvelle expansion financée par la dette.',
+      diagnosis:{
+        correct:"Le profit augmente, mais la couverture des intérêts s’affaiblit fortement et le flux de trésorerie d’exploitation est devenu négatif — le risque d’endettement et de fonds de roulement augmente plus vite que ne le suggère le compte de résultat.",
+        distractors:[
+          "L’entreprise n’est pas rentable et doit réduire ses coûts immédiatement.",
+          "La marge brute s’est effondrée et c’est le principal problème.",
+          "La croissance du chiffre d’affaires a stagné et l’entreprise a besoin d’une nouvelle stratégie commerciale."
+        ]
+      },
+      clientQuestions:[
+        {q:"Les ventes ont augmenté de 17 % et le profit reste positif — sommes-nous donc en meilleure santé financière cette année ?",
+         rubric:["Indique clairement que la croissance affichée du profit masque un risque réel","Cite la baisse de la couverture des intérêts d’environ 5,5x à 2,7x","Note que le flux de trésorerie d’exploitation est en réalité devenu négatif cette année","Explique qu’ici, le profit comptable et la santé de la trésorerie ne sont pas la même chose"]},
+        {q:"Devrions-nous contracter plus de dette pour agrandir davantage la nouvelle ligne de production ?",
+         rubric:["Recommande la prudence compte tenu de la couverture des intérêts déjà en baisse","Suggère de vouloir voir la conversion de trésorerie s’améliorer avant d’ajouter du levier","Propose de tester la résistance de la couverture face à une hausse des taux ou un recul de la demande","Évite un oui catégorique compte tenu de la tendance, sans pour autant l’exclure inconditionnellement"]},
+        {q:"Nos clients mettent plus de temps à payer — est-ce important si nous restons rentables sur le papier ?",
+         rubric:["Indique clairement que oui, cela importe — le profit et la trésorerie sont deux choses différentes","Relie directement l’allongement du délai de recouvrement (d’environ 53 à 66 jours) à la tension de trésorerie","Note que cette trésorerie est désormais effectivement financée par de la dette à court terme","Recommande de resserrer les conditions de crédit et le suivi des recouvrements"]}
+      ]
+    },
+    ar:{
+      sector:'الصناعة والتصنيع',
+      tagline:'المبيعات ترتفع، والربح يرتفع، والشركة تصبح أكثر خطورة بهدوء.',
+      backstory:'تزوّد هالسيون شركات إنشاءات ومصنّعي معدات ثقيلة إقليميين بمكونات فولاذية دقيقة. مولت هذا العام خط إنتاج جديدًا لمواكبة الطلب.',
+      clientBrief:'"ارتفعت الإيرادات بنسبة 17%، والربح يرتفع، والجميع هنا يظن أنه أفضل عام لنا حتى الآن. سألني مصرفيّ سؤالًا عن تغطية الفوائد لم أستطع الإجابة عنه، وأصبحت الآن قلقًا. هل يمكنكم إخباري إن كنا فعلًا في وضع أفضل أم لا؟"',
+      modelSummary:'تبدو هالسيون أقوى في قائمة الدخل وأضعف في كل مكان آخر. نما كل من الإيرادات وصافي الدخل، لكن تغطية الفوائد تراجعت إلى النصف تقريبًا (من نحو 5.5x إلى 2.7x) مع ارتفاع مصروف الفوائد الناتج عن دين خط الإنتاج الجديد أسرع من نمو الدخل التشغيلي. في الوقت نفسه، امتدت مدة تحصيل الذمم من نحو 53 إلى 66 يومًا، ونما المخزون أسرع حتى من المبيعات، ما جعل التدفق النقدي التشغيلي سالبًا خلال العام رغم صافي الدخل الإيجابي. قصة النمو الظاهرة وقصة النقد والرفع المالي الكامنة تتجهان في اتجاهين متعاكسين — وهو أمر يستحق لفت انتباه الإدارة إليه قبل الموافقة على مزيد من التوسع الممول بالدين.',
+      diagnosis:{
+        correct:"الربح ينمو، لكن تغطية الفوائد تتراجع بشدة وأصبح التدفق النقدي التشغيلي سالبًا — يرتفع خطر الرفع المالي ورأس المال العامل أسرع مما توحي به قائمة الدخل.",
+        distractors:[
+          "الشركة غير مربحة وتحتاج إلى خفض التكاليف فورًا.",
+          "انهار الهامش الإجمالي وهذه هي المشكلة الرئيسية.",
+          "توقف نمو الإيرادات وتحتاج الشركة إلى استراتيجية مبيعات جديدة."
+        ]
+      },
+      clientQuestions:[
+        {q:"ارتفعت المبيعات بنسبة 17% والربح لا يزال إيجابيًا — فهل نحن إذن في وضع مالي أفضل هذا العام؟",
+         rubric:["يوضح بجلاء أن نمو الربح الظاهر يُخفي خطرًا حقيقيًا","يستشهد بتراجع تغطية الفوائد من نحو 5.5x إلى 2.7x","يلاحظ أن التدفق النقدي التشغيلي أصبح فعليًا سالبًا هذا العام","يشرح أن الربح المحاسبي وسلامة النقد ليسا الشيء نفسه هنا"]},
+        {q:"هل يجب أن نتحمل مزيدًا من الدين لتوسيع خط الإنتاج الجديد أكثر؟",
+         rubric:["يوصي بالحذر نظرًا لتراجع تغطية الفوائد بالفعل","يقترح الرغبة في رؤية تحسّن تحويل النقد قبل إضافة رفع مالي","يقترح اختبار متانة التغطية أمام ارتفاع في الفائدة أو تراجع في الطلب","يتجنب إجابة «نعم» قاطعة نظرًا للاتجاه، دون استبعادها كليًا"]},
+        {q:"أصبح عملاؤنا يستغرقون وقتًا أطول للدفع — هل يهم ذلك ما دمنا لا نزال مربحين على الورق؟",
+         rubric:["يوضح بصراحة أن الأمر مهم — فالربح والنقد أمران مختلفان","يربط مباشرة بين ارتفاع مدة تحصيل الذمم (من نحو 53 إلى 66 يومًا) وضغط السيولة","يلاحظ أن هذا النقد أصبح الآن ممولًا فعليًا بدين قصير الأجل","يوصي بتشديد شروط الائتمان ومتابعة التحصيل"]}
+      ]
+    }
   }
 },
 {
@@ -1123,6 +1706,54 @@ const SCENARIOS = [
       "Staffing costs have spiraled out of control and are the main driver of the cash squeeze.",
       "The clinic has taken on too much debt to fund new equipment."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Santé',
+      tagline:'Les visites de patients augmentent et la facturation semble excellente — alors pourquoi devient-il soudain difficile de payer les salaires ?',
+      backstory:'Palm Grove est une clinique de médecine familiale regroupant plusieurs praticiens, facturant principalement via l’assurance. Le volume de visites de patients a bien progressé cette année, mais plusieurs assureurs remboursent plus lentement, et la clinique a déployé un nouveau logiciel de facturation.',
+      clientBrief:'« Nos visites de patients augmentent, et notre facturation a fière allure sur le papier. Mais il devient plus difficile de payer les salaires chaque mois. Que se passe-t-il ? »',
+      modelSummary:'L’histoire de Palm Grove est un problème de conversion de trésorerie côté payeur, pas un problème de rentabilité. Le chiffre d’affaires et le résultat net ont tous deux augmenté, mais les créances clients ont à peu près doublé à mesure que les remboursements des assureurs ralentissaient, faisant grimper fortement le délai de recouvrement et asséchant la trésorerie alors même que le compte de résultat semblait sain. La solution consiste à resserrer le recouvrement et l’analyse de l’ancienneté des créances par assureur, pas à réduire le personnel ni à supposer que la clinique n’est pas rentable.',
+      diagnosis:{
+        correct:"Les retards de remboursement des assurances allongent les créances et assèchent la trésorerie, même si les revenus facturés et le profit augmentent tous deux.",
+        distractors:[
+          "La clinique n’est pas rentable et doit augmenter ses prix immédiatement.",
+          "Les coûts de personnel ont explosé de manière incontrôlée et sont le principal facteur de la tension de trésorerie.",
+          "La clinique a contracté trop de dette pour financer du nouvel équipement."
+        ]
+      },
+      clientQuestions:[
+        {q:"Notre volume de visites et notre facturation ont tous deux bien progressé cette année — pourquoi devient-il soudain difficile de payer les salaires ?",
+         rubric:["Identifie que les créances clients (remboursements d’assurance) augmentent bien plus vite que le chiffre d’affaires","Distingue le revenu facturé du montant réellement encaissé","Note que le délai de recouvrement a à peu près doublé","Évite de supposer que la clinique elle-même n’est pas rentable"]},
+        {q:"Devrions-nous changer pour un fournisseur de logiciel de facturation plus rapide pour corriger cela ?",
+         rubric:["Note qu’un nouveau logiciel seul ne corrigera pas les retards de remboursement côté payeur","Recommande d’analyser l’ancienneté des créances par assureur","Suggère de resserrer le processus de recouvrement / de suivi","Présente cela comme un problème de processus et de répartition des payeurs, pas seulement un choix d’outil"]},
+        {q:"Quelques assureurs sont systématiquement lents à payer — devrions-nous simplement cesser de les accepter ?",
+         rubric:["Met en balance l’accès des patients et la contribution au chiffre d’affaires face au problème de recouvrement","Suggère d’analyser quels payeurs génèrent réellement les pires délais de recouvrement","Recommande de renégocier les conditions ou de constituer une réserve pour recouvrement avant d’écarter un payeur","Évite un oui/non catégorique sans données supplémentaires par payeur"]}
+      ]
+    },
+    ar:{
+      sector:'الرعاية الصحية',
+      tagline:'زيارات المرضى في ازدياد والفواتير تبدو ممتازة — فلماذا أصبح دفع الرواتب صعبًا فجأة؟',
+      backstory:'بالم غروف عيادة طب أسرة متعددة الممارسين تفوتر بشكل رئيسي عبر التأمين. نما حجم زيارات المرضى بشكل جيد هذا العام، لكن عدة شركات تأمين أصبحت أبطأ في السداد، وطرحت العيادة نظام برمجيات فوترة جديدًا.',
+      clientBrief:'"زياراتنا المرضية في ازدياد، وفواتيرنا تبدو ممتازة على الورق. لكن دفع الرواتب يصبح أصعب كل شهر. ما الذي يحدث؟"',
+      modelSummary:'قصة بالم غروف هي مشكلة تحويل نقدي من جهة الجهات الدافعة، لا مشكلة ربحية. نما كل من الإيرادات وصافي الدخل، لكن الذمم المدينة تضاعفت تقريبًا مع تباطؤ سداد شركات التأمين، ما دفع مدة تحصيل الذمم للارتفاع بشدة واستنزف النقد رغم أن قائمة الدخل بدت سليمة. الحل هو تشديد التحصيل وتحليل أعمار الذمم حسب الجهة الدافعة، لا تقليص الموظفين أو افتراض أن العيادة غير مربحة.',
+      diagnosis:{
+        correct:"تأخيرات سداد التأمين تُطيل أمد الذمم المدينة وتستنزف النقد، رغم أن الإيرادات المفوترة والربح كلاهما في نمو.",
+        distractors:[
+          "العيادة غير مربحة وتحتاج إلى رفع الأسعار فورًا.",
+          "تصاعدت تكاليف الموظفين خارج السيطرة وهي المحرك الرئيسي لضغط السيولة.",
+          "تحمّلت العيادة دينًا مفرطًا لتمويل معدات جديدة."
+        ]
+      },
+      clientQuestions:[
+        {q:"حجم زياراتنا والفواتير المسجّلة ارتفعا بشكل جيد هذا العام — فلماذا أصبح دفع الرواتب صعبًا فجأة؟",
+         rubric:["يحدد أن الذمم المدينة (تعويضات التأمين) تنمو أسرع بكثير من الإيرادات","يميّز بين الإيرادات المفوترة والنقد المحصّل فعليًا","يلاحظ أن مدة تحصيل الذمم تضاعفت تقريبًا","يتجنب افتراض أن العيادة نفسها غير مربحة"]},
+        {q:"هل يجب أن نتحول إلى مزوّد برمجيات فوترة أسرع لحل هذه المشكلة؟",
+         rubric:["يلاحظ أن برمجيات جديدة وحدها لن تحل تأخيرات السداد من جهة الدافع","يوصي بتحليل أعمار الذمم المدينة حسب شركة التأمين","يقترح تشديد عملية التحصيل / المتابعة","يؤطر هذا كمشكلة عملية ومزيج جهات دافعة، لا مجرد اختيار أداة"]},
+        {q:"بعض شركات التأمين بطيئة السداد باستمرار — هل يجب أن نتوقف ببساطة عن قبولها؟",
+         rubric:["يوازن بين وصول المرضى والمساهمة في الإيرادات مقابل مشكلة التحصيل","يقترح تحليل أي الجهات الدافعة تتسبب فعليًا في أسوأ مدد تحصيل","يوصي بإعادة التفاوض على الشروط أو بناء احتياطي للتحصيل قبل استبعاد أي جهة دافعة","يتجنب إجابة نعم/لا قاطعة دون مزيد من البيانات على مستوى الجهة الدافعة"]}
+      ]
+    }
   }
 },
 {
@@ -1160,6 +1791,54 @@ const SCENARIOS = [
       "Receivables are growing out of control and draining cash.",
       "Customer concentration risk is the biggest threat to the business."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Transport et Logistique',
+      tagline:'Un volume de fret record. Une flambée brutale du carburant. Une conversation sur les clauses de prêt que personne ne voulait avoir.',
+      backstory:'Coastal Freight est une entreprise régionale de transport routier et de courtage de fret. Cette année, les prix du diesel ont fortement flambé, et l’entreprise a financé six nouveaux camions par la dette pour répondre à la demande.',
+      clientBrief:'« Nous avons transporté plus de fret que jamais cette année, mais les coûts de carburant nous ont dévorés et maintenant la banque veut discuter de nos clauses de prêt. Que s’est-il passé ? »',
+      modelSummary:'Le problème central de Coastal Freight est un effondrement de marge côté coûts, pas un problème de volume. Le chiffre d’affaires a augmenté de près de 17 %, mais le carburant et les coûts directs de transport sont passés de 70 % à 75 % du chiffre d’affaires, et la nouvelle dette pour les camions a ajouté des charges d’intérêts significatives. Cette combinaison a fait passer l’entreprise sous son seuil de rentabilité vers une perte d’exploitation, et les propriétaires ont injecté du capital supplémentaire cette année pour consolider le bilan. Le chemin vers la rentabilité passe par les surcharges carburant et la négociation tarifaire, pas par davantage de volume.',
+      diagnosis:{
+        correct:"Les coûts de carburant et de transport direct ont augmenté plus vite que le chiffre d’affaires, faisant passer l’entreprise sous son seuil de rentabilité malgré un volume de fret record.",
+        distractors:[
+          "Le volume de fret a diminué et l’entreprise doit trouver de nouveaux clients.",
+          "Les créances augmentent de manière incontrôlée et assèchent la trésorerie.",
+          "Le risque de concentration client est la plus grande menace pour l’entreprise."
+        ]
+      },
+      clientQuestions:[
+        {q:"Nous avons transporté plus de fret que jamais — comment avons-nous fini par enregistrer une perte ?",
+         rubric:["Identifie la hausse du coût du carburant/transport direct de 70 % à 75 % du chiffre d’affaires comme facteur principal","Note que le financement des nouveaux camions a ajouté des charges d’intérêts significatives","Distingue la croissance du volume de la réalité des marges et des coûts","Fait référence au seuil de rentabilité pour montrer que le chiffre d’affaires est tombé en dessous"]},
+        {q:"Devrions-nous augmenter nos tarifs de fret pour couvrir la hausse des coûts de carburant ?",
+         rubric:["Recommande de revoir les mécanismes de surcharge carburant dans les contrats existants","Note que les hausses tarifaires prennent du temps à négocier avec les clients existants","Suggère de modéliser la hausse tarifaire nécessaire pour restaurer la marge","Équilibre compétitivité et restauration de la marge"]},
+        {q:"La banque veut discuter des clauses de prêt — que devrions-nous leur dire ?",
+         rubric:["Reconnaît honnêtement la perte d’exploitation et la compression des marges","Présente le coût du carburant comme une pression largement externe et probablement temporaire, tout en signalant la hausse de l’endettement","Recommande de présenter un plan concret de recouvrement des coûts ou de tarification plutôt que de minimiser le problème","Évite de promettre à l’excès une solution rapide"]}
+      ]
+    },
+    ar:{
+      sector:'النقل والخدمات اللوجستية',
+      tagline:'حجم شحن قياسي. ارتفاع وقود قاسٍ. محادثة حول تعهدات القرض لم يرغب فيها أحد.',
+      backstory:'كوستال فريت شركة إقليمية للنقل بالشاحنات ووساطة الشحن. ارتفعت أسعار الديزل بشدة هذا العام، ومولت الشركة ست شاحنات جديدة بالدين لمواكبة الطلب.',
+      clientBrief:'"نقلنا شحنات أكثر من أي وقت مضى هذا العام، لكن تكاليف الوقود التهمتنا والآن يريد البنك مناقشة تعهدات قرضنا. ماذا حدث؟"',
+      modelSummary:'المشكلة الجوهرية لدى كوستال فريت هي انهيار الهامش من جهة التكاليف، لا مشكلة حجم. نمت الإيرادات بنحو 17%، لكن تكاليف الوقود والنقل المباشر قفزت من 70% إلى 75% من الإيرادات، وأضاف دين الشاحنات الجديدة مصروف فوائد ملموسًا. هذا المزيج دفع الشركة إلى ما دون نقطة تعادلها نحو خسارة تشغيلية، وضخّ الملاك رأس مال إضافي هذا العام لتدعيم الميزانية العمومية. طريق العودة إلى الربحية يمر عبر رسوم الوقود الإضافية والتفاوض على الأسعار، لا مزيد من الحجم.',
+      diagnosis:{
+        correct:"ارتفعت تكاليف الوقود والنقل المباشر أسرع من الإيرادات، ما دفع الشركة إلى ما دون نقطة تعادلها رغم حجم الشحن القياسي.",
+        distractors:[
+          "تراجع حجم الشحن وتحتاج الشركة إلى إيجاد عملاء جدد.",
+          "الذمم المدينة تنمو خارج السيطرة وتستنزف النقد.",
+          "خطر تركّز العملاء هو أكبر تهديد للشركة."
+        ]
+      },
+      clientQuestions:[
+        {q:"نقلنا شحنات أكثر من أي وقت مضى — كيف انتهى بنا الأمر بخسارة؟",
+         rubric:["يحدد قفزة تكلفة الوقود/النقل المباشر من 70% إلى 75% من الإيرادات كسبب رئيسي","يلاحظ أن تمويل الشاحنات الجديدة أضاف مصروف فوائد ملموسًا","يميّز بين نمو الحجم وواقع الهوامش والتكاليف","يشير إلى رقم نقطة التعادل لإظهار أن الإيرادات هبطت دونها"]},
+        {q:"هل يجب أن نرفع أسعار الشحن لتغطية ارتفاع تكاليف الوقود؟",
+         rubric:["يوصي بمراجعة آليات رسوم الوقود الإضافية في العقود الحالية","يلاحظ أن رفع الأسعار يستغرق وقتًا للتفاوض عليه مع العملاء الحاليين","يقترح نمذجة رفع السعر اللازم لاستعادة الهامش","يوازن بين القدرة التنافسية واستعادة الهامش"]},
+        {q:"يريد البنك مناقشة تعهدات القرض — ماذا يجب أن نخبرهم؟",
+         rubric:["يقر بصدق بالخسارة التشغيلية وانضغاط الهامش","يؤطر تكلفة الوقود كضغط خارجي إلى حد كبير ومحتمل أن يكون مؤقتًا، مع الإشارة إلى ارتفاع الرفع المالي","يوصي بتقديم خطة ملموسة لاسترداد التكاليف أو التسعير بدلًا من التقليل من شأن المشكلة","يتجنب المبالغة في الوعد بحل سريع"]}
+      ]
+    }
   }
 },
 {
@@ -1197,6 +1876,54 @@ const SCENARIOS = [
       "The company is carrying far too much long-term debt.",
       "Receivables from wholesale customers are the main cash drain."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Restauration et Boissons / Vente directe',
+      tagline:'Les abonnés continuent d’affluer chaque mois. Les marges viennent de connaître leur pire année de mémoire d’homme.',
+      backstory:'Harvest & Co. est un torréfacteur de café de spécialité vendant via un café de vente au détail et une offre d’abonnement en vente directe à croissance rapide. Les prix du café vert ont flambé cette année en raison de pénuries liées aux conditions climatiques dans les pays d’origine.',
+      clientBrief:'« Notre box d’abonnement croît chaque mois et les clients nous adorent — alors pourquoi notre comptable dit-il que les marges sont les pires depuis des années ? »',
+      modelSummary:'La croissance des abonnés de Harvest & Co. est réelle et encourageante, mais elle masque une histoire de coûts de matières premières : la hausse des prix du café vert a fait chuter la marge brute de 60 % à 50 %, et le résultat net a baissé alors même que le chiffre d’affaires progressait de plus de 30 %. La décision de l’équipe de constituer un stock de grains avant de nouvelles hausses de prix est une couverture raisonnable, mais elle a à peu près doublé le stock et immobilisé de la trésorerie qui aurait autrement amorti le choc sur la marge. La priorité est une revue de la tarification et de l’approvisionnement, pas seulement de célébrer la croissance des abonnés.',
+      diagnosis:{
+        correct:"Une flambée des coûts du café vert (intrant) a fortement réduit la marge brute, et le résultat net a baissé même si les revenus des abonnements ont augmenté de plus de 30 %.",
+        distractors:[
+          "La croissance des abonnés a stagné et les dépenses marketing doivent augmenter.",
+          "L’entreprise porte une dette à long terme bien trop importante.",
+          "Les créances des clients en gros sont le principal facteur d’assèchement de la trésorerie."
+        ]
+      },
+      clientQuestions:[
+        {q:"Les abonnés continuent de croître chaque mois — pourquoi les marges sont-elles les pires depuis des années ?",
+         rubric:["Identifie la flambée du coût du café vert (COGS) de 40 % à 50 % du chiffre d’affaires comme facteur","Distingue la croissance des abonnés (une vraie réussite) de la santé des marges (un vrai problème)","Note que la marge brute a chuté d’environ dix points","Ne laisse pas l’histoire de croissance détourner l’attention de l’histoire des coûts"]},
+        {q:"Devrions-nous augmenter les prix des abonnements pour compenser la hausse du coût des grains ?",
+         rubric:["Présente le prix comme un levier parmi plusieurs, aux côtés de l’approvisionnement/couverture et de l’efficacité de l’emballage","Note la sensibilité au prix des abonnés et le risque de résiliation","Recommande de modéliser la hausse de prix réellement nécessaire pour restaurer la marge","Ne traite pas le prix seul comme une solution complète"]},
+        {q:"Nous avons acheté un surplus de stock de café vert pour anticiper de nouvelles hausses de prix — était-ce la bonne décision ?",
+         rubric:["Reconnaît qu’il s’agit d’une couverture raisonnable contre une inflation supplémentaire des matières premières","Note que cela a à peu près doublé le stock et immobilisé de la trésorerie","Signale le risque de détérioration/stockage pour un intrant périssable","Recommande de surveiller la rotation des stocks plutôt que d’étendre excessivement la couverture"]}
+      ]
+    },
+    ar:{
+      sector:'الأغذية والمشروبات / البيع المباشر للمستهلك',
+      tagline:'المشتركون يواصلون الانضمام كل شهر. الهوامش سجّلت للتو أسوأ عام لها منذ زمن طويل.',
+      backstory:'هارفست آند كو محمصة قهوة مختصة تبيع عبر مقهى للبيع بالتجزئة وصندوق اشتراك بيع مباشر سريع النمو. ارتفعت أسعار حبوب القهوة الخضراء هذا العام بسبب نقص ناتج عن الطقس في بلدان المنشأ.',
+      clientBrief:'"صندوق اشتراكنا ينمو كل شهر والعملاء يحبوننا — فلماذا يقول محاسبنا إن الهوامش هي الأسوأ منذ سنوات؟"',
+      modelSummary:'نمو المشتركين لدى هارفست آند كو حقيقي ومشجّع، لكنه يخفي قصة تكلفة سلعة: دفع ارتفاع أسعار القهوة الخضراء الهامش الإجمالي للانخفاض من 60% إلى 50%، وتراجع صافي الدخل رغم نمو الإيرادات بأكثر من 30%. قرار الفريق بتخزين حبوب إضافية استعدادًا لمزيد من ارتفاع الأسعار تحوّط معقول، لكنه ضاعف المخزون تقريبًا وحجز نقدًا كان سيخفف أثر الهامش لولا ذلك. الأولوية هي مراجعة التسعير والتوريد، لا مجرد الاحتفاء بنمو المشتركين.',
+      diagnosis:{
+        correct:"أدت طفرة في تكاليف القهوة الخضراء (المدخلات) إلى خفض الهامش الإجمالي بشدة، وتراجع صافي الدخل رغم نمو إيرادات الاشتراكات بأكثر من 30%.",
+        distractors:[
+          "توقف نمو المشتركين ويجب زيادة الإنفاق التسويقي.",
+          "تحمل الشركة دينًا طويل الأجل مفرطًا للغاية.",
+          "ذمم عملاء الجملة هي المستنزف الرئيسي للنقد."
+        ]
+      },
+      clientQuestions:[
+        {q:"المشتركون يستمرون بالنمو كل شهر — فلماذا الهوامش هي الأسوأ منذ سنوات؟",
+         rubric:["يحدد قفزة تكلفة القهوة الخضراء من 40% إلى 50% من الإيرادات كسبب","يميّز بين نمو المشتركين (إنجاز حقيقي) وصحة الهوامش (مشكلة حقيقية)","يلاحظ أن الهامش الإجمالي انخفض نحو عشر نقاط","لا يدع قصة النمو تُشتت الانتباه عن قصة التكاليف"]},
+        {q:"هل يجب أن نرفع أسعار الاشتراك لتعويض ارتفاع تكلفة الحبوب؟",
+         rubric:["يعرض التسعير كرافعة واحدة من عدة روافع، إلى جانب التوريد/التحوط وكفاءة التغليف","يلاحظ حساسية المشتركين للسعر ومخاطر إلغاء الاشتراك","يوصي بنمذجة رفع السعر اللازم فعليًا لاستعادة الهامش","لا يعامل السعر وحده كحل كامل"]},
+        {q:"اشترينا مخزونًا إضافيًا من القهوة الخضراء لمواجهة ارتفاعات أسعار مستقبلية — هل كان ذلك القرار الصحيح؟",
+         rubric:["يقر بأن ذلك تحوّط معقول ضد مزيد من تضخم تكلفة المدخلات","يلاحظ أن ذلك ضاعف المخزون تقريبًا وحجز نقدًا","يشير إلى خطر التلف/التخزين لمدخل قابل للتلف","يوصي بمراقبة معدل دوران المخزون بدلًا من التوسع المفرط في التحوط"]}
+      ]
+    }
   }
 },
 {
@@ -1234,6 +1961,54 @@ const SCENARIOS = [
       "Material costs have spiraled out of control, destroying margins.",
       "The company has too much short-term debt relative to its size."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Construction et Entrepreneuriat',
+      tagline:'Trois chantiers en cours simultanément. Un profit record sur le papier. Étrangement, aucune trésorerie à montrer pour autant.',
+      backstory:'Bellwood est un entrepreneur commercial de taille moyenne réalisant des aménagements de commerces et de bureaux sur plusieurs mois. Les contrats sont facturés par étapes, les clients retenant un pourcentage de chaque facture jusqu’à l’achèvement du projet, et le chiffre d’affaires est constaté au fur et à mesure de l’avancement des travaux — parfois avant même de pouvoir être facturé.',
+      clientBrief:'« Nous n’avons jamais été aussi occupés — trois grands projets en cours simultanément. Mais chaque mois, on a l’impression de financer nos clients plutôt que l’inverse. Aidez-nous à comprendre pourquoi. »',
+      modelSummary:'Bellwood est une entreprise rentable avec un problème de conversion de trésorerie caché à la vue de tous. Les indicateurs de créances standards paraissent raisonnables, mais ils passent à côté des deux véritables moteurs de la tension de trésorerie : les créances non facturées (travaux réalisés selon la méthode de l’avancement mais pas encore facturés) et les retenues de garantie conservées par les clients jusqu’à l’achèvement du projet. Les deux ont augmenté bien plus vite que le chiffre d’affaires avec trois projets menés simultanément, ce qui signifie que le profit constaté est réel mais que la trésorerie correspondante est retardée de plusieurs mois. La recommandation est de négocier des cycles de facturation plus rapides et des taux de retenue plus bas avant d’accepter un volume de projets supplémentaire.',
+      diagnosis:{
+        correct:"Les créances non facturées et les retenues de garantie détenues par les clients — et non les créances clients classiques — immobilisent la trésorerie plus vite que le chiffre d’affaires ne croît, même si le profit constaté paraît solide.",
+        distractors:[
+          "L’entreprise n’est pas rentable en raison d’une mauvaise politique de soumission des projets.",
+          "Les coûts des matériaux ont explosé de manière incontrôlée, détruisant les marges.",
+          "L’entreprise a trop de dette à court terme par rapport à sa taille."
+        ]
+      },
+      clientQuestions:[
+        {q:"Nous n’avons jamais été aussi occupés et le profit augmente — alors pourquoi finançons-nous nos clients plutôt que l’inverse ?",
+         rubric:["Identifie les créances non facturées (travaux réalisés mais pas encore facturés) comme un facteur clé","Identifie les retenues détenues par les clients comme un second facteur distinct","Note que les deux ont augmenté bien plus vite que le chiffre d’affaires sur trois projets simultanés","Explique que le profit constaté selon la méthode de l’avancement n’équivaut pas à de la trésorerie encaissée"]},
+        {q:"Le cycle de conversion de trésorerie standard paraît correct sur le papier — devrions-nous être rassurés ?",
+         rubric:["Explique que la formule standard exclut les créances non facturées et les retenues","Indique que cela sous-estime la trésorerie réellement immobilisée dans l’entreprise","Recommande de suivre un indicateur spécifique au projet qui inclut ces soldes","Ne prend pas le ratio standard pour argent comptant"]},
+        {q:"Devrions-nous accepter un quatrième projet le trimestre prochain ?",
+         rubric:["Recommande d’évaluer d’abord la trésorerie disponible et la capacité de la ligne de crédit","Signale que chaque nouveau projet ajoute des travaux non facturés et des retenues avant d’ajouter de la trésorerie","Suggère de négocier une facturation d’avancement plus rapide ou des taux de retenue plus bas avec les clients","Donne une réponse conditionnelle liée à la position de trésorerie, pas seulement à la demande"]}
+      ]
+    },
+    ar:{
+      sector:'البناء والمقاولات',
+      tagline:'ثلاثة مشاريع تعمل في آن واحد. ربح قياسي على الورق. ومع ذلك، لا نقد يُذكر لإثبات ذلك.',
+      backstory:'بيلوود مقاول تجاري متوسط الحجم ينفذ تجهيزات متاجر ومكاتب تمتد لأشهر. تُفوتر العقود على مراحل، ويحتفظ العملاء بنسبة من كل فاتورة حتى اكتمال المشروع، ويتم الاعتراف بالإيرادات مع تقدم العمل — أحيانًا قبل أن يتسنى فوترتها فعليًا.',
+      clientBrief:'"لم نكن قط بهذا الانشغال — ثلاثة مشاريع كبرى تعمل في آن واحد. لكن كل شهر نشعر وكأننا نموّل عملاءنا بدلًا من العكس. ساعدونا على فهم السبب."',
+      modelSummary:'بيلوود شركة مربحة تعاني من مشكلة تحويل نقدي مخفية في العلن. تبدو مقاييس الذمم القياسية معقولة، لكنها تفوّت المحركين الحقيقيين لضغط السيولة: الذمم غير المفوترة (أعمال منجزة وفق منهج نسبة الإنجاز لكن لم تُفوتر بعد) والمحتجزات التي يحتفظ بها العملاء حتى اكتمال المشروع. نما كلاهما أسرع بكثير من الإيرادات مع تشغيل ثلاثة مشاريع في آن واحد، ما يعني أن الربح المُبلغ عنه حقيقي لكن النقد المقابل له متأخر بأشهر. التوصية هي التفاوض على دورات فوترة أسرع ونسب احتجاز أقل قبل قبول حجم مشاريع إضافي.',
+      diagnosis:{
+        correct:"الذمم غير المفوترة والمحتجزات التي يحتفظ بها العملاء — لا الذمم المدينة التقليدية — هي ما يحجز النقد أسرع من نمو الإيرادات، رغم أن الربح المُبلغ عنه يبدو قويًا.",
+        distractors:[
+          "الشركة غير مربحة بسبب سوء تقديم عروض المشاريع.",
+          "تصاعدت تكاليف المواد خارج السيطرة، ما دمّر الهوامش.",
+          "لدى الشركة دين قصير الأجل مفرط مقارنة بحجمها."
+        ]
+      },
+      clientQuestions:[
+        {q:"لم نكن قط بهذا الانشغال والربح في ارتفاع — فلماذا نموّل عملاءنا بدلًا من العكس؟",
+         rubric:["يحدد الذمم غير المفوترة (أعمال منجزة لكن لم تُفوتر بعد) كسبب رئيسي","يحدد المحتجزات التي يحتفظ بها العملاء كسبب ثانٍ منفصل","يلاحظ أن كليهما نما أسرع بكثير من الإيرادات عبر ثلاثة مشاريع متزامنة","يشرح أن الربح المُبلغ عنه وفق نسبة الإنجاز لا يساوي نقدًا محصّلًا"]},
+        {q:"دورة تحويل النقد القياسية تبدو جيدة على الورق — هل ينبغي أن نطمئن؟",
+         rubric:["يشرح أن الصيغة القياسية تستبعد الذمم غير المفوترة والمحتجزات","يوضح أن هذا يُقلل من تقدير النقد المحتجز فعليًا في الشركة","يوصي بمتابعة مقياس خاص بالمشروع يشمل هذه الأرصدة","لا يأخذ النسبة القياسية على ظاهرها"]},
+        {q:"هل يجب أن نقبل مشروعًا رابعًا الفصل القادم؟",
+         rubric:["يوصي بتقييم النقد المتاح وسعة خط الائتمان أولًا","يشير إلى أن كل مشروع جديد يضيف أعمالًا غير مفوترة ومحتجزات قبل أن يضيف نقدًا","يقترح التفاوض على فوترة تقدم أسرع أو نسب احتجاز أقل مع العملاء","يقدّم إجابة مشروطة مرتبطة بالوضع النقدي، لا الطلب فقط"]}
+      ]
+    }
   }
 },
 {
@@ -1271,6 +2046,54 @@ const SCENARIOS = [
       "Operating costs have spiraled out of control.",
       "The portfolio needs to sell buildings to raise cash immediately."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Immobilier et Gestion de Biens',
+      tagline:'Les immeubles sont pleins. Les loyers sont stables. Le profit a pourtant presque disparu.',
+      backstory:'Union Square possède et exploite un portefeuille d’immeubles commerciaux à usage mixte, générant des revenus locatifs. Cette année, un immeuble a connu une vacance plus élevée, et un refinancement hypothécaire a été conclu à un taux d’intérêt nettement plus élevé.',
+      clientBrief:'« Nos immeubles restent globalement pleins et les loyers sont stables — mais le nouveau taux de refinancement inquiète notre comité financier. Sommes-nous en difficulté ? »',
+      modelSummary:'L’effondrement du profit d’Union Square est presque entièrement une histoire de financement, pas d’exploitation. Les revenus locatifs n’ont que légèrement reculé en raison d’une vacance plus élevée dans un immeuble, et les coûts d’exploitation sont restés pour l’essentiel stables — mais un refinancement hypothécaire à un taux nettement plus élevé a fait grimper les charges d’intérêts de plus de moitié, et la couverture des intérêts est tombée d’environ 1,96x à environ 1,03x. C’est un véritable signal d’alerte pour un portefeuille immobilier fortement endetté, qui mérite de revoir la politique de distribution et de tester la résistance à de nouvelles hausses de taux avant de supposer qu’une occupation stable suffit à garantir la bonne santé de l’entreprise.',
+      diagnosis:{
+        correct:"Un refinancement hypothécaire à un taux d’intérêt beaucoup plus élevé — et non l’occupation ou les coûts d’exploitation — est le principal moteur de l’effondrement quasi total du profit et de la baisse de la couverture des intérêts.",
+        distractors:[
+          "La vacance s’est effondrée et les revenus locatifs sont en chute libre.",
+          "Les coûts d’exploitation ont explosé de manière incontrôlée.",
+          "Le portefeuille doit vendre des immeubles pour lever des liquidités immédiatement."
+        ]
+      },
+      clientQuestions:[
+        {q:"Nos immeubles restent globalement pleins et les loyers sont stables — sommes-nous en difficulté ?",
+         rubric:["Identifie la hausse du taux de refinancement, et non l’occupation, comme le principal moteur de l’effondrement du profit","Cite la baisse de la couverture des intérêts d’environ 1,96x à environ 1,03x","Explique qu’il s’agit davantage d’une histoire de financement / risque de taux que d’exploitation","N’exagère pas l’importance de la (modeste) baisse de revenus comme cause principale"]},
+        {q:"Devrions-nous refinancer à nouveau pour verrouiller un meilleur taux, ou attendre ?",
+         rubric:["Recommande de modéliser plusieurs scénarios de taux avant de décider","Note que le calendrier et les frais de refinancement comptent dans la décision","Suggère d’évaluer si la couverture actuelle peut absorber de nouvelles hausses de taux","Évite une réponse définitive sans davantage de données de marché — à juste titre"]},
+        {q:"Nous continuons à verser des distributions aux propriétaires — est-ce prudent compte tenu du ratio de couverture ?",
+         rubric:["Signale que maintenir des distributions importantes avec une couverture proche de 1,0x accroît le risque","Recommande de revoir la politique de distribution par rapport à un seuil de couverture","Équilibre les attentes des investisseurs avec la prudence financière","Relie la recommandation à la tendance de la couverture des intérêts"]}
+      ]
+    },
+    ar:{
+      sector:'العقارات وإدارة الممتلكات',
+      tagline:'المباني ممتلئة. الإيجارات مستقرة. ومع ذلك كاد الربح يختفي.',
+      backstory:'يونيون سكوير تمتلك وتدير محفظة من المباني التجارية متعددة الاستخدامات، وتحقق دخلًا إيجاريًا. شهد أحد المباني هذا العام شواغر أعلى، وتمت إعادة تمويل رهن عقاري بسعر فائدة أعلى بشكل ملحوظ.',
+      clientBrief:'"مبانينا لا تزال ممتلئة إلى حد كبير والإيجارات مستقرة — لكن سعر إعادة التمويل الجديد يقلق لجنتنا المالية. هل نحن في ورطة؟"',
+      modelSummary:'انهيار ربح يونيون سكوير هو في معظمه قصة تمويل، لا قصة تشغيل. تراجعت الإيرادات الإيجارية بشكل طفيف فقط بسبب ارتفاع الشواغر في مبنى واحد، وبقيت تكاليف التشغيل مستقرة إلى حد كبير — لكن إعادة تمويل الرهن العقاري بسعر أعلى بكثير رفعت مصروف الفوائد بأكثر من النصف، وتراجعت تغطية الفوائد من نحو 1.96x إلى نحو 1.03x. هذه إشارة تحذير حقيقية لمحفظة عقارية مثقلة بالديون، وتستحق إعادة النظر في سياسة التوزيعات واختبار متانة أي ارتفاعات إضافية في الفائدة قبل افتراض أن استقرار الإشغال وحده يعني أن الشركة بصحة جيدة.',
+      diagnosis:{
+        correct:"إعادة تمويل الرهن العقاري بسعر فائدة أعلى بكثير — لا الإشغال أو تكاليف التشغيل — هي المحرك الرئيسي للانهيار شبه الكامل في الربح وتراجع تغطية الفوائد.",
+        distractors:[
+          "انهارت معدلات الإشغال والإيرادات الإيجارية في تراجع حر.",
+          "تصاعدت تكاليف التشغيل خارج السيطرة.",
+          "يجب أن تبيع المحفظة مبانٍ لجمع سيولة فورًا."
+        ]
+      },
+      clientQuestions:[
+        {q:"مبانينا لا تزال ممتلئة إلى حد كبير والإيجارات مستقرة — هل نحن في ورطة؟",
+         rubric:["يحدد ارتفاع سعر إعادة التمويل، لا الإشغال، كالمحرك الرئيسي لانهيار الربح","يستشهد بتراجع تغطية الفوائد من نحو 1.96x إلى نحو 1.03x","يشرح أن هذه قصة تمويل / مخاطر سعر فائدة أكثر منها قصة تشغيل","لا يبالغ في تقدير أثر التراجع (الطفيف) في الإيرادات كسبب رئيسي"]},
+        {q:"هل يجب أن نعيد التمويل مجددًا لتثبيت سعر أفضل، أم ننتظر؟",
+         rubric:["يوصي بنمذجة عدة سيناريوهات لأسعار الفائدة قبل اتخاذ القرار","يلاحظ أن توقيت إعادة التمويل ورسومه مهمان للقرار","يقترح تقييم ما إذا كانت التغطية الحالية قادرة على استيعاب مزيد من ارتفاعات الفائدة","يتجنب إجابة قاطعة دون مزيد من بيانات السوق — بشكل مناسب"]},
+        {q:"لا نزال نوزع أرباحًا على الملاك — هل هذا حكيم بالنظر إلى نسبة التغطية؟",
+         rubric:["يشير إلى أن الاستمرار في توزيعات كبيرة مع تغطية قريبة من 1.0x يزيد المخاطر","يوصي بمراجعة سياسة التوزيعات مقابل حد أدنى للتغطية","يوازن بين توقعات المستثمرين والحيطة المالية","يربط التوصية باتجاه تغطية الفوائد"]}
+      ]
+    }
   }
 },
 {
@@ -1308,6 +2131,54 @@ const SCENARIOS = [
       "Client demand has slowed and the agency needs new business development.",
       "Software and technology costs have spiraled out of control."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Services Professionnels',
+      tagline:'Chaque chargé de compte est complètement réservé. La paie reste pourtant tendue.',
+      backstory:'Meridian est une agence de branding et marketing de taille moyenne travaillant en régie et au projet pour des marques de consommation. Cette année, plusieurs grands projets ont duré plus longtemps que prévu, et le temps de personnel non facturé s’est fortement accumulé.',
+      clientBrief:'« Notre équipe n’a jamais été aussi occupée — chaque chargé de compte est complètement réservé. Mais on se paie en retard ce mois-ci. Qu’est-ce qui m’échappe ? »',
+      modelSummary:'Le problème central de Meridian est un encours de travaux non facturés qui dépasse le chiffre d’affaires — plusieurs grands projets ont duré plus longtemps que prévu, et le temps de personnel investi dans ceux-ci n’a pas encore été converti en factures, et encore moins en trésorerie. La rentabilité au niveau opérationnel est réellement bonne, bien au-dessus du seuil de rentabilité, ce n’est donc pas un problème de tarification ou de demande ; c’est un problème de cadence de facturation. La solution est une facturation intermédiaire plus fréquente et un suivi plus strict des travaux en cours, pas de nouvelles embauches ni des remises.',
+      diagnosis:{
+        correct:"Les travaux en cours non facturés (temps de personnel pas encore facturé) augmentent plus vite que le chiffre d’affaires, immobilisant la trésorerie même si l’agence est complètement réservée et rentable.",
+        distractors:[
+          "L’agence n’est pas rentable et doit augmenter ses tarifs immédiatement.",
+          "La demande des clients a ralenti et l’agence a besoin de développement commercial.",
+          "Les coûts logiciels et technologiques ont explosé de manière incontrôlée."
+        ]
+      },
+      clientQuestions:[
+        {q:"Notre équipe n’a jamais été aussi occupée — pourquoi manquons-nous soudain de trésorerie ?",
+         rubric:["Identifie les travaux en cours non facturés (temps de personnel pas encore facturé) comme facteur","Note qu’ils ont augmenté bien plus vite que le chiffre d’affaires","Distingue le fait d’être occupé du fait d’être payé","Fait référence aux chiffres précis des travaux non facturés"]},
+        {q:"Devrions-nous embaucher davantage de personnel pour accepter encore plus de projets ?",
+         rubric:["Recommande d’améliorer la cadence de facturation et de convertir les travaux en cours en factures avant d’augmenter les effectifs","Signale que davantage de personnel sans facturation plus rapide ne fait qu’accroître le temps non facturé","Suggère une solution de processus précise, comme une facturation intermédiaire bimensuelle"]},
+        {q:"Quelques clients contestent nos tarifs — devrions-nous accorder des remises pour conserver le travail ?",
+         rubric:["Note que la marge n’est que légèrement comprimée, pas en crise","Recommande de maintenir les tarifs ou d’améliorer le taux de réalisation plutôt que d’accorder des remises","Fait le lien avec l’analyse du seuil de rentabilité montrant une marge de sécurité saine"]}
+      ]
+    },
+    ar:{
+      sector:'الخدمات المهنية',
+      tagline:'كل مسؤول حساب محجوز بالكامل. ومع ذلك لا تزال الرواتب متعثرة.',
+      backstory:'ميريديان وكالة علامات تجارية وتسويق متوسطة الحجم تعمل بنظام الاشتراك الشهري والمشاريع لصالح علامات استهلاكية. هذا العام، امتدت عدة مشاريع كبيرة لفترة أطول، وتراكم وقت الموظفين غير المفوتر بشكل كبير.',
+      clientBrief:'"فريقنا لم يكن قط بهذا الانشغال — كل مسؤول حساب محجوز بالكامل. لكننا بطريقة ما ندفع رواتبنا متأخرة هذا الشهر. ما الذي يفوتني؟"',
+      modelSummary:'المشكلة الجوهرية لدى ميريديان هي أن الأعمال قيد التنفيذ غير المفوترة تتجاوز الإيرادات — امتدت عدة مشاريع كبيرة لفترة أطول، ولم يُحوَّل وقت الموظفين المستثمر فيها بعد إلى فواتير، ناهيك عن نقد. الربحية على المستوى التشغيلي جيدة فعليًا، وأعلى بكثير من نقطة التعادل، فهذه ليست مشكلة تسعير أو طلب؛ إنها مشكلة وتيرة فوترة. الحل هو فوترة مرحلية أكثر تكرارًا ومراقبة أدق للأعمال قيد التنفيذ، لا تعيينات جديدة أو تخفيضات.',
+      diagnosis:{
+        correct:"الأعمال قيد التنفيذ غير المفوترة (وقت الموظفين غير المفوتر بعد) تنمو أسرع من الإيرادات، ما يحجز النقد رغم أن الوكالة محجوزة بالكامل ومربحة.",
+        distractors:[
+          "الوكالة غير مربحة ويجب أن ترفع أسعارها فورًا.",
+          "تباطأ طلب العملاء وتحتاج الوكالة إلى تطوير أعمال جديد.",
+          "تصاعدت تكاليف البرمجيات والتقنية خارج السيطرة."
+        ]
+      },
+      clientQuestions:[
+        {q:"فريقنا لم يكن قط بهذا الانشغال — فلماذا ننفد من النقد فجأة؟",
+         rubric:["يحدد الأعمال قيد التنفيذ غير المفوترة (وقت موظفين لم يُفوتر بعد) كسبب","يلاحظ أنها نمت أسرع بكثير من الإيرادات","يميّز بين كون المرء مشغولًا وكونه مدفوعًا له","يشير إلى أرقام محددة للأعمال غير المفوترة"]},
+        {q:"هل يجب أن نوظف مزيدًا من الموظفين لقبول مشاريع أكثر؟",
+         rubric:["يوصي بتحسين وتيرة الفوترة وتحويل الأعمال قيد التنفيذ إلى فواتير قبل زيادة عدد الموظفين","يشير إلى أن مزيدًا من الموظفين دون فوترة أسرع سيزيد فقط الوقت غير المفوتر","يقترح إصلاحًا محددًا للعملية، مثل الفوترة المرحلية كل أسبوعين"]},
+        {q:"بعض العملاء يعترضون على أسعارنا — هل يجب أن نمنح تخفيضات للحفاظ على العمل؟",
+         rubric:["يلاحظ أن الهامش منضغط بشكل طفيف فقط، وليس في أزمة","يوصي بالحفاظ على الأسعار أو تحسين معدل التحصيل بدلًا من التخفيض","يربط بتحليل نقطة التعادل الذي يُظهر هامش أمان صحيًا"]}
+      ]
+    }
   }
 },
 {
@@ -1345,6 +2216,54 @@ const SCENARIOS = [
       "Gross margin has collapsed due to rising ingredient costs.",
       "The taproom is unprofitable and should be closed."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Restauration et Boissons',
+      tagline:'La capacité des cuves a doublé. Les commandes en gros ont fortement augmenté. La trésorerie semble avoir disparu dans les cuves.',
+      backstory:'Ridgeline est une brasserie artisanale produisant de la bière pour son propre bar de dégustation ainsi que pour la distribution en gros aux bars et détaillants. Cette année, elle a ajouté de nouvelles cuves de fermentation pour augmenter sa capacité, et le stock vieillissant dans ces cuves a fortement augmenté.',
+      clientBrief:'« Nous avons doublé notre capacité de cuves cette année et les commandes en gros ont fortement augmenté. Alors pourquoi a-t-on l’impression que toute notre trésorerie est entrée dans les cuves et n’en est jamais ressortie ? »',
+      modelSummary:'L’expansion de Ridgeline est réelle et la demande en gros croît véritablement, mais deux éléments consomment discrètement la trésorerie que cette croissance devrait générer : le stock (bière vieillissant dans les nouvelles cuves, plus un volume de production plus élevé) a augmenté plus vite que le chiffre d’affaires, et les cuves elles-mêmes ont été financées par de la dette qui a fait grimper les charges d’intérêts de plus du double. Le résultat net est à peu près stable malgré des ventes plus élevées, en grande partie à cause de ce coût d’intérêt. La solution consiste à calibrer la production sur une demande réaliste à court terme et à surveiller étroitement la couverture des intérêts avant de financer une nouvelle capacité.',
+      diagnosis:{
+        correct:"Le vieillissement du stock lié à une production accrue, ainsi que l’expansion des cuves financée par la dette, consomment la trésorerie que la croissance du chiffre d’affaires devrait par ailleurs générer.",
+        distractors:[
+          "La demande en gros s’est effondrée et la brasserie a besoin de nouveaux partenaires de distribution.",
+          "La marge brute s’est effondrée en raison de la hausse des coûts des ingrédients.",
+          "Le bar de dégustation n’est pas rentable et devrait être fermé."
+        ]
+      },
+      clientQuestions:[
+        {q:"Nous avons doublé notre capacité de cuves et les commandes en gros ont augmenté — pourquoi a-t-on l’impression que notre trésorerie est entrée dans les cuves et n’en est jamais ressortie ?",
+         rubric:["Identifie le stock (bière vieillissante plus volume de production plus élevé) augmentant plus vite que le chiffre d’affaires","Note que les nouvelles cuves ont été financées par la dette, augmentant les charges d’intérêts","Distingue la croissance de capacité de la conversion de trésorerie"]},
+        {q:"Devrions-nous continuer à brasser à pleine capacité pour répondre à toute commande qui arrive ?",
+         rubric:["Recommande d’aligner le volume de production sur une demande réaliste à court terme plutôt que sur la capacité maximale","Signale que le stock vieillissant immobilise la trésorerie pendant des semaines avant d’être vendable","Suggère de fixer un objectif de rotation des stocks"]},
+        {q:"Les coûts d’intérêts ont beaucoup augmenté cette année — devrions-nous nous inquiéter ?",
+         rubric:["Note que les charges d’intérêts ont été multipliées par environ deux et demi d’une année sur l’autre","Recommande de vérifier explicitement la tendance de la couverture des intérêts","Relie la dette croissante à l’expansion des cuves","Suggère de surveiller la couverture avant de financer une capacité supplémentaire"]}
+      ]
+    },
+    ar:{
+      sector:'الأغذية والمشروبات',
+      tagline:'تضاعفت سعة الخزانات. طلبات الجملة ارتفعت بشدة. يبدو أن النقد اختفى داخل الخزانات.',
+      backstory:'ريدجلاين مصنع جعة حرفي ينتج البيرة لصالة تذوقه الخاصة بالإضافة إلى التوزيع بالجملة للحانات وتجار التجزئة. أضافت هذا العام خزانات تخمير جديدة لزيادة الطاقة الإنتاجية، ونما المخزون المُعتَّق في هذه الخزانات بشكل كبير.',
+      clientBrief:'"ضاعفنا سعة خزاناتنا هذا العام وطلبات الجملة ارتفعت بشدة. فلماذا نشعر وكأن كل نقدنا دخل إلى الخزانات ولم يخرج منها أبدًا؟"',
+      modelSummary:'توسع ريدجلاين حقيقي والطلب بالجملة ينمو فعليًا، لكن أمرين يستهلكان بصمت النقد الذي يفترض أن يولّده هذا النمو: نما المخزون (بيرة تُعتَّق في الخزانات الجديدة، إضافة إلى حجم إنتاج أعلى) أسرع من الإيرادات، ومُوّلت الخزانات نفسها بدين رفع مصروف الفوائد بأكثر من الضعف. صافي الدخل شبه ثابت رغم ارتفاع المبيعات، ويعود ذلك إلى حد كبير لتكلفة الفائدة تلك. الحل هو معايرة الإنتاج وفق طلب واقعي قريب الأجل ومراقبة تغطية الفوائد عن كثب قبل تمويل طاقة إضافية.',
+      diagnosis:{
+        correct:"تقادم المخزون الناتج عن ارتفاع الإنتاج، إلى جانب توسع الخزانات الممول بالدين، يستهلكان النقد الذي كان يفترض أن يولّده نمو الإيرادات.",
+        distractors:[
+          "انهار الطلب بالجملة وتحتاج المصنع إلى شركاء توزيع جدد.",
+          "انهار الهامش الإجمالي بسبب ارتفاع تكاليف المكونات.",
+          "صالة التذوق غير مربحة ويجب إغلاقها."
+        ]
+      },
+      clientQuestions:[
+        {q:"ضاعفنا سعة خزاناتنا وارتفعت طلبات الجملة — فلماذا نشعر أن نقدنا دخل إلى الخزانات ولم يخرج منها أبدًا؟",
+         rubric:["يحدد المخزون (بيرة معتّقة بالإضافة إلى حجم إنتاج أعلى) الذي ينمو أسرع من الإيرادات","يلاحظ أن الخزانات الجديدة مُوّلت بالدين، ما رفع مصروف الفوائد","يميّز بين نمو الطاقة الإنتاجية وتحويل النقد"]},
+        {q:"هل يجب أن نستمر في التخمير بكامل الطاقة لتلبية أي طلب يصل؟",
+         rubric:["يوصي بمواءمة حجم الإنتاج مع طلب واقعي قريب الأجل بدلًا من الطاقة القصوى","يشير إلى أن المخزون المعتّق يحجز النقد لأسابيع قبل أن يصبح قابلًا للبيع","يقترح وضع هدف لمعدل دوران المخزون"]},
+        {q:"ارتفعت تكاليف الفوائد كثيرًا هذا العام — هل يجب أن نقلق؟",
+         rubric:["يلاحظ أن مصروف الفوائد ارتفع نحو مرتين ونصف مقارنة بالعام السابق","يوصي بالتحقق صراحة من اتجاه تغطية الفوائد","يربط الدين المتصاعد بتوسع الخزانات","يقترح مراقبة التغطية قبل تمويل طاقة إضافية"]}
+      ]
+    }
   }
 },
 {
@@ -1382,6 +2301,54 @@ const SCENARIOS = [
       "Panel and equipment costs have made the business unprofitable.",
       "The company has taken on debt for reasons unrelated to growth."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Énergie et Services Publics',
+      tagline:'Plus d’installations que jamais. Une pile croissante d’argent de subvention publique encore dû.',
+      backstory:'SunPeak installe des systèmes solaires résidentiels et commerciaux de petite taille. La croissance est forte, financée en partie par un programme de subvention publique qui rembourse les clients — et parfois directement l’installateur — après l’achèvement de l’installation.',
+      clientBrief:'« Nous avons installé plus de systèmes que jamais cette année, et le programme de subvention publique est un argument clé de notre offre — mais nous attendons toujours une grande partie de cet argent de subvention. Devrions-nous nous inquiéter ? »',
+      modelSummary:'La croissance de SunPeak est réelle, mais une part croissante de celle-ci est piégée dans les créances — plus précisément, les remboursements d’un programme de subvention publique qui traite les demandes plus lentement que le rythme des installations. La marge brute a également légèrement reculé sous l’effet des coûts de main-d’œuvre d’installation, et une nouvelle dette pour financer la croissance a ajouté des charges d’intérêts, mais le facteur le plus important est de loin l’accumulation des créances, qui a augmenté bien plus vite que le chiffre d’affaires. Il s’agit fondamentalement d’une histoire de délai de recouvrement, et l’entreprise devrait évaluer si l’affacturage ou l’accélération du traitement des demandes de subvention vaut le coût, compte tenu du montant de trésorerie immobilisé.',
+      diagnosis:{
+        correct:"Les créances liées aux subventions publiques et aux clients augmentent bien plus vite que le chiffre d’affaires, immobilisant la trésorerie même si le volume d’installation et le chiffre d’affaires sont tous deux en forte hausse.",
+        distractors:[
+          "La demande d’installation a ralenti et l’entreprise a besoin d’un nouveau canal de vente.",
+          "Les coûts des panneaux et de l’équipement ont rendu l’entreprise non rentable.",
+          "L’entreprise a contracté de la dette pour des raisons sans rapport avec la croissance."
+        ]
+      },
+      clientQuestions:[
+        {q:"Nous avons installé plus de systèmes que jamais, et les subventions sont un argument clé de notre offre — devrions-nous nous inquiéter de la trésorerie qui nous est due ?",
+         rubric:["Identifie les créances de subvention et autres augmentant bien plus vite que le chiffre d’affaires","Distingue la constatation du revenu du calendrier réel de remboursement public","Recommande de suivre les créances de subvention par programme et leur délai de traitement habituel"]},
+        {q:"Devrions-nous continuer à accroître le volume d’installation à ce rythme ?",
+         rubric:["Recommande de vérifier la trésorerie et la capacité de crédit par rapport au solde croissant des créances avant de s’engager dans une nouvelle croissance","Suggère de modéliser un scénario où le traitement des subventions ralentit davantage"]},
+        {q:"Une société de financement propose de racheter nos créances de subvention avec une décote contre de la trésorerie immédiate — devrions-nous envisager cela ?",
+         rubric:["Présente cela comme une option légitime d’accélération de trésorerie (affacturage) ayant un coût réel","Recommande de comparer le coût de la décote à la valeur d’une trésorerie plus rapide et d’un risque de recouvrement réduit","Ne rejette ni n’accepte d’emblée sans faire le calcul"]}
+      ]
+    },
+    ar:{
+      sector:'الطاقة والمرافق',
+      tagline:'تركيبات أكثر من أي وقت مضى. كومة متزايدة من أموال الدعم الحكومي لا تزال مستحقة.',
+      backstory:'صن بيك تركّب أنظمة طاقة شمسية سكنية وتجارية صغيرة. النمو قوي، ويموَّل جزئيًا ببرنامج دعم حكومي يُسدد للعملاء — وأحيانًا للمُركِّب مباشرة — بعد اكتمال التركيب.',
+      clientBrief:'"ركّبنا أنظمة أكثر من أي وقت مضى هذا العام، وبرنامج الدعم الحكومي جزء كبير من عرضنا للعملاء — لكننا لا نزال ننتظر الكثير من أموال ذلك الدعم. هل يجب أن نقلق؟"',
+      modelSummary:'نمو صن بيك حقيقي، لكن حصة متزايدة منه محتجزة في الذمم المدينة — وتحديدًا، تعويضات من برنامج دعم حكومي يعالج المطالبات أبطأ من وتيرة التركيبات. تراجع الهامش الإجمالي أيضًا قليلًا بسبب تكاليف عمالة التركيب، وأضاف دين جديد لتمويل النمو مصروف فوائد، لكن العامل الأكبر بوضوح هو تراكم الذمم المدينة، الذي نما أسرع بكثير من الإيرادات. هذه في جوهرها قصة توقيت تحصيل، ويجب أن تقيّم الشركة ما إذا كان تحويل الذمم أو تسريع معالجة مطالبات الدعم يستحق التكلفة، بالنظر إلى حجم النقد المحتجز.',
+      diagnosis:{
+        correct:"الذمم المتعلقة بالدعم الحكومي والعملاء تنمو أسرع بكثير من الإيرادات، ما يحجز النقد رغم أن حجم التركيبات والإيرادات كلاهما في ارتفاع حاد.",
+        distractors:[
+          "تباطأ طلب التركيب وتحتاج الشركة إلى قناة مبيعات جديدة.",
+          "جعلت تكاليف الألواح والمعدات الشركة غير مربحة.",
+          "تحمّلت الشركة دينًا لأسباب لا علاقة لها بالنمو."
+        ]
+      },
+      clientQuestions:[
+        {q:"ركّبنا أنظمة أكثر من أي وقت مضى، والدعم جزء كبير من عرضنا — هل يجب أن نقلق بشأن النقد المستحق لنا؟",
+         rubric:["يحدد ذمم الدعم وغيرها التي تنمو أسرع بكثير من الإيرادات","يميّز بين الاعتراف بالإيراد والتوقيت الفعلي لسداد الجهة الحكومية","يوصي بمتابعة ذمم الدعم حسب البرنامج ومدة معالجتها المعتادة"]},
+        {q:"هل يجب أن نستمر في زيادة حجم التركيبات بهذه الوتيرة؟",
+         rubric:["يوصي بالتحقق من النقد وسعة الائتمان مقابل رصيد الذمم المتزايد قبل الالتزام بمزيد من النمو","يقترح نمذجة سيناريو يتباطأ فيه معالجة الدعم أكثر"]},
+        {q:"تعرض شركة تمويل شراء ذمم الدعم الخاصة بنا بخصم مقابل نقد فوري — هل يجب أن ننظر في ذلك؟",
+         rubric:["يؤطر ذلك كخيار مشروع لتسريع النقد (تحويل الذمم) له تكلفة حقيقية","يوصي بمقارنة تكلفة الخصم بقيمة النقد الأسرع وانخفاض مخاطر التحصيل","لا يرفض ولا يقبل مباشرة دون إجراء الحساب"]}
+      ]
+    }
   }
 },
 {
@@ -1419,6 +2386,54 @@ const SCENARIOS = [
       "Gross margin is collapsing due to rising hosting costs.",
       "The company has taken on too much debt to fund content production."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Technologie / SaaS',
+      tagline:'Les abonnés ont doublé cette année. Le profit a à peine bougé.',
+      backstory:'BrightPath est une plateforme de cours en ligne vendant des abonnements et des achats ponctuels de cours à des professionnels actifs. Les dépenses marketing ont fortement augmenté cette année pour alimenter la croissance des abonnés.',
+      clientBrief:'« Notre nombre d’abonnés a doublé cette année ! Le marketing me répète que la croissance va très bien — mais je ne vois pas le profit correspondant. Quelle est la vraie histoire ? »',
+      modelSummary:'La croissance des abonnés de BrightPath et l’amélioration de sa marge brute sont toutes deux réellement encourageantes — l’économie unitaire sous-jacente de la prestation du service s’améliore avec l’échelle. Mais les dépenses marketing ont presque triplé pour alimenter cette croissance, consommant presque tout le profit incrémental et laissant le résultat net proche de zéro, avec un chiffre d’affaires à peine au-dessus du seuil de rentabilité estimé. La hausse des produits différés est un bon indicateur avancé, mais elle ne change rien à la faiblesse de la marge de sécurité de la période actuelle. L’entreprise devrait calculer son coût d’acquisition client réel avant de décider de maintenir ce niveau de dépenses.',
+      diagnosis:{
+        correct:"Les dépenses marketing ont presque triplé pour alimenter la croissance des abonnés, consommant presque tout le profit alors même que la marge brute s’est réellement améliorée et que le chiffre d’affaires a presque doublé.",
+        distractors:[
+          "La croissance des abonnés a stagné et la plateforme a besoin d’une nouvelle stratégie de contenu.",
+          "La marge brute s’effondre en raison de la hausse des coûts d’hébergement.",
+          "L’entreprise a contracté trop de dette pour financer la production de contenu."
+        ]
+      },
+      clientQuestions:[
+        {q:"Notre nombre d’abonnés a doublé cette année ! Pourquoi le profit ne reflète-t-il pas cela ?",
+         rubric:["Identifie le quasi-triplement des dépenses marketing comme principal facteur qui absorbe les gains","Note que la marge brute s’est en réalité améliorée, il s’agit donc d’un problème de charges d’exploitation, pas de coût du service","Distingue la croissance des abonnés de la santé du résultat net"]},
+        {q:"Devrions-nous continuer à dépenser en marketing à ce niveau pour poursuivre la croissance des abonnés ?",
+         rubric:["Recommande de calculer explicitement le coût d’acquisition client","Suggère de comparer le CAC à la valeur vie client des abonnés","Note que l’entreprise se situe exactement à son seuil de rentabilité, laissant peu de marge d’erreur"]},
+        {q:"Les produits différés augmentent bien — cela ne signifie-t-il pas que nous sommes en bonne position ?",
+         rubric:["Convient que la hausse des produits différés est un signal avancé réellement sain","Note que cela ne corrige pas la faible rentabilité de la période actuelle","Recommande de surveiller les deux signaux ensemble, sans substituer l’un à l’autre"]}
+      ]
+    },
+    ar:{
+      sector:'التكنولوجيا / البرمجيات كخدمة',
+      tagline:'تضاعف عدد المشتركين هذا العام. الربح بالكاد تحرّك.',
+      backstory:'برايت باث منصة دورات عبر الإنترنت تبيع اشتراكات ومشتريات دورات لمرة واحدة لمحترفين عاملين. ارتفع الإنفاق التسويقي بشدة هذا العام لتغذية نمو المشتركين.',
+      clientBrief:'"تضاعف عدد مشتركينا هذا العام! يستمر التسويق بإخباري أن النمو ممتاز — لكنني لا أرى الربح المقابل. ما القصة الحقيقية؟"',
+      modelSummary:'نمو المشتركين لدى برايت باث وتحسّن هامشها الإجمالي كلاهما مشجّع فعليًا — تتحسن اقتصاديات الوحدة الأساسية لتقديم الخدمة مع اتساع الحجم. لكن الإنفاق التسويقي تضاعف تقريبًا ثلاث مرات لتغذية هذا النمو، مستهلكًا معظم الربح الإضافي وتاركًا صافي الدخل قريبًا من الصفر، مع إيرادات بالكاد أعلى من نقطة التعادل المقدرة. نمو الإيرادات المؤجلة مؤشر تطلعي جيد، لكنه لا يغيّر ضآلة هامش الأمان في الفترة الحالية. يجب أن تحسب الشركة تكلفة اكتساب العميل الفعلية قبل أن تقرر الاستمرار في الإنفاق بهذا المستوى.',
+      diagnosis:{
+        correct:"تضاعف الإنفاق التسويقي تقريبًا ثلاث مرات لتغذية نمو المشتركين، مستهلكًا معظم الربح رغم أن الهامش الإجمالي تحسّن فعليًا وتضاعفت الإيرادات تقريبًا.",
+        distractors:[
+          "توقف نمو المشتركين وتحتاج المنصة إلى استراتيجية محتوى جديدة.",
+          "ينهار الهامش الإجمالي بسبب ارتفاع تكاليف الاستضافة.",
+          "تحمّلت الشركة دينًا مفرطًا لتمويل إنتاج المحتوى."
+        ]
+      },
+      clientQuestions:[
+        {q:"تضاعف عدد مشتركينا هذا العام! لماذا لا يعكس الربح ذلك؟",
+         rubric:["يحدد تضاعف الإنفاق التسويقي تقريبًا ثلاث مرات كالسبب الرئيسي الذي يلتهم المكاسب","يلاحظ أن الهامش الإجمالي تحسّن فعليًا، فهذه مشكلة مصاريف تشغيلية لا مشكلة تكلفة خدمة","يميّز بين نمو المشتركين وصحة صافي الربح"]},
+        {q:"هل يجب أن نستمر في الإنفاق التسويقي بهذا المستوى لمواصلة نمو المشتركين؟",
+         rubric:["يوصي بحساب تكلفة اكتساب العميل بشكل صريح","يقترح مقارنة تكلفة الاكتساب بالقيمة الدائمة للمشترك","يلاحظ أن الشركة عند نقطة تعادلها تمامًا، ما يترك هامش خطأ ضئيلًا"]},
+        {q:"الإيرادات المؤجلة تنمو بشكل جيد — ألا يعني ذلك أننا في وضع جيد؟",
+         rubric:["يوافق على أن نمو الإيرادات المؤجلة إشارة تطلعية صحية فعليًا","يلاحظ أن ذلك لا يعالج ضعف الربحية في الفترة الحالية","يوصي بمراقبة الإشارتين معًا، دون استبدال إحداهما بالأخرى"]}
+      ]
+    }
   }
 },
 {
@@ -1456,60 +2471,108 @@ const SCENARIOS = [
       "The company is unprofitable and near its break-even point.",
       "Rising debt and interest costs are the main driver of the profit decline."
     ]
+  },
+  i18n:{
+    fr:{
+      sector:'Services Professionnels',
+      tagline:'Plus fréquenté que l’an dernier dans chaque site. Les marges se sont pourtant dégradées.',
+      backstory:'Palmetto exploite une chaîne de quatre ateliers de réparation et d’entretien automobile. Cette année, un site a sous-performé après le départ d’un mécanicien clé, tandis que les coûts des pièces ont augmenté dans tout le secteur.',
+      clientBrief:'« Nous avons des clients fidèles dans chaque site et nous sommes plus fréquentés que l’an dernier — alors pourquoi notre comptable dit-il que les marges se sont dégradées ? »',
+      modelSummary:'L’histoire de Palmetto est une compression de marge simple : le chiffre d’affaires a augmenté de façon modeste (7 %), mais les coûts des pièces et de la main-d’œuvre directe ont augmenté plus vite, faisant baisser la marge brute de 40 % à 37 % et réduisant le résultat net même si l’activité est objectivement plus fréquentée et reste confortablement au-dessus du seuil de rentabilité. Les chiffres à l’échelle de l’entreprise ne permettent pas de confirmer si le site sous-performant (après le départ de son mécanicien principal) est un élément significatif de l’histoire — cela nécessite des données au niveau du site. Les leviers à court terme sont un ajustement tarifaire modeste et une revue des coûts des fournisseurs de pièces.',
+      diagnosis:{
+        correct:"Les coûts des pièces et de la main-d’œuvre ont augmenté plus vite que le chiffre d’affaires, comprimant la marge brute de 40 % à 37 % même si l’activité est plus fréquentée et reste solidement rentable.",
+        distractors:[
+          "La fréquentation client a diminué dans tous les sites.",
+          "L’entreprise n’est pas rentable et proche de son seuil de rentabilité.",
+          "La hausse de la dette et des coûts d’intérêts est le principal moteur de la baisse du profit."
+        ]
+      },
+      clientQuestions:[
+        {q:"Nous sommes plus fréquentés que l’an dernier dans chaque site — alors pourquoi les marges se sont-elles dégradées ?",
+         rubric:["Identifie la baisse de la marge brute de 40 % à 37 % due à l’inflation du coût des pièces","Note que le chiffre d’affaires n’a augmenté que modestement tandis que les coûts ont augmenté plus vite","Signale que « plus fréquenté » (chiffre d’affaires) et « plus rentable » sont deux choses différentes"]},
+        {q:"Un de nos sites a perdu son mécanicien principal — cela pourrait-il expliquer une partie du problème ?",
+         rubric:["Note que les chiffres consolidés à l’échelle de l’entreprise ne peuvent pas isoler la performance d’un seul site","Recommande des données au niveau du site pour vérifier l’efficacité de la main-d’œuvre et l’usage des pièces de ce site","Évite de tirer une conclusion ferme à partir des seuls chiffres à l’échelle de l’entreprise"]},
+        {q:"Devrions-nous augmenter les prix pour compenser la hausse des coûts des pièces ?",
+         rubric:["Présente une hausse de prix comme un levier raisonnable parmi d’autres","Recommande de vérifier le positionnement concurrentiel et le risque de fidélisation client","Suggère aussi de revoir la tarification ou l’approvisionnement des fournisseurs de pièces comme second levier"]}
+      ]
+    },
+    ar:{
+      sector:'الخدمات المهنية',
+      tagline:'أكثر ازدحامًا من العام الماضي في كل موقع. ومع ذلك ساءت الهوامش.',
+      backstory:'تدير بالميتو سلسلة من أربعة مراكز لإصلاح وصيانة السيارات. هذا العام، تراجع أداء أحد المواقع بعد مغادرة ميكانيكي رئيسي، بينما ارتفعت تكاليف قطع الغيار على مستوى القطاع.',
+      clientBrief:'"لدينا عملاء مخلصون في كل موقع ونحن أكثر ازدحامًا من العام الماضي — فلماذا قال محاسبنا إن الهوامش ساءت؟"',
+      modelSummary:'قصة بالميتو هي انضغاط هامش مباشر: نمت الإيرادات بشكل متواضع (7%)، لكن تكاليف قطع الغيار والعمالة المباشرة ارتفعت أسرع، ما خفض الهامش الإجمالي من 40% إلى 37% وقلّص صافي الدخل رغم أن النشاط أكثر ازدحامًا موضوعيًا ولا يزال أعلى بشكل مريح من نقطة التعادل. لا يمكن للأرقام على مستوى الشركة تأكيد ما إذا كان الموقع ضعيف الأداء (بعد مغادرة ميكانيكيه الرئيسي) جزءًا مهمًا من القصة — يتطلب ذلك بيانات على مستوى الموقع. الروافع قريبة الأجل هي تعديل سعري متواضع ومراجعة تكاليف موردي قطع الغيار.',
+      diagnosis:{
+        correct:"ارتفعت تكاليف قطع الغيار والعمالة أسرع من الإيرادات، ما ضغط الهامش الإجمالي من 40% إلى 37% رغم أن النشاط أكثر ازدحامًا ولا يزال مربحًا بقوة.",
+        distractors:[
+          "تراجعت حركة العملاء في جميع المواقع.",
+          "الشركة غير مربحة وقريبة من نقطة تعادلها.",
+          "ارتفاع الدين وتكاليف الفوائد هو المحرك الرئيسي لتراجع الربح."
+        ]
+      },
+      clientQuestions:[
+        {q:"نحن أكثر ازدحامًا من العام الماضي في كل موقع — فلماذا ساءت الهوامش؟",
+         rubric:["يحدد انخفاض الهامش الإجمالي من 40% إلى 37% الناتج عن تضخم تكلفة القطع","يلاحظ أن الإيرادات ارتفعت بشكل متواضع فقط بينما ارتفعت التكاليف أسرع","يشير إلى أن «أكثر ازدحامًا» (الإيرادات) و«أكثر ربحية» أمران مختلفان"]},
+        {q:"فقد أحد مواقعنا ميكانيكيه الرئيسي — هل يمكن أن يكون ذلك جزءًا من السبب؟",
+         rubric:["يلاحظ أن الأرقام الموحدة على مستوى الشركة لا يمكنها عزل أداء موقع واحد","يوصي ببيانات على مستوى الموقع للتحقق من كفاءة العمالة واستخدام القطع في ذلك الموقع","يتجنب استخلاص استنتاج قاطع من الأرقام على مستوى الشركة وحدها"]},
+        {q:"هل يجب أن نرفع الأسعار لتعويض ارتفاع تكاليف قطع الغيار؟",
+         rubric:["يعرض رفع الأسعار كرافعة معقولة واحدة من عدة روافع","يوصي بالتحقق من الموقع التنافسي ومخاطر الاحتفاظ بالعملاء","يقترح أيضًا مراجعة تسعير موردي القطع أو التوريد كرافعة ثانية"]}
+      ]
+    }
   }
 }
 ];
 
 const GLOSSARY = [
-  {term:'Current Ratio', formula:'Current Assets ÷ Current Liabilities', def:'Measures whether short-term assets can cover short-term obligations. Above 1.0 is generally considered adequate, but the quality of current assets matters as much as the ratio itself.'},
-  {term:'Quick Ratio (Acid-Test)', formula:'(Current Assets − Inventory) ÷ Current Liabilities', def:'A stricter liquidity test that excludes inventory, since inventory can be slow to convert to cash. Useful when current ratio looks fine but you suspect inventory is propping it up.'},
-  {term:'Gross Margin', formula:'(Revenue − COGS) ÷ Revenue', def:'The percentage of revenue left after direct costs of producing goods or services, before operating expenses.'},
-  {term:'Net Margin', formula:'Net Income ÷ Revenue', def:'The percentage of revenue that ultimately becomes profit after every expense, interest, and tax.'},
-  {term:'Return on Assets (ROA)', formula:'Net Income ÷ Total Assets', def:'How efficiently a company turns its total asset base into profit, regardless of how those assets were financed.'},
-  {term:'Return on Equity (ROE)', formula:'Net Income ÷ Total Equity', def:'The return generated on shareholders\u2019 capital specifically. Can be inflated by leverage, which is why DuPont analysis breaks it apart.'},
-  {term:'DuPont Analysis', formula:'ROE = Net Margin × Asset Turnover × Equity Multiplier', def:'Splits ROE into profitability, efficiency, and leverage components, so you can see whether a strong ROE is coming from real operating performance or just from debt.'},
-  {term:'Debt-to-Equity Ratio', formula:'Total Liabilities ÷ Total Equity', def:'Shows how much the company relies on debt versus owner capital. Rising debt-to-equity alongside falling interest coverage is a classic early warning sign.'},
-  {term:'Interest Coverage Ratio', formula:'Operating Income ÷ Interest Expense', def:'How many times over a company can pay its interest bill from operating profit. A falling ratio, even with growing profit, signals rising financial risk.'},
-  {term:'Inventory Turnover', formula:'COGS ÷ Inventory', def:'How many times inventory is sold and replaced in a period. Low turnover can hide behind a healthy-looking current ratio.'},
-  {term:'Days Sales Outstanding (DSO)', formula:'(Accounts Receivable ÷ Revenue) × 365', def:'The average number of days it takes to collect payment after a sale. Rising DSO is one of the most common hidden causes of a cash squeeze.'},
-  {term:'Asset Turnover', formula:'Revenue ÷ Total Assets', def:'How efficiently a company generates revenue from its asset base — a key input to both ROA and the DuPont breakdown.'},
-  {term:'Break-Even Point', formula:'Fixed Costs ÷ (1 − Variable Cost Ratio)', def:'The revenue level at which a business covers all its costs with zero profit. Essential in fixed-cost-heavy industries like restaurants and manufacturing.'},
-  {term:'Operating Leverage', def:'Describes how sensitive operating profit is to changes in revenue. High fixed costs relative to variable costs means small revenue swings cause large profit swings — in either direction.'},
-  {term:'Working Capital', formula:'Current Assets − Current Liabilities', def:'The cash tied up in day-to-day operations. Growing revenue often requires more working capital, which is easy to overlook when focused only on the income statement.'},
-  {term:'Free Cash Flow', formula:'Cash from Operations − Capital Expenditures', def:'Cash left over after funding operations and reinvestment — often a better indicator of financial flexibility than net income alone.'},
-  {term:'Deferred Revenue', def:'Cash collected for a service not yet delivered (common in subscription businesses). It\u2019s a liability, not revenue yet — a frequent point of confusion for new analysts.'},
-  {term:'Budget Variance Analysis', def:'Comparing actual results to budgeted targets to explain what drove the difference — a favorable or unfavorable revenue variance, cost variance, or both.'},
-  {term:'Contribution Margin', formula:'Revenue − Variable Costs', def:'What\u2019s left from each dollar of revenue after variable costs, available to cover fixed costs and then profit.'},
-  {term:'Days Inventory Outstanding (DIO)', formula:'(Inventory ÷ COGS) × 365', def:'The average number of days inventory sits before being sold. Feeds into the cash conversion cycle alongside DSO and DPO.'},
-  {term:'Days Payable Outstanding (DPO)', formula:'(Accounts Payable ÷ COGS) × 365', def:'The average number of days a company takes to pay its own suppliers. A rising DPO can be a deliberate cash management choice — or a sign of strain.'},
-  {term:'Cash Conversion Cycle (CCC)', formula:'DSO + DIO − DPO', def:'The number of days between paying for inputs and collecting cash from customers. Shorter is generally better. Watch for businesses (like project contractors) where this standard formula misses important cash-tied-up items.'},
-  {term:'Unbilled Receivables (Contract Assets)', def:'Revenue recognized for work already performed but not yet invoiced to the client — common in construction and other long-contract businesses. It\u2019s real revenue, but not yet a formal receivable or cash.'},
-  {term:'Retention Receivable', def:'A portion of billed amounts that a client withholds until a project is fully complete, as security. It\u2019s an asset to the contractor, but one of the slowest to collect.'},
-  {term:'Income Statement', def:'A summary of revenue, costs, and profit over a period of time (a quarter or a year). It answers "did the business make money" — as distinct from the balance sheet, which is a snapshot at one point in time.'},
-  {term:'Balance Sheet', formula:'Assets = Liabilities + Equity', def:'A snapshot of what a business owns (assets), owes (liabilities), and what\u2019s left for owners (equity) at one specific date. It always balances by definition — that\u2019s not a coincidence, it\u2019s the accounting identity.'},
-  {term:'Statement of Cash Flows', def:'A breakdown of actual cash moving in and out of the business, split into operating, investing, and financing activities. It exists because profit (on the income statement) and cash are not the same thing.'},
-  {term:'Accounts Receivable', def:'Money owed to the business by customers who\u2019ve already been billed but haven\u2019t paid yet. It\u2019s an asset, but not cash — the gap between the two is where a lot of real-world cash problems hide.'},
-  {term:'Accounts Payable', def:'Money the business owes to its own suppliers for goods or services already received but not yet paid for. Stretching payables can be a deliberate cash management tool, or a sign of strain.'},
-  {term:'Retained Earnings', formula:'Prior Retained Earnings + Net Income − Dividends', def:'The accumulated profit a company has kept (rather than paid out to owners) since it started. It\u2019s part of equity, alongside contributed capital.'},
-  {term:'Fixed Costs', def:'Costs that stay roughly the same regardless of how much the business sells — rent and salaried labor are common examples. They\u2019re the key input to break-even analysis.'},
-  {term:'Variable Costs', def:'Costs that rise and fall directly with volume — materials, hourly labor tied to production, and payment-processing fees are common examples.'},
-  {term:'EBITDA', formula:'Earnings Before Interest, Tax, Depreciation & Amortization', def:'A profit measure that strips out financing decisions and non-cash accounting charges, often used to compare operating performance across companies with different capital structures. It is not the same as cash flow, despite sometimes being used as a rough proxy for it.'},
-  {term:'Amortization', def:'The gradual write-down of an intangible asset\u2019s cost over its useful life — the intangible-asset counterpart to depreciation, which applies to physical assets.'},
-  {term:'Capitalized Software', def:'Software development costs recorded as an asset on the balance sheet (and expensed gradually over time) rather than expensed immediately, because the software is expected to provide value over multiple periods.'},
-  {term:'Runway', def:'How long a company can keep operating at its current cash balance and burn rate before running out of cash — usually expressed in months. A core metric for any business that isn\u2019t yet cash-flow positive.'},
-  {term:'Burn Rate', def:'How much cash a company is spending (net of any revenue) per month or per period. Compared against cash on hand, it produces runway.'},
-  {term:'CAGR (Compound Annual Growth Rate)', formula:'(Ending Value ÷ Starting Value)^(1 ÷ Years) − 1', def:'The smoothed annual growth rate that would take a starting figure to an ending figure over a number of years, if it grew at a steady compounding rate. Useful for comparing growth across businesses or time periods of different lengths.'},
-  {term:'Forecast / Projection', def:'An estimate of future financial results based on stated assumptions (growth rate, cost structure, planned investment). A forecast is only as good as its assumptions — always state them alongside the numbers.'},
-  {term:'Customer Concentration Risk', def:'The risk that a large share of revenue or receivables comes from one or a small number of customers — if one leaves, pays late, or renegotiates terms, the impact is outsized.'},
-  {term:'Percentage of Completion', def:'A revenue recognition method for long-term contracts (common in construction) where revenue is recorded in proportion to work completed, rather than waiting until the whole project is finished or invoiced.'},
-  {term:'Loan Covenant', def:'A condition attached to a loan that the borrower must maintain — for example, keeping interest coverage above a set level. Breaching a covenant can trigger penalties or even let the lender demand early repayment.'},
-  {term:'Occupancy Rate', def:'The percentage of available space (rooms, units, seats) actually in use or rented out — a core driver of revenue for hospitality and real estate businesses.'},
-  {term:'Customer Acquisition Cost (CAC)', formula:'Sales & Marketing Spend ÷ New Customers Acquired', def:'How much it costs, on average, to win one new customer. Usually compared against customer lifetime value to judge whether growth spending is actually paying off.'},
-  {term:'Equity Multiplier', formula:'Total Assets ÷ Total Equity', def:'A measure of leverage used in DuPont analysis — how many dollars of assets each dollar of equity is supporting. A rising equity multiplier means more of the balance sheet is funded by debt.'},
-  {term:'Common-Size Statement', def:'A financial statement restated so every line is shown as a percentage (of revenue for the income statement, of total assets for the balance sheet) instead of raw currency — this strips out scale so periods, or companies of different sizes, can be compared directly.'},
-  {term:'Horizontal Analysis', def:'Comparing each line item across two or more periods to see the dollar and percentage change — useful for spotting which specific lines are driving an overall trend.'},
-  {term:'Sensitivity Analysis', def:'Testing how an outcome (like net income) changes as one or more assumptions move — for example, seeing what happens to profit under different combinations of revenue growth and cost inflation. Also called a "what-if" analysis.'},
-  {term:'Accrual Accounting', def:'Recording revenue when it\u2019s earned and expenses when they\u2019re incurred, regardless of when cash actually changes hands. Nearly all businesses beyond the smallest use this method — it\u2019s why profit and cash flow can diverge.'}
+  {term:'Current Ratio', formula:'Current Assets ÷ Current Liabilities', def:'Measures whether short-term assets can cover short-term obligations. Above 1.0 is generally considered adequate, but the quality of current assets matters as much as the ratio itself.', i18n:{fr:{term:'Ratio de Liquidité Générale',formula:'Actif circulant ÷ Passif circulant', def:'Mesure si les actifs à court terme peuvent couvrir les obligations à court terme. Au-dessus de 1,0 est généralement considéré comme adéquat, mais la qualité des actifs circulants compte autant que le ratio lui-même.'}, ar:{term:'نسبة التداول',formula:'الأصول المتداولة ÷ الخصوم المتداولة', def:'تقيس ما إذا كانت الأصول قصيرة الأجل قادرة على تغطية الالتزامات قصيرة الأجل. القيمة فوق 1.0 تُعتبر عمومًا كافية، لكن جودة الأصول المتداولة تهم بقدر أهمية النسبة نفسها.'}}},
+  {term:'Quick Ratio (Acid-Test)', formula:'(Current Assets − Inventory) ÷ Current Liabilities', def:'A stricter liquidity test that excludes inventory, since inventory can be slow to convert to cash. Useful when current ratio looks fine but you suspect inventory is propping it up.', i18n:{fr:{term:'Ratio de Liquidité Immédiate (Test Acide)',formula:'(Actif circulant − Stocks) ÷ Passif circulant', def:'Un test de liquidité plus strict qui exclut les stocks, car ceux-ci peuvent être lents à convertir en trésorerie. Utile lorsque le ratio de liquidité générale semble correct mais que l’on soupçonne que les stocks le soutiennent artificiellement.'}, ar:{term:'نسبة السيولة السريعة (اختبار الحمض)',formula:'(الأصول المتداولة − المخزون) ÷ الخصوم المتداولة', def:'اختبار سيولة أكثر صرامة يستبعد المخزون، لأن تحويله إلى نقد قد يكون بطيئًا. مفيد عندما تبدو نسبة التداول جيدة لكنك تشك في أن المخزون هو ما يدعمها.'}}},
+  {term:'Gross Margin', formula:'(Revenue − COGS) ÷ Revenue', def:'The percentage of revenue left after direct costs of producing goods or services, before operating expenses.', i18n:{fr:{term:'Marge Brute',formula:'(Chiffre d’affaires − Coût des ventes) ÷ Chiffre d’affaires', def:'Le pourcentage du chiffre d’affaires qui reste après les coûts directs de production des biens ou services, avant les charges d’exploitation.'}, ar:{term:'الهامش الإجمالي',formula:'(الإيرادات − تكلفة البضاعة المباعة) ÷ الإيرادات', def:'النسبة المئوية من الإيرادات المتبقية بعد التكاليف المباشرة لإنتاج السلع أو الخدمات، قبل المصاريف التشغيلية.'}}},
+  {term:'Net Margin', formula:'Net Income ÷ Revenue', def:'The percentage of revenue that ultimately becomes profit after every expense, interest, and tax.', i18n:{fr:{term:'Marge Nette',formula:'Résultat net ÷ Chiffre d’affaires', def:'Le pourcentage du chiffre d’affaires qui devient finalement du profit après toutes les charges, intérêts et impôts.'}, ar:{term:'الهامش الصافي',formula:'صافي الدخل ÷ الإيرادات', def:'النسبة المئوية من الإيرادات التي تتحول في النهاية إلى ربح بعد جميع المصاريف والفوائد والضرائب.'}}},
+  {term:'Return on Assets (ROA)', formula:'Net Income ÷ Total Assets', def:'How efficiently a company turns its total asset base into profit, regardless of how those assets were financed.', i18n:{fr:{term:'Rentabilité des Actifs (ROA)',formula:'Résultat net ÷ Total de l’actif', def:'L’efficacité avec laquelle une entreprise transforme sa base d’actifs totale en profit, indépendamment de la manière dont ces actifs ont été financés.'}, ar:{term:'العائد على الأصول',formula:'صافي الدخل ÷ إجمالي الأصول', def:'مدى كفاءة الشركة في تحويل قاعدة أصولها الكاملة إلى ربح، بغض النظر عن كيفية تمويل تلك الأصول.'}}},
+  {term:'Return on Equity (ROE)', formula:'Net Income ÷ Total Equity', def:'The return generated on shareholders\u2019 capital specifically. Can be inflated by leverage, which is why DuPont analysis breaks it apart.', i18n:{fr:{term:'Rentabilité des Capitaux Propres (ROE)',formula:'Résultat net ÷ Total des capitaux propres', def:'Le rendement généré spécifiquement sur le capital des actionnaires. Peut être gonflé par l’endettement, ce qui explique pourquoi l’analyse DuPont le décompose.'}, ar:{term:'العائد على حقوق الملكية',formula:'صافي الدخل ÷ إجمالي حقوق الملكية', def:'العائد المتحقق تحديدًا على رأس مال المساهمين. يمكن أن يتضخم بفعل الرفع المالي، ولهذا يفكك تحليل ديبونت هذا العائد إلى مكوناته.'}}},
+  {term:'DuPont Analysis', formula:'ROE = Net Margin × Asset Turnover × Equity Multiplier', def:'Splits ROE into profitability, efficiency, and leverage components, so you can see whether a strong ROE is coming from real operating performance or just from debt.', i18n:{fr:{term:'Analyse DuPont',formula:'ROE = Marge nette × Rotation de l’actif × Multiplicateur de capitaux propres', def:'Décompose le ROE en composantes de rentabilité, d’efficacité et d’endettement, afin de voir si un ROE élevé provient d’une performance opérationnelle réelle ou simplement de la dette.'}, ar:{term:'تحليل ديبونت',formula:'العائد على حقوق الملكية = الهامش الصافي × معدل دوران الأصول × مضاعف حقوق الملكية', def:'يفكك العائد على حقوق الملكية إلى مكونات الربحية والكفاءة والرفع المالي، لترى ما إذا كان العائد المرتفع ناتجًا عن أداء تشغيلي حقيقي أم مجرد دين.'}}},
+  {term:'Debt-to-Equity Ratio', formula:'Total Liabilities ÷ Total Equity', def:'Shows how much the company relies on debt versus owner capital. Rising debt-to-equity alongside falling interest coverage is a classic early warning sign.', i18n:{fr:{term:'Ratio Dette / Capitaux Propres',formula:'Total du passif ÷ Total des capitaux propres', def:'Montre dans quelle mesure l’entreprise dépend de la dette par rapport au capital des propriétaires. Une hausse du ratio dette/capitaux propres accompagnée d’une baisse de la couverture des intérêts est un signal d’alerte précoce classique.'}, ar:{term:'نسبة الدين إلى حقوق الملكية',formula:'إجمالي الخصوم ÷ إجمالي حقوق الملكية', def:'تُظهر مدى اعتماد الشركة على الدين مقابل رأس مال الملاك. ارتفاع هذه النسبة مع تراجع تغطية الفوائد إشارة تحذير مبكرة كلاسيكية.'}}},
+  {term:'Interest Coverage Ratio', formula:'Operating Income ÷ Interest Expense', def:'How many times over a company can pay its interest bill from operating profit. A falling ratio, even with growing profit, signals rising financial risk.', i18n:{fr:{term:'Ratio de Couverture des Intérêts',formula:'Résultat d’exploitation ÷ Charges d’intérêts', def:'Combien de fois une entreprise peut payer ses charges d’intérêts à partir de son profit d’exploitation. Un ratio en baisse, même avec un profit croissant, signale un risque financier grandissant.'}, ar:{term:'نسبة تغطية الفوائد',formula:'الدخل التشغيلي ÷ مصروف الفوائد', def:'عدد المرات التي يمكن فيها للشركة سداد فاتورة فوائدها من ربحها التشغيلي. تراجع هذه النسبة، حتى مع نمو الربح، يشير إلى ارتفاع المخاطر المالية.'}}},
+  {term:'Inventory Turnover', formula:'COGS ÷ Inventory', def:'How many times inventory is sold and replaced in a period. Low turnover can hide behind a healthy-looking current ratio.', i18n:{fr:{term:'Rotation des Stocks',formula:'Coût des ventes ÷ Stocks', def:'Combien de fois le stock est vendu et remplacé au cours d’une période. Une faible rotation peut se cacher derrière un ratio de liquidité générale qui semble sain.'}, ar:{term:'معدل دوران المخزون',formula:'تكلفة البضاعة المباعة ÷ المخزون', def:'عدد مرات بيع المخزون واستبداله خلال فترة معينة. يمكن أن يختبئ معدل الدوران المنخفض خلف نسبة تداول تبدو صحية.'}}},
+  {term:'Days Sales Outstanding (DSO)', formula:'(Accounts Receivable ÷ Revenue) × 365', def:'The average number of days it takes to collect payment after a sale. Rising DSO is one of the most common hidden causes of a cash squeeze.', i18n:{fr:{term:'Délai de Recouvrement Clients (DSO)',formula:'(Créances clients ÷ Chiffre d’affaires) × 365', def:'Le nombre moyen de jours nécessaires pour encaisser un paiement après une vente. Une hausse du DSO est l’une des causes cachées les plus courantes d’une tension de trésorerie.'}, ar:{term:'متوسط فترة تحصيل الذمم (DSO)',formula:'(الذمم المدينة ÷ الإيرادات) × 365', def:'متوسط عدد الأيام اللازمة لتحصيل الدفعة بعد عملية البيع. ارتفاع هذا المؤشر أحد أكثر الأسباب الخفية شيوعًا لضغط السيولة.'}}},
+  {term:'Asset Turnover', formula:'Revenue ÷ Total Assets', def:'How efficiently a company generates revenue from its asset base — a key input to both ROA and the DuPont breakdown.', i18n:{fr:{term:'Rotation de l’Actif',formula:'Chiffre d’affaires ÷ Total de l’actif', def:'L’efficacité avec laquelle une entreprise génère du chiffre d’affaires à partir de sa base d’actifs — une composante clé à la fois du ROA et de la décomposition DuPont.'}, ar:{term:'معدل دوران الأصول',formula:'الإيرادات ÷ إجمالي الأصول', def:'مدى كفاءة الشركة في توليد إيرادات من قاعدة أصولها — مدخل رئيسي في كل من العائد على الأصول وتحليل ديبونت.'}}},
+  {term:'Break-Even Point', formula:'Fixed Costs ÷ (1 − Variable Cost Ratio)', def:'The revenue level at which a business covers all its costs with zero profit. Essential in fixed-cost-heavy industries like restaurants and manufacturing.', i18n:{fr:{term:'Seuil de Rentabilité',formula:'Coûts fixes ÷ (1 − Taux de coûts variables)', def:'Le niveau de chiffre d’affaires auquel une entreprise couvre tous ses coûts avec un profit nul. Essentiel dans les secteurs à coûts fixes élevés comme la restauration et l’industrie.'}, ar:{term:'نقطة التعادل',formula:'التكاليف الثابتة ÷ (1 − نسبة التكاليف المتغيرة)', def:'مستوى الإيرادات الذي تغطي عنده الشركة جميع تكاليفها بربح صفري. أساسي في القطاعات ذات التكاليف الثابتة المرتفعة مثل المطاعم والتصنيع.'}}},
+  {term:'Operating Leverage', def:'Describes how sensitive operating profit is to changes in revenue. High fixed costs relative to variable costs means small revenue swings cause large profit swings — in either direction.', i18n:{fr:{term:'Effet de Levier Opérationnel', def:'Décrit la sensibilité du profit d’exploitation aux variations du chiffre d’affaires. Des coûts fixes élevés par rapport aux coûts variables signifient que de petites variations de chiffre d’affaires provoquent de grandes variations de profit — dans un sens comme dans l’autre.'}, ar:{term:'الرافعة التشغيلية', def:'تصف مدى حساسية الربح التشغيلي لتغيرات الإيرادات. ارتفاع التكاليف الثابتة نسبةً إلى المتغيرة يعني أن تقلبات صغيرة في الإيرادات تُحدث تقلبات كبيرة في الربح — في أي من الاتجاهين.'}}},
+  {term:'Working Capital', formula:'Current Assets − Current Liabilities', def:'The cash tied up in day-to-day operations. Growing revenue often requires more working capital, which is easy to overlook when focused only on the income statement.', i18n:{fr:{term:'Fonds de Roulement',formula:'Actif circulant − Passif circulant', def:'La trésorerie immobilisée dans les opérations quotidiennes. Une croissance du chiffre d’affaires nécessite souvent davantage de fonds de roulement, ce qui est facile à négliger en se concentrant uniquement sur le compte de résultat.'}, ar:{term:'رأس المال العامل',formula:'الأصول المتداولة − الخصوم المتداولة', def:'النقد المحتجز في العمليات اليومية. غالبًا ما يتطلب نمو الإيرادات مزيدًا من رأس المال العامل، وهو أمر يسهل إغفاله عند التركيز فقط على قائمة الدخل.'}}},
+  {term:'Free Cash Flow', formula:'Cash from Operations − Capital Expenditures', def:'Cash left over after funding operations and reinvestment — often a better indicator of financial flexibility than net income alone.', i18n:{fr:{term:'Flux de Trésorerie Disponible',formula:'Flux de trésorerie d’exploitation − Dépenses d’investissement', def:'La trésorerie restante après financement des opérations et du réinvestissement — souvent un meilleur indicateur de flexibilité financière que le seul résultat net.'}, ar:{term:'التدفق النقدي الحر',formula:'التدفق النقدي من التشغيل − النفقات الرأسمالية', def:'النقد المتبقي بعد تمويل العمليات وإعادة الاستثمار — غالبًا مؤشر أفضل على المرونة المالية من صافي الدخل وحده.'}}},
+  {term:'Deferred Revenue', def:'Cash collected for a service not yet delivered (common in subscription businesses). It\u2019s a liability, not revenue yet — a frequent point of confusion for new analysts.', i18n:{fr:{term:'Produits Différés', def:'Trésorerie encaissée pour un service pas encore fourni (courant dans les entreprises par abonnement). C’est un passif, pas encore un revenu — une source fréquente de confusion pour les nouveaux analystes.'}, ar:{term:'الإيرادات المؤجلة', def:'نقد تم تحصيله مقابل خدمة لم تُقدَّم بعد (شائع في شركات الاشتراكات). إنه التزام، وليس إيرادًا بعد — نقطة التباس شائعة لدى المحللين الجدد.'}}},
+  {term:'Budget Variance Analysis', def:'Comparing actual results to budgeted targets to explain what drove the difference — a favorable or unfavorable revenue variance, cost variance, or both.', i18n:{fr:{term:'Analyse des Écarts Budgétaires', def:'Comparer les résultats réels aux objectifs budgétés pour expliquer ce qui a causé la différence — un écart favorable ou défavorable de chiffre d’affaires, de coûts, ou les deux.'}, ar:{term:'تحليل انحراف الموازنة', def:'مقارنة النتائج الفعلية بالأهداف المُوازَنة لتفسير سبب الفرق — انحراف إيجابي أو سلبي في الإيرادات، أو في التكاليف، أو كليهما.'}}},
+  {term:'Contribution Margin', formula:'Revenue − Variable Costs', def:'What\u2019s left from each dollar of revenue after variable costs, available to cover fixed costs and then profit.', i18n:{fr:{term:'Marge sur Coûts Variables',formula:'Chiffre d’affaires − Coûts variables', def:'Ce qui reste de chaque dollar de chiffre d’affaires après les coûts variables, disponible pour couvrir les coûts fixes puis le profit.'}, ar:{term:'هامش المساهمة',formula:'الإيرادات − التكاليف المتغيرة', def:'ما يتبقى من كل دولار من الإيرادات بعد التكاليف المتغيرة، والمتاح لتغطية التكاليف الثابتة ثم تحقيق الربح.'}}},
+  {term:'Days Inventory Outstanding (DIO)', formula:'(Inventory ÷ COGS) × 365', def:'The average number of days inventory sits before being sold. Feeds into the cash conversion cycle alongside DSO and DPO.', i18n:{fr:{term:'Délai de Rotation des Stocks (DIO)',formula:'(Stocks ÷ Coût des ventes) × 365', def:'Le nombre moyen de jours pendant lesquels le stock reste avant d’être vendu. Alimente le cycle de conversion de trésorerie aux côtés du DSO et du DPO.'}, ar:{term:'فترة دوران المخزون (DIO)',formula:'(المخزون ÷ تكلفة البضاعة المباعة) × 365', def:'متوسط عدد الأيام التي يبقى فيها المخزون قبل بيعه. يُدخل في حساب دورة تحويل النقد إلى جانب DSO وDPO.'}}},
+  {term:'Days Payable Outstanding (DPO)', formula:'(Accounts Payable ÷ COGS) × 365', def:'The average number of days a company takes to pay its own suppliers. A rising DPO can be a deliberate cash management choice — or a sign of strain.', i18n:{fr:{term:'Délai de Règlement Fournisseurs (DPO)',formula:'(Dettes fournisseurs ÷ Coût des ventes) × 365', def:'Le nombre moyen de jours qu’une entreprise met à payer ses propres fournisseurs. Une hausse du DPO peut être un choix délibéré de gestion de trésorerie — ou un signe de tension.'}, ar:{term:'فترة سداد الدائنين (DPO)',formula:'(الذمم الدائنة ÷ تكلفة البضاعة المباعة) × 365', def:'متوسط عدد الأيام التي تستغرقها الشركة لسداد مورديها. يمكن أن يكون ارتفاع هذا المؤشر خيارًا مقصودًا لإدارة النقد — أو علامة على ضغط مالي.'}}},
+  {term:'Cash Conversion Cycle (CCC)', formula:'DSO + DIO − DPO', def:'The number of days between paying for inputs and collecting cash from customers. Shorter is generally better. Watch for businesses (like project contractors) where this standard formula misses important cash-tied-up items.', i18n:{fr:{term:'Cycle de Conversion de Trésorerie (CCC)',formula:'DSO + DIO − DPO', def:'Le nombre de jours entre le paiement des intrants et l’encaissement de la trésorerie des clients. Plus court est généralement préférable. Attention aux entreprises (comme les entrepreneurs de projets) où cette formule standard manque des éléments importants de trésorerie immobilisée.'}, ar:{term:'دورة تحويل النقد (CCC)',formula:'DSO + DIO − DPO', def:'عدد الأيام بين دفع ثمن المدخلات وتحصيل النقد من العملاء. كلما كانت أقصر كان ذلك أفضل عمومًا. احذر من الشركات (مثل مقاولي المشاريع) حيث تفوّت هذه الصيغة القياسية عناصر مهمة من النقد المحتجز.'}}},
+  {term:'Unbilled Receivables (Contract Assets)', def:'Revenue recognized for work already performed but not yet invoiced to the client — common in construction and other long-contract businesses. It\u2019s real revenue, but not yet a formal receivable or cash.', i18n:{fr:{term:'Créances Non Facturées (Actifs sur Contrats)', def:'Chiffre d’affaires constaté pour des travaux déjà réalisés mais pas encore facturés au client — courant dans la construction et d’autres activités à contrats longs. C’est un revenu réel, mais pas encore une créance formelle ni de la trésorerie.'}, ar:{term:'الذمم غير المفوترة (أصول العقود)', def:'إيرادات معترف بها لأعمال أُنجزت فعلًا لكن لم تُفوتر بعد للعميل — شائعة في قطاع البناء والأنشطة الأخرى ذات العقود الطويلة. إنها إيراد حقيقي، لكنها ليست بعد ذمة رسمية أو نقدًا.'}}},
+  {term:'Retention Receivable', def:'A portion of billed amounts that a client withholds until a project is fully complete, as security. It\u2019s an asset to the contractor, but one of the slowest to collect.', i18n:{fr:{term:'Retenue de Garantie à Recevoir', def:'Une partie des montants facturés qu’un client retient jusqu’à l’achèvement complet d’un projet, à titre de garantie. C’est un actif pour l’entrepreneur, mais l’un des plus lents à recouvrer.'}, ar:{term:'محتجزات مستحقة (ضمان)', def:'جزء من المبالغ المفوترة يحتفظ به العميل حتى الاكتمال التام للمشروع، كضمان. إنه أصل للمقاول، لكنه من أبطأ الأصول تحصيلًا.'}}},
+  {term:'Income Statement', def:'A summary of revenue, costs, and profit over a period of time (a quarter or a year). It answers "did the business make money" — as distinct from the balance sheet, which is a snapshot at one point in time.', i18n:{fr:{term:'Compte de Résultat', def:'Un résumé du chiffre d’affaires, des coûts et du profit sur une période (un trimestre ou une année). Il répond à la question « l’entreprise a-t-elle gagné de l’argent » — à la différence du bilan, qui est une photographie à un instant précis.'}, ar:{term:'قائمة الدخل', def:'ملخص للإيرادات والتكاليف والربح على مدى فترة زمنية (فصل أو سنة). تجيب عن سؤال «هل حققت الشركة ربحًا» — على عكس الميزانية العمومية، وهي لقطة لحظية في تاريخ محدد.'}}},
+  {term:'Balance Sheet', formula:'Assets = Liabilities + Equity', def:'A snapshot of what a business owns (assets), owes (liabilities), and what\u2019s left for owners (equity) at one specific date. It always balances by definition — that\u2019s not a coincidence, it\u2019s the accounting identity.', i18n:{fr:{term:'Bilan',formula:'Actif = Passif + Capitaux propres', def:'Une photographie de ce qu’une entreprise possède (actif), doit (passif), et de ce qui reste pour les propriétaires (capitaux propres) à une date précise. Il s’équilibre toujours par définition — ce n’est pas une coïncidence, c’est l’identité comptable fondamentale.'}, ar:{term:'الميزانية العمومية',formula:'الأصول = الخصوم + حقوق الملكية', def:'لقطة لما تملكه الشركة (الأصول)، وما عليها (الخصوم)، وما يتبقى للملاك (حقوق الملكية) في تاريخ محدد. تتوازن دائمًا بحكم التعريف — وهذا ليس صدفة، بل هو المعادلة المحاسبية الأساسية.'}}},
+  {term:'Statement of Cash Flows', def:'A breakdown of actual cash moving in and out of the business, split into operating, investing, and financing activities. It exists because profit (on the income statement) and cash are not the same thing.', i18n:{fr:{term:'Tableau des Flux de Trésorerie', def:'Une ventilation de la trésorerie réelle entrant et sortant de l’entreprise, répartie entre activités d’exploitation, d’investissement et de financement. Il existe parce que le profit (au compte de résultat) et la trésorerie ne sont pas la même chose.'}, ar:{term:'قائمة التدفقات النقدية', def:'تفصيل للنقد الفعلي الداخل والخارج من الشركة، مقسّم إلى أنشطة تشغيلية واستثمارية وتمويلية. توجد هذه القائمة لأن الربح (في قائمة الدخل) والنقد ليسا الشيء نفسه.'}}},
+  {term:'Accounts Receivable', def:'Money owed to the business by customers who\u2019ve already been billed but haven\u2019t paid yet. It\u2019s an asset, but not cash — the gap between the two is where a lot of real-world cash problems hide.', i18n:{fr:{term:'Créances Clients', def:'L’argent dû à l’entreprise par des clients déjà facturés mais qui n’ont pas encore payé. C’est un actif, mais pas de la trésorerie — l’écart entre les deux est souvent là où se cachent de nombreux problèmes de trésorerie réels.'}, ar:{term:'الذمم المدينة', def:'أموال مستحقة للشركة من عملاء تمت فوترتهم بالفعل لكنهم لم يدفعوا بعد. إنها أصل، لكنها ليست نقدًا — والفجوة بين الاثنين هي حيث تختبئ الكثير من مشكلات النقد الحقيقية.'}}},
+  {term:'Accounts Payable', def:'Money the business owes to its own suppliers for goods or services already received but not yet paid for. Stretching payables can be a deliberate cash management tool, or a sign of strain.', i18n:{fr:{term:'Dettes Fournisseurs', def:'L’argent que l’entreprise doit à ses propres fournisseurs pour des biens ou services déjà reçus mais pas encore payés. Étirer les délais de paiement peut être un outil délibéré de gestion de trésorerie, ou un signe de tension.'}, ar:{term:'الذمم الدائنة', def:'أموال تدين بها الشركة لمورديها مقابل سلع أو خدمات استُلمت بالفعل لكن لم تُدفع بعد. إطالة آجال السداد يمكن أن تكون أداة مقصودة لإدارة النقد، أو علامة على ضغط مالي.'}}},
+  {term:'Retained Earnings', formula:'Prior Retained Earnings + Net Income − Dividends', def:'The accumulated profit a company has kept (rather than paid out to owners) since it started. It\u2019s part of equity, alongside contributed capital.', i18n:{fr:{term:'Résultats Non Distribués',formula:'Résultats non distribués antérieurs + Résultat net − Dividendes', def:'Le profit cumulé qu’une entreprise a conservé (plutôt que versé aux propriétaires) depuis sa création. Cela fait partie des capitaux propres, aux côtés du capital apporté.'}, ar:{term:'الأرباح المحتجزة',formula:'الأرباح المحتجزة السابقة + صافي الدخل − توزيعات الأرباح', def:'الربح المتراكم الذي احتفظت به الشركة (بدلًا من توزيعه على الملاك) منذ تأسيسها. يُعد جزءًا من حقوق الملكية، إلى جانب رأس المال المساهم به.'}}},
+  {term:'Fixed Costs', def:'Costs that stay roughly the same regardless of how much the business sells — rent and salaried labor are common examples. They\u2019re the key input to break-even analysis.', i18n:{fr:{term:'Coûts Fixes', def:'Des coûts qui restent à peu près constants quel que soit le volume de ventes de l’entreprise — le loyer et la main-d’œuvre salariée en sont des exemples courants. Ils sont l’élément clé de l’analyse du seuil de rentabilité.'}, ar:{term:'التكاليف الثابتة', def:'تكاليف تبقى شبه ثابتة بغض النظر عن حجم مبيعات الشركة — الإيجار والعمالة براتب ثابت أمثلة شائعة عليها. هي المدخل الرئيسي لتحليل نقطة التعادل.'}}},
+  {term:'Variable Costs', def:'Costs that rise and fall directly with volume — materials, hourly labor tied to production, and payment-processing fees are common examples.', i18n:{fr:{term:'Coûts Variables', def:'Des coûts qui augmentent et diminuent directement avec le volume — les matières premières, la main-d’œuvre horaire liée à la production, et les frais de traitement des paiements en sont des exemples courants.'}, ar:{term:'التكاليف المتغيرة', def:'تكاليف ترتفع وتنخفض مباشرة مع الحجم — المواد، والعمالة بالساعة المرتبطة بالإنتاج، ورسوم معالجة المدفوعات أمثلة شائعة عليها.'}}},
+  {term:'EBITDA', formula:'Earnings Before Interest, Tax, Depreciation & Amortization', def:'A profit measure that strips out financing decisions and non-cash accounting charges, often used to compare operating performance across companies with different capital structures. It is not the same as cash flow, despite sometimes being used as a rough proxy for it.', i18n:{fr:{term:'EBITDA',formula:'Résultat avant intérêts, impôts, dépréciation et amortissement', def:'Un indicateur de profit qui élimine les décisions de financement et les charges comptables non monétaires, souvent utilisé pour comparer la performance opérationnelle entre entreprises ayant des structures de capital différentes. Ce n’est pas la même chose que le flux de trésorerie, même s’il est parfois utilisé comme un indicateur approximatif de celui-ci.'}, ar:{term:'EBITDA (الأرباح قبل الفوائد والضرائب والإهلاك والاستهلاك)',formula:'الأرباح قبل الفوائد والضرائب والإهلاك والاستهلاك', def:'مقياس ربح يستبعد قرارات التمويل والأعباء المحاسبية غير النقدية، ويُستخدم غالبًا لمقارنة الأداء التشغيلي بين شركات ذات هياكل رأسمالية مختلفة. ليس مطابقًا للتدفق النقدي، رغم استخدامه أحيانًا كمؤشر تقريبي له.'}}},
+  {term:'Amortization', def:'The gradual write-down of an intangible asset\u2019s cost over its useful life — the intangible-asset counterpart to depreciation, which applies to physical assets.', i18n:{fr:{term:'Amortissement (Actifs Incorporels)', def:'La réduction progressive de la valeur comptable d’un actif incorporel sur sa durée de vie utile — l’équivalent, pour les actifs incorporels, de la dépréciation qui s’applique aux actifs physiques.'}, ar:{term:'الاستهلاك (الأصول غير الملموسة)', def:'التخفيض التدريجي لتكلفة أصل غير ملموس على مدى عمره الإنتاجي — نظير الإهلاك الخاص بالأصول الملموسة، لكن للأصول غير الملموسة.'}}},
+  {term:'Capitalized Software', def:'Software development costs recorded as an asset on the balance sheet (and expensed gradually over time) rather than expensed immediately, because the software is expected to provide value over multiple periods.', i18n:{fr:{term:'Logiciels Capitalisés', def:'Coûts de développement logiciel enregistrés comme un actif au bilan (et amortis progressivement dans le temps) plutôt que passés en charges immédiatement, car le logiciel est censé apporter de la valeur sur plusieurs périodes.'}, ar:{term:'البرمجيات المرسملة', def:'تكاليف تطوير البرمجيات المسجلة كأصل في الميزانية العمومية (وتُستهلك تدريجيًا بمرور الوقت) بدلًا من تحميلها كمصروف فورًا، لأن من المتوقع أن توفر البرمجيات قيمة على مدى عدة فترات.'}}},
+  {term:'Runway', def:'How long a company can keep operating at its current cash balance and burn rate before running out of cash — usually expressed in months. A core metric for any business that isn\u2019t yet cash-flow positive.', i18n:{fr:{term:'Trésorerie Disponible (Runway)', def:'Combien de temps une entreprise peut continuer à fonctionner à son solde de trésorerie et son rythme de combustion actuels avant de manquer de liquidités — généralement exprimé en mois. Un indicateur essentiel pour toute entreprise qui n’est pas encore génératrice de trésorerie positive.'}, ar:{term:'العمر النقدي المتبقي (Runway)', def:'المدة التي يمكن أن تستمر فيها الشركة بالعمل عند رصيدها النقدي الحالي ومعدل استهلاكه قبل نفاد النقد — تُقاس عادة بالأشهر. مقياس أساسي لأي شركة لم تصل بعد إلى تدفق نقدي إيجابي.'}}},
+  {term:'Burn Rate', def:'How much cash a company is spending (net of any revenue) per month or per period. Compared against cash on hand, it produces runway.', i18n:{fr:{term:'Taux de Combustion (Burn Rate)', def:'Le montant de trésorerie qu’une entreprise dépense (net de tout revenu) par mois ou par période. Comparé à la trésorerie disponible, il détermine le runway.'}, ar:{term:'معدل الاستهلاك (Burn Rate)', def:'مقدار النقد الذي تنفقه الشركة (بعد خصم أي إيرادات) شهريًا أو خلال فترة معينة. عند مقارنته بالنقد المتاح، يحدد العمر النقدي المتبقي.'}}},
+  {term:'CAGR (Compound Annual Growth Rate)', formula:'(Ending Value ÷ Starting Value)^(1 ÷ Years) − 1', def:'The smoothed annual growth rate that would take a starting figure to an ending figure over a number of years, if it grew at a steady compounding rate. Useful for comparing growth across businesses or time periods of different lengths.', i18n:{fr:{term:'TCAC (Taux de Croissance Annuel Composé)',formula:'(Valeur finale ÷ Valeur initiale)^(1 ÷ Années) − 1', def:'Le taux de croissance annuel lissé qui ferait passer un chiffre de départ à un chiffre final sur un certain nombre d’années, s’il croissait à un taux composé constant. Utile pour comparer la croissance entre entreprises ou périodes de durées différentes.'}, ar:{term:'معدل النمو السنوي المركب (CAGR)',formula:'(القيمة النهائية ÷ القيمة الأولية)^(1 ÷ عدد السنوات) − 1', def:'معدل النمو السنوي المنعّم الذي يأخذ رقمًا بدائيًا إلى رقم نهائي على مدى عدد من السنوات، لو نما بمعدل مركّب ثابت. مفيد لمقارنة النمو بين شركات أو فترات ذات مدد مختلفة.'}}},
+  {term:'Forecast / Projection', def:'An estimate of future financial results based on stated assumptions (growth rate, cost structure, planned investment). A forecast is only as good as its assumptions — always state them alongside the numbers.', i18n:{fr:{term:'Prévision / Projection', def:'Une estimation des résultats financiers futurs basée sur des hypothèses énoncées (taux de croissance, structure de coûts, investissement prévu). Une prévision ne vaut que ce que valent ses hypothèses — toujours les indiquer aux côtés des chiffres.'}, ar:{term:'التوقع / الإسقاط', def:'تقدير للنتائج المالية المستقبلية مبني على افتراضات مُعلَنة (معدل النمو، هيكل التكاليف، الاستثمار المخطط). لا تكون جودة التوقع أفضل من جودة افتراضاته — اذكرها دائمًا إلى جانب الأرقام.'}}},
+  {term:'Customer Concentration Risk', def:'The risk that a large share of revenue or receivables comes from one or a small number of customers — if one leaves, pays late, or renegotiates terms, the impact is outsized.', i18n:{fr:{term:'Risque de Concentration Client', def:'Le risque qu’une grande part du chiffre d’affaires ou des créances provienne d’un seul ou d’un petit nombre de clients — si l’un d’eux part, paie en retard, ou renégocie ses conditions, l’impact est disproportionné.'}, ar:{term:'مخاطر تركّز العملاء', def:'خطر أن تأتي حصة كبيرة من الإيرادات أو الذمم من عميل واحد أو عدد قليل من العملاء — فإذا غادر أحدهم، أو تأخر في الدفع، أو أعاد التفاوض على الشروط، يكون الأثر كبيرًا بشكل غير متناسب.'}}},
+  {term:'Percentage of Completion', def:'A revenue recognition method for long-term contracts (common in construction) where revenue is recorded in proportion to work completed, rather than waiting until the whole project is finished or invoiced.', i18n:{fr:{term:'Méthode de l’Avancement', def:'Une méthode de constatation du revenu pour les contrats à long terme (courante dans la construction) où le chiffre d’affaires est enregistré en proportion des travaux réalisés, plutôt que d’attendre que tout le projet soit terminé ou facturé.'}, ar:{term:'نسبة الإنجاز', def:'طريقة للاعتراف بالإيراد في العقود طويلة الأجل (شائعة في البناء) يُسجَّل فيها الإيراد بما يتناسب مع نسبة الأعمال المُنجزة، بدلًا من الانتظار حتى اكتمال المشروع بالكامل أو فوترته.'}}},
+  {term:'Loan Covenant', def:'A condition attached to a loan that the borrower must maintain — for example, keeping interest coverage above a set level. Breaching a covenant can trigger penalties or even let the lender demand early repayment.', i18n:{fr:{term:'Clause Restrictive de Prêt (Covenant)', def:'Une condition attachée à un prêt que l’emprunteur doit respecter — par exemple, maintenir la couverture des intérêts au-dessus d’un certain niveau. Enfreindre une clause peut déclencher des pénalités ou même permettre au prêteur d’exiger un remboursement anticipé.'}, ar:{term:'تعهد القرض (Covenant)', def:'شرط مرتبط بقرض يجب على المقترض الالتزام به — مثل الحفاظ على تغطية الفوائد فوق مستوى معين. خرق التعهد قد يؤدي إلى عقوبات أو حتى يسمح للمُقرض بالمطالبة بالسداد المبكر.'}}},
+  {term:'Occupancy Rate', def:'The percentage of available space (rooms, units, seats) actually in use or rented out — a core driver of revenue for hospitality and real estate businesses.', i18n:{fr:{term:'Taux d’Occupation', def:'Le pourcentage de l’espace disponible (chambres, unités, places) réellement utilisé ou loué — un moteur central du chiffre d’affaires pour les entreprises hôtelières et immobilières.'}, ar:{term:'معدل الإشغال', def:'النسبة المئوية للمساحة المتاحة (غرف، وحدات، مقاعد) المستخدمة أو المؤجرة فعليًا — محرك أساسي للإيرادات في قطاعي الضيافة والعقارات.'}}},
+  {term:'Customer Acquisition Cost (CAC)', formula:'Sales & Marketing Spend ÷ New Customers Acquired', def:'How much it costs, on average, to win one new customer. Usually compared against customer lifetime value to judge whether growth spending is actually paying off.', i18n:{fr:{term:'Coût d’Acquisition Client (CAC)',formula:'Dépenses commerciales et marketing ÷ Nouveaux clients acquis', def:'Combien coûte, en moyenne, l’acquisition d’un nouveau client. Généralement comparé à la valeur vie client pour juger si les dépenses de croissance sont réellement rentables.'}, ar:{term:'تكلفة اكتساب العميل (CAC)',formula:'إنفاق المبيعات والتسويق ÷ عدد العملاء الجدد المكتسبين', def:'متوسط تكلفة اكتساب عميل جديد واحد. تُقارن عادة بالقيمة الدائمة للعميل للحكم على ما إذا كان إنفاق النمو مجديًا فعليًا.'}}},
+  {term:'Equity Multiplier', formula:'Total Assets ÷ Total Equity', def:'A measure of leverage used in DuPont analysis — how many dollars of assets each dollar of equity is supporting. A rising equity multiplier means more of the balance sheet is funded by debt.', i18n:{fr:{term:'Multiplicateur de Capitaux Propres',formula:'Total de l’actif ÷ Total des capitaux propres', def:'Une mesure de l’endettement utilisée dans l’analyse DuPont — combien de dollars d’actifs chaque dollar de capitaux propres soutient. Un multiplicateur croissant signifie qu’une part plus importante du bilan est financée par la dette.'}, ar:{term:'مضاعف حقوق الملكية',formula:'إجمالي الأصول ÷ إجمالي حقوق الملكية', def:'مقياس للرفع المالي يُستخدم في تحليل ديبونت — عدد دولارات الأصول التي يدعمها كل دولار من حقوق الملكية. ارتفاع هذا المضاعف يعني أن جزءًا أكبر من الميزانية العمومية مموَّل بالدين.'}}},
+  {term:'Common-Size Statement', def:'A financial statement restated so every line is shown as a percentage (of revenue for the income statement, of total assets for the balance sheet) instead of raw currency — this strips out scale so periods, or companies of different sizes, can be compared directly.', i18n:{fr:{term:'État Financier en Pourcentage (Common-Size)', def:'Un état financier reformulé de sorte que chaque ligne soit présentée en pourcentage (du chiffre d’affaires pour le compte de résultat, du total de l’actif pour le bilan) plutôt qu’en devise brute — cela élimine l’effet de taille afin de pouvoir comparer directement des périodes ou des entreprises de tailles différentes.'}, ar:{term:'القائمة المالية النسبية (Common-Size)', def:'قائمة مالية يُعاد صياغتها بحيث يُعرض كل بند كنسبة مئوية (من الإيرادات لقائمة الدخل، ومن إجمالي الأصول للميزانية العمومية) بدلًا من العملة الخام — وهذا يزيل أثر الحجم بحيث يمكن مقارنة الفترات أو الشركات المختلفة الحجم مباشرة.'}}},
+  {term:'Horizontal Analysis', def:'Comparing each line item across two or more periods to see the dollar and percentage change — useful for spotting which specific lines are driving an overall trend.', i18n:{fr:{term:'Analyse Horizontale', def:'Comparer chaque poste sur deux périodes ou plus pour voir la variation en dollars et en pourcentage — utile pour repérer quelles lignes précises pilotent une tendance globale.'}, ar:{term:'التحليل الأفقي', def:'مقارنة كل بند عبر فترتين أو أكثر لرؤية التغير بالقيمة الدولارية والنسبة المئوية — مفيد لتحديد أي البنود تحديدًا تقود اتجاهًا عامًا.'}}},
+  {term:'Sensitivity Analysis', def:'Testing how an outcome (like net income) changes as one or more assumptions move — for example, seeing what happens to profit under different combinations of revenue growth and cost inflation. Also called a "what-if" analysis.', i18n:{fr:{term:'Analyse de Sensibilité', def:'Tester comment un résultat (comme le résultat net) change lorsqu’une ou plusieurs hypothèses évoluent — par exemple, voir ce qui arrive au profit sous différentes combinaisons de croissance du chiffre d’affaires et d’inflation des coûts. Aussi appelée analyse « et si ».'}, ar:{term:'تحليل الحساسية', def:'اختبار كيفية تغيّر نتيجة ما (مثل صافي الدخل) عند تحرك افتراض واحد أو أكثر — على سبيل المثال، رؤية ما يحدث للربح تحت تركيبات مختلفة من نمو الإيرادات وتضخم التكاليف. يُعرف أيضًا بتحليل «ماذا لو».'}}},
+  {term:'Accrual Accounting', def:'Recording revenue when it\u2019s earned and expenses when they\u2019re incurred, regardless of when cash actually changes hands. Nearly all businesses beyond the smallest use this method — it\u2019s why profit and cash flow can diverge.', i18n:{fr:{term:'Comptabilité d’Engagement', def:'Enregistrer le chiffre d’affaires lorsqu’il est gagné et les charges lorsqu’elles sont engagées, indépendamment du moment où la trésorerie change réellement de mains. Presque toutes les entreprises au-delà des plus petites utilisent cette méthode — c’est pourquoi le profit et le flux de trésorerie peuvent diverger.'}, ar:{term:'المحاسبة على أساس الاستحقاق', def:'تسجيل الإيراد عند تحققه والمصروف عند تكبّده، بغض النظر عن توقيت انتقال النقد فعليًا. تستخدم كل الشركات تقريبًا باستثناء الأصغر حجمًا هذه الطريقة — ولهذا يمكن أن يتباين الربح عن التدفق النقدي.'}}}
 ];
 
 const LESSONS = [
