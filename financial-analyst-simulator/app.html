@@ -3836,13 +3836,13 @@ function wireFinancials(){
 /* ---------- RATIOS & FRAMEWORKS ---------- */
 let ratioTab = 'dashboard';
 
-function ratioTile(label, formatFn, v1, v2, info, direction){
+function ratioTile(key, label, formatFn, v1, v2, info, direction){
   let deltaStr, deltaClass;
   const notComparable = v1===null || v2===null || v1===undefined || v2===undefined || !isFinite(v1) || !isFinite(v2);
   if(notComparable){
     deltaStr = '—'; deltaClass = '';
-  } else if((label==='Interest Coverage') && (v1<0 || v2<0)){
-    deltaStr = 'operating loss — ratio not meaningful'; deltaClass = 'neg';
+  } else if((key==='interestCoverage') && (v1<0 || v2<0)){
+    deltaStr = t('ratio.opLossNotMeaningful'); deltaClass = 'neg';
   } else {
     const improving = direction==='up' ? (v2>=v1) : (v2<=v1);
     deltaClass = improving ? 'pos' : 'neg';
@@ -3867,43 +3867,43 @@ function viewRatios(){
   if(ratioTab==='dashboard'){
     body = `
     <div class="grid-4">
-      ${ratioTile('Current Ratio', ratio, r.y1.current, r.y2.current, 'Current Assets ÷ Current Liabilities', 'up')}
-      ${ratioTile('Quick Ratio', ratio, r.y1.quick, r.y2.quick, '(Current Assets − Inventory) ÷ Current Liabilities', 'up')}
-      ${ratioTile('Gross Margin', v=>pct(v), r.y1.grossMargin, r.y2.grossMargin, '(Revenue − COGS) ÷ Revenue', 'up')}
-      ${ratioTile('Net Margin', v=>pct(v), r.y1.netMargin, r.y2.netMargin, 'Net Income ÷ Revenue', 'up')}
-      ${ratioTile('Return on Assets', v=>pct(v), r.y1.roa, r.y2.roa, 'Net Income ÷ Total Assets', 'up')}
-      ${ratioTile('Return on Equity', v=>pct(v), r.y1.roe, r.y2.roe, 'Net Income ÷ Total Equity', 'up')}
-      ${ratioTile('Debt-to-Equity', ratio, r.y1.debtEquity, r.y2.debtEquity, 'Total Liabilities ÷ Total Equity', 'down')}
-      ${ratioTile('Interest Coverage', ratio, r.y1.interestCoverage, r.y2.interestCoverage, 'Operating Income ÷ Interest Expense', 'up')}
-      ${ratioTile('Inventory Turnover', ratio, r.y1.inventoryTurnover, r.y2.inventoryTurnover, 'COGS ÷ Inventory', 'up')}
-      ${ratioTile('Days Sales Outstanding', days, r.y1.dso, r.y2.dso, '(Accounts Receivable ÷ Revenue) × 365', 'down')}
-      ${ratioTile('Asset Turnover', ratio, r.y1.assetTurnover, r.y2.assetTurnover, 'Revenue ÷ Total Assets', 'up')}
-      ${ratioTile('Operating Margin', v=>pct(v), r.y1.operatingMargin, r.y2.operatingMargin, 'Operating Income ÷ Revenue', 'up')}
-      ${ratioTile('Cash Conversion Cycle', days, r.y1.ccc, r.y2.ccc, 'DSO + Days Inventory Outstanding − Days Payable Outstanding', 'down')}
+      ${ratioTile('current', t('ratio.current'), ratio, r.y1.current, r.y2.current, t('ratio.currentInfo'), 'up')}
+      ${ratioTile('quick', t('ratio.quick'), ratio, r.y1.quick, r.y2.quick, t('ratio.quickInfo'), 'up')}
+      ${ratioTile('grossMargin', t('ratio.grossMargin'), v=>pct(v), r.y1.grossMargin, r.y2.grossMargin, t('ratio.grossMarginInfo'), 'up')}
+      ${ratioTile('netMargin', t('ratio.netMargin'), v=>pct(v), r.y1.netMargin, r.y2.netMargin, t('ratio.netMarginInfo'), 'up')}
+      ${ratioTile('roa', t('ratio.roa'), v=>pct(v), r.y1.roa, r.y2.roa, t('ratio.roaInfo'), 'up')}
+      ${ratioTile('roe', t('ratio.roe'), v=>pct(v), r.y1.roe, r.y2.roe, t('ratio.roeInfo'), 'up')}
+      ${ratioTile('debtEquity', t('ratio.debtEquity'), ratio, r.y1.debtEquity, r.y2.debtEquity, t('ratio.debtEquityInfo'), 'down')}
+      ${ratioTile('interestCoverage', t('ratio.interestCoverage'), ratio, r.y1.interestCoverage, r.y2.interestCoverage, t('ratio.interestCoverageInfo'), 'up')}
+      ${ratioTile('inventoryTurnover', t('ratio.inventoryTurnover'), ratio, r.y1.inventoryTurnover, r.y2.inventoryTurnover, t('ratio.inventoryTurnoverInfo'), 'up')}
+      ${ratioTile('dso', t('ratio.dso'), days, r.y1.dso, r.y2.dso, t('ratio.dsoInfo'), 'down')}
+      ${ratioTile('assetTurnover', t('ratio.assetTurnover'), ratio, r.y1.assetTurnover, r.y2.assetTurnover, t('ratio.assetTurnoverInfo'), 'up')}
+      ${ratioTile('operatingMargin', t('ratio.operatingMargin'), v=>pct(v), r.y1.operatingMargin, r.y2.operatingMargin, t('ratio.operatingMarginInfo'), 'up')}
+      ${ratioTile('ccc', t('ratio.ccc'), days, r.y1.ccc, r.y2.ccc, t('ratio.cccInfo'), 'down')}
     </div>
     ${(sc.balance.y2.unbilledAR || sc.balance.y2.retentionReceivable) ? `
-    <div class="lesson-box"><b>Watch this one closely:</b> the standard Cash Conversion Cycle above only counts standard receivables, inventory and payables. This case also carries
-      <b>${fmt((sc.balance.y2.unbilledAR||0)+(sc.balance.y2.retentionReceivable||0))}</b> in unbilled receivables and retention (vs
-      <b>${fmt((sc.balance.y1.unbilledAR||0)+(sc.balance.y1.retentionReceivable||0))}</b> last year) — cash tied up that the standard formula doesn't see at all. Check the Balance Sheet tab for the full picture.</div>
+    <div class="lesson-box"><b>${t('ratio.watchTitle')}</b>${tf('ratio.watchBody', {
+      curr: '<b>'+fmt((sc.balance.y2.unbilledAR||0)+(sc.balance.y2.retentionReceivable||0))+'</b>',
+      prior: '<b>'+fmt((sc.balance.y1.unbilledAR||0)+(sc.balance.y1.retentionReceivable||0))+'</b>'
+    })}</div>
     ` : ''}
-    <div class="lesson-box"><b>Reading this dashboard:</b> compare each figure against last period first, then ask which two or three ratios actually explain the client's problem — a strong dashboard read names the two or three that matter, not all thirteen.</div>
+    <div class="lesson-box"><b>${t('ratio.readingTitle')}</b> ${t('ratio.readingBody')}</div>
     `;
   } else if(ratioTab==='dupont'){
-    const em1 = r.y1.roa===0?0:r.y1.roe/ (r.y1.netMargin*r.y1.assetTurnover||1);
     body = `
     <div class="card">
-      <h2>DuPont Breakdown</h2>
-      <div class="card-sub">ROE = Net Margin &times; Asset Turnover &times; Equity Multiplier</div>
+      <h2>${t('ratio.dupontTitle')}</h2>
+      <div class="card-sub">${t('ratio.dupontSub')}</div>
       <div class="grid-3">
-        <div class="stat-tile"><div class="label">Net Margin</div><div class="value">${pct(r.y2.netMargin)}</div><div class="hint">${sc.years[0]}: ${pct(r.y1.netMargin)}</div></div>
-        <div class="stat-tile"><div class="label">Asset Turnover</div><div class="value">${ratio(r.y2.assetTurnover)}</div><div class="hint">${sc.years[0]}: ${ratio(r.y1.assetTurnover)}</div></div>
-        <div class="stat-tile"><div class="label">Equity Multiplier</div><div class="value">${ratio(r.y2.equityMultiplier)}</div><div class="hint">${sc.years[0]}: ${ratio(r.y1.equityMultiplier)}</div></div>
+        <div class="stat-tile"><div class="label">${t('ratio.netMargin')}</div><div class="value">${pct(r.y2.netMargin)}</div><div class="hint">${sc.years[0]}: ${pct(r.y1.netMargin)}</div></div>
+        <div class="stat-tile"><div class="label">${t('ratio.assetTurnover')}</div><div class="value">${ratio(r.y2.assetTurnover)}</div><div class="hint">${sc.years[0]}: ${ratio(r.y1.assetTurnover)}</div></div>
+        <div class="stat-tile"><div class="label">${t('ratio.equityMultiplier')}</div><div class="value">${ratio(r.y2.equityMultiplier)}</div><div class="hint">${sc.years[0]}: ${ratio(r.y1.equityMultiplier)}</div></div>
       </div>
       <div style="text-align:center; margin:22px 0; font-family:var(--mono); font-size:20px; color:var(--paper);">
-        = <span style="color:var(--brass);">${pct(r.y2.roe)}</span> Return on Equity
-        <div style="font-size:12px; color:var(--text-faint); margin-top:4px;">vs ${pct(r.y1.roe)} in ${sc.years[0]}</div>
+        = <span style="color:var(--brass);">${pct(r.y2.roe)}</span> ${t('ratio.roeResultSuffix')}
+        <div style="font-size:12px; color:var(--text-faint); margin-top:4px;">${tf('ratio.vsInYear', {value: pct(r.y1.roe), year: sc.years[0]})}</div>
       </div>
-      <div class="lesson-box"><b>What to look for:</b> if ROE rose mainly because the equity multiplier (leverage) rose — not because margin or turnover improved — that's a warning sign, not a win. Check which lever actually moved.</div>
+      <div class="lesson-box"><b>${t('ratio.lookForTitle')}</b> ${t('ratio.dupontLesson')}</div>
     </div>`;
   } else if(ratioTab==='breakeven'){
     const actualRev = sc.income.y2.revenue;
@@ -3911,22 +3911,23 @@ function viewRatios(){
     const maxScale = beIsFinite ? Math.max(actualRev, be.breakevenRevenue) * 1.15 : (actualRev * 1.15 || 1);
     const beBarWidth = beIsFinite ? (be.breakevenRevenue/maxScale*100).toFixed(1) : 100;
     const actualBarWidth = beIsFinite ? (actualRev/maxScale*100).toFixed(1) : (actualRev>0 ? 15 : 0);
+    const beMsg = !beIsFinite ? t('ratio.beNotAchievable') : (actualRev >= be.breakevenRevenue ? t('ratio.beAbove') : t('ratio.beBelow'));
     body = `
     <div class="card">
-      <h2>Break-Even Analysis</h2>
-      <div class="card-sub">${sc.years[1]} cost structure</div>
+      <h2>${t('ratio.breakevenTitle')}</h2>
+      <div class="card-sub">${tf('ratio.breakevenSub', {year: sc.years[1]})}</div>
       <div class="grid-3">
-        <div class="stat-tile"><div class="label">Fixed Costs</div><div class="value">${fmt(be.fixed)}</div></div>
-        <div class="stat-tile"><div class="label">Variable Cost Ratio</div><div class="value">${pct(be.varRatio)}</div></div>
-        <div class="stat-tile"><div class="label">Break-Even Revenue</div><div class="value">${beIsFinite ? fmt(be.breakevenRevenue) : 'Not achievable'}</div></div>
+        <div class="stat-tile"><div class="label">${t('ratio.fixedCosts')}</div><div class="value">${fmt(be.fixed)}</div></div>
+        <div class="stat-tile"><div class="label">${t('ratio.variableCostRatio')}</div><div class="value">${pct(be.varRatio)}</div></div>
+        <div class="stat-tile"><div class="label">${t('ratio.breakevenRevenue')}</div><div class="value">${beIsFinite ? fmt(be.breakevenRevenue) : t('ratio.notAchievable')}</div></div>
       </div>
       <div style="margin-top:22px;">
-        <div style="font-size:12px;color:var(--text-soft);margin-bottom:6px;">Break-even revenue</div>
+        <div style="font-size:12px;color:var(--text-soft);margin-bottom:6px;">${t('ratio.breakevenRevenueBarLabel')}</div>
         <div class="pbar" style="height:22px;"><div style="width:${beBarWidth}%; background:linear-gradient(90deg,var(--red-deep),var(--brass));"></div></div>
-        <div style="font-size:12px;color:var(--text-soft);margin:14px 0 6px;">Actual revenue (${sc.years[1]})</div>
+        <div style="font-size:12px;color:var(--text-soft);margin:14px 0 6px;">${tf('ratio.actualRevenueBarLabel', {year: sc.years[1]})}</div>
         <div class="pbar" style="height:22px;"><div style="width:${actualBarWidth}%;"></div></div>
       </div>
-      <div class="lesson-box"><b>Formula:</b> Break-Even Revenue = Fixed Costs &divide; (1 − Variable Cost Ratio). ${!beIsFinite ? 'Variable costs alone consume 100% of revenue or more at this cost structure — no volume of sales would cover fixed costs. This points to a pricing or input-cost problem that needs fixing before break-even is even a meaningful target.' : (actualRev >= be.breakevenRevenue ? 'Actual revenue is above break-even — the business is operating with a margin of safety.' : 'Actual revenue is below break-even — the business cannot cover its fixed costs at this volume.')}</div>
+      <div class="lesson-box"><b>${t('ratio.formulaTitle')}</b> ${t('ratio.formulaText')} ${beMsg}</div>
     </div>`;
   } else {
     const b = sc.budget;
@@ -3939,31 +3940,31 @@ function viewRatios(){
     const niVar = i2.netIncome - b.netIncome;
     body = `
     <div class="card">
-      <h2>Budget vs. Actual</h2>
-      <div class="card-sub">${sc.years[1]}, $000s</div>
+      <h2>${t('ratio.budgetTitle')}</h2>
+      <div class="card-sub">${tf('ratio.budgetSub', {year: sc.years[1]})}</div>
       <table class="ledger" style="color:var(--text);">
-        <tr><th style="color:var(--text-faint);text-align:left;">Line</th><th style="color:var(--text-faint);">Budget</th><th style="color:var(--text-faint);">Actual</th><th style="color:var(--text-faint);">Variance</th></tr>
-        <tr><td>Revenue</td><td>${fmt(b.revenue)}</td><td>${fmt(sc.income.y2.revenue)}</td><td class="${revVar>=0?'pos':'neg'}">${fmtSigned(revVar)}</td></tr>
-        <tr><td>COGS</td><td>${fmt(-b.cogs)}</td><td>${fmt(-sc.income.y2.cogs)}</td><td class="${cogsVar<=0?'pos':'neg'}">${fmtSigned(-cogsVar)}</td></tr>
-        <tr class="subtotal"><td>Gross Profit</td><td>${fmt(budgetGP)}</td><td>${fmt(actualGP)}</td><td class="${gpVar>=0?'pos':'neg'}">${fmtSigned(gpVar)}</td></tr>
-        <tr><td>Operating Expenses</td><td>${fmt(-b.opex)}</td><td>${fmt(-i2.opexTotal)}</td><td class="${opexVar<=0?'pos':'neg'}">${fmtSigned(-opexVar)}</td></tr>
-        <tr class="grand"><td>Net Income</td><td>${fmt(b.netIncome)}</td><td>${fmt(i2.netIncome)}</td><td class="${niVar>=0?'pos':'neg'}">${fmtSigned(niVar)}</td></tr>
+        <tr><th style="color:var(--text-faint);text-align:left;">${t('ratio.colLine')}</th><th style="color:var(--text-faint);">${t('ratio.colBudget')}</th><th style="color:var(--text-faint);">${t('ratio.colActual')}</th><th style="color:var(--text-faint);">${t('ratio.colVariance')}</th></tr>
+        <tr><td>${tl('Revenue')}</td><td>${fmt(b.revenue)}</td><td>${fmt(sc.income.y2.revenue)}</td><td class="${revVar>=0?'pos':'neg'}">${fmtSigned(revVar)}</td></tr>
+        <tr><td>${tl('COGS')}</td><td>${fmt(-b.cogs)}</td><td>${fmt(-sc.income.y2.cogs)}</td><td class="${cogsVar<=0?'pos':'neg'}">${fmtSigned(-cogsVar)}</td></tr>
+        <tr class="subtotal"><td>${tl('Gross Profit')}</td><td>${fmt(budgetGP)}</td><td>${fmt(actualGP)}</td><td class="${gpVar>=0?'pos':'neg'}">${fmtSigned(gpVar)}</td></tr>
+        <tr><td>${tl('Operating Expenses')}</td><td>${fmt(-b.opex)}</td><td>${fmt(-i2.opexTotal)}</td><td class="${opexVar<=0?'pos':'neg'}">${fmtSigned(-opexVar)}</td></tr>
+        <tr class="grand"><td>${tl('Net Income')}</td><td>${fmt(b.netIncome)}</td><td>${fmt(i2.netIncome)}</td><td class="${niVar>=0?'pos':'neg'}">${fmtSigned(niVar)}</td></tr>
       </table>
-      <div class="lesson-box"><b>Reading a variance:</b> a favorable revenue variance and an unfavorable cost variance can offset each other in the headline number — walk the full waterfall (revenue, COGS, gross profit, opex) rather than reporting only the net effect.</div>
+      <div class="lesson-box"><b>${t('ratio.varianceTitle')}</b> ${t('ratio.varianceBody')}</div>
     </div>`;
   }
 
   return `
     ${caseHeaderHTML(sc)}
     <div class="subtabs">
-      <button class="subtab ${ratioTab==='dashboard'?'active':''}" data-rt="dashboard">Ratio Dashboard</button>
-      <button class="subtab ${ratioTab==='dupont'?'active':''}" data-rt="dupont">DuPont Analysis</button>
-      <button class="subtab ${ratioTab==='breakeven'?'active':''}" data-rt="breakeven">Break-Even</button>
-      <button class="subtab ${ratioTab==='budget'?'active':''}" data-rt="budget">Budget vs Actual</button>
+      <button class="subtab ${ratioTab==='dashboard'?'active':''}" data-rt="dashboard">${t('ratio.tabDashboard')}</button>
+      <button class="subtab ${ratioTab==='dupont'?'active':''}" data-rt="dupont">${t('ratio.tabDupont')}</button>
+      <button class="subtab ${ratioTab==='breakeven'?'active':''}" data-rt="breakeven">${t('ratio.tabBreakeven')}</button>
+      <button class="subtab ${ratioTab==='budget'?'active':''}" data-rt="budget">${t('ratio.tabBudget')}</button>
     </div>
     ${body}
     <div style="margin-top:10px;display:flex;justify-content:flex-end;" class="no-print">
-      <button class="btn primary" id="toDiagnosisBtn">Continue to Diagnose the Problem &rarr;</button>
+      <button class="btn primary" id="toDiagnosisBtn">${t('ratio.continueDiagnosis')}</button>
     </div>
   `;
 }
@@ -3983,8 +3984,9 @@ function viewDiagnosis(){
   const sc = currentScenario();
   if(!sc){ State.view='select'; return viewSelect(); }
   const rec = Store.scenario(sc.id);
+  const dLoc = L(sc,'diagnosis');
   const options = seededShuffle(
-    [{text:sc.diagnosis.correct, correct:true}, ...sc.diagnosis.distractors.map(d=>({text:d, correct:false}))],
+    [{text:dLoc.correct, correct:true}, ...dLoc.distractors.map(d=>({text:d, correct:false}))],
     sc.id
   );
   const submitted = rec.diagnosis.submitted;
@@ -4006,18 +4008,18 @@ function viewDiagnosis(){
 
   return `
     ${caseHeaderHTML(sc)}
-    <div class="lesson-box"><b>How this works:</b> based on everything you've seen in the financials and ratios, pick the option that best explains what's really going on. This isn't about memorizing — it's about pattern recognition.</div>
+    <div class="lesson-box"><b>${t('diag.howWorksTitle')}</b> ${t('diag.howWorksBody')}</div>
     <div class="card">
-      <h2>Diagnose the Problem</h2>
-      <div class="card-sub">Choose one</div>
+      <h2>${t('nav.diagnosis')}</h2>
+      <div class="card-sub">${t('diag.chooseOne')}</div>
       <div id="diagOptions">${optionsHTML}</div>
       <div style="margin-top:16px;">
-        <button class="btn primary" id="submitDiagBtn" ${submitted?'disabled':''}>${submitted?'Diagnosis Submitted':'Submit Diagnosis'}</button>
+        <button class="btn primary" id="submitDiagBtn" ${submitted?'disabled':''}>${submitted?t('diag.submitted'):t('diag.submit')}</button>
       </div>
       <div id="diagFeedback">${submitted ? diagFeedbackHTML(sc, rec) : ''}</div>
     </div>
     <div style="display:flex;justify-content:flex-end;" class="no-print">
-      <button class="btn primary" id="toToolkitBtn">Continue to Analyst Toolkit &rarr;</button>
+      <button class="btn primary" id="toToolkitBtn">${t('diag.continueToolkit')}</button>
     </div>
     <style>
       .diag-option{ display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border:1px solid var(--line); border-radius:8px; margin-bottom:10px; font-size:13.5px; color:var(--text-soft); cursor:pointer; }
@@ -4032,7 +4034,7 @@ function viewDiagnosis(){
 
 function diagFeedbackHTML(sc, rec){
   return `<div class="lesson-box" style="margin-top:14px;">
-    <b>${rec.diagnosis.correct ? 'Correct.' : 'Not quite.'}</b> ${esc(sc.modelSummary)}
+    <b>${rec.diagnosis.correct ? t('diag.correct') : t('diag.notQuite')}</b> ${esc(L(sc,'modelSummary'))}
   </div>`;
 }
 
@@ -4047,7 +4049,7 @@ function wireDiagnosis(){
   });
   const submitBtn = document.getElementById('submitDiagBtn');
   if(submitBtn) submitBtn.addEventListener('click', ()=>{
-    if(rec.diagnosis.selected===null){ showToast('Pick an option first'); return; }
+    if(rec.diagnosis.selected===null){ showToast(t('diag.pickOption')); return; }
     const checked = document.querySelector('input[name=diagOpt]:checked');
     rec.diagnosis.correct = checked && checked.dataset.correct==='true';
     rec.diagnosis.submitted = true;
