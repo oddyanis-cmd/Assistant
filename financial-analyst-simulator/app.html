@@ -747,6 +747,15 @@ const I18N = {
     'btn.continue':'Continue', 'btn.save':'Save', 'btn.submit':'Submit', 'btn.download':'Download',
     'btn.upload':'Upload', 'btn.copy':'Copy to Clipboard', 'btn.print':'Print / Save as PDF', 'btn.back':'Back',
     'title.select':'Choose a Case File', 'title.rc':'Keel Analysis', 'title.trainer':'Trainer & Glossary', 'title.progress':'Your Progress',
+    'case.difficulty':'difficulty','case.figures':'Figures in $000s',
+    'diff.beginner':'Beginner','diff.intermediate':'Intermediate','diff.advanced':'Advanced',
+    'brief.name':'Client Briefing','brief.replay':'Replay briefing','brief.skip':'Skip animation',
+    'brief.reactLabel':'Your first reaction (optional) — jot down your gut read before opening the numbers','brief.reactPh':'What is your instinct just from hearing this?',
+    'fin.tabIncome':'Income Statement','fin.tabBalance':'Balance Sheet','fin.tabCash':'Cash Flow','fin.tabTrend':'Trend Chart',
+    'fin.titleIncome':'Income Statement','fin.subIncome':'Consolidated, $000s',
+    'fin.titleBalance':'Balance Sheet','fin.subBalance':'As of period end, $000s',
+    'fin.titleCash':'Statement of Cash Flows','fin.subCash':'indirect method, $000s',
+    'fin.trendTitle':'Revenue & Net Income Trend','fin.continueRatios':'Continue to Ratios & Frameworks →',
     'lang.note':'Navigation is available in English, French, and Arabic. Case-file content is currently English-only.'
   },
   fr: {
@@ -762,6 +771,15 @@ const I18N = {
     'btn.continue':'Continuer', 'btn.save':'Enregistrer', 'btn.submit':'Soumettre', 'btn.download':'Télécharger',
     'btn.upload':'Importer', 'btn.copy':'Copier', 'btn.print':'Imprimer / Enregistrer en PDF', 'btn.back':'Retour',
     'title.select':'Choisir un Dossier de Cas', 'title.rc':'Analyse Keel', 'title.trainer':'Formation & Glossaire', 'title.progress':'Votre Progression',
+    'case.difficulty':'de difficulté','case.figures':'Montants en milliers de $',
+    'diff.beginner':'débutant','diff.intermediate':'intermédiaire','diff.advanced':'avancé',
+    'brief.name':'Briefing Client','brief.replay':'Rejouer le briefing','brief.skip':"Passer l'animation",
+    'brief.reactLabel':"Votre première réaction (facultatif) — notez votre intuition avant d'ouvrir les chiffres",'brief.reactPh':"Quelle est votre intuition rien qu'à l'écoute ?",
+    'fin.tabIncome':'Compte de résultat','fin.tabBalance':'Bilan','fin.tabCash':'Flux de trésorerie','fin.tabTrend':'Graphique de tendance',
+    'fin.titleIncome':'Compte de résultat','fin.subIncome':'Consolidé, en milliers de $',
+    'fin.titleBalance':'Bilan','fin.subBalance':'À la clôture, en milliers de $',
+    'fin.titleCash':'Tableau des flux de trésorerie','fin.subCash':'méthode indirecte, en milliers de $',
+    'fin.trendTitle':'Tendance CA & résultat net','fin.continueRatios':'Continuer vers Ratios & Méthodes →',
     'lang.note':'La navigation est disponible en anglais, français et arabe. Le contenu des dossiers reste en anglais pour l\u2019instant.'
   },
   ar: {
@@ -777,9 +795,85 @@ const I18N = {
     'btn.continue':'متابعة', 'btn.save':'حفظ', 'btn.submit':'إرسال', 'btn.download':'تنزيل',
     'btn.upload':'رفع', 'btn.copy':'نسخ', 'btn.print':'طباعة / حفظ كملف PDF', 'btn.back':'رجوع',
     'title.select':'اختر ملف حالة', 'title.rc':'تحليل Keel', 'title.trainer':'التدريب والمصطلحات', 'title.progress':'تقدمك',
+    'case.difficulty':'الصعوبة','case.figures':'المبالغ بالآلاف من الدولارات',
+    'diff.beginner':'مبتدئ','diff.intermediate':'متوسط','diff.advanced':'متقدم',
+    'brief.name':'إحاطة العميل','brief.replay':'إعادة الإحاطة','brief.skip':'تخطّي الحركة',
+    'brief.reactLabel':'انطباعك الأول (اختياري) — دوّن حدسك قبل فتح الأرقام','brief.reactPh':'ما حدسك من مجرد سماع هذا؟',
+    'fin.tabIncome':'قائمة الدخل','fin.tabBalance':'الميزانية العمومية','fin.tabCash':'التدفق النقدي','fin.tabTrend':'مخطط الاتجاه',
+    'fin.titleIncome':'قائمة الدخل','fin.subIncome':'موحّدة، بالآلاف من $',
+    'fin.titleBalance':'الميزانية العمومية','fin.subBalance':'كما في نهاية الفترة، بالآلاف من $',
+    'fin.titleCash':'قائمة التدفقات النقدية','fin.subCash':'الطريقة غير المباشرة، بالآلاف من $',
+    'fin.trendTitle':'اتجاه الإيرادات وصافي الدخل','fin.continueRatios':'المتابعة إلى النسب والأطر ←',
     'lang.note':'التنقل متاح بالإنجليزية والفرنسية والعربية. محتوى الحالات لا يزال بالإنجليزية فقط في هذه النسخة.'
   }
 };
+
+/* Financial-statement line-item translations (income, balance, cash flow, opex).
+   tl() maps a known English label to the active language; unknown labels pass through. */
+const FIN_LABELS = {
+  'Revenue':{fr:"Chiffre d'affaires",ar:'الإيرادات'},
+  'Cost of Goods / Services':{fr:'Coût des biens / services',ar:'تكلفة البضائع / الخدمات'},
+  'Gross Profit':{fr:'Marge brute',ar:'إجمالي الربح'},
+  'Operating Income':{fr:"Résultat d'exploitation",ar:'الدخل التشغيلي'},
+  'Interest Expense':{fr:"Charges d'intérêts",ar:'مصروف الفوائد'},
+  'Pre-Tax Income':{fr:'Résultat avant impôt',ar:'الدخل قبل الضريبة'},
+  'Tax':{fr:'Impôt',ar:'الضريبة'},
+  'Net Income':{fr:'Résultat net',ar:'صافي الدخل'},
+  'SG&A':{fr:'Frais généraux (SG&A)',ar:'مصاريف بيع وإدارية'},
+  'Marketing':{fr:'Marketing',ar:'التسويق'},
+  'Depreciation':{fr:'Amortissement',ar:'الإهلاك'},
+  'R&D':{fr:'R&D',ar:'البحث والتطوير'},
+  'Rent':{fr:'Loyer',ar:'الإيجار'},
+  'Payroll':{fr:'Masse salariale',ar:'الرواتب'},
+  'Salaries':{fr:'Salaires',ar:'الرواتب'},
+  'Utilities':{fr:'Charges (eau/électricité)',ar:'المرافق'},
+  'Administrative':{fr:'Frais administratifs',ar:'مصاريف إدارية'},
+  'Assets':{fr:'Actif',ar:'الأصول'},
+  'Cash':{fr:'Trésorerie',ar:'النقد'},
+  'Accounts Receivable':{fr:'Créances clients',ar:'الذمم المدينة'},
+  'Unbilled Receivables (Contract Assets)':{fr:'Produits à recevoir (actifs sur contrats)',ar:'إيرادات غير مفوترة (أصول عقود)'},
+  'Retention Receivable':{fr:'Retenues de garantie à recevoir',ar:'محتجزات مستحقة'},
+  'Inventory':{fr:'Stocks',ar:'المخزون'},
+  'Other Current Assets':{fr:'Autres actifs courants',ar:'أصول متداولة أخرى'},
+  'Total Current Assets':{fr:'Total actif courant',ar:'إجمالي الأصول المتداولة'},
+  'Property, Plant &amp; Equipment':{fr:'Immobilisations corporelles',ar:'الممتلكات والمنشآت والمعدات'},
+  'Other Long-Term Assets':{fr:'Autres actifs non courants',ar:'أصول طويلة الأجل أخرى'},
+  'Total Assets':{fr:"Total de l'actif",ar:'إجمالي الأصول'},
+  'Liabilities':{fr:'Passif',ar:'الخصوم'},
+  'Accounts Payable':{fr:'Dettes fournisseurs',ar:'الذمم الدائنة'},
+  'Short-Term Debt':{fr:'Dette à court terme',ar:'ديون قصيرة الأجل'},
+  'Deferred Revenue':{fr:'Produits différés',ar:'إيرادات مؤجلة'},
+  'Other Current Liabilities':{fr:'Autres passifs courants',ar:'خصوم متداولة أخرى'},
+  'Total Current Liabilities':{fr:'Total passif courant',ar:'إجمالي الخصوم المتداولة'},
+  'Long-Term Debt':{fr:'Dette à long terme',ar:'ديون طويلة الأجل'},
+  'Total Liabilities':{fr:'Total du passif',ar:'إجمالي الخصوم'},
+  'Equity':{fr:'Capitaux propres',ar:'حقوق الملكية'},
+  'Common Stock / Paid-in Capital':{fr:'Capital social / apports',ar:'رأس المال المدفوع'},
+  'Retained Earnings':{fr:'Résultats non distribués',ar:'الأرباح المحتجزة'},
+  'Total Equity':{fr:'Total des capitaux propres',ar:'إجمالي حقوق الملكية'},
+  '+ Depreciation':{fr:'+ Amortissement',ar:'+ الإهلاك'},
+  '&Delta; Accounts Receivable':{fr:'Δ Créances clients',ar:'Δ الذمم المدينة'},
+  '&Delta; Unbilled Receivables':{fr:'Δ Produits à recevoir',ar:'Δ الإيرادات غير المفوترة'},
+  '&Delta; Retention Receivable':{fr:'Δ Retenues de garantie',ar:'Δ المحتجزات'},
+  '&Delta; Inventory':{fr:'Δ Stocks',ar:'Δ المخزون'},
+  '&Delta; Other Current Assets':{fr:'Δ Autres actifs courants',ar:'Δ الأصول المتداولة الأخرى'},
+  '&Delta; Accounts Payable':{fr:'Δ Dettes fournisseurs',ar:'Δ الذمم الدائنة'},
+  '&Delta; Other Current Liabilities':{fr:'Δ Autres passifs courants',ar:'Δ الخصوم المتداولة الأخرى'},
+  '&Delta; Deferred Revenue':{fr:'Δ Produits différés',ar:'Δ الإيرادات المؤجلة'},
+  'Cash from Operations':{fr:"Flux de trésorerie d'exploitation",ar:'التدفق النقدي من التشغيل'},
+  'Capital Expenditures':{fr:"Dépenses d'investissement",ar:'النفقات الرأسمالية'},
+  '&Delta; Other Long-Term Assets':{fr:'Δ Autres actifs non courants',ar:'Δ الأصول طويلة الأجل الأخرى'},
+  'Cash from Investing':{fr:"Flux de trésorerie d'investissement",ar:'التدفق النقدي من الاستثمار'},
+  '&Delta; Short-Term Debt':{fr:'Δ Dette à court terme',ar:'Δ الديون قصيرة الأجل'},
+  '&Delta; Long-Term Debt':{fr:'Δ Dette à long terme',ar:'Δ الديون طويلة الأجل'},
+  'Capital Raised / (Repurchased)':{fr:'Capital levé / (racheté)',ar:'رأس مال مُجمَّع / (مُعاد شراؤه)'},
+  'Dividends / Owner Distributions':{fr:'Dividendes / distributions',ar:'توزيعات الأرباح / المالك'},
+  'Cash from Financing':{fr:'Flux de trésorerie de financement',ar:'التدفق النقدي من التمويل'},
+  'Net Change in Cash':{fr:'Variation nette de trésorerie',ar:'صافي التغير في النقد'},
+  'Beginning Cash':{fr:"Trésorerie d'ouverture",ar:'النقد في بداية الفترة'},
+  'Ending Cash':{fr:'Trésorerie de clôture',ar:'النقد في نهاية الفترة'}
+};
+function tl(label){ if(CURRENT_LANG==='en') return label; var m=FIN_LABELS[label]; return (m && m[CURRENT_LANG]) || label; }
 
 let CURRENT_LANG = 'en';
 function t(key){
@@ -2257,10 +2351,10 @@ function caseHeaderHTML(sc){
     <div class="case-header">
       <div>
         <h1>${esc(sc.name)}</h1>
-        <div class="meta"><b>${esc(sc.sector)}</b> &middot; ${capitalize(sc.difficulty)} difficulty &middot; Figures in $000s</div>
+        <div class="meta"><b>${esc(sc.sector)}</b> &middot; ${t('diff.'+sc.difficulty)} &middot; ${t('case.figures')}</div>
         <div class="backstory">${esc(sc.backstory)}</div>
       </div>
-      <div class="stamp ${sc.difficulty}">${sc.difficulty}</div>
+      <div class="stamp ${sc.difficulty}">${t('diff.'+sc.difficulty)}</div>
     </div>`;
 }
 
@@ -2290,7 +2384,7 @@ function balanceRows(sc){
   const y1 = sc.balance.y1, y2 = sc.balance.y2;
   const t1 = totals(y1), t2 = totals(y2);
   const re1 = t1.equity - y1.commonStock, re2 = t2.equity - y2.commonStock;
-  let rows = '<tr><td colspan="3" style="padding-top:14px;font-weight:700;color:var(--paper-ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:0.6px;">Assets</td></tr>';
+  let rows = '<tr><td colspan="3" style="padding-top:14px;font-weight:700;color:var(--paper-ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:0.6px;">' + tl('Assets') + '</td></tr>';
   rows += rowLine('Cash', y1.cash, y2.cash);
   rows += rowLine('Accounts Receivable', y1.ar, y2.ar);
   if(y1.unbilledAR || y2.unbilledAR) rows += rowLine('Unbilled Receivables (Contract Assets)', y1.unbilledAR||0, y2.unbilledAR||0);
@@ -2302,7 +2396,7 @@ function balanceRows(sc){
   rows += rowLine('Other Long-Term Assets', y1.otherLTA, y2.otherLTA);
   rows += rowGrand('Total Assets', t1.totalAssets, t2.totalAssets);
 
-  rows += '<tr><td colspan="3" style="padding-top:16px;font-weight:700;color:var(--paper-ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:0.6px;">Liabilities</td></tr>';
+  rows += '<tr><td colspan="3" style="padding-top:16px;font-weight:700;color:var(--paper-ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:0.6px;">' + tl('Liabilities') + '</td></tr>';
   rows += rowLine('Accounts Payable', y1.ap, y2.ap);
   if(y1.stDebt || y2.stDebt) rows += rowLine('Short-Term Debt', y1.stDebt||0, y2.stDebt||0);
   if(y1.deferredRevenue || y2.deferredRevenue) rows += rowLine('Deferred Revenue', y1.deferredRevenue||0, y2.deferredRevenue||0);
@@ -2311,7 +2405,7 @@ function balanceRows(sc){
   rows += rowLine('Long-Term Debt', y1.ltDebt, y2.ltDebt);
   rows += rowSub('Total Liabilities', t1.totalLiab, t2.totalLiab);
 
-  rows += '<tr><td colspan="3" style="padding-top:16px;font-weight:700;color:var(--paper-ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:0.6px;">Equity</td></tr>';
+  rows += '<tr><td colspan="3" style="padding-top:16px;font-weight:700;color:var(--paper-ink-soft);font-size:11px;text-transform:uppercase;letter-spacing:0.6px;">' + tl('Equity') + '</td></tr>';
   rows += rowLine('Common Stock / Paid-in Capital', y1.commonStock, y2.commonStock);
   rows += rowLine('Retained Earnings', re1, re2);
   rows += rowGrand('Total Equity', t1.equity, t2.equity);
@@ -2350,22 +2444,22 @@ function cashflowRows(sc){
 }
 
 function rowLine(label, v1, v2, indent){
-  return `<tr class="${indent?'indent':''}"><td>${label}</td><td>${fmt(v1)}</td><td>${fmt(v2)}</td></tr>`;
+  return `<tr class="${indent?'indent':''}"><td>${tl(label)}</td><td>${fmt(v1)}</td><td>${fmt(v2)}</td></tr>`;
 }
 function rowSub(label, v1, v2){
-  return `<tr class="subtotal"><td>${label}</td><td>${fmt(v1)}</td><td>${fmt(v2)}</td></tr>`;
+  return `<tr class="subtotal"><td>${tl(label)}</td><td>${fmt(v1)}</td><td>${fmt(v2)}</td></tr>`;
 }
 function rowGrand(label, v1, v2){
-  return `<tr class="grand"><td>${label}</td><td>${fmt(v1)}</td><td>${fmt(v2)}</td></tr>`;
+  return `<tr class="grand"><td>${tl(label)}</td><td>${fmt(v1)}</td><td>${fmt(v2)}</td></tr>`;
 }
 function rowSingle(label, v){
-  return `<tr><td>${label}</td><td>${fmt(v)}</td></tr>`;
+  return `<tr><td>${tl(label)}</td><td>${fmt(v)}</td></tr>`;
 }
 function rowSubSingle(label, v){
-  return `<tr class="subtotal"><td>${label}</td><td>${fmt(v)}</td></tr>`;
+  return `<tr class="subtotal"><td>${tl(label)}</td><td>${fmt(v)}</td></tr>`;
 }
 function rowGrandSingle(label, v){
-  return `<tr class="grand"><td>${label}</td><td>${fmt(v)}</td></tr>`;
+  return `<tr class="grand"><td>${tl(label)}</td><td>${fmt(v)}</td></tr>`;
 }
 
 function viewFinancials(){
@@ -2376,13 +2470,13 @@ function viewFinancials(){
 
   let tableHTML = '';
   if(finTab==='income'){
-    tableHTML = `<h3>Income Statement</h3><div class="paper-sub">Consolidated, $000s</div>
+    tableHTML = `<h3>${t('fin.titleIncome')}</h3><div class="paper-sub">${t('fin.subIncome')}</div>
     <table class="ledger"><tr><th></th><th>${yrs[0]}</th><th>${yrs[1]}</th></tr>${incomeRows(sc)}</table>`;
   } else if(finTab==='balance'){
-    tableHTML = `<h3>Balance Sheet</h3><div class="paper-sub">As of period end, $000s</div>
+    tableHTML = `<h3>${t('fin.titleBalance')}</h3><div class="paper-sub">${t('fin.subBalance')}</div>
     <table class="ledger"><tr><th></th><th>${yrs[0]}</th><th>${yrs[1]}</th></tr>${balanceRows(sc)}</table>`;
   } else {
-    tableHTML = `<h3>Statement of Cash Flows</h3><div class="paper-sub">${yrs[1]}, indirect method, $000s</div>
+    tableHTML = `<h3>${t('fin.titleCash')}</h3><div class="paper-sub">${yrs[1]}, ${t('fin.subCash')}</div>
     <table class="ledger"><tr><th></th><th>${yrs[1]}</th></tr>${cashflowRows(sc)}</table>`;
   }
 
@@ -2390,20 +2484,20 @@ function viewFinancials(){
     ${caseHeaderHTML(sc)}
     ${briefingSceneHTML(sc, rec)}
     <div class="subtabs">
-      <button class="subtab ${finTab==='income'?'active':''}" data-fin="income">Income Statement</button>
-      <button class="subtab ${finTab==='balance'?'active':''}" data-fin="balance">Balance Sheet</button>
-      <button class="subtab ${finTab==='cashflow'?'active':''}" data-fin="cashflow">Cash Flow</button>
-      <button class="subtab ${finTab==='trend'?'active':''}" data-fin="trend">Trend Chart</button>
+      <button class="subtab ${finTab==='income'?'active':''}" data-fin="income">${t('fin.tabIncome')}</button>
+      <button class="subtab ${finTab==='balance'?'active':''}" data-fin="balance">${t('fin.tabBalance')}</button>
+      <button class="subtab ${finTab==='cashflow'?'active':''}" data-fin="cashflow">${t('fin.tabCash')}</button>
+      <button class="subtab ${finTab==='trend'?'active':''}" data-fin="trend">${t('fin.tabTrend')}</button>
     </div>
     ${finTab==='trend' ? `
       <div class="card">
-        <h2>Revenue &amp; Net Income Trend</h2>
+        <h2>${t('fin.trendTitle')}</h2>
         <div class="card-sub">${yrs[0]} vs ${yrs[1]}</div>
         <div class="chart-wrap"><canvas id="finChart"></canvas></div>
       </div>
     ` : `<div class="paper">${tableHTML}</div>`}
     <div style="margin-top:22px;display:flex;justify-content:flex-end;" class="no-print">
-      <button class="btn primary" id="toRatiosBtn">Continue to Ratios &amp; Frameworks &rarr;</button>
+      <button class="btn primary" id="toRatiosBtn">${t('fin.continueRatios')}</button>
     </div>
   `;
 }
@@ -2694,7 +2788,7 @@ function commonSizeIncomeRows(sc){
 function commonSizeBalanceRows(sc){
   const y1 = sc.balance.y1, y2 = sc.balance.y2;
   const t1 = totals(y1), t2 = totals(y2);
-  function line(label, v1, v2){ return `<tr><td>${label}</td><td>${pct(v1/t1.totalAssets)}</td><td>${pct(v2/t2.totalAssets)}</td></tr>`; }
+  function line(label, v1, v2){ return `<tr><td>${tl(label)}</td><td>${pct(v1/t1.totalAssets)}</td><td>${pct(v2/t2.totalAssets)}</td></tr>`; }
   let rows = '';
   rows += line('Cash', y1.cash, y2.cash);
   rows += line('Accounts Receivable', y1.ar, y2.ar);
@@ -2715,7 +2809,7 @@ function horizontalIncomeRows(sc){
   const i1 = incomeTotals(y1), i2 = incomeTotals(y2);
   function line(label, v1, v2){
     const d = pctDelta(v1, v2);
-    return `<tr><td>${label}</td><td>${fmt(v1)}</td><td>${fmt(v2)}</td><td>${fmtSigned(v2-v1)}</td><td>${d===null?'—':pct(d)}</td></tr>`;
+    return `<tr><td>${tl(label)}</td><td>${fmt(v1)}</td><td>${fmt(v2)}</td><td>${fmtSigned(v2-v1)}</td><td>${d===null?'—':pct(d)}</td></tr>`;
   }
   let rows = '';
   rows += line('Revenue', y1.revenue, y2.revenue);
@@ -3079,16 +3173,16 @@ function briefingSceneHTML(sc, rec){
     <div class="briefing-scene">
       <div class="briefing-avatar" id="briefingAvatar">${characterAvatarSVG(sc.difficulty)}</div>
       <div class="briefing-bubble">
-        <div class="briefing-name">Client Briefing</div>
+        <div class="briefing-name">${t('brief.name')}</div>
         <div class="briefing-text" id="briefingText">${seen ? esc(sc.clientBrief) : ''}</div>
         <div class="briefing-actions">
-          ${seen ? '<button class="btn small ghost" id="briefingReplayBtn">Replay briefing</button>' : '<button class="btn small ghost" id="briefingSkipBtn">Skip animation</button>'}
+          ${seen ? `<button class="btn small ghost" id="briefingReplayBtn">${t('brief.replay')}</button>` : `<button class="btn small ghost" id="briefingSkipBtn">${t('brief.skip')}</button>`}
         </div>
       </div>
     </div>
     <div class="card" id="briefingFeedbackCard" style="${seen?'':'display:none;'}">
-      <label style="font-size:12.5px;color:var(--text-soft);font-weight:500;display:block;margin-bottom:6px;">Your first reaction (optional) — jot down your gut read before opening the numbers</label>
-      <textarea id="briefingReaction" placeholder="What's your instinct just from hearing this?">${esc(rec.briefingReaction||'')}</textarea>
+      <label style="font-size:12.5px;color:var(--text-soft);font-weight:500;display:block;margin-bottom:6px;">${t('brief.reactLabel')}</label>
+      <textarea id="briefingReaction" placeholder="${t('brief.reactPh')}">${esc(rec.briefingReaction||'')}</textarea>
     </div>
   `;
 }
@@ -3127,7 +3221,7 @@ function wireBriefingScene(sc, rec){
     Store.save();
     if(feedbackCard) feedbackCard.style.display = '';
     const actions = document.querySelector('.briefing-actions');
-    if(actions) actions.innerHTML = '<button class="btn small ghost" id="briefingReplayBtn">Replay briefing</button>';
+    if(actions) actions.innerHTML = `<button class="btn small ghost" id="briefingReplayBtn">${t('brief.replay')}</button>`;
     wireReplay();
   }
   function wireReplay(){
