@@ -1197,6 +1197,17 @@ const FIN_LABELS = {
 };
 function tl(label){ if(CURRENT_LANG==='en') return label; var m=FIN_LABELS[label]; return (m && m[CURRENT_LANG]) || label; }
 
+/* Three-letter difficulty stamp abbreviation (mini badge on Learning Path cards). */
+const DIFF_ABBR = {
+  en:{beginner:'BEG', intermediate:'INT', advanced:'ADV'},
+  fr:{beginner:'DÉB', intermediate:'INT', advanced:'AVA'},
+  ar:{beginner:'مبت', intermediate:'متو', advanced:'متق'}
+};
+function diffAbbr(difficulty){
+  const m = DIFF_ABBR[CURRENT_LANG] || DIFF_ABBR.en;
+  return m[difficulty] || (DIFF_ABBR.en[difficulty] || '');
+}
+
 let CURRENT_LANG = 'en';
 function t(key){
   return (I18N[CURRENT_LANG] && I18N[CURRENT_LANG][key]) || I18N.en[key] || key;
@@ -2664,7 +2675,30 @@ const PLAYBOOK = [
      'Calculate days sales outstanding for the worst-offending accounts specifically, not just the company average.',
      'Recommend a concrete collections action: a follow-up cadence, a credit hold on new work for chronic late payers, or renegotiated terms.',
      'If the client wants to extend more credit anyway, quantify the cash impact before they decide, not after.'
-   ]},
+   ],
+   i18n:{
+     fr:{title:'Les Créances Augmentent Plus Vite que le Chiffre d’Affaires',
+      whenToUse:'À utiliser lorsque les créances clients (ou le DSO) augmentent nettement plus vite que le chiffre d’affaires — le signe le plus précoce et le plus courant d’une tension de trésorerie à venir.',
+      steps:[
+        'Sortez un rapport d’ancienneté des créances clients détaillé par client (ou par payeur, pour les entreprises facturées via l’assurance santé).',
+        'Déterminez si la hausse est concentrée sur quelques gros comptes lents à payer ou répartie largement sur l’ensemble du portefeuille.',
+        'Vérifiez si les conditions de paiement ont changé récemment (de 30 à 60 jours nets, un nouveau grand client avec des conditions plus lentes, etc.).',
+        'Calculez le délai de recouvrement spécifiquement pour les comptes les plus problématiques, pas seulement la moyenne de l’entreprise.',
+        'Recommandez une action de recouvrement concrète : une cadence de relance, un blocage de crédit sur les nouveaux travaux pour les mauvais payeurs chroniques, ou des conditions renégociées.',
+        'Si le client souhaite tout de même accorder plus de crédit, quantifiez l’impact sur la trésorerie avant qu’il décide, pas après.'
+      ]},
+     ar:{title:'الذمم المدينة تنمو أسرع من الإيرادات',
+      whenToUse:'استخدم هذا عندما ترتفع الذمم المدينة (أو DSO) أسرع بشكل ملحوظ من الإيرادات — وهي أول علامة شائعة على ضغط سيولة قادم.',
+      steps:[
+        'استخرج تقرير أعمار الذمم المدينة مفصلًا حسب العميل (أو حسب الجهة الدافعة، للأنشطة التي تُفوتر عبر التأمين الصحي).',
+        'حدد ما إذا كانت الزيادة مُركّزة في عدد قليل من الحسابات الكبيرة البطيئة الدفع أو موزعة على نطاق واسع عبر المحفظة.',
+        'تحقق مما إذا تغيرت شروط الدفع مؤخرًا (من 30 إلى 60 يومًا صافي، أو عميل كبير جديد بشروط أبطأ، إلخ).',
+        'احسب متوسط فترة تحصيل الذمم للحسابات الأكثر تعثرًا تحديدًا، لا لمتوسط الشركة فقط.',
+        'أوصِ بإجراء تحصيل ملموس: وتيرة متابعة، أو تجميد ائتماني على أعمال جديدة للعملاء المتأخرين بشكل متكرر، أو إعادة تفاوض على الشروط.',
+        'إذا أراد العميل تمديد ائتمان إضافي رغم ذلك، قدّر الأثر النقدي قبل اتخاذ القرار، لا بعده.'
+      ]}
+   }
+  },
   {id:'liquidity_gap', title:'Current Ratio Looks Fine, Quick Ratio Doesn\u2019t',
    whenToUse:'Use this when there\u2019s a wide gap between the current ratio and the quick ratio — current assets are being propped up by inventory or similarly slow-to-convert items.',
    steps:[
@@ -2673,7 +2707,28 @@ const PLAYBOOK = [
      'Ask what\u2019s driving the buildup: overordering, slow-moving SKUs, or a deliberate hedge against input cost inflation.',
      'Model a realistic liquidation value for the inventory — most of it won\u2019t convert to cash at full book value on short notice.',
      'Recommend a specific target (e.g. reduce inventory days by X) rather than a vague "manage inventory better."'
-   ]},
+   ],
+   i18n:{
+     fr:{title:'Le Ratio de Liquidité Générale Semble Correct, mais pas le Ratio de Liquidité Immédiate',
+      whenToUse:'À utiliser lorsqu’il existe un large écart entre le ratio de liquidité générale et le ratio de liquidité immédiate — l’actif circulant est soutenu artificiellement par des stocks ou des éléments similaires lents à convertir.',
+      steps:[
+        'Recalculez le ratio de liquidité immédiate en excluant les stocks (ainsi que les créances non facturées ou les retenues de garantie, si l’activité est basée sur des projets).',
+        'Vérifiez la rotation des stocks — le stock circule-t-il réellement, ou s’accumule-t-il ?',
+        'Demandez-vous ce qui alimente cette accumulation : surcommande, références à rotation lente, ou couverture délibérée contre l’inflation des coûts d’intrants.',
+        'Modélisez une valeur de liquidation réaliste pour le stock — la majeure partie ne se convertira pas en trésorerie à sa pleine valeur comptable dans un délai court.',
+        'Recommandez un objectif précis (par ex. réduire les jours de stock de X) plutôt qu’un vague « mieux gérer les stocks ».'
+      ]},
+     ar:{title:'نسبة التداول تبدو جيدة، لكن نسبة السيولة السريعة ليست كذلك',
+      whenToUse:'استخدم هذا عندما توجد فجوة كبيرة بين نسبة التداول ونسبة السيولة السريعة — إذ تكون الأصول المتداولة مدعومة بمخزون أو عناصر مشابهة بطيئة التحويل إلى نقد.',
+      steps:[
+        'أعد حساب نسبة السيولة السريعة مع استبعاد المخزون (والذمم غير المفوترة أو المحتجزات، إذا كان النشاط قائمًا على مشاريع).',
+        'تحقق من معدل دوران المخزون — هل المخزون يتحرك فعليًا، أم يتراكم؟',
+        'اسأل عمّا يقود هذا التراكم: إفراط في الطلب، أصناف بطيئة الحركة، أو تحوّط مقصود ضد تضخم تكلفة المدخلات.',
+        'قدّر قيمة تصفية واقعية للمخزون — لن يتحول معظمه إلى نقد بكامل قيمته الدفترية خلال مهلة قصيرة.',
+        'أوصِ بهدف محدد (مثل خفض أيام المخزون بمقدار X) بدلًا من عبارة غامضة مثل «إدارة المخزون بشكل أفضل».'
+      ]}
+   }
+  },
   {id:'cash_profit_mismatch', title:'Profitable on Paper, Negative Operating Cash Flow',
    whenToUse:'Use this whenever net income is positive but cash from operations is negative — the single most important gap to explain to a client who trusts their P&L.',
    steps:[
@@ -2682,7 +2737,28 @@ const PLAYBOOK = [
      'Check whether growth itself is the cause — fast-growing businesses often need more working capital before the cash shows up.',
      'Quantify the gap in dollar terms, not just as a ratio, so the client feels the real cash impact.',
      'Recommend addressing the specific working-capital driver identified, not a generic "cut costs" response.'
-   ]},
+   ],
+   i18n:{
+     fr:{title:'Rentable sur le Papier, Flux de Trésorerie d’Exploitation Négatif',
+      whenToUse:'À utiliser chaque fois que le résultat net est positif mais que la trésorerie d’exploitation est négative — l’écart le plus important à expliquer à un client qui se fie à son compte de résultat.',
+      steps:[
+        'Parcourez le tableau des flux de trésorerie en méthode indirecte ligne par ligne : quels éléments du fonds de roulement consomment la trésorerie — créances, stocks, ou dettes fournisseurs évoluant dans le mauvais sens ?',
+        'Distinguez un problème de timing ponctuel (une seule grosse facture impayée) d’un schéma structurel (cela se répète depuis au moins deux périodes consécutives).',
+        'Vérifiez si la croissance elle-même en est la cause — les entreprises en forte croissance ont souvent besoin de plus de fonds de roulement avant que la trésorerie n’apparaisse.',
+        'Quantifiez l’écart en valeur monétaire, pas seulement sous forme de ratio, afin que le client ressente le véritable impact sur la trésorerie.',
+        'Recommandez de traiter le facteur précis de fonds de roulement identifié, plutôt qu’une réponse générique du type « réduire les coûts ».'
+      ]},
+     ar:{title:'مربحة على الورق، لكن التدفق النقدي التشغيلي سالب',
+      whenToUse:'استخدم هذا كلما كان صافي الدخل إيجابيًا لكن التدفق النقدي من التشغيل سالبًا — وهي أهم فجوة يجب شرحها لعميل يثق بقائمة دخله.',
+      steps:[
+        'راجع قائمة التدفقات النقدية بالطريقة غير المباشرة بندًا بندًا: أي عناصر رأس المال العامل تستهلك النقد — الذمم المدينة، أو المخزون، أو الذمم الدائنة التي تتحرك في الاتجاه الخاطئ؟',
+        'ميّز بين مشكلة توقيت لمرة واحدة (فاتورة كبيرة واحدة غير مسددة) وبين نمط هيكلي (تكرر الأمر لفترتين متتاليتين أو أكثر).',
+        'تحقق مما إذا كان النمو نفسه هو السبب — غالبًا ما تحتاج الشركات سريعة النمو إلى رأس مال عامل أكبر قبل ظهور النقد.',
+        'قدّر الفجوة بالقيمة الدولارية، لا كنسبة فقط، حتى يشعر العميل بالأثر النقدي الحقيقي.',
+        'أوصِ بمعالجة محرك رأس المال العامل المحدد الذي تم تحديده، لا برد عام مثل «خفّض التكاليف».'
+      ]}
+   }
+  },
   {id:'interest_coverage', title:'Weakening Interest Coverage',
    whenToUse:'Use this when interest coverage is low or falling — a leading indicator lenders watch closely, often before other numbers look concerning.',
    steps:[
@@ -2691,7 +2767,28 @@ const PLAYBOOK = [
      'Stress-test: what does coverage look like if operating income drops 10-15%, or if rates rise another point?',
      'Check whether debt maturities are matched to the assets they financed — short-term debt funding long-term assets is a common root cause.',
      'Recommend a specific next step: refinancing to better-matched terms, pausing further debt-funded capex, or building a cash reserve before the next renewal.'
-   ]},
+   ],
+   i18n:{
+     fr:{title:'Affaiblissement de la Couverture des Intérêts',
+      whenToUse:'À utiliser lorsque la couverture des intérêts est faible ou en baisse — un indicateur avancé que les prêteurs surveillent de près, souvent avant que les autres chiffres ne paraissent préoccupants.',
+      steps:[
+        'Distinguez les deux causes possibles : baisse du résultat d’exploitation, ou hausse des charges d’intérêts (nouvelle dette, taux plus élevés, ou les deux).',
+        'Recalculez la couverture en utilisant le résultat d’exploitation plus l’amortissement (une approximation grossière de la trésorerie disponible) pour obtenir un second point de comparaison.',
+        'Effectuez un test de résistance : à quoi ressemble la couverture si le résultat d’exploitation chute de 10 à 15 %, ou si les taux augmentent d’un point supplémentaire ?',
+        'Vérifiez si les échéances de la dette correspondent aux actifs qu’elles ont financés — une dette à court terme finançant des actifs à long terme est une cause profonde courante.',
+        'Recommandez une prochaine étape précise : refinancer avec des conditions mieux adaptées, suspendre de nouveaux investissements financés par la dette, ou constituer une réserve de trésorerie avant le prochain renouvellement.'
+      ]},
+     ar:{title:'تراجع تغطية الفوائد',
+      whenToUse:'استخدم هذا عندما تكون تغطية الفوائد منخفضة أو في تراجع — وهي مؤشر مبكر يراقبه المُقرضون عن كثب، غالبًا قبل أن تبدو الأرقام الأخرى مقلقة.',
+      steps:[
+        'ميّز بين السببين المحتملين: تراجع الدخل التشغيلي، أو ارتفاع مصروف الفوائد (دين جديد، أسعار فائدة أعلى، أو كلاهما).',
+        'أعد حساب التغطية باستخدام الدخل التشغيلي مضافًا إليه الإهلاك (كتقدير تقريبي للنقد المتاح) للحصول على نقطة بيانات ثانية.',
+        'أجرِ اختبار متانة: كيف ستبدو التغطية إذا انخفض الدخل التشغيلي بنسبة 10-15%، أو إذا ارتفعت أسعار الفائدة نقطة إضافية؟',
+        'تحقق مما إذا كانت آجال استحقاق الدين متوافقة مع الأصول التي مولتها — تمويل أصول طويلة الأجل بدين قصير الأجل سبب جذري شائع.',
+        'أوصِ بخطوة تالية محددة: إعادة التمويل بشروط أكثر تناسبًا، أو تعليق مزيد من الإنفاق الرأسمالي الممول بالدين، أو بناء احتياطي نقدي قبل التجديد القادم.'
+      ]}
+   }
+  },
   {id:'margin_compression', title:'Gross Margin Compression',
    whenToUse:'Use this when gross margin has declined period over period, even if revenue and net income still look acceptable.',
    steps:[
@@ -2700,7 +2797,28 @@ const PLAYBOOK = [
      'If input costs are the driver, check whether the increase is temporary (commodity spike) or structural (supplier price increase).',
      'Model the price increase or cost reduction needed to restore the prior margin, so the recommendation is a specific number.',
      'Flag any customer or channel-level detail the client should track going forward if the company doesn\u2019t already segment margin that way.'
-   ]},
+   ],
+   i18n:{
+     fr:{title:'Compression de la Marge Brute',
+      whenToUse:'À utiliser lorsque la marge brute a diminué d’une période à l’autre, même si le chiffre d’affaires et le résultat net semblent encore acceptables.',
+      steps:[
+        'Décomposez la variation en composantes de prix, de volume et de coûts — l’entreprise a-t-elle davantage accordé de remises, vendu un mix différent, ou fait face à des coûts d’intrants plus élevés ?',
+        'Comparez le ratio du coût des ventes aux deux périodes précédentes au moins, pour voir s’il s’agit d’une nouvelle tendance ou d’un incident ponctuel.',
+        'Si les coûts d’intrants en sont la cause, vérifiez si la hausse est temporaire (flambée des matières premières) ou structurelle (hausse des prix des fournisseurs).',
+        'Modélisez la hausse de prix ou la baisse de coûts nécessaire pour restaurer la marge antérieure, afin que la recommandation soit un chiffre précis.',
+        'Signalez tout détail au niveau du client ou du canal que le client devrait suivre à l’avenir, si l’entreprise ne segmente pas déjà la marge de cette manière.'
+      ]},
+     ar:{title:'انضغاط الهامش الإجمالي',
+      whenToUse:'استخدم هذا عندما يتراجع الهامش الإجمالي من فترة إلى أخرى، حتى لو بدت الإيرادات وصافي الدخل مقبولين.',
+      steps:[
+        'حلّل التغير إلى مكونات السعر والحجم والتكلفة — هل قدّمت الشركة تخفيضات أكبر، أم باعت مزيجًا مختلفًا، أم واجهت ارتفاعًا في تكلفة المدخلات؟',
+        'قارن نسبة تكلفة البضاعة المباعة بالفترتين السابقتين على الأقل، لمعرفة ما إذا كان هذا اتجاهًا جديدًا أم مجرد حدث عابر.',
+        'إذا كانت تكلفة المدخلات هي السبب، تحقق مما إذا كانت الزيادة مؤقتة (طفرة سلعية) أو هيكلية (ارتفاع أسعار الموردين).',
+        'قدّر زيادة السعر أو خفض التكلفة اللازمين لاستعادة الهامش السابق، بحيث تكون التوصية رقمًا محددًا.',
+        'أشر إلى أي تفصيل على مستوى العميل أو القناة يجب على العميل متابعته مستقبلًا، إذا لم تكن الشركة تُجزّئ الهامش بهذا الشكل أصلًا.'
+      ]}
+   }
+  },
   {id:'leverage_rising', title:'Rising Debt-to-Equity',
    whenToUse:'Use this when leverage is increasing faster than the equity base — not necessarily a problem on its own, but worth understanding the "why."',
    steps:[
@@ -2709,7 +2827,28 @@ const PLAYBOOK = [
      'Recalculate interest coverage and compare its trend to the leverage trend — rising debt with falling coverage is the real combination to flag.',
      'Ask what covenants, if any, apply to the new debt, and whether current trends risk breaching them.',
      'Recommend a leverage ceiling or a coverage floor the client should manage against going forward.'
-   ]},
+   ],
+   i18n:{
+     fr:{title:'Hausse du Ratio Dette / Capitaux Propres',
+      whenToUse:'À utiliser lorsque l’endettement augmente plus vite que la base de capitaux propres — ce n’est pas nécessairement un problème en soi, mais il vaut la peine d’en comprendre le « pourquoi ».',
+      steps:[
+        'Identifiez ce que la nouvelle dette a réellement financé — investissement de croissance, fonds de roulement, ou couverture d’un déficit d’exploitation (chacun a un profil de risque très différent).',
+        'Vérifiez si le résultat d’exploitation et le flux de trésorerie progressent au même rythme que la nouvelle dette, ou s’ils sont à la traîne.',
+        'Recalculez la couverture des intérêts et comparez sa tendance à celle de l’endettement — une dette en hausse combinée à une couverture en baisse est la véritable combinaison à signaler.',
+        'Demandez quels engagements contractuels (covenants), le cas échéant, s’appliquent à la nouvelle dette, et si les tendances actuelles risquent de les enfreindre.',
+        'Recommandez un plafond d’endettement ou un plancher de couverture que le client devrait respecter à l’avenir.'
+      ]},
+     ar:{title:'ارتفاع نسبة الدين إلى حقوق الملكية',
+      whenToUse:'استخدم هذا عندما يرتفع الرفع المالي أسرع من قاعدة حقوق الملكية — ليس بالضرورة مشكلة بحد ذاته، لكن يستحق فهم «السبب».',
+      steps:[
+        'حدد ما الذي مولته فعليًا الديون الجديدة — إنفاق رأسمالي للنمو، أو رأس مال عامل، أو تغطية عجز تشغيلي (لكل منها ملف مخاطر مختلف تمامًا).',
+        'تحقق مما إذا كان الدخل التشغيلي والتدفق النقدي ينموان بالتوازي مع الدين الجديد، أم أنهما متأخران عنه.',
+        'أعد حساب تغطية الفوائد وقارن اتجاهها باتجاه الرفع المالي — ارتفاع الدين مع تراجع التغطية هو المزيج الحقيقي الذي يستحق التنبيه.',
+        'اسأل عن أي تعهدات (covenants) تنطبق على الدين الجديد، وما إذا كانت الاتجاهات الحالية تخاطر بخرقها.',
+        'أوصِ بسقف للرفع المالي أو حد أدنى للتغطية يجب على العميل الالتزام به مستقبلًا.'
+      ]}
+   }
+  },
   {id:'below_breakeven', title:'Revenue Below or Near Break-Even',
    whenToUse:'Use this in fixed-cost-heavy businesses (restaurants, manufacturing, clinics) when actual revenue is at or below the calculated break-even point.',
    steps:[
@@ -2718,7 +2857,28 @@ const PLAYBOOK = [
      'Identify the fastest lever available: a price increase, a fixed-cost cut, or a volume/mix improvement — and estimate the size of each.',
      'If there are multiple locations or business lines, flag that a consolidated number can hide a specific underperformer — recommend segment-level data if it isn\u2019t already available.',
      'Present the break-even gap in the report as a specific dollar or percentage figure, not just "costs are too high."'
-   ]},
+   ],
+   i18n:{
+     fr:{title:'Chiffre d’Affaires Sous ou Proche du Seuil de Rentabilité',
+      whenToUse:'À utiliser dans les entreprises à coûts fixes élevés (restaurants, industrie, cliniques) lorsque le chiffre d’affaires réel est égal ou inférieur au seuil de rentabilité calculé.',
+      steps:[
+        'Confirmez que la répartition entre coûts fixes et variables est réaliste — la main-d’œuvre en particulier est parfois plus flexible (ou moins) qu’on ne le suppose.',
+        'Recalculez le chiffre d’affaires au seuil de rentabilité après toute hausse de coûts récente (augmentation de loyer, hausses de salaires) pour vous assurer que le chiffre est à jour.',
+        'Identifiez le levier le plus rapide disponible : une hausse de prix, une réduction des coûts fixes, ou une amélioration du volume/mix — et estimez l’ampleur de chacun.',
+        'S’il existe plusieurs sites ou lignes d’activité, signalez qu’un chiffre consolidé peut masquer un élément précis sous-performant — recommandez des données au niveau des segments si elles ne sont pas déjà disponibles.',
+        'Présentez l’écart au seuil de rentabilité dans le rapport sous forme de chiffre précis en dollars ou en pourcentage, pas seulement « les coûts sont trop élevés ».'
+      ]},
+     ar:{title:'إيرادات دون أو قرب نقطة التعادل',
+      whenToUse:'استخدم هذا في الأنشطة ذات التكاليف الثابتة المرتفعة (المطاعم، التصنيع، العيادات) عندما تكون الإيرادات الفعلية عند نقطة التعادل المحسوبة أو دونها.',
+      steps:[
+        'تأكد من أن تقسيم التكاليف الثابتة والمتغيرة واقعي — العمالة تحديدًا تكون أحيانًا أكثر مرونة (أو أقل) مما هو مفترض.',
+        'أعد حساب إيرادات نقطة التعادل بعد أي زيادات تكلفة حديثة (زيادات الإيجار، زيادات الأجور) للتأكد من أن الرقم محدث.',
+        'حدد الرافعة الأسرع المتاحة: زيادة السعر، أو خفض التكاليف الثابتة، أو تحسين الحجم/المزيج — وقدّر حجم كل منها.',
+        'إذا كان هناك عدة مواقع أو خطوط أعمال، أشر إلى أن الرقم الموحد قد يُخفي عنصرًا محددًا ضعيف الأداء — أوصِ ببيانات على مستوى القطاع إذا لم تكن متوفرة بالفعل.',
+        'اعرض فجوة نقطة التعادل في التقرير كرقم محدد بالدولار أو بالنسبة المئوية، لا مجرد عبارة «التكاليف مرتفعة جدًا».'
+      ]}
+   }
+  },
   {id:'dso_rising', title:'Collections Slowing (Rising Days Sales Outstanding)',
    whenToUse:'Use this when DSO is climbing period over period, even if it hasn\u2019t yet caused an obvious cash problem.',
    steps:[
@@ -2726,7 +2886,26 @@ const PLAYBOOK = [
      'Segment by customer type or size — often a handful of accounts are driving most of the increase.',
      'Check for an internal cause too: slower invoicing, unclear invoices, or a change in who\u2019s responsible for collections.',
      'Recommend a specific collections process improvement (invoicing speed, follow-up cadence, early-payment incentive) rather than a general reminder to "collect faster."'
-   ]},
+   ],
+   i18n:{
+     fr:{title:'Ralentissement du Recouvrement (Hausse du Délai de Recouvrement Clients)',
+      whenToUse:'À utiliser lorsque le DSO augmente d’une période à l’autre, même s’il n’a pas encore causé de problème de trésorerie évident.',
+      steps:[
+        'Comparez le DSO aux propres conditions de paiement affichées par l’entreprise — le DSO dérive-t-il au-delà de ce que les clients sont réellement censés respecter ?',
+        'Segmentez par type ou taille de client — souvent, une poignée de comptes est responsable de l’essentiel de la hausse.',
+        'Vérifiez aussi une cause interne possible : facturation plus lente, factures peu claires, ou changement dans le responsable du recouvrement.',
+        'Recommandez une amélioration précise du processus de recouvrement (rapidité de facturation, cadence de relance, incitation au paiement anticipé) plutôt qu’un rappel général à « encaisser plus vite ».'
+      ]},
+     ar:{title:'تباطؤ التحصيل (ارتفاع متوسط فترة تحصيل الذمم)',
+      whenToUse:'استخدم هذا عندما يرتفع DSO من فترة إلى أخرى، حتى لو لم يتسبب بعد في مشكلة نقدية واضحة.',
+      steps:[
+        'قارن DSO بشروط الدفع المُعلنة للشركة نفسها — هل يتجاوز DSO ما يُفترض أن يلتزم به العملاء فعليًا؟',
+        'قسّم حسب نوع العميل أو حجمه — غالبًا ما يكون عدد قليل من الحسابات مسؤولًا عن معظم الزيادة.',
+        'تحقق أيضًا من وجود سبب داخلي: فوترة أبطأ، فواتير غير واضحة، أو تغيير في المسؤول عن التحصيل.',
+        'أوصِ بتحسين محدد لعملية التحصيل (سرعة الفوترة، وتيرة المتابعة، حافز للدفع المبكر) بدلًا من تذكير عام بـ«التحصيل بشكل أسرع».'
+      ]}
+   }
+  },
   {id:'cash_drop', title:'Sharp Drop in Cash Balance',
    whenToUse:'Use this any time cash on hand has fallen sharply period over period, regardless of what net income shows.',
    steps:[
@@ -2735,7 +2914,28 @@ const PLAYBOOK = [
      'If financing is the driver, check whether distributions or debt repayments continued at a normal pace despite weaker operating cash flow.',
      'Estimate runway at the current burn rate if the trend continues, in months, not just as a ratio.',
      'Recommend a specific action tied to the driver identified — not a generic "reduce spending" recommendation.'
-   ]},
+   ],
+   i18n:{
+     fr:{title:'Chute Brutale du Solde de Trésorerie',
+      whenToUse:'À utiliser chaque fois que la trésorerie disponible a chuté fortement d’une période à l’autre, quel que soit ce qu’indique le résultat net.',
+      steps:[
+        'Parcourez les trois sections du tableau des flux de trésorerie pour voir où la trésorerie est réellement passée — exploitation, investissement, ou financement.',
+        'Si l’investissement en est la cause, confirmez que la dépense d’investissement était planifiée et correctement financée (et non financée en puisant dans les réserves de fonds de roulement).',
+        'Si le financement en est la cause, vérifiez si les distributions ou les remboursements de dette se sont poursuivis à un rythme normal malgré un flux de trésorerie d’exploitation plus faible.',
+        'Estimez la trésorerie disponible (runway) au taux de combustion actuel si la tendance se poursuit, en mois, pas seulement sous forme de ratio.',
+        'Recommandez une action précise liée au facteur identifié — pas une recommandation générique de « réduire les dépenses ».'
+      ]},
+     ar:{title:'انخفاض حاد في الرصيد النقدي',
+      whenToUse:'استخدم هذا في أي وقت ينخفض فيه النقد المتاح بشكل حاد من فترة إلى أخرى، بغض النظر عمّا يُظهره صافي الدخل.',
+      steps:[
+        'راجع الأقسام الثلاثة لقائمة التدفقات النقدية لمعرفة أين ذهب النقد فعليًا — التشغيل، أو الاستثمار، أو التمويل.',
+        'إذا كان الاستثمار هو السبب، تأكد من أن الإنفاق الرأسمالي كان مخططًا ومموّلًا بشكل مناسب (لا عبر استنزاف احتياطيات رأس المال العامل).',
+        'إذا كان التمويل هو السبب، تحقق مما إذا استمرت التوزيعات أو سداد الديون بوتيرة طبيعية رغم ضعف التدفق النقدي التشغيلي.',
+        'قدّر العمر النقدي المتبقي عند معدل الاستهلاك الحالي إذا استمر الاتجاه، بالأشهر، لا كنسبة فقط.',
+        'أوصِ بإجراء محدد مرتبط بالسبب الذي تم تحديده — لا بتوصية عامة مثل «تقليل الإنفاق».'
+      ]}
+   }
+  },
   {id:'client_communication', title:'Delivering Findings to a Client',
    whenToUse:'Use this as a general process check before any client meeting or report delivery, regardless of what the numbers show.',
    steps:[
@@ -2744,7 +2944,28 @@ const PLAYBOOK = [
      'Always pair a finding with a recommendation — an observation without a next step leaves the client with more anxiety, not less.',
      'Name any data gaps honestly rather than filling them with assumptions the client didn\u2019t give you.',
      'Close with a plain-language summary of what to watch next period, so the engagement feels ongoing rather than a one-time verdict.'
-   ]}
+   ],
+   i18n:{
+     fr:{title:'Présenter les Constats à un Client',
+      whenToUse:'À utiliser comme vérification générale de processus avant toute réunion client ou remise de rapport, quel que soit ce que montrent les chiffres.',
+      steps:[
+        'Énoncez le constat central dès la première phrase — ne faites pas attendre le client à travers la méthodologie pour entendre la conclusion.',
+        'Commencez par les deux ou trois chiffres qui expliquent réellement le constat, pas tous les ratios calculés.',
+        'Associez toujours un constat à une recommandation — une observation sans étape suivante laisse le client avec plus d’anxiété, pas moins.',
+        'Signalez honnêtement toute lacune dans les données plutôt que de la combler avec des hypothèses que le client ne vous a pas fournies.',
+        'Terminez par un résumé en langage simple de ce qu’il faut surveiller la période suivante, afin que la mission paraisse continue plutôt qu’un verdict ponctuel.'
+      ]},
+     ar:{title:'تقديم النتائج إلى العميل',
+      whenToUse:'استخدم هذا كتحقق عام من العملية قبل أي اجتماع مع العميل أو تسليم تقرير، بغض النظر عمّا تُظهره الأرقام.',
+      steps:[
+        'اذكر النتيجة الجوهرية في الجملة الأولى — لا تجعل العميل ينتظر عبر المنهجية ليسمع الخلاصة.',
+        'ابدأ بالرقمين أو الأرقام الثلاثة التي تفسر النتيجة فعليًا، لا بكل نسبة تم حسابها.',
+        'اقرن دائمًا كل نتيجة بتوصية — فالملاحظة دون خطوة تالية تترك العميل بقلق أكبر، لا أقل.',
+        'اذكر بصدق أي ثغرات في البيانات بدلًا من سدّها بافتراضات لم يقدمها لك العميل.',
+        'اختم بملخص بلغة بسيطة لما يجب مراقبته في الفترة القادمة، بحيث تبدو المهمة مستمرة لا حكمًا لمرة واحدة.'
+      ]}
+   }
+  }
 ];
 
 /* =========================================================
@@ -3136,14 +3357,21 @@ function selectScenario(id){
       b.disabled = false;
     }
   });
-  const sc = currentScenario();
   const badge = document.getElementById('caseBadge');
   badge.classList.add('active');
-  document.getElementById('cbName').textContent = sc.name;
-  document.getElementById('cbMeta').textContent = sc.sector + ' · ' + capitalize(sc.difficulty);
+  updateCaseBadge();
   setActiveTab('financials');
   markVisited('financials');
   renderMain();
+}
+
+function updateCaseBadge(){
+  const sc = currentScenario();
+  const nameEl = document.getElementById('cbName');
+  const metaEl = document.getElementById('cbMeta');
+  if(!sc || !nameEl || !metaEl) return;
+  nameEl.textContent = sc.name;
+  metaEl.textContent = L(sc,'sector') + ' · ' + t('diff.'+sc.difficulty);
 }
 
 function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
@@ -3211,12 +3439,13 @@ document.querySelectorAll('.lang-btn').forEach(btn=>{
 function buildSearchIndex(){
   const idx = [];
   SCENARIOS.forEach(sc=>{
-    idx.push({kind:t('search.cases'), label:sc.name, sub:sc.sector, action:()=>{ selectScenario(sc.id); closeSearch(); }});
+    idx.push({kind:t('search.cases'), label:sc.name, sub:L(sc,'sector'), action:()=>{ selectScenario(sc.id); closeSearch(); }});
   });
   GLOSSARY.forEach(g=>{
-    idx.push({kind:t('search.glossary'), label:g.term, sub:g.def.slice(0,70)+'…', action:()=>{
+    const gTerm = L(g,'term'), gDef = L(g,'def');
+    idx.push({kind:t('search.glossary'), label:gTerm, sub:gDef.slice(0,70)+'…', action:()=>{
       State.view='trainer'; setActiveTab('trainer'); trainerTab='glossary'; renderMain();
-      setTimeout(()=>{ const box=document.getElementById('glossSearch'); if(box){ box.value=g.term; renderGlossList(g.term); } }, 0);
+      setTimeout(()=>{ const box=document.getElementById('glossSearch'); if(box){ box.value=gTerm; renderGlossList(gTerm); } }, 0);
       closeSearch();
     }});
   });
@@ -3360,6 +3589,7 @@ function renderMain(){
     default: el.innerHTML = viewSelect(); wireSelect();
   }
   updateXPBadge();
+  updateCaseBadge();
 }
 
 /* ---------- SELECT ---------- */
@@ -3375,28 +3605,28 @@ function viewSelect(){
     <button class="tcard diff-${diff}" data-id="${sc.id}" style="--i:${idx}">
       <span class="tcard-bar"></span>
       <div class="tcard-top">
-        <span class="tcard-sector">${esc(sc.sector)}</span>
-        <span class="tcard-diff diff-${diff}">${esc(diff)}</span>
+        <span class="tcard-sector">${esc(L(sc,'sector'))}</span>
+        <span class="tcard-diff diff-${diff}">${esc(t('diff.'+diff))}</span>
       </div>
       <h3>${esc(sc.name)}</h3>
-      <p>${esc(sc.tagline)}</p>
+      <p>${esc(L(sc,'tagline'))}</p>
       <div class="tcard-foot">
-        ${done ? '<span class="tcard-status done">&#10003; Completed</span>' : '<span class="tcard-status">Not started</span>'}
-        <span class="tcard-go">Open case &rarr;</span>
+        ${done ? ('<span class="tcard-status done">&#10003; ' + esc(t('status.completed')) + '</span>') : ('<span class="tcard-status">' + esc(t('status.notStarted')) + '</span>')}
+        <span class="tcard-go">${esc(t('select.openCase'))}</span>
       </div>
     </button>`;
   }).join('');
 
   return `
     <div class="tcase-hero">
-      <p class="tcase-eye">Free training · practice cases</p>
-      <h1>Choose a Case File</h1>
-      <div class="meta">Each case is a fictional company with real, internally consistent financial statements. Work the numbers, run the analysis, write the report, then field the client's questions.</div>
+      <p class="tcase-eye">${esc(t('select.eyebrow'))}</p>
+      <h1>${esc(t('title.select'))}</h1>
+      <div class="meta">${esc(t('select.heroDesc'))}</div>
       <div class="tcase-stats">
-        <span><b>${total}</b>cases</span>
-        <span><b>${sectors}</b>sectors</span>
-        <span><b>3</b>levels</span>
-        <span><b>${doneCount}</b>completed</span>
+        <span><b>${total}</b>${esc(t('select.statCases'))}</span>
+        <span><b>${sectors}</b>${esc(t('select.statSectors'))}</span>
+        <span><b>3</b>${esc(t('select.statLevels'))}</span>
+        <span><b>${doneCount}</b>${esc(t('select.statCompleted'))}</span>
       </div>
     </div>
     <div class="tgrid">${cards}</div>
@@ -3414,8 +3644,8 @@ function caseHeaderHTML(sc){
     <div class="case-header">
       <div>
         <h1>${esc(sc.name)}</h1>
-        <div class="meta"><b>${esc(sc.sector)}</b> &middot; ${t('diff.'+sc.difficulty)} &middot; ${t('case.figures')}</div>
-        <div class="backstory">${esc(sc.backstory)}</div>
+        <div class="meta"><b>${esc(L(sc,'sector'))}</b> &middot; ${t('diff.'+sc.difficulty)} &middot; ${t('case.figures')}</div>
+        <div class="backstory">${esc(L(sc,'backstory'))}</div>
       </div>
       <div class="stamp ${sc.difficulty}">${t('diff.'+sc.difficulty)}</div>
     </div>`;
@@ -4237,7 +4467,7 @@ function briefingSceneHTML(sc, rec){
       <div class="briefing-avatar" id="briefingAvatar">${characterAvatarSVG(sc.difficulty)}</div>
       <div class="briefing-bubble">
         <div class="briefing-name">${t('brief.name')}</div>
-        <div class="briefing-text" id="briefingText">${seen ? esc(sc.clientBrief) : ''}</div>
+        <div class="briefing-text" id="briefingText">${seen ? esc(L(sc,'clientBrief')) : ''}</div>
         <div class="briefing-actions">
           ${seen ? `<button class="btn small ghost" id="briefingReplayBtn">${t('brief.replay')}</button>` : `<button class="btn small ghost" id="briefingSkipBtn">${t('brief.skip')}</button>`}
         </div>
@@ -4289,11 +4519,11 @@ function wireBriefingScene(sc, rec){
   }
   function wireReplay(){
     const btn = document.getElementById('briefingReplayBtn');
-    if(btn) btn.addEventListener('click', ()=> playBriefingTypewriter(sc.clientBrief, ()=>{}));
+    if(btn) btn.addEventListener('click', ()=> playBriefingTypewriter(L(sc,'clientBrief'), ()=>{}));
   }
 
   if(!rec.briefing || !rec.briefing.seen){
-    playBriefingTypewriter(sc.clientBrief, finish);
+    playBriefingTypewriter(L(sc,'clientBrief'), finish);
   } else {
     wireReplay();
   }
@@ -4302,7 +4532,7 @@ function wireBriefingScene(sc, rec){
     briefingTypeInterval = null;
     const el = document.getElementById('briefingText');
     const avatar = document.getElementById('briefingAvatar');
-    if(el) el.textContent = sc.clientBrief;
+    if(el) el.textContent = L(sc,'clientBrief');
     if(avatar) avatar.classList.remove('talking');
     finish();
   });
@@ -4584,11 +4814,11 @@ function viewTrainer(){
       const done = rec && rec.completed;
       return `
       <div class="scenario-card" data-goto="${sc.id}">
-        <div class="mini-stamp stamp-color-${sc.difficulty}">${sc.difficulty.slice(0,3).toUpperCase()}</div>
-        <span class="sector-tag">${esc(sc.sector)}</span>
+        <div class="mini-stamp stamp-color-${sc.difficulty}">${diffAbbr(sc.difficulty)}</div>
+        <span class="sector-tag">${esc(L(sc,'sector'))}</span>
         <h3>${esc(sc.name)}</h3>
-        <p>${esc(sc.tagline)}</p>
-        ${done?'<div class="done-flag">&#10003; Completed</div>':'<div class="pill">Start this case</div>'}
+        <p>${esc(L(sc,'tagline'))}</p>
+        ${done?('<div class="done-flag">&#10003; ' + esc(t('status.completed')) + '</div>'):('<div class="pill">' + esc(t('status.startCase')) + '</div>')}
       </div>`;
     }).join('') + `</div>`;
   }
@@ -4688,9 +4918,9 @@ function viewProgress(){
     const done = rec && rec.completed;
     return `<tr>
       <td style="text-align:left;">${esc(sc.name)}</td>
-      <td style="text-align:left;">${esc(sc.sector)}</td>
-      <td>${capitalize(sc.difficulty)}</td>
-      <td>${done ? '<span class="pos">Completed</span>' : '<span style="color:var(--text-faint);">Not started</span>'}</td>
+      <td style="text-align:left;">${esc(L(sc,'sector'))}</td>
+      <td>${esc(t('diff.'+sc.difficulty))}</td>
+      <td>${done ? ('<span class="pos">' + esc(t('status.completed')) + '</span>') : ('<span style="color:var(--text-faint);">' + esc(t('status.notStarted')) + '</span>')}</td>
     </tr>`;
   }).join('');
 
