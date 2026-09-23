@@ -663,7 +663,7 @@ html[dir="rtl"] .mobile-topbar{ flex-direction:row-reverse; }
     <nav class="tabs">
       <div class="side-group pro-only">
         <div class="tab-group-label" data-i18n="nav.proMode">Pro Analyzing Mode</div>
-        <button class="tab-btn rc-tab-btn active" data-view="rc"><span class="tab-ico">&#9673;</span> <span data-i18n="nav.rc">RC Realcount Analysis</span></button>
+        <button class="tab-btn rc-tab-btn active" data-view="rc"><span class="tab-ico">&#9673;</span> <span data-i18n="nav.rc">Keel Analysis</span></button>
       </div>
 
       <div class="side-group training-only">
@@ -735,7 +735,7 @@ html[dir="rtl"] .mobile-topbar{ flex-direction:row-reverse; }
    ========================================================= */
 const I18N = {
   en: {
-    'nav.proMode':'Pro Analyzing Mode', 'nav.rc':'RC Realcount Analysis',
+    'nav.proMode':'Pro Analyzing Mode', 'nav.rc':'Keel Analysis',
     'nav.caseFile':'Case File', 'nav.selectCase':'Select a Case',
     'nav.workspace':'Workspace', 'nav.financials':'Financial Statements', 'nav.ratios':'Ratios & Frameworks',
     'nav.diagnosis':'Diagnose the Problem', 'nav.toolkit':'Analyst Toolkit', 'nav.assumptions':'Assumptions Model',
@@ -746,11 +746,11 @@ const I18N = {
     'search.cases':'Case File', 'search.glossary':'Glossary Term', 'search.client':'RC Client', 'search.none':'No matches found.',
     'btn.continue':'Continue', 'btn.save':'Save', 'btn.submit':'Submit', 'btn.download':'Download',
     'btn.upload':'Upload', 'btn.copy':'Copy to Clipboard', 'btn.print':'Print / Save as PDF', 'btn.back':'Back',
-    'title.select':'Choose a Case File', 'title.rc':'RC Realcount Analysis', 'title.trainer':'Trainer & Glossary', 'title.progress':'Your Progress',
+    'title.select':'Choose a Case File', 'title.rc':'Keel Analysis', 'title.trainer':'Trainer & Glossary', 'title.progress':'Your Progress',
     'lang.note':'Navigation is available in English, French, and Arabic. Case-file content is currently English-only.'
   },
   fr: {
-    'nav.proMode':'Mode Analyse Pro', 'nav.rc':'RC Analyse Realcount',
+    'nav.proMode':'Mode Analyse Pro', 'nav.rc':'Analyse Keel',
     'nav.caseFile':'Dossier de Cas', 'nav.selectCase':'Choisir un Cas',
     'nav.workspace':'Espace de Travail', 'nav.financials':'États Financiers', 'nav.ratios':'Ratios & Méthodes',
     'nav.diagnosis':'Diagnostiquer le Problème', 'nav.toolkit':'Boîte à Outils', 'nav.assumptions':'Modèle d\u2019Hypothèses',
@@ -761,11 +761,11 @@ const I18N = {
     'search.cases':'Dossier de Cas', 'search.glossary':'Terme du Glossaire', 'search.client':'Client RC', 'search.none':'Aucun résultat.',
     'btn.continue':'Continuer', 'btn.save':'Enregistrer', 'btn.submit':'Soumettre', 'btn.download':'Télécharger',
     'btn.upload':'Importer', 'btn.copy':'Copier', 'btn.print':'Imprimer / Enregistrer en PDF', 'btn.back':'Retour',
-    'title.select':'Choisir un Dossier de Cas', 'title.rc':'RC Analyse Realcount', 'title.trainer':'Formation & Glossaire', 'title.progress':'Votre Progression',
+    'title.select':'Choisir un Dossier de Cas', 'title.rc':'Analyse Keel', 'title.trainer':'Formation & Glossaire', 'title.progress':'Votre Progression',
     'lang.note':'La navigation est disponible en anglais, français et arabe. Le contenu des dossiers reste en anglais pour l\u2019instant.'
   },
   ar: {
-    'nav.proMode':'وضع التحليل الاحترافي', 'nav.rc':'آر سي — تحليل ريل كاونت',
+    'nav.proMode':'وضع التحليل الاحترافي', 'nav.rc':'تحليل Keel',
     'nav.caseFile':'ملف الحالة', 'nav.selectCase':'اختر حالة',
     'nav.workspace':'مساحة العمل', 'nav.financials':'القوائم المالية', 'nav.ratios':'النسب والأطر',
     'nav.diagnosis':'تشخيص المشكلة', 'nav.toolkit':'أدوات المحلل', 'nav.assumptions':'نموذج الافتراضات',
@@ -776,7 +776,7 @@ const I18N = {
     'search.cases':'ملف حالة', 'search.glossary':'مصطلح', 'search.client':'عميل RC', 'search.none':'لا توجد نتائج.',
     'btn.continue':'متابعة', 'btn.save':'حفظ', 'btn.submit':'إرسال', 'btn.download':'تنزيل',
     'btn.upload':'رفع', 'btn.copy':'نسخ', 'btn.print':'طباعة / حفظ كملف PDF', 'btn.back':'رجوع',
-    'title.select':'اختر ملف حالة', 'title.rc':'آر سي — تحليل ريل كاونت', 'title.trainer':'التدريب والمصطلحات', 'title.progress':'تقدمك',
+    'title.select':'اختر ملف حالة', 'title.rc':'تحليل Keel', 'title.trainer':'التدريب والمصطلحات', 'title.progress':'تقدمك',
     'lang.note':'التنقل متاح بالإنجليزية والفرنسية والعربية. محتوى الحالات لا يزال بالإنجليزية فقط في هذه النسخة.'
   }
 };
@@ -1494,7 +1494,7 @@ const CONTRACT_CLAUSES = [
 
 /* =========================================================
    PLAYBOOK — a step-by-step course for each recurring
-   financial-analysis situation. RC Assistant links each
+   financial-analysis situation. Keel Assistant links each
    flagged insight straight to the matching entry here.
    ========================================================= */
 const PLAYBOOK = [
@@ -3051,13 +3051,25 @@ function characterAvatarSVG(difficulty){
   const accent = difficulty==='beginner' ? 'var(--green)' : difficulty==='advanced' ? 'var(--red)' : 'var(--brass)';
   return `
   <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration of a client representative">
-    <path d="M20 156 C20 110 55 95 80 95 C105 95 140 110 140 156 Z" fill="var(--panel-2)" stroke="${accent}" stroke-width="2"/>
-    <circle cx="80" cy="62" r="42" fill="var(--panel-2)" stroke="${accent}" stroke-width="2.5"/>
-    <path d="M50 48 q10 -9 22 -3" fill="none" stroke="var(--text-faint)" stroke-width="2.5" stroke-linecap="round"/>
-    <path d="M88 45 q10 -6 22 5" fill="none" stroke="var(--text-faint)" stroke-width="2.5" stroke-linecap="round"/>
-    <ellipse class="briefing-eye" cx="62" cy="60" rx="4.5" ry="6" fill="var(--text)"/>
-    <ellipse class="briefing-eye" cx="98" cy="60" rx="4.5" ry="6" fill="var(--text)"/>
-    <ellipse class="briefing-mouth" cx="80" cy="83" rx="12" ry="4" fill="var(--text-faint)"/>
+    <defs><clipPath id="avClip"><circle cx="80" cy="80" r="76"/></clipPath></defs>
+    <circle cx="80" cy="80" r="76" fill="var(--panel-2)"/>
+    <g clip-path="url(#avClip)">
+      <path d="M20 160 C20 125 47 111 80 111 C113 111 140 125 140 160 Z" fill="var(--ink-2)"/>
+      <path d="M63 114 L80 133 L97 114 L97 160 L63 160 Z" fill="var(--panel)"/>
+      <path d="M75 114 L80 129 L85 114 Z" fill="${accent}"/>
+      <rect x="70" y="95" width="20" height="26" rx="9" fill="#d7a583"/>
+      <ellipse cx="80" cy="65" rx="34" ry="38" fill="#e7b998"/>
+      <ellipse cx="46" cy="68" rx="5.5" ry="7" fill="#e0ac89"/>
+      <ellipse cx="114" cy="68" rx="5.5" ry="7" fill="#e0ac89"/>
+      <path d="M45 62 C43 30 65 21 80 21 C95 21 117 30 115 62 C111 47 99 41 80 41 C61 41 49 47 45 62 Z" fill="#2b3a4f"/>
+      <path d="M57 55 q9 -5 18 -1" fill="none" stroke="#2b3a4f" stroke-width="3" stroke-linecap="round"/>
+      <path d="M85 54 q9 -4 18 1" fill="none" stroke="#2b3a4f" stroke-width="3" stroke-linecap="round"/>
+      <g class="briefing-eye"><ellipse cx="67" cy="65" rx="6.5" ry="5" fill="#fff"/><circle cx="68" cy="65.5" r="3.1" fill="#26333f"/></g>
+      <g class="briefing-eye"><ellipse cx="93" cy="65" rx="6.5" ry="5" fill="#fff"/><circle cx="92" cy="65.5" r="3.1" fill="#26333f"/></g>
+      <path d="M80 67 q-3 8 -5 12 q3 2 7 1" fill="none" stroke="#c98f6a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="briefing-mouth" d="M70 88 q10 8 20 0" fill="none" stroke="#a25a4a" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <circle cx="80" cy="80" r="76" fill="none" stroke="${accent}" stroke-width="2.5"/>
   </svg>`;
 }
 
@@ -3395,7 +3407,7 @@ function viewTrainer(){
     `;
   } else if(trainerTab==='playbook'){
     body = `
-      <div class="lesson-box"><b>How to use this:</b> each entry below is a full course on one recurring situation — when it shows up, what's actually driving it, and the exact steps to work through before you write a recommendation. RC Assistant links straight to these from any flagged insight on your own client data.</div>
+      <div class="lesson-box"><b>How to use this:</b> each entry below is a full course on one recurring situation — when it shows up, what's actually driving it, and the exact steps to work through before you write a recommendation. Keel Assistant links straight to these from any flagged insight on your own client data.</div>
       ${PLAYBOOK.map((p,idx)=>`
         <div class="card">
           <h2>${esc(p.title)}</h2>
@@ -3949,7 +3961,7 @@ function viewRC(){
     <div class="case-header">
       <div>
         <h1>Pro Analyzing Mode</h1>
-        <div class="meta">RC Realcount Analysis — your personal financial &amp; data analysis system: your own clients, your own numbers, the same analysis engine used throughout this app.</div>
+        <div class="meta">Keel Analysis — your personal financial &amp; data analysis system: your own clients, your own numbers, the same analysis engine used throughout this app.</div>
       </div>
     </div>
     <div class="subtabs">
@@ -3959,7 +3971,7 @@ function viewRC(){
       <button class="subtab ${rcTab==='upload'?'active':''}" data-rcnav="upload">Upload Data</button>
       <button class="subtab ${rcTab==='analysis'?'active':''}" data-rcnav="analysis">Analysis</button>
       <button class="subtab ${rcTab==='forecast'?'active':''}" data-rcnav="forecast">Forecast</button>
-      <button class="subtab ${rcTab==='assistant'?'active':''}" data-rcnav="assistant">RC Assistant</button>
+      <button class="subtab ${rcTab==='assistant'?'active':''}" data-rcnav="assistant">Keel Assistant</button>
       <button class="subtab ${rcTab==='dashboard'?'active':''}" data-rcnav="dashboard">Client Dashboard</button>
       <button class="subtab ${rcTab==='report'?'active':''}" data-rcnav="report">Client Report</button>
     </div>
@@ -4864,7 +4876,7 @@ function rcViewForecast(client){
     </div>
 
     <div style="display:flex;justify-content:flex-end;" class="no-print">
-      <button class="btn primary" id="rcToAssistantBtn2">Continue to RC Assistant &rarr;</button>
+      <button class="btn primary" id="rcToAssistantBtn2">Continue to Keel Assistant &rarr;</button>
     </div>
   `;
 }
@@ -5054,7 +5066,7 @@ function rcPreAnalysis(client){
 
 function rcViewAssistant(client){
   if(!viewRC_analysisNoDataCheck(client)){
-    return `<div class="empty-state"><div class="big-icon">&#9673;</div>Enter or upload data first so RC Assistant has something to read.<br><button class="btn primary" style="margin-top:14px;" id="rcGoEntryEmpty2">Go to Data Entry</button></div>`;
+    return `<div class="empty-state"><div class="big-icon">&#9673;</div>Enter or upload data first so Keel Assistant has something to read.<br><button class="btn primary" style="margin-top:14px;" id="rcGoEntryEmpty2">Go to Data Entry</button></div>`;
   }
   const insights = generateInsights(client);
   const redCount = insights.filter(i=>i.level==='red').length;
@@ -5080,10 +5092,10 @@ function rcViewAssistant(client){
   return `
     ${rcPreAnalysis(client)}
     <div class="card">
-      <h2>RC Assistant — flags & playbooks</h2>
+      <h2>Keel Assistant — flags & playbooks</h2>
       <div class="card-sub">Reads ${esc(client.name)}'s entered figures and checks them against common financial-analysis heuristics — ${redCount} needing attention, ${amberCount} worth watching.</div>
       ${cards}
-      <div class="lesson-box">RC Assistant is a rules-based checklist, not a live chat — it re-scans your numbers every time you update them, so re-visit this tab after any data change.</div>
+      <div class="lesson-box">Keel Assistant is a rules-based checklist, not a live chat — it re-scans your numbers every time you update them, so re-visit this tab after any data change.</div>
     </div>
     <div style="display:flex;justify-content:flex-end;" class="no-print">
       <button class="btn primary" id="rcToDashboardBtn">Continue to Client Dashboard &rarr;</button>
@@ -5341,7 +5353,7 @@ function createPDFBuilder(doc, client, sectionLabel){
     doc.setDrawColor(...pb.C.lineGray); doc.setLineWidth(0.6);
     doc.line(pb.M, 32, pb.W-pb.M, 32);
     doc.setFontSize(8); doc.setTextColor(...pb.C.faint);
-    doc.text('Prepared with RC Realcount Analysis \u2014 Confidential', pb.M, pb.H-24);
+    doc.text('Prepared with Keel Analysis \u2014 Confidential', pb.M, pb.H-24);
     doc.text('Page ' + doc.internal.getNumberOfPages(), pb.W-pb.M, pb.H-24, {align:'right'});
   };
 
@@ -5698,8 +5710,50 @@ function buildClientPDFReport(client){
   }
 }
 
+function rcGenerateReport(client){
+  const hasData = (client.income.y2.revenue>0)||(client.income.y1.revenue>0);
+  if(!hasData) return null;
+  const r = computeRatios(client), sc = computeScorecard(client), insights = generateInsights(client);
+  const y2=r.y2;
+  const nm=pct(y2.netMargin), gm=pct(y2.grossMargin), roe=pct(y2.roe);
+  const revGrowth = pctDelta(client.income.y1.revenue, client.income.y2.revenue);
+  const order={red:0,amber:1,green:2};
+  const dims=[['profitability',sc.profitability],['liquidity',sc.liquidity],['leverage',sc.leverage],['cashflow',sc.cashflow]];
+  dims.sort((a,b)=>order[a[1].status]-order[b[1].status]);
+  const weak=dims[0][0];
+  const LEVER={profitability:'improving margins — pricing and the largest cost lines', liquidity:'tightening the cash cycle — collecting receivables faster and staging payables', leverage:'reducing debt and lifting interest coverage', cashflow:'converting profit into cash more reliably'};
+  const NEXT={profitability:'rework pricing on the lowest-margin lines and renegotiate the single biggest supplier cost.', liquidity:'build a 13-week cash forecast and set a minimum cash buffer before any new spending.', leverage:'direct free cash flow to debt paydown and refinance the most expensive facility first.', cashflow:'run a weekly cash dashboard tying collections and inventory to hard targets.'};
+
+  const exec = `${client.name} is ${sc.overall.label.toLowerCase()} overall — profitability ${sc.profitability.label.toLowerCase()} (net margin ${nm}), liquidity ${sc.liquidity.label.toLowerCase()} (current ratio ${ratio(y2.current)}) and leverage ${sc.leverage.label.toLowerCase()}.` +
+    (revGrowth!==null ? ` Revenue ${revGrowth>=0?'grew':'fell'} ${pct(Math.abs(revGrowth))} from ${client.years[0]} to ${client.years[1]}.` : '') +
+    ` The biggest lever from here is ${LEVER[weak]}.`;
+
+  const findings = [
+    `• Profitability — gross margin ${gm}, net margin ${nm}, return on equity ${roe}.`,
+    `• Liquidity — current ${ratio(y2.current)}, quick ${ratio(y2.quick)}, cash conversion cycle ${days(y2.ccc)}.`,
+    `• Leverage — debt-to-equity ${ratio(y2.debtEquity)}${y2.interestCoverage!=null?`, interest coverage ${ratio(y2.interestCoverage)}`:''}.`
+  ].join('\n');
+
+  const flagged = insights.filter(i=>i.level==='red'||i.level==='amber');
+  const risks = flagged.length ? flagged.slice(0,5).map(i=>`• ${i.text}`).join('\n')
+    : '• No material red flags this period. The main risk is drift — keep tracking the same ratios each period so a downturn is caught early.';
+
+  const recs=[];
+  flagged.map(i=>PLAYBOOK.find(p=>p.id===i.situation)).filter(Boolean).slice(0,2).forEach(pb=>{ recs.push(`• ${pb.title}: ${pb.steps[0]}`); });
+  let fc=null; try{ fc=rcForecastCompute(client); }catch(e){}
+  if(fc){ recs.push(`• Invest for the future — at ${client.forecast.growth}% revenue growth, ${client.forecast.label||'the next period'} projects net income of about ${fmt(fc.adjNetIncome)}${client.forecast.budgetPush?` after a planned ${fmt(client.forecast.budgetPush)} investment`:''}. Reinvest surplus cash into the highest-return area (${LEVER[weak].split(' — ')[0]}) rather than leaving it idle.`); }
+  recs.push(`• Next step — ${NEXT[weak]}`);
+  recs.push(`• Review these ratios against ${client.sector||'sector'} benchmarks each quarter and refresh this report.`);
+
+  return { execSummary:exec, keyFindings:findings, risks:risks, recommendations:recs.join('\n') };
+}
+
 function rcViewReport(client){
-  const rp = client.report;
+  let rp = client.report;
+  if(!(rp.execSummary||rp.keyFindings||rp.risks||rp.recommendations)){
+    const gen = rcGenerateReport(client);
+    if(gen){ Object.assign(client.report, gen); client.updatedAt=Date.now(); Store.save(); rp = client.report; }
+  }
   const branding = Store.data.rcBranding || {preparedBy:'', firmName:''};
   return `
     <div class="card no-print">
@@ -5713,7 +5767,8 @@ function rcViewReport(client){
 
     <div class="card no-print">
       <h2>Client Report</h2>
-      <div class="card-sub">For ${esc(client.name)}. Saved automatically as you type.</div>
+      <div class="card-sub">For ${esc(client.name)}. Keel drafts every section from the numbers — findings, risks, and forward-looking investment recommendations. Edit anything; it saves as you type.</div>
+      <div style="margin-bottom:14px;"><button class="btn small primary" id="rcBtnGenReport">&#10022; Draft the full report with Keel</button></div>
       <div class="field"><label>Executive Summary</label><textarea id="rcRepSummary" placeholder="State your conclusion in 2-3 sentences.">${esc(rp.execSummary)}</textarea></div>
       <div class="field"><label>Key Findings</label><textarea id="rcRepFindings" placeholder="The two or three numbers that actually explain it.">${esc(rp.keyFindings)}</textarea></div>
       <div class="field"><label>Risk Areas</label><textarea id="rcRepRisks" placeholder="What happens if nothing changes?">${esc(rp.risks)}</textarea></div>
@@ -5770,6 +5825,16 @@ function wireRCReport(client){
   bind('rcRepFindings','keyFindings');
   bind('rcRepRisks','risks');
   bind('rcRepRecs','recommendations');
+  const genBtn = document.getElementById('rcBtnGenReport');
+  if(genBtn) genBtn.addEventListener('click', ()=>{
+    const g = rcGenerateReport(client);
+    if(!g){ showToast('Enter or upload data first'); return; }
+    Object.assign(client.report, g);
+    client.updatedAt = Date.now();
+    Store.save();
+    renderMain();
+    showToast('Report drafted by Keel — edit anything you like');
+  });
   document.getElementById('rcBtnCopyReport').addEventListener('click', ()=>{
     const r = client.report;
     const text = `${client.name} — Analyst Report\n\nExecutive Summary\n${r.execSummary}\n\nKey Findings\n${r.keyFindings}\n\nRisk Areas\n${r.risks}\n\nRecommendations\n${r.recommendations}`;
