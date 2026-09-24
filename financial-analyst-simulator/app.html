@@ -864,6 +864,8 @@ const I18N = {
     'progress.caseStatusTitle':'Case File Status','progress.colCase':'Case','progress.colSector':'Sector','progress.colDifficulty':'Difficulty','progress.colStatus':'Status',
     'progress.footNote':'Progress and every report, answer, and reflection you’ve written are saved to this browser’s local storage — nothing is sent anywhere. Clearing your browser data will reset it.',
 
+    'trainer.authorizedSignature':'Authorized Signature',
+
     'lang.note':'Navigation, screens, and case content are all available in English, French, and Arabic. Company names stay in English.'
   },
   fr: {
@@ -992,6 +994,8 @@ const I18N = {
     'progress.achievementsTitle':'Réussites','progress.achievementsSub':'Obtenues automatiquement au fil de vos dossiers',
     'progress.caseStatusTitle':'État des Dossiers','progress.colCase':'Cas','progress.colSector':'Secteur','progress.colDifficulty':'Difficulté','progress.colStatus':'Statut',
     'progress.footNote':'La progression, ainsi que chaque rapport, réponse et réflexion que vous avez rédigés, sont enregistrés localement dans ce navigateur — rien n’est envoyé ailleurs. Effacer les données de votre navigateur réinitialisera tout.',
+
+    'trainer.authorizedSignature':'Signature Autorisée',
 
     'lang.note':'La navigation, les écrans et le contenu des dossiers sont désormais disponibles en anglais, en français et en arabe. Les noms d’entreprises restent en anglais.'
   },
@@ -1123,6 +1127,8 @@ const I18N = {
     'progress.caseStatusTitle':'حالة ملفات القضايا','progress.colCase':'الحالة','progress.colSector':'القطاع','progress.colDifficulty':'الصعوبة','progress.colStatus':'الوضع',
     'progress.footNote':'يتم حفظ التقدم وكل تقرير وإجابة وتأمل كتبته محليًا في هذا المتصفح — لا يُرسل شيء إلى أي جهة. مسح بيانات المتصفح سيؤدي إلى إعادة ضبط كل ذلك.',
 
+    'trainer.authorizedSignature':'توقيع معتمد',
+
     'lang.note':'أصبحت عناصر التنقل والشاشات ومحتوى الحالات متاحة الآن بالإنجليزية والفرنسية والعربية. تبقى أسماء الشركات بالإنجليزية.'
   }
 };
@@ -1156,6 +1162,7 @@ const FIN_LABELS = {
   'Other Current Assets':{fr:'Autres actifs courants',ar:'أصول متداولة أخرى'},
   'Total Current Assets':{fr:'Total actif courant',ar:'إجمالي الأصول المتداولة'},
   'Property, Plant &amp; Equipment':{fr:'Immobilisations corporelles',ar:'الممتلكات والمنشآت والمعدات'},
+  'PP&amp;E':{fr:'Immobilisations corporelles',ar:'الممتلكات والمنشآت والمعدات'},
   'Other Long-Term Assets':{fr:'Autres actifs non courants',ar:'أصول طويلة الأجل أخرى'},
   'Total Assets':{fr:"Total de l'actif",ar:'إجمالي الأصول'},
   'Liabilities':{fr:'Passif',ar:'الخصوم'},
@@ -1193,7 +1200,18 @@ const FIN_LABELS = {
   'Ending Cash':{fr:'Trésorerie de clôture',ar:'النقد في نهاية الفترة'},
   'COGS':{fr:'Coût des ventes',ar:'تكلفة البضاعة المباعة'},
   'Operating Expenses':{fr:"Charges d'exploitation",ar:'المصاريف التشغيلية'},
-  'Budgeted Operating Expenses':{fr:"Charges d'exploitation budgétées",ar:'المصاريف التشغيلية المُوازَنة'}
+  'Budgeted Operating Expenses':{fr:"Charges d'exploitation budgétées",ar:'المصاريف التشغيلية المُوازَنة'},
+  'Labor':{fr:'Main-d’œuvre',ar:'العمالة'},
+  'Rent & Occupancy':{fr:'Loyer et Occupation',ar:'الإيجار والإشغال'},
+  'Other G&A':{fr:'Autres frais généraux',ar:'مصاريف عمومية أخرى'},
+  'Sales & Marketing':{fr:'Ventes et Marketing',ar:'المبيعات والتسويق'},
+  'General & Admin':{fr:'Frais généraux et administratifs',ar:'مصاريف عمومية وإدارية'},
+  'Staff':{fr:'Personnel',ar:'الموظفون'},
+  'Maintenance':{fr:'Entretien',ar:'الصيانة'},
+  'Software':{fr:'Logiciels',ar:'البرمجيات'},
+  'Taproom Operations':{fr:'Exploitation du Bar de Dégustation',ar:'تشغيل صالة التذوق'},
+  'Distribution':{fr:'Distribution',ar:'التوزيع'},
+  'Content Production':{fr:'Production de Contenu',ar:'إنتاج المحتوى'}
 };
 function tl(label){ if(CURRENT_LANG==='en') return label; var m=FIN_LABELS[label]; return (m && m[CURRENT_LANG]) || label; }
 
@@ -1253,7 +1271,10 @@ const SECTOR_OPTIONS = [
 const OPEX_LABELS = {
   sga:'SG&A', marketing:'Marketing', dep:'Depreciation',
   labor:'Labor', rent:'Rent & Occupancy', other:'Other G&A',
-  rnd:'R&D', sm:'Sales & Marketing', ga:'General & Admin'
+  rnd:'R&D', sm:'Sales & Marketing', ga:'General & Admin',
+  staff:'Staff', admin:'Administrative', maint:'Maintenance',
+  salaries:'Salaries', software:'Software', taproom:'Taproom Operations',
+  distribution:'Distribution', content:'Content Production'
 };
 
 const SCENARIOS = [
@@ -2587,77 +2608,165 @@ const GLOSSARY = [
 ];
 
 const LESSONS = [
-  {title:'Reading a Cash Flow Statement Like an Analyst', body:'Start at the bottom, not the top: check whether cash from operations is positive before looking at investing or financing. A company can be "profitable" on the income statement while operating cash flow is negative — that gap is usually the most important story in the file.'},
-  {title:'Ratio Analysis: Context Before Conclusions', body:'A ratio in isolation means very little. Always compare it to the prior period, to a budget, or to what\u2019s typical for the sector. A current ratio of 1.2 might be strong for a manufacturer and weak for a SaaS company.'},
-  {title:'Structuring a Client Memo', body:'Lead with the answer, not the process. Executive Summary states the conclusion in two or three sentences; Key Findings back it with numbers; Recommendations are specific and prioritized. Clients read the first paragraph closely and skim the rest.'},
-  {title:'Excel & Power BI Habits Worth Building', body:'Keep raw data, calculations, and presentation on separate sheets/tabs. Use named ranges or structured tables instead of hardcoded cell references. In Power BI, build a simple date table early — most time-intelligence measures depend on it.'},
-  {title:'A Light SQL Habit for Analysts', body:'Most reporting questions reduce to a GROUP BY with a date filter: SELECT period, SUM(amount) FROM transactions WHERE date BETWEEN ... GROUP BY period. Learning to write that comfortably covers a large share of real analyst requests.'},
-  {title:'Building a Simple 3-Statement Model', body:'Start from revenue assumptions, drive the income statement, then let the balance sheet and cash flow statement follow mechanically from those results and your working-capital assumptions. Plug cash last — if it doesn\u2019t balance, the error is almost always in a working-capital or debt schedule link.'},
-  {title:'Delivering an Unfavorable Finding', body:'State the finding plainly in the first sentence — don\u2019t bury it. Follow immediately with the "so what" and a recommendation. Clients trust analysts who are direct about bad news far more than ones who hedge it into vagueness.'},
-  {title:'When the Data Isn\u2019t Enough', body:'Real engagements often can\u2019t answer every question with the data on hand. Naming that gap explicitly — and saying what additional data would resolve it — is a sign of a stronger analyst, not a weaker one.'}
+  {title:'Reading a Cash Flow Statement Like an Analyst', body:'Start at the bottom, not the top: check whether cash from operations is positive before looking at investing or financing. A company can be "profitable" on the income statement while operating cash flow is negative — that gap is usually the most important story in the file.',
+   i18n:{fr:{title:'Lire un Tableau des Flux de Trésorerie comme un Analyste', body:'Commencez par le bas, pas par le haut : vérifiez si le flux de trésorerie d’exploitation est positif avant de regarder l’investissement ou le financement. Une entreprise peut être « rentable » au compte de résultat tout en ayant un flux de trésorerie d’exploitation négatif — cet écart est généralement l’histoire la plus importante du dossier.'},
+        ar:{title:'قراءة قائمة التدفقات النقدية كمحلل', body:'ابدأ من الأسفل لا من الأعلى: تحقق مما إذا كان التدفق النقدي من التشغيل إيجابيًا قبل النظر إلى الاستثمار أو التمويل. يمكن أن تكون الشركة "مربحة" في قائمة الدخل بينما يكون التدفق النقدي التشغيلي سالبًا — وهذه الفجوة عادة ما تكون القصة الأهم في الملف.'}}},
+  {title:'Ratio Analysis: Context Before Conclusions', body:'A ratio in isolation means very little. Always compare it to the prior period, to a budget, or to what\u2019s typical for the sector. A current ratio of 1.2 might be strong for a manufacturer and weak for a SaaS company.',
+   i18n:{fr:{title:'Analyse des Ratios : le Contexte Avant les Conclusions', body:'Un ratio isolé ne signifie pas grand-chose. Comparez-le toujours à la période précédente, à un budget, ou à ce qui est typique pour le secteur. Un ratio de liquidité générale de 1,2 peut être solide pour un fabricant et faible pour une entreprise SaaS.'},
+        ar:{title:'تحليل النسب: السياق قبل الاستنتاجات', body:'النسبة المعزولة لا تعني الكثير. قارنها دائمًا بالفترة السابقة، أو بالموازنة، أو بما هو معتاد للقطاع. نسبة تداول 1.2 قد تكون قوية لشركة تصنيع وضعيفة لشركة برمجيات كخدمة.'}}},
+  {title:'Structuring a Client Memo', body:'Lead with the answer, not the process. Executive Summary states the conclusion in two or three sentences; Key Findings back it with numbers; Recommendations are specific and prioritized. Clients read the first paragraph closely and skim the rest.',
+   i18n:{fr:{title:'Structurer une Note au Client', body:'Commencez par la réponse, pas par le processus. La synthèse énonce la conclusion en deux ou trois phrases ; les constats clés l’étayent avec des chiffres ; les recommandations sont précises et hiérarchisées. Les clients lisent attentivement le premier paragraphe et survolent le reste.'},
+        ar:{title:'هيكلة مذكرة للعميل', body:'ابدأ بالإجابة، لا بالعملية. يذكر الملخص التنفيذي الاستنتاج في جملتين أو ثلاث؛ وتدعمه أبرز النتائج بالأرقام؛ وتكون التوصيات محددة ومرتبة حسب الأولوية. يقرأ العملاء الفقرة الأولى بعناية ويتصفحون الباقي بسرعة.'}}},
+  {title:'Excel & Power BI Habits Worth Building', body:'Keep raw data, calculations, and presentation on separate sheets/tabs. Use named ranges or structured tables instead of hardcoded cell references. In Power BI, build a simple date table early — most time-intelligence measures depend on it.',
+   i18n:{fr:{title:'Bonnes Habitudes Excel et Power BI à Développer', body:'Gardez les données brutes, les calculs et la présentation sur des feuilles/onglets séparés. Utilisez des plages nommées ou des tableaux structurés plutôt que des références de cellules codées en dur. Dans Power BI, créez tôt une table de dates simple — la plupart des mesures de veille temporelle en dépendent.'},
+        ar:{title:'عادات إكسل وPower BI تستحق البناء', body:'احتفظ بالبيانات الخام والحسابات والعرض في أوراق/تبويبات منفصلة. استخدم نطاقات مسمّاة أو جداول منظمة بدلًا من مراجع خلايا ثابتة. في Power BI، ابنِ جدول تواريخ بسيطًا مبكرًا — تعتمد عليه معظم مقاييس الذكاء الزمني.'}}},
+  {title:'A Light SQL Habit for Analysts', body:'Most reporting questions reduce to a GROUP BY with a date filter: SELECT period, SUM(amount) FROM transactions WHERE date BETWEEN ... GROUP BY period. Learning to write that comfortably covers a large share of real analyst requests.',
+   i18n:{fr:{title:'Une Habitude SQL Simple pour les Analystes', body:'La plupart des questions de reporting se résument à un GROUP BY avec un filtre de date : SELECT period, SUM(amount) FROM transactions WHERE date BETWEEN ... GROUP BY period. Savoir l’écrire aisément couvre une grande part des demandes réelles d’analystes.'},
+        ar:{title:'عادة SQL بسيطة للمحللين', body:'معظم أسئلة التقارير تختصر إلى GROUP BY مع فلتر تاريخ: SELECT period, SUM(amount) FROM transactions WHERE date BETWEEN ... GROUP BY period. إتقان كتابة ذلك بارتياح يغطي جزءًا كبيرًا من طلبات المحللين الحقيقية.'}}},
+  {title:'Building a Simple 3-Statement Model', body:'Start from revenue assumptions, drive the income statement, then let the balance sheet and cash flow statement follow mechanically from those results and your working-capital assumptions. Plug cash last — if it doesn\u2019t balance, the error is almost always in a working-capital or debt schedule link.',
+   i18n:{fr:{title:'Construire un Modèle Simple à Trois États Financiers', body:'Partez des hypothèses de chiffre d’affaires, pilotez le compte de résultat, puis laissez le bilan et le tableau des flux de trésorerie découler mécaniquement de ces résultats et de vos hypothèses de fonds de roulement. Insérez la trésorerie en dernier — si cela ne s’équilibre pas, l’erreur se trouve presque toujours dans un lien de fonds de roulement ou de tableau de dette.'},
+        ar:{title:'بناء نموذج بسيط من ثلاث قوائم مالية', body:'ابدأ من افتراضات الإيرادات، وشغّل قائمة الدخل، ثم دع الميزانية العمومية وقائمة التدفقات النقدية تنتج آليًا من تلك النتائج وافتراضات رأس المال العامل لديك. أدرج النقد أخيرًا — إذا لم يتوازن، يكون الخطأ غالبًا في رابط رأس المال العامل أو جدول الدين.'}}},
+  {title:'Delivering an Unfavorable Finding', body:'State the finding plainly in the first sentence — don\u2019t bury it. Follow immediately with the "so what" and a recommendation. Clients trust analysts who are direct about bad news far more than ones who hedge it into vagueness.',
+   i18n:{fr:{title:'Présenter un Constat Défavorable', body:'Énoncez le constat clairement dès la première phrase — ne l’enterrez pas. Enchaînez immédiatement avec le « et alors » et une recommandation. Les clients font bien plus confiance aux analystes directs sur les mauvaises nouvelles qu’à ceux qui les noient dans le vague.'},
+        ar:{title:'تقديم نتيجة غير مواتية', body:'اذكر النتيجة بوضوح في الجملة الأولى — لا تدفنها. تابع فورًا بسؤال "إذن ماذا يعني ذلك" وتوصية. يثق العملاء بالمحللين الصريحين بشأن الأخبار السيئة أكثر بكثير من أولئك الذين يغرقونها في الغموض.'}}},
+  {title:'When the Data Isn\u2019t Enough', body:'Real engagements often can\u2019t answer every question with the data on hand. Naming that gap explicitly — and saying what additional data would resolve it — is a sign of a stronger analyst, not a weaker one.',
+   i18n:{fr:{title:'Quand les Données ne Suffisent Pas', body:'Les missions réelles ne peuvent souvent pas répondre à toutes les questions avec les données disponibles. Nommer explicitement cette lacune — et indiquer quelles données supplémentaires la résoudraient — est le signe d’un analyste plus solide, pas plus faible.'},
+        ar:{title:'عندما لا تكون البيانات كافية', body:'لا تستطيع المهام الحقيقية غالبًا الإجابة عن كل سؤال بالبيانات المتوفرة. تسمية تلك الفجوة صراحة — وذكر البيانات الإضافية التي قد تحلّها — علامة على محلل أقوى، لا أضعف.'}}}
 ];
 
 const TIPS = [
-  'If receivables grow faster than revenue for two periods running, expect a cash problem within a quarter or two — even if profit looks fine.',
-  'Always check the quick ratio after the current ratio. A big gap between them almost always means inventory (or something inventory-like) is doing the heavy lifting.',
-  'A rising current ratio isn\u2019t automatically good news — check whether it\u2019s driven by cash (good) or by slow-moving inventory and receivables (a warning sign).',
-  'Interest coverage below about 2x is a common lender red line. Track the trend, not just the current number — a fast decline matters even if the level still looks okay.',
-  'Net income can rise while operating cash flow falls. When that happens, working capital (receivables, inventory, payables) is almost always the explanation — go there first.',
-  'Before recommending a fix, ask whether the problem is a profitability issue, a liquidity issue, a leverage issue, or several at once. The right fix is completely different for each.',
-  'Common-size (vertical) statements are the fastest way to compare a small company to a big one — percentages strip out scale so cost structures compare cleanly.',
-  'When a budget variance looks small at the net income line, check every line above it — favorable and unfavorable variances often cancel out and hide the real story.',
-  'For project-based businesses (construction, agencies, consultancies), always ask whether "receivables" includes unbilled work or retention — the standard ratio can miss both.',
-  'Break-even revenue rising faster than actual revenue is often the earliest sign of trouble in a fixed-cost-heavy business — check it before the P&L turns negative, not after.',
-  'A rate of change matters more than a single data point: a ratio moving fast in the wrong direction is usually more urgent than a bad ratio that has been stable for years.',
-  'When you\u2019re not sure whether a number is a real problem, benchmark it — against last period, against budget, or against a typical range for the sector — before calling it a red flag.',
-  'In a client memo, state your conclusion in the first sentence of the Executive Summary. Analysts who bury the finding lose the reader before the evidence even shows up.',
-  'Every recommendation should answer "so what should we actually do." A finding without a recommendation is only half the job.',
-  'If you catch yourself writing "it depends," go one step further and say what it depends on — that\u2019s usually the actual insight the client is paying for.'
+  {text:'If receivables grow faster than revenue for two periods running, expect a cash problem within a quarter or two — even if profit looks fine.', i18n:{fr:{text:'Si les créances augmentent plus vite que le chiffre d’affaires sur deux périodes consécutives, attendez-vous à un problème de trésorerie d’ici un trimestre ou deux — même si le profit semble correct.'}, ar:{text:'إذا نمت الذمم المدينة أسرع من الإيرادات لفترتين متتاليتين، توقّع مشكلة نقدية خلال فصل أو فصلين — حتى لو بدا الربح جيدًا.'}}},
+  {text:'Always check the quick ratio after the current ratio. A big gap between them almost always means inventory (or something inventory-like) is doing the heavy lifting.', i18n:{fr:{text:'Vérifiez toujours le ratio de liquidité immédiate après le ratio de liquidité générale. Un grand écart entre les deux signifie presque toujours que le stock (ou quelque chose de similaire) fait l’essentiel du travail.'}, ar:{text:'تحقق دائمًا من نسبة السيولة السريعة بعد نسبة التداول. الفجوة الكبيرة بينهما تعني في الغالب أن المخزون (أو ما شابهه) هو ما يقوم بمعظم العمل.'}}},
+  {text:'A rising current ratio isn’t automatically good news — check whether it’s driven by cash (good) or by slow-moving inventory and receivables (a warning sign).', i18n:{fr:{text:'Une hausse du ratio de liquidité générale n’est pas automatiquement une bonne nouvelle — vérifiez si elle est portée par la trésorerie (bon signe) ou par des stocks et créances à rotation lente (signal d’alerte).'}, ar:{text:'ارتفاع نسبة التداول ليس بالضرورة خبرًا جيدًا — تحقق مما إذا كان مدفوعًا بالنقد (جيد) أو بمخزون وذمم بطيئة الحركة (إشارة تحذير).'}}},
+  {text:'Interest coverage below about 2x is a common lender red line. Track the trend, not just the current number — a fast decline matters even if the level still looks okay.', i18n:{fr:{text:'Une couverture des intérêts inférieure à environ 2x est souvent une ligne rouge pour les prêteurs. Suivez la tendance, pas seulement le chiffre actuel — un déclin rapide compte même si le niveau semble encore correct.'}, ar:{text:'تغطية الفوائد أقل من نحو 2x غالبًا ما تكون خطًا أحمر للمُقرضين. تتبّع الاتجاه، لا الرقم الحالي فقط — فالتراجع السريع مهم حتى لو بدا المستوى لا يزال مقبولًا.'}}},
+  {text:'Net income can rise while operating cash flow falls. When that happens, working capital (receivables, inventory, payables) is almost always the explanation — go there first.', i18n:{fr:{text:'Le résultat net peut augmenter alors que le flux de trésorerie d’exploitation baisse. Quand cela se produit, le fonds de roulement (créances, stocks, dettes fournisseurs) en est presque toujours l’explication — commencez par là.'}, ar:{text:'يمكن أن يرتفع صافي الدخل بينما ينخفض التدفق النقدي التشغيلي. عند حدوث ذلك، يكون رأس المال العامل (الذمم، المخزون، الدائنون) هو التفسير في الغالب — ابدأ من هناك.'}}},
+  {text:'Before recommending a fix, ask whether the problem is a profitability issue, a liquidity issue, a leverage issue, or several at once. The right fix is completely different for each.', i18n:{fr:{text:'Avant de recommander une solution, demandez-vous si le problème est de rentabilité, de liquidité, d’endettement, ou plusieurs à la fois. La bonne solution est totalement différente selon le cas.'}, ar:{text:'قبل التوصية بحل، اسأل ما إذا كانت المشكلة تتعلق بالربحية، أو السيولة، أو الرفع المالي، أو عدة أمور في آن واحد. الحل الصحيح يختلف تمامًا في كل حالة.'}}},
+  {text:'Common-size (vertical) statements are the fastest way to compare a small company to a big one — percentages strip out scale so cost structures compare cleanly.', i18n:{fr:{text:'Les états en pourcentage (analyse verticale) sont le moyen le plus rapide de comparer une petite entreprise à une grande — les pourcentages éliminent l’effet de taille pour comparer proprement les structures de coûts.'}, ar:{text:'القوائم النسبية (التحليل الرأسي) هي أسرع طريقة لمقارنة شركة صغيرة بأخرى كبيرة — إذ تُزيل النسب المئوية أثر الحجم فتُقارَن هياكل التكاليف بوضوح.'}}},
+  {text:'When a budget variance looks small at the net income line, check every line above it — favorable and unfavorable variances often cancel out and hide the real story.', i18n:{fr:{text:'Quand un écart budgétaire semble faible au niveau du résultat net, vérifiez chaque ligne au-dessus — les écarts favorables et défavorables s’annulent souvent et masquent la vraie histoire.'}, ar:{text:'عندما يبدو انحراف الموازنة صغيرًا عند بند صافي الدخل، تحقق من كل بند أعلاه — فالانحرافات الإيجابية والسلبية غالبًا ما تُلغي بعضها وتُخفي القصة الحقيقية.'}}},
+  {text:'For project-based businesses (construction, agencies, consultancies), always ask whether "receivables" includes unbilled work or retention — the standard ratio can miss both.', i18n:{fr:{text:'Pour les entreprises basées sur des projets (construction, agences, cabinets de conseil), demandez toujours si les « créances » incluent les travaux non facturés ou les retenues de garantie — le ratio standard peut manquer les deux.'}, ar:{text:'بالنسبة للأنشطة القائمة على المشاريع (البناء، الوكالات، الاستشارات)، اسأل دائمًا عمّا إذا كانت «الذمم» تشمل أعمالًا غير مفوترة أو محتجزات — فالنسبة القياسية قد تفوّت كليهما.'}}},
+  {text:'Break-even revenue rising faster than actual revenue is often the earliest sign of trouble in a fixed-cost-heavy business — check it before the P&L turns negative, not after.', i18n:{fr:{text:'Un seuil de rentabilité qui augmente plus vite que le chiffre d’affaires réel est souvent le tout premier signe de difficulté dans une entreprise à coûts fixes élevés — vérifiez-le avant que le compte de résultat ne devienne négatif, pas après.'}, ar:{text:'ارتفاع إيرادات نقطة التعادل أسرع من الإيرادات الفعلية غالبًا ما يكون أول علامة على مشكلة في نشاط ذي تكاليف ثابتة مرتفعة — تحقق منه قبل أن تتحول قائمة الدخل إلى السالب، لا بعد ذلك.'}}},
+  {text:'A rate of change matters more than a single data point: a ratio moving fast in the wrong direction is usually more urgent than a bad ratio that has been stable for years.', i18n:{fr:{text:'Le rythme de variation compte plus qu’un chiffre isolé : un ratio qui évolue rapidement dans la mauvaise direction est généralement plus urgent qu’un mauvais ratio stable depuis des années.'}, ar:{text:'معدل التغير أهم من رقم منفرد: نسبة تتحرك بسرعة في الاتجاه الخاطئ عادة ما تكون أكثر إلحاحًا من نسبة سيئة لكنها مستقرة منذ سنوات.'}}},
+  {text:'When you’re not sure whether a number is a real problem, benchmark it — against last period, against budget, or against a typical range for the sector — before calling it a red flag.', i18n:{fr:{text:'Quand vous n’êtes pas sûr qu’un chiffre pose réellement problème, comparez-le — à la période précédente, au budget, ou à une fourchette typique du secteur — avant de le qualifier de signal d’alerte.'}, ar:{text:'عندما لا تكون متأكدًا مما إذا كان رقم ما يمثل مشكلة حقيقية، قارنه — بالفترة السابقة، أو بالموازنة، أو بنطاق معتاد للقطاع — قبل أن تصفه بإشارة تحذير.'}}},
+  {text:'In a client memo, state your conclusion in the first sentence of the Executive Summary. Analysts who bury the finding lose the reader before the evidence even shows up.', i18n:{fr:{text:'Dans une note au client, énoncez votre conclusion dès la première phrase de la synthèse. Les analystes qui enterrent le constat perdent le lecteur avant même que les preuves n’apparaissent.'}, ar:{text:'في مذكرة للعميل، اذكر استنتاجك في الجملة الأولى من الملخص التنفيذي. المحللون الذين يدفنون النتيجة يفقدون القارئ قبل أن تظهر الأدلة أصلًا.'}}},
+  {text:'Every recommendation should answer "so what should we actually do." A finding without a recommendation is only half the job.', i18n:{fr:{text:'Chaque recommandation doit répondre à « donc que devrions-nous faire concrètement ». Un constat sans recommandation n’est que la moitié du travail.'}, ar:{text:'يجب أن تجيب كل توصية عن سؤال «إذن ماذا يجب أن نفعل فعليًا». النتيجة دون توصية ليست سوى نصف المهمة.'}}},
+  {text:'If you catch yourself writing "it depends," go one step further and say what it depends on — that’s usually the actual insight the client is paying for.', i18n:{fr:{text:'Si vous vous surprenez à écrire « ça dépend », allez plus loin et précisez de quoi cela dépend — c’est généralement l’analyse réelle pour laquelle le client paie.'}, ar:{text:'إذا وجدت نفسك تكتب «هذا يعتمد على...»، اذهب خطوة أبعد وحدّد على ماذا يعتمد — فهذا عادة هو الاستبصار الحقيقي الذي يدفع العميل مقابله.'}}}
 ];
 
 const REPORT_GUIDE = [
   {section:'Executive Summary', purpose:'Gives a busy reader the conclusion in the first ten seconds — before they\u2019ve seen a single number.',
    goodLooksLike:'Two to three sentences stating what\u2019s really going on and, in broad strokes, what to do about it.',
-   commonMistake:'Summarizing the process ("we reviewed the statements and calculated several ratios...") instead of stating the conclusion.'},
+   commonMistake:'Summarizing the process ("we reviewed the statements and calculated several ratios...") instead of stating the conclusion.',
+   i18n:{fr:{section:'Synthèse', purpose:'Donne au lecteur pressé la conclusion dans les dix premières secondes — avant même d’avoir vu un seul chiffre.',
+             goodLooksLike:'Deux à trois phrases indiquant ce qui se passe réellement et, à grands traits, ce qu’il faut faire.',
+             commonMistake:'Résumer le processus (« nous avons examiné les états et calculé plusieurs ratios... ») au lieu d’énoncer la conclusion.'},
+        ar:{section:'الملخص التنفيذي', purpose:'يمنح القارئ المشغول الاستنتاج في أول عشر ثوانٍ — قبل أن يرى رقمًا واحدًا.',
+             goodLooksLike:'جملتان إلى ثلاث تذكر ما يحدث فعليًا، وبخطوط عريضة، ما يجب فعله حياله.',
+             commonMistake:'تلخيص العملية ("راجعنا القوائم وحسبنا عدة نسب...") بدلًا من ذكر الاستنتاج.'}}},
   {section:'Key Findings', purpose:'Backs the conclusion with the two or three numbers that actually explain it.',
    goodLooksLike:'Specific figures and ratios, each tied clearly to why it matters for this client\u2019s situation.',
-   commonMistake:'Listing every ratio calculated, with no indication of which ones actually matter.'},
+   commonMistake:'Listing every ratio calculated, with no indication of which ones actually matter.',
+   i18n:{fr:{section:'Constats Clés', purpose:'Étaye la conclusion avec les deux ou trois chiffres qui l’expliquent réellement.',
+             goodLooksLike:'Des chiffres et ratios précis, chacun clairement relié à son importance pour la situation de ce client.',
+             commonMistake:'Lister tous les ratios calculés, sans indiquer lesquels comptent réellement.'},
+        ar:{section:'أبرز النتائج', purpose:'تدعم الاستنتاج بالرقمين أو الأرقام الثلاثة التي تفسره فعليًا.',
+             goodLooksLike:'أرقام ونسب محددة، كل منها مرتبط بوضوح بأهميته لوضع هذا العميل.',
+             commonMistake:'سرد كل نسبة تم حسابها، دون بيان أيها مهم فعليًا.'}}},
   {section:'Risk Areas', purpose:'Answers "what happens if nothing changes" — the downside case the client needs to see clearly.',
    goodLooksLike:'A specific scenario (e.g. "if receivables continue growing at this rate, cash runs out in roughly X months") rather than a vague warning.',
-   commonMistake:'Restating the findings in more alarming language without adding a concrete forward-looking risk.'},
+   commonMistake:'Restating the findings in more alarming language without adding a concrete forward-looking risk.',
+   i18n:{fr:{section:'Zones de Risque', purpose:'Répond à « que se passe-t-il si rien ne change » — le scénario défavorable que le client doit voir clairement.',
+             goodLooksLike:'Un scénario précis (par ex. « si les créances continuent de croître à ce rythme, la trésorerie s’épuise en environ X mois ») plutôt qu’un avertissement vague.',
+             commonMistake:'Reformuler les constats en des termes plus alarmants sans ajouter de risque prospectif concret.'},
+        ar:{section:'مجالات الخطر', purpose:'تجيب عن سؤال "ماذا يحدث إذا لم يتغير شيء" — السيناريو السلبي الذي يحتاج العميل لرؤيته بوضوح.',
+             goodLooksLike:'سيناريو محدد (مثل "إذا استمرت الذمم في النمو بهذا المعدل، سينفد النقد خلال نحو X أشهر") بدلًا من تحذير غامض.',
+             commonMistake:'إعادة صياغة النتائج بلغة أكثر إثارة للقلق دون إضافة خطر مستقبلي ملموس.'}}},
   {section:'Recommendations', purpose:'Tells the client exactly what to do next, in priority order.',
    goodLooksLike:'A short, prioritized list of specific, actionable steps — the first one clearly labeled as the most urgent.',
-   commonMistake:'Vague advice ("improve collections," "monitor costs") with no specific action, owner, or timeframe implied.'}
+   commonMistake:'Vague advice ("improve collections," "monitor costs") with no specific action, owner, or timeframe implied.',
+   i18n:{fr:{section:'Recommandations', purpose:'Indique au client exactement quoi faire ensuite, par ordre de priorité.',
+             goodLooksLike:'Une liste courte et hiérarchisée d’actions précises et réalisables — la première clairement identifiée comme la plus urgente.',
+             commonMistake:'Des conseils vagues (« améliorer le recouvrement », « surveiller les coûts ») sans action, responsable ou délai précis.'},
+        ar:{section:'التوصيات', purpose:'تخبر العميل بالضبط بما يجب فعله تاليًا، مرتبًا حسب الأولوية.',
+             goodLooksLike:'قائمة قصيرة ومرتبة حسب الأولوية بخطوات محددة وقابلة للتنفيذ — الأولى موسومة بوضوح كالأكثر إلحاحًا.',
+             commonMistake:'نصائح غامضة ("حسّن التحصيل"، "راقب التكاليف") دون إجراء أو مسؤول أو إطار زمني محدد.'}}}
 ];
 
 const STATEMENT_GUIDE = [
   {section:'Income Statement — Revenue through Gross Profit', meaning:'How much the business sold, what it cost to deliver directly, and what\u2019s left before overhead.',
-   watchFor:'Gross margin moving in either direction — it usually points straight at pricing, discounting, or input costs.'},
+   watchFor:'Gross margin moving in either direction — it usually points straight at pricing, discounting, or input costs.',
+   i18n:{fr:{section:'Compte de Résultat — Du Chiffre d’Affaires à la Marge Brute', meaning:'Combien l’entreprise a vendu, ce qu’il en a coûté directement à livrer, et ce qui reste avant les frais généraux.',
+             watchFor:'La marge brute évoluant dans un sens ou l’autre — cela pointe généralement directement vers la tarification, les remises, ou les coûts d’intrants.'},
+        ar:{section:'قائمة الدخل — من الإيرادات إلى الربح الإجمالي', meaning:'كم باعت الشركة، وما تكلفة تقديمه مباشرة، وما يتبقى قبل المصاريف العمومية.',
+             watchFor:'تحرك الهامش الإجمالي في أي اتجاه — عادة ما يشير مباشرة إلى التسعير، أو التخفيضات، أو تكاليف المدخلات.'}}},
   {section:'Income Statement — Operating Expenses through Operating Income', meaning:'The cost of running the business day-to-day, and what\u2019s left after covering both direct and indirect costs.',
-   watchFor:'Fixed costs (rent, salaries) growing faster than revenue — a classic operating leverage warning sign.'},
+   watchFor:'Fixed costs (rent, salaries) growing faster than revenue — a classic operating leverage warning sign.',
+   i18n:{fr:{section:'Compte de Résultat — Des Charges d’Exploitation au Résultat d’Exploitation', meaning:'Le coût de fonctionnement quotidien de l’entreprise, et ce qui reste après avoir couvert les coûts directs et indirects.',
+             watchFor:'Les coûts fixes (loyer, salaires) augmentant plus vite que le chiffre d’affaires — un signal d’alerte classique de l’effet de levier opérationnel.'},
+        ar:{section:'قائمة الدخل — من المصاريف التشغيلية إلى الدخل التشغيلي', meaning:'تكلفة تشغيل الشركة يوميًا، وما يتبقى بعد تغطية التكاليف المباشرة وغير المباشرة.',
+             watchFor:'ارتفاع التكاليف الثابتة (الإيجار، الرواتب) أسرع من الإيرادات — إشارة تحذير كلاسيكية للرافعة التشغيلية.'}}},
   {section:'Income Statement — Interest, Tax, Net Income', meaning:'What\u2019s left after financing costs and taxes — the bottom line most people look at first.',
-   watchFor:'Interest expense growing much faster than operating income — a sign leverage or rates are becoming a real drag.'},
+   watchFor:'Interest expense growing much faster than operating income — a sign leverage or rates are becoming a real drag.',
+   i18n:{fr:{section:'Compte de Résultat — Intérêts, Impôt, Résultat Net', meaning:'Ce qui reste après les coûts de financement et les impôts — le résultat final que la plupart des gens regardent en premier.',
+             watchFor:'Les charges d’intérêts augmentant bien plus vite que le résultat d’exploitation — un signe que l’endettement ou les taux deviennent un vrai frein.'},
+        ar:{section:'قائمة الدخل — الفوائد والضرائب وصافي الدخل', meaning:'ما يتبقى بعد تكاليف التمويل والضرائب — السطر الأخير الذي ينظر إليه معظم الناس أولًا.',
+             watchFor:'ارتفاع مصروف الفوائد أسرع بكثير من الدخل التشغيلي — إشارة إلى أن الرفع المالي أو أسعار الفائدة أصبحت عبئًا حقيقيًا.'}}},
   {section:'Balance Sheet — Assets', meaning:'Everything the business owns or is owed, from cash to receivables to buildings and equipment.',
-   watchFor:'Receivables or inventory growing faster than revenue — cash getting quietly tied up in operations.'},
+   watchFor:'Receivables or inventory growing faster than revenue — cash getting quietly tied up in operations.',
+   i18n:{fr:{section:'Bilan — Actif', meaning:'Tout ce que l’entreprise possède ou ce qui lui est dû, de la trésorerie aux créances en passant par les bâtiments et équipements.',
+             watchFor:'Les créances ou les stocks augmentant plus vite que le chiffre d’affaires — de la trésorerie discrètement immobilisée dans les opérations.'},
+        ar:{section:'الميزانية العمومية — الأصول', meaning:'كل ما تملكه الشركة أو ما هو مستحق لها، من النقد إلى الذمم إلى المباني والمعدات.',
+             watchFor:'نمو الذمم أو المخزون أسرع من الإيرادات — نقد يُحتجز بهدوء في العمليات.'}}},
   {section:'Balance Sheet — Liabilities', meaning:'Everything the business owes, from supplier bills due soon to long-term loans.',
-   watchFor:'Short-term debt growing to fund something that will take years to pay off — a maturity mismatch.'},
+   watchFor:'Short-term debt growing to fund something that will take years to pay off — a maturity mismatch.',
+   i18n:{fr:{section:'Bilan — Passif', meaning:'Tout ce que l’entreprise doit, des factures fournisseurs à échéance proche aux prêts à long terme.',
+             watchFor:'De la dette à court terme augmentant pour financer quelque chose qui prendra des années à rembourser — un décalage d’échéance.'},
+        ar:{section:'الميزانية العمومية — الخصوم', meaning:'كل ما تدين به الشركة، من فواتير الموردين المستحقة قريبًا إلى القروض طويلة الأجل.',
+             watchFor:'نمو الدين قصير الأجل لتمويل شيء سيستغرق سنوات لسداده — عدم تطابق في آجال الاستحقاق.'}}},
   {section:'Balance Sheet — Equity', meaning:'What\u2019s left for owners after subtracting liabilities from assets — retained profit plus contributed capital.',
-   watchFor:'Equity shrinking even while the company reports profit usually means large distributions or losses in a prior period.'},
+   watchFor:'Equity shrinking even while the company reports profit usually means large distributions or losses in a prior period.',
+   i18n:{fr:{section:'Bilan — Capitaux Propres', meaning:'Ce qui reste aux propriétaires après soustraction du passif de l’actif — le résultat non distribué plus le capital apporté.',
+             watchFor:'Des capitaux propres qui diminuent alors même que l’entreprise déclare un profit signifient généralement des distributions importantes ou des pertes lors d’une période antérieure.'},
+        ar:{section:'الميزانية العمومية — حقوق الملكية', meaning:'ما يتبقى للملاك بعد طرح الخصوم من الأصول — الأرباح المحتجزة مضافًا إليها رأس المال المساهم به.',
+             watchFor:'تقلص حقوق الملكية رغم إبلاغ الشركة عن ربح يعني عادة توزيعات كبيرة أو خسائر في فترة سابقة.'}}},
   {section:'Cash Flow — Operating', meaning:'Cash generated (or consumed) by the core business, adjusting net income for non-cash items and working capital changes.',
-   watchFor:'Negative operating cash flow alongside positive net income — almost always a working-capital story worth investigating first.'},
+   watchFor:'Negative operating cash flow alongside positive net income — almost always a working-capital story worth investigating first.',
+   i18n:{fr:{section:'Flux de Trésorerie — Exploitation', meaning:'La trésorerie générée (ou consommée) par l’activité principale, en ajustant le résultat net des éléments non monétaires et des variations de fonds de roulement.',
+             watchFor:'Un flux de trésorerie d’exploitation négatif accompagné d’un résultat net positif — presque toujours une histoire de fonds de roulement à examiner en premier.'},
+        ar:{section:'التدفق النقدي — التشغيل', meaning:'النقد المُولَّد (أو المُستهلَك) من النشاط الأساسي، بتعديل صافي الدخل للبنود غير النقدية وتغيرات رأس المال العامل.',
+             watchFor:'تدفق نقدي تشغيلي سالب مع صافي دخل إيجابي — يكاد يكون دائمًا قصة رأس مال عامل تستحق البحث أولًا.'}}},
   {section:'Cash Flow — Investing', meaning:'Cash spent on (or received from) long-term assets like equipment, property, or acquisitions.',
-   watchFor:'Heavy capital expenditure funded by short-term financing rather than matching long-term debt or equity.'},
+   watchFor:'Heavy capital expenditure funded by short-term financing rather than matching long-term debt or equity.',
+   i18n:{fr:{section:'Flux de Trésorerie — Investissement', meaning:'La trésorerie dépensée pour (ou reçue de) des actifs à long terme tels que l’équipement, l’immobilier, ou les acquisitions.',
+             watchFor:'Des dépenses d’investissement importantes financées par du financement à court terme plutôt que par de la dette à long terme ou des capitaux propres adaptés.'},
+        ar:{section:'التدفق النقدي — الاستثمار', meaning:'النقد المُنفَق على (أو المُحصَّل من) أصول طويلة الأجل مثل المعدات أو العقارات أو الاستحواذات.',
+             watchFor:'إنفاق رأسمالي كبير ممول بتمويل قصير الأجل بدلًا من دين طويل الأجل أو حقوق ملكية متناسبة.'}}},
   {section:'Cash Flow — Financing', meaning:'Cash raised from or returned to lenders and owners — new debt, debt repaid, capital raised, dividends paid.',
-   watchFor:'Distributions or dividends continuing at a stable level while operating cash flow is weakening.'}
+   watchFor:'Distributions or dividends continuing at a stable level while operating cash flow is weakening.',
+   i18n:{fr:{section:'Flux de Trésorerie — Financement', meaning:'La trésorerie levée auprès des prêteurs et propriétaires ou qui leur est retournée — nouvelle dette, dette remboursée, capital levé, dividendes versés.',
+             watchFor:'Des distributions ou dividendes qui se poursuivent à un niveau stable alors que le flux de trésorerie d’exploitation s’affaiblit.'},
+        ar:{section:'التدفق النقدي — التمويل', meaning:'النقد المُجمَّع من المُقرضين والملاك أو المُعاد إليهم — دين جديد، سداد دين، رأس مال مُجمَّع، توزيعات أرباح مدفوعة.',
+             watchFor:'استمرار التوزيعات أو الأرباح عند مستوى ثابت بينما يضعف التدفق النقدي التشغيلي.'}}}
 ];
 
 const CONTRACT_CLAUSES = [
-  {clause:'Scope of Work', meaning:'Defines exactly what analysis and deliverables are included — and, just as importantly, what isn\u2019t.'},
-  {clause:'Fee Structure & Payment Terms', meaning:'States how and when the analyst gets paid — fixed fee, hourly, or milestone-based — and what happens if payment is late.'},
-  {clause:'Deliverables & Timeline', meaning:'Specifies what will be handed over (reports, models, presentations) and by when.'},
-  {clause:'Confidentiality', meaning:'Protects the client\u2019s financial data from being shared or used outside the engagement.'},
-  {clause:'Limitation of Liability', meaning:'Caps the analyst\u2019s financial responsibility if something in the engagement goes wrong — standard in professional services.'},
-  {clause:'Termination Clause', meaning:'Explains how either party can end the engagement early, and what\u2019s owed if they do.'}
+  {clause:'Scope of Work', meaning:'Defines exactly what analysis and deliverables are included — and, just as importantly, what isn\u2019t.',
+   i18n:{fr:{clause:'Étendue des Travaux', meaning:'Définit exactement quelles analyses et livrables sont inclus — et, tout aussi important, ce qui ne l’est pas.'},
+        ar:{clause:'نطاق العمل', meaning:'يحدد بالضبط أي تحليلات ومخرجات مشمولة — وبنفس الأهمية، ما هو غير مشمول.'}}},
+  {clause:'Fee Structure & Payment Terms', meaning:'States how and when the analyst gets paid — fixed fee, hourly, or milestone-based — and what happens if payment is late.',
+   i18n:{fr:{clause:'Structure des Honoraires et Conditions de Paiement', meaning:'Précise comment et quand l’analyste est payé — forfait, taux horaire, ou par jalons — et ce qui se passe en cas de retard de paiement.'},
+        ar:{clause:'هيكل الأتعاب وشروط الدفع', meaning:'يوضح كيف ومتى يُدفع للمحلل — أتعاب ثابتة، أو بالساعة، أو حسب مراحل الإنجاز — وما يحدث في حال تأخر الدفع.'}}},
+  {clause:'Deliverables & Timeline', meaning:'Specifies what will be handed over (reports, models, presentations) and by when.',
+   i18n:{fr:{clause:'Livrables et Calendrier', meaning:'Précise ce qui sera remis (rapports, modèles, présentations) et à quelle échéance.'},
+        ar:{clause:'المخرجات والجدول الزمني', meaning:'يحدد ما سيتم تسليمه (تقارير، نماذج، عروض تقديمية) وبحلول متى.'}}},
+  {clause:'Confidentiality', meaning:'Protects the client\u2019s financial data from being shared or used outside the engagement.',
+   i18n:{fr:{clause:'Confidentialité', meaning:'Protège les données financières du client contre tout partage ou utilisation en dehors de la mission.'},
+        ar:{clause:'السرية', meaning:'تحمي بيانات العميل المالية من المشاركة أو الاستخدام خارج نطاق المهمة.'}}},
+  {clause:'Limitation of Liability', meaning:'Caps the analyst\u2019s financial responsibility if something in the engagement goes wrong — standard in professional services.',
+   i18n:{fr:{clause:'Limitation de Responsabilité', meaning:'Plafonne la responsabilité financière de l’analyste si quelque chose tourne mal dans la mission — une clause standard dans les services professionnels.'},
+        ar:{clause:'تحديد المسؤولية', meaning:'يحدد سقف المسؤولية المالية للمحلل إذا حدث خطأ ما في المهمة — أمر معتاد في الخدمات المهنية.'}}},
+  {clause:'Termination Clause', meaning:'Explains how either party can end the engagement early, and what\u2019s owed if they do.',
+   i18n:{fr:{clause:'Clause de Résiliation', meaning:'Explique comment chaque partie peut mettre fin à la mission de façon anticipée, et ce qui est dû le cas échéant.'},
+        ar:{clause:'بند الإنهاء', meaning:'يوضح كيف يمكن لأي طرف إنهاء المهمة مبكرًا، وما المستحق في حال حدوث ذلك.'}}}
 ];
 
 /* =========================================================
@@ -3239,12 +3348,12 @@ Store.load();
 const WORKSPACE_TABS = ['financials','ratios','diagnosis','toolkit','assumptions','report','advisory'];
 
 const RANKS = [
-  {min:0,    name:'Trainee Analyst'},
-  {min:200,  name:'Junior Analyst'},
-  {min:500,  name:'Analyst'},
-  {min:1000, name:'Senior Analyst'},
-  {min:1600, name:'Principal Analyst'},
-  {min:2200, name:'Partner-Track Analyst'}
+  {min:0,    name:'Trainee Analyst', i18n:{fr:{name:'Analyste Stagiaire'}, ar:{name:'محلل متدرب'}}},
+  {min:200,  name:'Junior Analyst', i18n:{fr:{name:'Analyste Junior'}, ar:{name:'محلل مبتدئ'}}},
+  {min:500,  name:'Analyst', i18n:{fr:{name:'Analyste'}, ar:{name:'محلل'}}},
+  {min:1000, name:'Senior Analyst', i18n:{fr:{name:'Analyste Senior'}, ar:{name:'محلل أول'}}},
+  {min:1600, name:'Principal Analyst', i18n:{fr:{name:'Analyste Principal'}, ar:{name:'محلل رئيسي'}}},
+  {min:2200, name:'Partner-Track Analyst', i18n:{fr:{name:'Analyste en Voie d’Association'}, ar:{name:'محلل في مسار الشراكة'}}}
 ];
 
 function rankForXP(xp){
@@ -3253,7 +3362,7 @@ function rankForXP(xp){
     if(xp >= RANKS[i].min) current = RANKS[i];
     else { next = RANKS[i]; break; }
   }
-  return {name:current.name, next, floor:current.min};
+  return {name:current.name, next, floor:current.min, obj:current};
 }
 
 function computeXP(){
@@ -3294,12 +3403,18 @@ function diagnosisCorrectStreak(){
 }
 
 const ACHIEVEMENTS = [
-  {id:'first_case', label:'First Case Closed', desc:'Complete your first case file.', test:()=>scenariosCompletedCount()>=1},
-  {id:'three_sectors', label:'Cross-Sector Analyst', desc:'Complete cases in three different sectors.', test:()=>sectorsCompletedCount()>=3},
-  {id:'five_cases', label:'Case Load', desc:'Complete five case files.', test:()=>scenariosCompletedCount()>=5},
-  {id:'all_cases', label:'Full Portfolio', desc:'Complete every case file in the library.', test:()=>scenariosCompletedCount()>=SCENARIOS.length},
-  {id:'sharp_eye', label:'Sharp Eye', desc:'Diagnose three cases correctly in a row, first try.', test:()=>diagnosisCorrectStreak()>=3},
-  {id:'senior_rank', label:'Senior Analyst', desc:'Reach Senior Analyst rank or higher.', test:()=>computeXP()>=1000}
+  {id:'first_case', label:'First Case Closed', desc:'Complete your first case file.', test:()=>scenariosCompletedCount()>=1,
+   i18n:{fr:{label:'Premier Cas Bouclé', desc:'Terminez votre premier dossier de cas.'}, ar:{label:'أول حالة مكتملة', desc:'أكمل ملف حالتك الأول.'}}},
+  {id:'three_sectors', label:'Cross-Sector Analyst', desc:'Complete cases in three different sectors.', test:()=>sectorsCompletedCount()>=3,
+   i18n:{fr:{label:'Analyste Multisectoriel', desc:'Terminez des cas dans trois secteurs différents.'}, ar:{label:'محلل متعدد القطاعات', desc:'أكمل حالات في ثلاثة قطاعات مختلفة.'}}},
+  {id:'five_cases', label:'Case Load', desc:'Complete five case files.', test:()=>scenariosCompletedCount()>=5,
+   i18n:{fr:{label:'Charge de Dossiers', desc:'Terminez cinq dossiers de cas.'}, ar:{label:'عبء الحالات', desc:'أكمل خمسة ملفات حالات.'}}},
+  {id:'all_cases', label:'Full Portfolio', desc:'Complete every case file in the library.', test:()=>scenariosCompletedCount()>=SCENARIOS.length,
+   i18n:{fr:{label:'Portefeuille Complet', desc:'Terminez tous les dossiers de cas de la bibliothèque.'}, ar:{label:'المحفظة الكاملة', desc:'أكمل كل ملفات الحالات في المكتبة.'}}},
+  {id:'sharp_eye', label:'Sharp Eye', desc:'Diagnose three cases correctly in a row, first try.', test:()=>diagnosisCorrectStreak()>=3,
+   i18n:{fr:{label:'Œil Aiguisé', desc:'Diagnostiquez correctement trois cas d’affilée, du premier coup.'}, ar:{label:'عين حادة', desc:'شخّص ثلاث حالات بشكل صحيح على التوالي من المحاولة الأولى.'}}},
+  {id:'senior_rank', label:'Senior Analyst', desc:'Reach Senior Analyst rank or higher.', test:()=>computeXP()>=1000,
+   i18n:{fr:{label:'Analyste Senior', desc:'Atteignez le rang d’Analyste Senior ou supérieur.'}, ar:{label:'محلل أول', desc:'بلوغ رتبة محلل أول أو أعلى.'}}}
 ];
 
 function updateXPBadge(){
@@ -3309,11 +3424,11 @@ function updateXPBadge(){
   const barEl = document.getElementById('xpBar');
   const numEl = document.getElementById('xpNum');
   if(!rankEl) return;
-  rankEl.textContent = r.name;
+  rankEl.textContent = L(r.obj,'name');
   const span = r.next ? (r.next.min - r.floor) : 1;
   const into = xp - r.floor;
   barEl.style.width = Math.min(100, (into/span*100)).toFixed(0) + '%';
-  numEl.textContent = xp + ' XP' + (r.next ? (' · ' + (r.next.min-xp) + ' to ' + r.next.name) : ' · Max rank');
+  numEl.textContent = r.next ? tf('xp.toNext', {xp:xp, remaining:(r.next.min-xp), rank:L(r.next,'name')}) : tf('xp.maxRank', {xp:xp});
 }
 
 function seededShuffle(arr, seedStr){
@@ -3816,8 +3931,8 @@ function wireFinancials(){
         data:{
           labels: sc.years,
           datasets:[
-            {label:'Revenue', data:[sc.income.y1.revenue, sc.income.y2.revenue], borderColor:'#4f8be6', backgroundColor:'rgba(79,139,230,0.15)', tension:0.25, fill:true},
-            {label:'Net Income', data:[i1.netIncome, i2.netIncome], borderColor:'#4f9d76', backgroundColor:'rgba(79,157,118,0.15)', tension:0.25, fill:true}
+            {label:tl('Revenue'), data:[sc.income.y1.revenue, sc.income.y2.revenue], borderColor:'#4f8be6', backgroundColor:'rgba(79,139,230,0.15)', tension:0.25, fill:true},
+            {label:tl('Net Income'), data:[i1.netIncome, i2.netIncome], borderColor:'#4f9d76', backgroundColor:'rgba(79,157,118,0.15)', tension:0.25, fill:true}
           ]
         },
         options:{
@@ -4069,14 +4184,14 @@ function commonSizeIncomeRows(sc){
   const y1 = sc.income.y1, y2 = sc.income.y2;
   const i1 = incomeTotals(y1), i2 = incomeTotals(y2);
   let rows = '';
-  rows += `<tr><td>Revenue</td><td>${pct(1)}</td><td>${pct(1)}</td></tr>`;
-  rows += `<tr class="indent"><td>COGS</td><td>${pct(y1.cogs/y1.revenue)}</td><td>${pct(y2.cogs/y2.revenue)}</td></tr>`;
-  rows += `<tr class="subtotal"><td>Gross Profit</td><td>${pct(i1.grossProfit/y1.revenue)}</td><td>${pct(i2.grossProfit/y2.revenue)}</td></tr>`;
+  rows += `<tr><td>${tl('Revenue')}</td><td>${pct(1)}</td><td>${pct(1)}</td></tr>`;
+  rows += `<tr class="indent"><td>${tl('COGS')}</td><td>${pct(y1.cogs/y1.revenue)}</td><td>${pct(y2.cogs/y2.revenue)}</td></tr>`;
+  rows += `<tr class="subtotal"><td>${tl('Gross Profit')}</td><td>${pct(i1.grossProfit/y1.revenue)}</td><td>${pct(i2.grossProfit/y2.revenue)}</td></tr>`;
   for(const k in y2.opex){
-    rows += `<tr class="indent"><td>${OPEX_LABELS[k]||k}</td><td>${pct(y1.opex[k]/y1.revenue)}</td><td>${pct(y2.opex[k]/y2.revenue)}</td></tr>`;
+    rows += `<tr class="indent"><td>${tl(OPEX_LABELS[k]||k)}</td><td>${pct(y1.opex[k]/y1.revenue)}</td><td>${pct(y2.opex[k]/y2.revenue)}</td></tr>`;
   }
-  rows += `<tr class="subtotal"><td>Operating Income</td><td>${pct(i1.operatingIncome/y1.revenue)}</td><td>${pct(i2.operatingIncome/y2.revenue)}</td></tr>`;
-  rows += `<tr class="grand"><td>Net Income</td><td>${pct(i1.netIncome/y1.revenue)}</td><td>${pct(i2.netIncome/y2.revenue)}</td></tr>`;
+  rows += `<tr class="subtotal"><td>${tl('Operating Income')}</td><td>${pct(i1.operatingIncome/y1.revenue)}</td><td>${pct(i2.operatingIncome/y2.revenue)}</td></tr>`;
+  rows += `<tr class="grand"><td>${tl('Net Income')}</td><td>${pct(i1.netIncome/y1.revenue)}</td><td>${pct(i2.netIncome/y2.revenue)}</td></tr>`;
   return rows;
 }
 
@@ -4090,9 +4205,9 @@ function commonSizeBalanceRows(sc){
   if(y1.unbilledAR||y2.unbilledAR) rows += line('Unbilled Receivables', y1.unbilledAR||0, y2.unbilledAR||0);
   if(y1.retentionReceivable||y2.retentionReceivable) rows += line('Retention Receivable', y1.retentionReceivable||0, y2.retentionReceivable||0);
   rows += line('Inventory', y1.inventory, y2.inventory);
-  rows += `<tr class="subtotal"><td>Total Current Assets</td><td>${pct(t1.totalCA/t1.totalAssets)}</td><td>${pct(t2.totalCA/t2.totalAssets)}</td></tr>`;
+  rows += `<tr class="subtotal"><td>${tl('Total Current Assets')}</td><td>${pct(t1.totalCA/t1.totalAssets)}</td><td>${pct(t2.totalCA/t2.totalAssets)}</td></tr>`;
   rows += line('PP&amp;E', y1.ppe, y2.ppe);
-  rows += `<tr class="grand"><td>Total Assets</td><td>${pct(1)}</td><td>${pct(1)}</td></tr>`;
+  rows += `<tr class="grand"><td>${tl('Total Assets')}</td><td>${pct(1)}</td><td>${pct(1)}</td></tr>`;
   rows += line('Accounts Payable', y1.ap, y2.ap);
   rows += line('Total Liabilities', t1.totalLiab, t2.totalLiab);
   rows += line('Total Equity', t1.equity, t2.equity);
@@ -4120,7 +4235,7 @@ function horizontalIncomeRows(sc){
 function sensitivityTableHTML(sc){
   const growthCols = [-10, 0, 10, 20, 30];
   const costRows = [-4, -2, 0, 2, 4];
-  let head = '<tr><th style="text-align:left;">COGS &Delta; \\ Growth</th>' + growthCols.map(g=>`<th>${g>=0?'+':''}${g}%</th>`).join('') + '</tr>';
+  let head = '<tr><th style="text-align:left;">' + t('ratio.sensAxisHeader') + '</th>' + growthCols.map(g=>`<th>${g>=0?'+':''}${g}%</th>`).join('') + '</tr>';
   let bodyRows = costRows.map(c=>{
     const cells = growthCols.map(g=>{
       const proj = proForma(sc, g, c, 0);
@@ -4140,31 +4255,31 @@ function viewToolkit(){
   if(toolkitTab==='commonsize'){
     body = `
       <div class="grid-2">
-        <div class="paper"><h3>Income Statement</h3><div class="paper-sub">% of revenue</div>
+        <div class="paper"><h3>${t('fin.titleIncome')}</h3><div class="paper-sub">${t('toolkit.pctOfRevenue')}</div>
           <table class="ledger"><tr><th></th><th>${sc.years[0]}</th><th>${sc.years[1]}</th></tr>${commonSizeIncomeRows(sc)}</table>
         </div>
-        <div class="paper"><h3>Balance Sheet</h3><div class="paper-sub">% of total assets</div>
+        <div class="paper"><h3>${t('fin.titleBalance')}</h3><div class="paper-sub">${t('toolkit.pctOfAssets')}</div>
           <table class="ledger"><tr><th></th><th>${sc.years[0]}</th><th>${sc.years[1]}</th></tr>${commonSizeBalanceRows(sc)}</table>
         </div>
       </div>
-      <div class="lesson-box"><b>Common-size (vertical) analysis:</b> restating every line as a percentage of revenue (or total assets) strips out scale, so you can compare cost structure year-over-year — or against a competitor of a different size — without dollar figures getting in the way.</div>
+      <div class="lesson-box"><b>${t('toolkit.commonSizeTitle')}</b> ${t('toolkit.commonSizeBody')}</div>
     `;
   } else if(toolkitTab==='horizontal'){
     body = `
       <div class="paper">
-        <h3>Income Statement — Horizontal Analysis</h3>
-        <div class="paper-sub">${sc.years[0]} vs ${sc.years[1]}, $000s</div>
-        <table class="ledger"><tr><th></th><th>${sc.years[0]}</th><th>${sc.years[1]}</th><th>$ Change</th><th>% Change</th></tr>${horizontalIncomeRows(sc)}</table>
+        <h3>${t('toolkit.horizontalTitle')}</h3>
+        <div class="paper-sub">${tf('toolkit.horizontalSub', {y1: sc.years[0], y2: sc.years[1]})}</div>
+        <table class="ledger"><tr><th></th><th>${sc.years[0]}</th><th>${sc.years[1]}</th><th>${t('toolkit.colDollarChange')}</th><th>${t('toolkit.colPctChange')}</th></tr>${horizontalIncomeRows(sc)}</table>
       </div>
-      <div class="lesson-box"><b>Horizontal analysis:</b> looking at the percentage change of every line, not just the ones you expect, often surfaces the real story — a small line that grew 200% can matter more than a big line that grew 5%.</div>
+      <div class="lesson-box"><b>${t('toolkit.horizontalLessonTitle')}</b> ${t('toolkit.horizontalLessonBody')}</div>
     `;
   } else {
     body = `
       <div class="card">
-        <h2>Net Income Sensitivity Table</h2>
-        <div class="card-sub">Next-period net income under different growth and COGS-ratio assumptions — the same "what-if" idea behind an Excel data table.</div>
+        <h2>${t('toolkit.sensitivityTitle')}</h2>
+        <div class="card-sub">${t('toolkit.sensitivitySub')}</div>
         ${sensitivityTableHTML(sc)}
-        <div class="lesson-box"><b>Reading this table:</b> find today's actual result, then look at how far a plausible swing in either direction moves net income. A business that flips from profit to loss with a small, realistic cost swing has thin margin for error — worth calling out explicitly in your report.</div>
+        <div class="lesson-box"><b>${t('toolkit.sensitivityLessonTitle')}</b> ${t('toolkit.sensitivityLessonBody')}</div>
       </div>
     `;
   }
@@ -4172,13 +4287,13 @@ function viewToolkit(){
   return `
     ${caseHeaderHTML(sc)}
     <div class="subtabs">
-      <button class="subtab ${toolkitTab==='commonsize'?'active':''}" data-tk="commonsize">Common-Size Statements</button>
-      <button class="subtab ${toolkitTab==='horizontal'?'active':''}" data-tk="horizontal">Horizontal Analysis</button>
-      <button class="subtab ${toolkitTab==='sensitivity'?'active':''}" data-tk="sensitivity">Sensitivity Table</button>
+      <button class="subtab ${toolkitTab==='commonsize'?'active':''}" data-tk="commonsize">${t('toolkit.tabCommonsize')}</button>
+      <button class="subtab ${toolkitTab==='horizontal'?'active':''}" data-tk="horizontal">${t('toolkit.tabHorizontal')}</button>
+      <button class="subtab ${toolkitTab==='sensitivity'?'active':''}" data-tk="sensitivity">${t('toolkit.tabSensitivity')}</button>
     </div>
     ${body}
     <div style="display:flex;justify-content:flex-end;" class="no-print">
-      <button class="btn primary" id="toAssumptionsBtn2">Continue to Assumptions Model &rarr;</button>
+      <button class="btn primary" id="toAssumptionsBtn2">${t('toolkit.continueAssumptions')}</button>
     </div>
   `;
 }
@@ -4205,21 +4320,21 @@ function viewAssumptions(){
   return `
     ${caseHeaderHTML(sc)}
     <div class="card">
-      <h2>Build Your Own Next-Period Model</h2>
-      <div class="card-sub">Adjust assumptions and watch ${sc.years[1]} recalculate into a ${sc.years[1]}+1 projection. This is how analysts stress-test a plan before presenting it.</div>
+      <h2>${t('assump.title')}</h2>
+      <div class="card-sub">${tf('assump.sub', {year: sc.years[1]})}</div>
 
       <div class="slider-row">
-        <label>Revenue growth</label>
+        <label>${t('assump.revenueGrowth')}</label>
         <input type="range" id="sGrowth" min="-20" max="40" value="${assumptions.growth}">
         <div class="sval" id="vGrowth">${assumptions.growth}%</div>
       </div>
       <div class="slider-row">
-        <label>COGS ratio change (pts)</label>
+        <label>${t('assump.cogsRatioChange')}</label>
         <input type="range" id="sCogs" min="-10" max="10" value="${assumptions.cogsDelta}">
         <div class="sval" id="vCogs">${assumptions.cogsDelta>=0?'+':''}${assumptions.cogsDelta}</div>
       </div>
       <div class="slider-row">
-        <label>Operating expense change</label>
+        <label>${t('assump.opexChangeLabel')}</label>
         <input type="range" id="sOpex" min="-15" max="25" value="${assumptions.opexChange}">
         <div class="sval" id="vOpex">${assumptions.opexChange>=0?'+':''}${assumptions.opexChange}%</div>
       </div>
@@ -4227,7 +4342,7 @@ function viewAssumptions(){
       <div id="projPanel"></div>
     </div>
     <div style="display:flex;justify-content:flex-end;" class="no-print">
-      <button class="btn primary" id="toReportBtn">Continue to Report Builder &rarr;</button>
+      <button class="btn primary" id="toReportBtn">${t('assump.continueReport')}</button>
     </div>
   `;
 }
@@ -4237,31 +4352,31 @@ function projPanelHTML(sc, proj){
   return `
     <div class="grid-2" style="margin-top:16px;">
       <div class="paper">
-        <h3>${sc.years[1]} — Actual</h3>
-        <div class="paper-sub">Baseline</div>
+        <h3>${tf('assump.actualHeader', {year: sc.years[1]})}</h3>
+        <div class="paper-sub">${t('assump.baseline')}</div>
         <table class="ledger">
-          <tr><td>Revenue</td><td>${fmt(sc.income.y2.revenue)}</td></tr>
-          <tr><td>COGS</td><td>${fmt(-sc.income.y2.cogs)}</td></tr>
-          <tr class="subtotal"><td>Gross Profit</td><td>${fmt(actual.grossProfit)}</td></tr>
-          <tr><td>Operating Expenses</td><td>${fmt(-actual.opexTotal)}</td></tr>
-          <tr class="subtotal"><td>Operating Income</td><td>${fmt(actual.operatingIncome)}</td></tr>
-          <tr class="grand"><td>Net Income</td><td>${fmt(actual.netIncome)}</td></tr>
+          <tr><td>${tl('Revenue')}</td><td>${fmt(sc.income.y2.revenue)}</td></tr>
+          <tr><td>${tl('COGS')}</td><td>${fmt(-sc.income.y2.cogs)}</td></tr>
+          <tr class="subtotal"><td>${tl('Gross Profit')}</td><td>${fmt(actual.grossProfit)}</td></tr>
+          <tr><td>${tl('Operating Expenses')}</td><td>${fmt(-actual.opexTotal)}</td></tr>
+          <tr class="subtotal"><td>${tl('Operating Income')}</td><td>${fmt(actual.operatingIncome)}</td></tr>
+          <tr class="grand"><td>${tl('Net Income')}</td><td>${fmt(actual.netIncome)}</td></tr>
         </table>
       </div>
       <div class="paper">
-        <h3>Next Period — Projected</h3>
-        <div class="paper-sub">Based on your assumptions</div>
+        <h3>${t('assump.projectedHeader')}</h3>
+        <div class="paper-sub">${t('assump.basedOnAssumptions')}</div>
         <table class="ledger">
-          <tr><td>Revenue</td><td>${fmt(proj.revenue)}</td></tr>
-          <tr><td>COGS</td><td>${fmt(-proj.cogs)}</td></tr>
-          <tr class="subtotal"><td>Gross Profit</td><td>${fmt(proj.grossProfit)}</td></tr>
-          <tr><td>Operating Expenses</td><td>${fmt(-proj.opexTotal)}</td></tr>
-          <tr class="subtotal"><td>Operating Income</td><td>${fmt(proj.operatingIncome)}</td></tr>
-          <tr class="grand"><td>Net Income</td><td>${fmt(proj.netIncome)}</td></tr>
+          <tr><td>${tl('Revenue')}</td><td>${fmt(proj.revenue)}</td></tr>
+          <tr><td>${tl('COGS')}</td><td>${fmt(-proj.cogs)}</td></tr>
+          <tr class="subtotal"><td>${tl('Gross Profit')}</td><td>${fmt(proj.grossProfit)}</td></tr>
+          <tr><td>${tl('Operating Expenses')}</td><td>${fmt(-proj.opexTotal)}</td></tr>
+          <tr class="subtotal"><td>${tl('Operating Income')}</td><td>${fmt(proj.operatingIncome)}</td></tr>
+          <tr class="grand"><td>${tl('Net Income')}</td><td>${fmt(proj.netIncome)}</td></tr>
         </table>
       </div>
     </div>
-    <div class="lesson-box"><b>Net income change:</b> ${fmtSigned(proj.netIncome-actual.netIncome)} vs actual (${pct((proj.netIncome-actual.netIncome)/Math.abs(actual.netIncome||1),1)}). Try isolating one lever at a time — move only revenue growth first, then only costs — to see which assumption the outcome is most sensitive to.</div>
+    <div class="lesson-box"><b>${t('assump.netIncomeChangeTitle')}</b> ${tf('assump.netIncomeChangeBody', {delta: fmtSigned(proj.netIncome-actual.netIncome), pctDelta: pct((proj.netIncome-actual.netIncome)/Math.abs(actual.netIncome||1),1)})}</div>
   `;
 }
 
@@ -4303,47 +4418,47 @@ function viewReport(){
   return `
     ${caseHeaderHTML(sc)}
     <div class="card no-print">
-      <h2>Report Builder</h2>
-      <div class="card-sub">Write this as if it's going to the client named in the brief. Saved automatically as you type.</div>
+      <h2>${t('nav.report')}</h2>
+      <div class="card-sub">${t('rpt.sub')}</div>
 
       <div class="field">
-        <label>Executive Summary</label>
-        <textarea id="repSummary" placeholder="State your conclusion in 2-3 sentences. What's really going on, in plain terms?">${esc(rp.execSummary)}</textarea>
-        <div class="hint">Guided prompt: If the client only read this paragraph, would they understand the core issue and what to do about it?</div>
+        <label>${t('rpt.execSummary')}</label>
+        <textarea id="repSummary" placeholder="${t('rpt.execPh')}">${esc(rp.execSummary)}</textarea>
+        <div class="hint">${t('rpt.execHint')}</div>
       </div>
       <div class="field">
-        <label>Key Findings</label>
-        <textarea id="repFindings" placeholder="What does the data actually show? Cite specific figures and ratios.">${esc(rp.keyFindings)}</textarea>
-        <div class="hint">Guided prompt: Which two or three numbers most explain the situation?</div>
+        <label>${t('rpt.keyFindings')}</label>
+        <textarea id="repFindings" placeholder="${t('rpt.findingsPh')}">${esc(rp.keyFindings)}</textarea>
+        <div class="hint">${t('rpt.findingsHint')}</div>
       </div>
       <div class="field">
-        <label>Risk Areas</label>
-        <textarea id="repRisks" placeholder="What could go wrong if nothing changes? What's the downside scenario?">${esc(rp.risks)}</textarea>
-        <div class="hint">Guided prompt: Is this a liquidity problem, a profitability problem, a leverage problem — or more than one?</div>
+        <label>${t('rpt.riskAreas')}</label>
+        <textarea id="repRisks" placeholder="${t('rpt.risksPh')}">${esc(rp.risks)}</textarea>
+        <div class="hint">${t('rpt.risksHint')}</div>
       </div>
       <div class="field">
-        <label>Recommendations</label>
-        <textarea id="repRecs" placeholder="What should the client actually do next? Be specific and prioritized.">${esc(rp.recommendations)}</textarea>
-        <div class="hint">Guided prompt: What's the single most important action, and what would you do second?</div>
+        <label>${t('rpt.recommendations')}</label>
+        <textarea id="repRecs" placeholder="${t('rpt.recsPh')}">${esc(rp.recommendations)}</textarea>
+        <div class="hint">${t('rpt.recsHint')}</div>
       </div>
 
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn small" id="btnCopyReport">Copy Report to Clipboard</button>
-        <button class="btn small" id="btnPrintReport">Print / Save as PDF</button>
+        <button class="btn small" id="btnCopyReport">${t('rpt.copyBtn')}</button>
+        <button class="btn small" id="btnPrintReport">${t('rpt.printBtn')}</button>
       </div>
     </div>
 
     <div class="paper" id="printableReport">
-      <h3>${esc(sc.name)} — Analyst Report</h3>
-      <div class="paper-sub">Prepared for engagement review</div>
-      <div style="margin-bottom:14px;"><b>Executive Summary</b><br>${esc(rp.execSummary)||'<i>Not yet written.</i>'}</div>
-      <div style="margin-bottom:14px;"><b>Key Findings</b><br>${esc(rp.keyFindings)||'<i>Not yet written.</i>'}</div>
-      <div style="margin-bottom:14px;"><b>Risk Areas</b><br>${esc(rp.risks)||'<i>Not yet written.</i>'}</div>
-      <div><b>Recommendations</b><br>${esc(rp.recommendations)||'<i>Not yet written.</i>'}</div>
+      <h3>${tf('rpt.analystReportTitle', {name: esc(sc.name)})}</h3>
+      <div class="paper-sub">${t('rpt.preparedFor')}</div>
+      <div style="margin-bottom:14px;"><b>${t('rpt.execSummary')}</b><br>${esc(rp.execSummary)||('<i>'+t('rpt.notYetWritten')+'</i>')}</div>
+      <div style="margin-bottom:14px;"><b>${t('rpt.keyFindings')}</b><br>${esc(rp.keyFindings)||('<i>'+t('rpt.notYetWritten')+'</i>')}</div>
+      <div style="margin-bottom:14px;"><b>${t('rpt.riskAreas')}</b><br>${esc(rp.risks)||('<i>'+t('rpt.notYetWritten')+'</i>')}</div>
+      <div><b>${t('rpt.recommendations')}</b><br>${esc(rp.recommendations)||('<i>'+t('rpt.notYetWritten')+'</i>')}</div>
     </div>
 
     <div style="display:flex;justify-content:flex-end;" class="no-print">
-      <button class="btn primary" id="toAdvisoryBtn">Continue to Client Advisory &rarr;</button>
+      <button class="btn primary" id="toAdvisoryBtn">${t('rpt.continueAdvisory')}</button>
     </div>
   `;
 }
@@ -4362,13 +4477,14 @@ function wireReport(){
   function refreshPrintable(){
     const box = document.getElementById('printableReport');
     if(!box) return;
+    const notYet = '<i>'+t('rpt.notYetWritten')+'</i>';
     box.innerHTML = `
-      <h3>${esc(sc.name)} — Analyst Report</h3>
-      <div class="paper-sub">Prepared for engagement review</div>
-      <div style="margin-bottom:14px;"><b>Executive Summary</b><br>${esc(rec.report.execSummary)||'<i>Not yet written.</i>'}</div>
-      <div style="margin-bottom:14px;"><b>Key Findings</b><br>${esc(rec.report.keyFindings)||'<i>Not yet written.</i>'}</div>
-      <div style="margin-bottom:14px;"><b>Risk Areas</b><br>${esc(rec.report.risks)||'<i>Not yet written.</i>'}</div>
-      <div><b>Recommendations</b><br>${esc(rec.report.recommendations)||'<i>Not yet written.</i>'}</div>
+      <h3>${tf('rpt.analystReportTitle', {name: esc(sc.name)})}</h3>
+      <div class="paper-sub">${t('rpt.preparedFor')}</div>
+      <div style="margin-bottom:14px;"><b>${t('rpt.execSummary')}</b><br>${esc(rec.report.execSummary)||notYet}</div>
+      <div style="margin-bottom:14px;"><b>${t('rpt.keyFindings')}</b><br>${esc(rec.report.keyFindings)||notYet}</div>
+      <div style="margin-bottom:14px;"><b>${t('rpt.riskAreas')}</b><br>${esc(rec.report.risks)||notYet}</div>
+      <div><b>${t('rpt.recommendations')}</b><br>${esc(rec.report.recommendations)||notYet}</div>
     `;
   }
   bind('repSummary','execSummary');
@@ -4378,11 +4494,11 @@ function wireReport(){
 
   document.getElementById('btnCopyReport').addEventListener('click', ()=>{
     const r = rec.report;
-    const text = `${sc.name} — Analyst Report\n\nExecutive Summary\n${r.execSummary}\n\nKey Findings\n${r.keyFindings}\n\nRisk Areas\n${r.risks}\n\nRecommendations\n${r.recommendations}`;
+    const text = tf('rpt.analystReportTitle', {name: sc.name})+'\n\n'+t('rpt.execSummary')+'\n'+r.execSummary+'\n\n'+t('rpt.keyFindings')+'\n'+r.keyFindings+'\n\n'+t('rpt.riskAreas')+'\n'+r.risks+'\n\n'+t('rpt.recommendations')+'\n'+r.recommendations;
     if(navigator.clipboard){
-      navigator.clipboard.writeText(text).then(()=>showToast('Report copied to clipboard'));
+      navigator.clipboard.writeText(text).then(()=>showToast(t('rpt.copiedToast')));
     } else {
-      showToast('Clipboard not available in this browser');
+      showToast(t('rpt.noClipboardToast'));
     }
   });
   document.getElementById('btnPrintReport').addEventListener('click', ()=> window.print());
@@ -4561,7 +4677,7 @@ function contractIllustrationSVG(){
       <rect x="80" y="202" width="140" height="6" rx="2" fill="var(--paper-ink-soft)" opacity="0.35"/>
       <path d="M80 240 q18 -14 36 0 t36 0 t36 0" fill="none" stroke="var(--green-deep)" stroke-width="2.5" stroke-linecap="round"/>
       <line x1="80" y1="252" x2="220" y2="252" stroke="var(--paper-ink-soft)" stroke-width="1" opacity="0.5"/>
-      <text x="80" y="266" font-family="var(--sans)" font-size="8" fill="var(--paper-ink-soft)">Authorized Signature</text>
+      <text x="80" y="266" font-family="var(--sans)" font-size="8" fill="var(--paper-ink-soft)">${t('trainer.authorizedSignature')}</text>
     </g>
     <g transform="rotate(8 330 230)">
       <circle cx="330" cy="230" r="34" fill="var(--brass)" opacity="0.92"/>
@@ -4576,8 +4692,9 @@ function viewAdvisory(){
   const sc = currentScenario();
   if(!sc){ State.view='select'; return viewSelect(); }
   const rec = Store.scenario(sc.id);
+  const clientQ = L(sc,'clientQuestions');
 
-  const blocks = sc.clientQuestions.map((cq, idx)=>{
+  const blocks = clientQ.map((cq, idx)=>{
     if(!rec.advisory[idx]) rec.advisory[idx] = {answer:'', checks:cq.rubric.map(()=>false), revealed:false};
     const a = rec.advisory[idx];
     const checkItems = cq.rubric.map((r,ri)=>`
@@ -4587,15 +4704,15 @@ function viewAdvisory(){
       </label>`).join('');
     return `
     <div class="card">
-      <h2>Question ${idx+1}</h2>
+      <h2>${tf('adv.questionLabel', {n: idx+1})}</h2>
       <div class="card-sub">"${esc(cq.q)}"</div>
       <div class="field">
-        <label>Your answer</label>
-        <textarea data-answer="${idx}" placeholder="Answer as if you're in the room with the client.">${esc(a.answer)}</textarea>
+        <label>${t('adv.yourAnswer')}</label>
+        <textarea data-answer="${idx}" placeholder="${t('adv.answerPh')}">${esc(a.answer)}</textarea>
       </div>
-      <button class="btn small" data-reveal="${idx}">${a.revealed?'Hide':'Show'} self-check rubric</button>
+      <button class="btn small" data-reveal="${idx}">${a.revealed?t('adv.hideRubric'):t('adv.showRubric')}</button>
       <div class="rubric-panel" data-panel="${idx}" style="${a.revealed?'':'display:none;'} margin-top:14px;">
-        <div class="card-sub" style="margin-bottom:8px;">Tick what your answer actually covered — be honest, this is for you.</div>
+        <div class="card-sub" style="margin-bottom:8px;">${t('adv.tickHonest')}</div>
         ${checkItems}
       </div>
     </div>`;
@@ -4604,10 +4721,10 @@ function viewAdvisory(){
   return `
     ${caseHeaderHTML(sc)}
     <div class="card" style="text-align:center;padding-top:10px;">${meetingIllustrationSVG()}</div>
-    <div class="lesson-box"><b>How this works:</b> answer each question the way you would in a real client meeting, then reveal the rubric and self-grade honestly. The goal is calibration, not a perfect score.</div>
+    <div class="lesson-box"><b>${t('adv.howWorksTitle')}</b> ${t('adv.howWorksBody')}</div>
     ${blocks}
     <div style="display:flex;justify-content:flex-end;" class="no-print">
-      <button class="btn primary" id="toDebriefBtn">Continue to Session Debrief &rarr;</button>
+      <button class="btn primary" id="toDebriefBtn">${t('adv.continueDebrief')}</button>
     </div>
   `;
 }
@@ -4651,19 +4768,13 @@ function wireAdvisory(){
 }
 
 /* ---------- SESSION DEBRIEF ---------- */
-const VIEW_LABELS = {
-  financials:'Financial Statements', ratios:'Ratios & Frameworks', diagnosis:'Diagnose the Problem',
-  toolkit:'Analyst Toolkit', assumptions:'Assumptions Model',
-  report:'Report Builder', advisory:'Client Advisory', debrief:'Session Debrief'
-};
-
 function viewDebrief(){
   const sc = currentScenario();
   if(!sc){ State.view='select'; return viewSelect(); }
   const rec = Store.scenario(sc.id);
 
   const visitedPills = ['financials','ratios','diagnosis','toolkit','assumptions','report','advisory'].map(v=>
-    `<span class="pill ${rec.visited[v]?'on':''}">${rec.visited[v]?'&#10003; ':''}${VIEW_LABELS[v]}</span>`
+    `<span class="pill ${rec.visited[v]?'on':''}">${rec.visited[v]?'&#10003; ':''}${t('nav.'+v)}</span>`
   ).join(' ');
 
   let totalChecked=0, totalItems=0;
@@ -4672,49 +4783,50 @@ function viewDebrief(){
     totalChecked += a.checks.filter(Boolean).length;
   });
   const selfScorePct = totalItems ? (totalChecked/totalItems) : 0;
+  const diagStatus = rec.diagnosis.submitted ? (rec.diagnosis.correct ? t('debrief.diagCorrectMsg') : t('debrief.diagWrongMsg')) : t('debrief.diagNotAttempted');
 
   return `
     ${caseHeaderHTML(sc)}
     <div class="card">
-      <h2>Approach Taken</h2>
-      <div class="card-sub">Workspace areas you used during this session</div>
+      <h2>${t('debrief.approachTitle')}</h2>
+      <div class="card-sub">${t('debrief.approachSub')}</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">${visitedPills}</div>
     </div>
 
     <div class="card">
-      <h2>Your Report Recap</h2>
-      <div style="margin-bottom:12px;"><b>Executive Summary</b><div class="card-sub" style="color:var(--text-soft);">${esc(rec.report.execSummary)||'Not written.'}</div></div>
-      <div style="margin-bottom:12px;"><b>Recommendations</b><div class="card-sub" style="color:var(--text-soft);">${esc(rec.report.recommendations)||'Not written.'}</div></div>
+      <h2>${t('debrief.reportRecapTitle')}</h2>
+      <div style="margin-bottom:12px;"><b>${t('rpt.execSummary')}</b><div class="card-sub" style="color:var(--text-soft);">${esc(rec.report.execSummary)||t('debrief.notWritten')}</div></div>
+      <div style="margin-bottom:12px;"><b>${t('rpt.recommendations')}</b><div class="card-sub" style="color:var(--text-soft);">${esc(rec.report.recommendations)||t('debrief.notWritten')}</div></div>
     </div>
 
     <div class="card">
-      <h2>Diagnosis Result</h2>
-      <div class="card-sub">${rec.diagnosis.submitted ? (rec.diagnosis.correct ? 'You identified the core issue correctly on your first attempt.' : 'Your first pick wasn\'t the core issue — worth re-reading the model summary below.') : 'Not attempted yet.'}</div>
+      <h2>${t('debrief.diagnosisResultTitle')}</h2>
+      <div class="card-sub">${diagStatus}</div>
     </div>
 
     <div class="card">
-      <h2>Client Advisory Self-Score</h2>
-      <div class="card-sub">${totalChecked} of ${totalItems} rubric points self-checked across ${sc.clientQuestions.length} questions</div>
+      <h2>${t('debrief.selfScoreTitle')}</h2>
+      <div class="card-sub">${tf('debrief.selfScoreSub', {checked: totalChecked, total: totalItems, q: L(sc,'clientQuestions').length})}</div>
       <div class="pbar" style="height:14px;"><div style="width:${(selfScorePct*100).toFixed(0)}%;"></div></div>
     </div>
 
     <div class="card">
-      <h2>How a Senior Analyst Would Frame This Case</h2>
-      <div class="card-sub">Read this after writing your own report — not before. Compare, don't copy.</div>
-      <div class="lesson-box">${esc(sc.modelSummary)}</div>
+      <h2>${t('debrief.seniorFrameTitle')}</h2>
+      <div class="card-sub">${t('debrief.seniorFrameSub')}</div>
+      <div class="lesson-box">${esc(L(sc,'modelSummary'))}</div>
     </div>
 
     <div class="card">
-      <h2>Reflection</h2>
+      <h2>${t('debrief.reflectionTitle')}</h2>
       <div class="field">
-        <label>What would you do differently next time?</label>
-        <textarea id="reflectBox" placeholder="What did the model summary catch that you missed? What would you check first next time?">${esc(rec.reflection)}</textarea>
+        <label>${t('debrief.reflectionLabel')}</label>
+        <textarea id="reflectBox" placeholder="${t('debrief.reflectionPh')}">${esc(rec.reflection)}</textarea>
       </div>
     </div>
 
     <div style="display:flex; justify-content:space-between;">
-      <button class="btn" id="backToSelect">&larr; Choose Another Case</button>
-      <button class="btn primary" id="viewProgressBtn">View Overall Progress &rarr;</button>
+      <button class="btn" id="backToSelect">${t('debrief.backToSelect')}</button>
+      <button class="btn primary" id="viewProgressBtn">${t('debrief.viewProgress')}</button>
     </div>
   `;
 }
@@ -4738,56 +4850,56 @@ function viewTrainer(){
   if(trainerTab==='lessons'){
     body = LESSONS.map(l=>`
       <div class="card">
-        <h2>${esc(l.title)}</h2>
-        <div class="card-sub" style="color:var(--text-soft); font-size:13.5px; line-height:1.6;">${esc(l.body)}</div>
+        <h2>${esc(L(l,'title'))}</h2>
+        <div class="card-sub" style="color:var(--text-soft); font-size:13.5px; line-height:1.6;">${esc(L(l,'body'))}</div>
       </div>`).join('');
   } else if(trainerTab==='glossary'){
     body = `
-      <input type="text" class="search-box" id="glossSearch" placeholder="Search terms, e.g. 'coverage' or 'margin'...">
+      <input type="text" class="search-box" id="glossSearch" placeholder="${t('trainer.glossarySearchPh')}">
       <div id="glossList"></div>
     `;
   } else if(trainerTab==='tips'){
     body = `
       <div class="card">
-        <h2>Tips &amp; Tricks</h2>
-        <div class="card-sub">Rules of thumb worth having memorized before you're in front of a client</div>
-        ${TIPS.map(t=>`<div class="lesson-box" style="margin:10px 0;">${esc(t)}</div>`).join('')}
+        <h2>${t('trainer.tipsTitle')}</h2>
+        <div class="card-sub">${t('trainer.tipsSub')}</div>
+        ${TIPS.map(tip=>`<div class="lesson-box" style="margin:10px 0;">${esc(L(tip,'text'))}</div>`).join('')}
       </div>
     `;
   } else if(trainerTab==='guide'){
     body = `
       <div class="card">
-        <h2>Understanding a Report, Section by Section</h2>
-        <div class="card-sub">What each part of an analyst report is actually for — and how to tell a strong one from a weak one</div>
+        <h2>${t('trainer.guideReportTitle')}</h2>
+        <div class="card-sub">${t('trainer.guideReportSub')}</div>
         ${REPORT_GUIDE.map(g=>`
           <div class="gloss-item">
-            <dt>${esc(g.section)}</dt>
-            <dd><b>Purpose:</b> ${esc(g.purpose)}<br>
-                <b>A strong version:</b> ${esc(g.goodLooksLike)}<br>
-                <b>Common mistake:</b> ${esc(g.commonMistake)}</dd>
+            <dt>${esc(L(g,'section'))}</dt>
+            <dd><b>${t('trainer.purposeLabel')}</b> ${esc(L(g,'purpose'))}<br>
+                <b>${t('trainer.strongVersionLabel')}</b> ${esc(L(g,'goodLooksLike'))}<br>
+                <b>${t('trainer.commonMistakeLabel')}</b> ${esc(L(g,'commonMistake'))}</dd>
           </div>
         `).join('')}
       </div>
       <div class="card">
-        <h2>Understanding a Financial Statement, Section by Section</h2>
-        <div class="card-sub">What each block of numbers means and what to watch for in it</div>
+        <h2>${t('trainer.guideStatementTitle')}</h2>
+        <div class="card-sub">${t('trainer.guideStatementSub')}</div>
         ${STATEMENT_GUIDE.map(g=>`
           <div class="gloss-item">
-            <dt>${esc(g.section)}</dt>
-            <dd>${esc(g.meaning)}<span class="gloss-formula">Watch for: ${esc(g.watchFor)}</span></dd>
+            <dt>${esc(L(g,'section'))}</dt>
+            <dd>${esc(L(g,'meaning'))}<span class="gloss-formula">${t('trainer.watchForLabel')} ${esc(L(g,'watchFor'))}</span></dd>
           </div>
         `).join('')}
       </div>
       <div class="card">
-        <h2>Reading a Client Engagement Letter</h2>
-        <div class="card-sub">Understanding analyst work isn't just about numbers — it starts with the contract that sets the terms of the engagement</div>
+        <h2>${t('trainer.guideContractTitle')}</h2>
+        <div class="card-sub">${t('trainer.guideContractSub')}</div>
         <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start;">
           <div class="illo-sm" style="flex-shrink:0;">${contractIllustrationSVG()}</div>
           <div style="flex:1; min-width:260px;">
             ${CONTRACT_CLAUSES.map(c=>`
               <div class="gloss-item">
-                <dt>${esc(c.clause)}</dt>
-                <dd>${esc(c.meaning)}</dd>
+                <dt>${esc(L(c,'clause'))}</dt>
+                <dd>${esc(L(c,'meaning'))}</dd>
               </div>
             `).join('')}
           </div>
@@ -4796,14 +4908,14 @@ function viewTrainer(){
     `;
   } else if(trainerTab==='playbook'){
     body = `
-      <div class="lesson-box"><b>How to use this:</b> each entry below is a full course on one recurring situation — when it shows up, what's actually driving it, and the exact steps to work through before you write a recommendation. Keel Assistant links straight to these from any flagged insight on your own client data.</div>
+      <div class="lesson-box"><b>${t('trainer.playbookIntroTitle')}</b> ${t('trainer.playbookIntroBody')}</div>
       ${PLAYBOOK.map((p,idx)=>`
         <div class="card">
-          <h2>${esc(p.title)}</h2>
-          <div class="card-sub">${esc(p.whenToUse)}</div>
-          <button class="btn small" data-pbcourse="${idx}">Show the steps</button>
+          <h2>${esc(L(p,'title'))}</h2>
+          <div class="card-sub">${esc(L(p,'whenToUse'))}</div>
+          <button class="btn small" data-pbcourse="${idx}">${t('trainer.showSteps')}</button>
           <ol class="playbook-steps" id="pbCourse${idx}" style="display:none;">
-            ${p.steps.map(s=>`<li>${esc(s)}</li>`).join('')}
+            ${L(p,'steps').map(s=>`<li>${esc(s)}</li>`).join('')}
           </ol>
         </div>
       `).join('')}
@@ -4828,17 +4940,17 @@ function viewTrainer(){
   return `
     <div class="case-header">
       <div>
-        <h1>Trainer &amp; Glossary</h1>
-        <div class="meta">Reference material and short lessons — available any time, independent of which case you're working.</div>
+        <h1>${t('title.trainer')}</h1>
+        <div class="meta">${t('trainer.sub')}</div>
       </div>
     </div>
     <div class="subtabs">
-      <button class="subtab ${trainerTab==='lessons'?'active':''}" data-tt="lessons">Lessons</button>
-      <button class="subtab ${trainerTab==='tips'?'active':''}" data-tt="tips">Tips &amp; Tricks</button>
-      <button class="subtab ${trainerTab==='guide'?'active':''}" data-tt="guide">Report &amp; Statement Guide</button>
-      <button class="subtab ${trainerTab==='playbook'?'active':''}" data-tt="playbook">Step-by-Step Course</button>
-      <button class="subtab ${trainerTab==='glossary'?'active':''}" data-tt="glossary">Glossary</button>
-      <button class="subtab ${trainerTab==='path'?'active':''}" data-tt="path">Learning Path</button>
+      <button class="subtab ${trainerTab==='lessons'?'active':''}" data-tt="lessons">${t('trainer.tabLessons')}</button>
+      <button class="subtab ${trainerTab==='tips'?'active':''}" data-tt="tips">${t('trainer.tabTips')}</button>
+      <button class="subtab ${trainerTab==='guide'?'active':''}" data-tt="guide">${t('trainer.tabGuide')}</button>
+      <button class="subtab ${trainerTab==='playbook'?'active':''}" data-tt="playbook">${t('trainer.tabPlaybook')}</button>
+      <button class="subtab ${trainerTab==='glossary'?'active':''}" data-tt="glossary">${t('trainer.tabGlossary')}</button>
+      <button class="subtab ${trainerTab==='path'?'active':''}" data-tt="path">${t('trainer.tabPath')}</button>
     </div>
     ${body}
   `;
@@ -4846,17 +4958,17 @@ function viewTrainer(){
 
 function renderGlossList(filter){
   const f = (filter||'').toLowerCase();
-  const items = GLOSSARY.filter(g => !f || g.term.toLowerCase().includes(f) || g.def.toLowerCase().includes(f));
+  const items = GLOSSARY.filter(g => !f || L(g,'term').toLowerCase().includes(f) || L(g,'def').toLowerCase().includes(f));
   const list = document.getElementById('glossList');
   if(!list) return;
   if(items.length===0){
-    list.innerHTML = `<div class="empty-state"><div class="big-icon">&#128269;</div>No terms match "${esc(filter)}".</div>`;
+    list.innerHTML = `<div class="empty-state"><div class="big-icon">&#128269;</div>${tf('trainer.noTermsMatch', {q: esc(filter)})}</div>`;
     return;
   }
   list.innerHTML = items.map(g=>`
     <div class="gloss-item">
-      <dt>${esc(g.term)}</dt>
-      <dd>${esc(g.def)}${g.formula?`<span class="gloss-formula">${esc(g.formula)}</span>`:''}</dd>
+      <dt>${esc(L(g,'term'))}</dt>
+      <dd>${esc(L(g,'def'))}${g.formula?`<span class="gloss-formula">${esc(L(g,'formula'))}</span>`:''}</dd>
     </div>
   `).join('');
 }
@@ -4881,7 +4993,7 @@ function wireTrainer(){
         if(!panel) return;
         const showing = panel.style.display !== 'none';
         panel.style.display = showing ? 'none' : 'block';
-        btn.textContent = showing ? 'Show the steps' : 'Hide the steps';
+        btn.textContent = showing ? t('trainer.showSteps') : t('trainer.hideSteps');
       });
     });
   }
@@ -4911,7 +5023,7 @@ function viewProgress(){
     const earned = a.test();
     return `<div class="check-item ${earned?'checked':''}" style="border-bottom:1px solid var(--line);">
       <span style="width:16px;flex-shrink:0;">${earned?'&#127942;':'&#9675;'}</span>
-      <span><b style="color:${earned?'var(--paper)':'var(--text-soft)'};">${esc(a.label)}</b> — ${esc(a.desc)}</span>
+      <span><b style="color:${earned?'var(--paper)':'var(--text-soft)'};">${esc(L(a,'label'))}</b> — ${esc(L(a,'desc'))}</span>
     </div>`;
   }).join('');
 
@@ -4929,33 +5041,33 @@ function viewProgress(){
   return `
     <div class="case-header">
       <div>
-        <h1>Your Progress</h1>
-        <div class="meta">A running record of your training sessions. Stored locally in this browser.</div>
+        <h1>${t('title.progress')}</h1>
+        <div class="meta">${t('progress.sub')}</div>
       </div>
     </div>
     <div class="card">
-      <h2>${esc(rankInfo.name)}</h2>
-      <div class="card-sub">${xp} XP earned${rankInfo.next ? (' &middot; ' + (rankInfo.next.min-xp) + ' XP to ' + esc(rankInfo.next.name)) : ' &middot; Maximum rank reached'}</div>
+      <h2>${esc(L(rankInfo.obj,'name'))}</h2>
+      <div class="card-sub">${rankInfo.next ? tf('xp.earnedToNext', {xp:xp, remaining:(rankInfo.next.min-xp), rank:esc(L(rankInfo.next,'name'))}) : tf('xp.earnedMax', {xp:xp})}</div>
       <div class="pbar" style="height:14px;"><div style="width:${rankInfo.next ? Math.min(100,((xp-rankInfo.floor)/(rankInfo.next.min-rankInfo.floor)*100)).toFixed(0) : 100}%;"></div></div>
     </div>
     <div class="grid-3">
-      <div class="stat-tile"><div class="label">Cases Completed</div><div class="value">${completedCount} / ${total}</div></div>
-      <div class="stat-tile"><div class="label">Sectors Covered</div><div class="value">${sectorsCovered}</div></div>
-      <div class="stat-tile"><div class="label">Avg. Advisory Self-Score</div><div class="value">${pct(avgScore,0)}</div></div>
+      <div class="stat-tile"><div class="label">${t('progress.casesCompleted')}</div><div class="value">${completedCount} / ${total}</div></div>
+      <div class="stat-tile"><div class="label">${t('progress.sectorsCovered')}</div><div class="value">${sectorsCovered}</div></div>
+      <div class="stat-tile"><div class="label">${t('progress.avgSelfScore')}</div><div class="value">${pct(avgScore,0)}</div></div>
     </div>
     <div class="card" style="margin-top:20px;">
-      <h2>Achievements</h2>
-      <div class="card-sub">Earned automatically as you work through case files</div>
+      <h2>${t('progress.achievementsTitle')}</h2>
+      <div class="card-sub">${t('progress.achievementsSub')}</div>
       ${achievementsHTML}
     </div>
     <div class="card">
-      <h2>Case File Status</h2>
+      <h2>${t('progress.caseStatusTitle')}</h2>
       <table class="ledger" style="color:var(--text);">
-        <tr><th style="text-align:left;color:var(--text-faint);">Case</th><th style="text-align:left;color:var(--text-faint);">Sector</th><th style="color:var(--text-faint);">Difficulty</th><th style="color:var(--text-faint);">Status</th></tr>
+        <tr><th style="text-align:left;color:var(--text-faint);">${t('progress.colCase')}</th><th style="text-align:left;color:var(--text-faint);">${t('progress.colSector')}</th><th style="color:var(--text-faint);">${t('progress.colDifficulty')}</th><th style="color:var(--text-faint);">${t('progress.colStatus')}</th></tr>
         ${rows}
       </table>
     </div>
-    <div class="lesson-box">Progress and every report, answer, and reflection you've written are saved to this browser's local storage — nothing is sent anywhere. Clearing your browser data will reset it.</div>
+    <div class="lesson-box">${t('progress.footNote')}</div>
   `;
 }
 
