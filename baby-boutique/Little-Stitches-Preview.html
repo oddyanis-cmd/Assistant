@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Little Stitches Boutique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: boutique storefront — sticky header, spacious centred container, product grids; admin is a sidebar app. */
+:root {
+  --ivory: #FAF7F2; --beige: #EDE2D4; --rose: #D8B4AF; --sage: #A8B8A0; --brown: #745A4A; --white: #FFFFFF;
+  --bg: var(--ivory); --surface: var(--white); --tint: var(--beige); --fg: #4A3A30; --heading: var(--brown);
+  --muted: #8A7A6E; --line: #E7DCCF; --btn: var(--brown); --btn-fg: #FFFFFF; --soft: #F3DCD7; --soft2: #E3E9DE;
+  --ok: #4F6B47; --ok-bg: #E3EDDD; --warn: #8A5F12; --warn-bg: #FBEBD0; --bad: #A4473D; --bad-bg: #F6DCD8;
+  --shadow: 0 8px 28px rgba(116, 90, 74, .10); --shadow-sm: 0 2px 8px rgba(116, 90, 74, .07);
+  --f-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --f-body: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --r: 18px; --pill: 999px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #221A16; --surface: #2E241F; --tint: #3A2E27; --fg: #EDE2D4; --heading: #F2D9D3; --muted: #B7A595; --line: #4A3B32;
+  --btn: #D8B4AF; --btn-fg: #2A1F1A; --soft: #4A3431; --soft2: #34402F;
+  --ok: #B8D3AE; --ok-bg: #2F3D2B; --warn: #F0CF8F; --warn-bg: #4A3A1C; --bad: #F2B3AA; --bad-bg: #4D2A26;
+  --shadow: 0 8px 28px rgba(0,0,0,.35); --shadow-sm: 0 2px 8px rgba(0,0,0,.3); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #221A16; --surface: #2E241F; --tint: #3A2E27; --fg: #EDE2D4; --heading: #F2D9D3; --muted: #B7A595; --line: #4A3B32;
+  --btn: #D8B4AF; --btn-fg: #2A1F1A; --soft: #4A3431; --soft2: #34402F;
+  --ok: #B8D3AE; --ok-bg: #2F3D2B; --warn: #F0CF8F; --warn-bg: #4A3A1C; --bad: #F2B3AA; --bad-bg: #4D2A26;
+  --shadow: 0 8px 28px rgba(0,0,0,.35); --shadow-sm: 0 2px 8px rgba(0,0,0,.3); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--bg); }
+a { color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+h1, h2, h3 { font-family: var(--f-display); color: var(--heading); font-weight: 600; line-height: 1.12; margin: 0 0 .4em; text-wrap: balance; }
+h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); } h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); } h3 { font-size: 1.3rem; }
+p { margin: 0 0 1em; }
+:focus-visible { outline: 3px solid var(--sage); outline-offset: 2px; border-radius: 6px; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.section { padding-block: clamp(40px, 7vw, 80px); }
+.tint { background: var(--tint); }
+.eyebrow { text-transform: uppercase; letter-spacing: .16em; font-size: .72rem; font-weight: 800; color: var(--sage); }
+.muted { color: var(--muted); }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.between { justify-content: space-between; }
+.stack { display: grid; gap: 12px; }
+
+.preview-bar { background: var(--sage); color: #22301E; font-size: .82rem; text-align: center; padding-block: 7px; font-weight: 700; }
+.preview-bar .wrap { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.preview-bar button { background: rgba(255,255,255,.55); border: 0; border-radius: var(--pill); padding: 2px 12px; font-weight: 800; cursor: pointer; color: #22301E; }
+
+header.site { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.hdr { display: flex; align-items: center; gap: 14px; height: 68px; }
+.logo { font-family: var(--f-display); font-weight: 700; font-size: 1.55rem; color: var(--heading); background: none; border: 0; cursor: pointer; padding: 0; white-space: nowrap; }
+nav.main { flex: 1; display: flex; justify-content: center; gap: 2px; }
+nav.main button { background: none; border: 0; padding: 8px 12px; border-radius: var(--pill); font-weight: 700; font-size: .9rem; cursor: pointer; }
+nav.main button:hover, nav.main button[aria-current="true"] { background: var(--tint); }
+.icons { display: flex; gap: 2px; margin-left: auto; }
+.ibtn { position: relative; width: 42px; height: 42px; border-radius: 50%; border: 0; background: none; cursor: pointer; display: grid; place-items: center; color: var(--heading); }
+.ibtn:hover { background: var(--tint); }
+.ibtn svg { width: 22px; height: 22px; }
+.badge { position: absolute; top: 2px; right: 0; min-width: 18px; height: 18px; padding: 0 5px; border-radius: var(--pill); background: var(--rose); color: #4A3A30; font-size: .7rem; font-weight: 800; display: grid; place-items: center; }
+.menu-btn { display: none; }
+.search-row { padding-block: 12px; border-top: 1px solid var(--line); }
+@media (max-width: 1020px) {
+  .menu-btn { display: grid; }
+  nav.main { display: none; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; background: var(--bg); padding: 10px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--line); box-shadow: var(--shadow); }
+  nav.main.open { display: flex; }
+  nav.main button { text-align: left; font-size: 1.05rem; padding: 12px 14px; }
+}
+@media (max-width: 460px) { .hide-xs { display: none !important; } .logo { font-size: 1.3rem; } }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border-radius: var(--pill); border: 1.5px solid transparent; background: var(--btn); color: var(--btn-fg); font-weight: 800; font-size: .93rem; cursor: pointer; transition: transform .2s, box-shadow .2s; text-decoration: none; }
+.btn:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn.rose { background: var(--rose); color: #4A3A30; }
+.btn.ghost { background: transparent; color: var(--heading); border-color: currentColor; }
+.btn.sm { padding: 7px 15px; font-size: .84rem; }
+.btn.block { width: 100%; }
+.link { background: none; border: 0; padding: 0; color: var(--heading); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 700; font-size: .88rem; }
+
+input, select, textarea { width: 100%; padding: 11px 14px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--sage); box-shadow: 0 0 0 4px color-mix(in srgb, var(--sage) 30%, transparent); }
+textarea { min-height: 90px; resize: vertical; }
+label.f { display: grid; gap: 5px; font-weight: 700; font-size: .86rem; color: var(--heading); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+@media (max-width: 620px) { .grid2 { grid-template-columns: 1fr; } }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: .9rem; cursor: pointer; }
+.check input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--brown); }
+
+/* hero */
+.hero { background: linear-gradient(120deg, var(--tint), var(--bg) 65%); }
+.hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(24px, 5vw, 60px); align-items: center; padding-block: 44px; }
+.hero .lead { font-size: 1.12rem; color: var(--muted); max-width: 32em; }
+.hero-img { border-radius: 180px 180px var(--r) var(--r); box-shadow: var(--shadow); aspect-ratio: 4/5; width: 100%; max-width: 100%; object-fit: cover; }
+.perks { display: flex; gap: 18px; flex-wrap: wrap; color: var(--muted); font-size: .86rem; margin-top: 26px; }
+.perks span { display: inline-flex; gap: 6px; align-items: center; } .perks svg { width: 18px; height: 18px; color: var(--sage); }
+@media (max-width: 820px) { .hero-grid { grid-template-columns: 1fr; text-align: center; } .hero .row, .perks { justify-content: center; } .hero .lead { margin-inline: auto; } .hero-img { max-width: 360px; margin: 0 auto; order: -1; } }
+
+.cats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+.cat { background: none; border: 0; cursor: pointer; display: grid; gap: 10px; text-align: center; padding: 0; }
+.cat .c { aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center; font-family: var(--f-display); font-size: 2.4rem; color: var(--heading); box-shadow: var(--shadow-sm); transition: transform .3s; max-width: 100%; }
+.cat:hover .c { transform: translateY(-4px); }
+.cat strong { font-family: var(--f-display); font-size: 1.15rem; color: var(--heading); }
+@media (max-width: 900px) { .cats { grid-template-columns: repeat(3, 1fr); } }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: clamp(14px, 2.2vw, 26px); }
+@media (max-width: 500px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }
+.card { position: relative; background: var(--surface); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; transition: transform .3s, box-shadow .3s; min-width: 0; }
+.card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.card .media { position: relative; aspect-ratio: 4/5; background: var(--tint); cursor: pointer; }
+.card .media img { width: 100%; height: 100%; object-fit: cover; }
+.tags { position: absolute; top: 10px; left: 10px; display: flex; gap: 5px; flex-wrap: wrap; }
+.tag { padding: 3px 9px; border-radius: var(--pill); font-size: .68rem; font-weight: 800; background: var(--surface); color: var(--heading); }
+.tag.new { background: var(--sage); color: #22301E; }
+.fav { position: absolute; top: 8px; right: 8px; background: color-mix(in srgb, var(--surface) 90%, transparent); }
+.fav[aria-pressed="true"] svg { fill: var(--rose); color: var(--bad); }
+.quick { position: absolute; left: 10px; right: 10px; bottom: 10px; opacity: 0; transition: opacity .2s; }
+.card:hover .quick, .card:focus-within .quick { opacity: 1; }
+@media (hover: none) { .quick { display: none; } }
+.card .body { padding: 12px 14px 14px; display: grid; gap: 4px; flex: 1; }
+.card .name { font-family: var(--f-display); font-size: 1.15rem; font-weight: 600; color: var(--heading); background: none; border: 0; padding: 0; text-align: left; cursor: pointer; line-height: 1.2; }
+.small { font-size: .78rem; color: var(--muted); }
+.price { font-weight: 800; color: var(--heading); font-variant-numeric: tabular-nums; }
+.price s { color: var(--muted); font-weight: 400; margin-left: 6px; }
+.foot { display: flex; justify-content: space-between; align-items: end; gap: 8px; margin-top: auto; padding-top: 4px; }
+.stock { font-size: .76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; }
+.stock::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.stock:empty { display: none; }
+.s-in { color: var(--ok); } .s-low { color: var(--warn); } .s-out { color: var(--bad); } .s-mto { color: var(--sage); }
+
+.story { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 5vw, 70px); align-items: center; }
+.story img { border-radius: var(--r); box-shadow: var(--shadow); width: 100%; max-width: 100%; aspect-ratio: 5/4; object-fit: cover; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-block: 20px; }
+.step { background: var(--surface); border-radius: 14px; padding: 14px; text-align: center; font-size: .86rem; }
+.step strong { display: block; font-family: var(--f-display); font-size: 1.15rem; color: var(--heading); }
+@media (max-width: 820px) { .story { grid-template-columns: 1fr; } }
+.reviews { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; }
+.review { background: var(--surface); border-radius: var(--r); padding: 22px; box-shadow: var(--shadow-sm); margin: 0; }
+.stars { color: #C9A15A; letter-spacing: 2px; }
+.news { background: var(--sage); color: #22301E; border-radius: 26px; padding: clamp(24px, 5vw, 50px); display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+.news h2 { color: #22301E; }
+.news input[type=email] { background: #fff; color: #2A1F1A; }
+@media (max-width: 760px) { .news { grid-template-columns: 1fr; } }
+
+footer.site { background: #5E4839; color: #EDE2D4; padding-block: 56px 26px; margin-top: 56px; }
+footer.site h3 { color: #fff; font-size: 1.1rem; }
+.fgrid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 28px; }
+.fgrid ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 7px; font-size: .9rem; }
+.fgrid button { background: none; border: 0; padding: 0; color: inherit; cursor: pointer; text-align: left; }
+.fgrid button:hover { color: #fff; text-decoration: underline; }
+.fbottom { border-top: 1px solid rgba(255,255,255,.15); margin-top: 34px; padding-top: 18px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: .8rem; }
+.pay span { border: 1px solid rgba(255,255,255,.35); border-radius: 6px; padding: 2px 8px; font-size: .7rem; font-weight: 800; margin-left: 6px; }
+@media (max-width: 820px) { .fgrid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .fgrid { grid-template-columns: 1fr; } }
+
+/* shop */
+.crumbs { font-size: .84rem; color: var(--muted); padding-top: 26px; }
+.crumbs button { background: none; border: 0; padding: 0; color: inherit; text-decoration: underline; cursor: pointer; }
+.shop { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 32px; align-items: start; }
+.filters { background: var(--surface); border-radius: var(--r); padding: 18px; box-shadow: var(--shadow-sm); position: sticky; top: calc(env(safe-area-inset-top, 0px) + 84px); }
+.filters fieldset { border: 0; padding: 0; margin: 0 0 18px; }
+.filters legend { font-family: var(--f-display); font-size: 1.12rem; font-weight: 600; color: var(--heading); margin-bottom: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip { padding: 6px 12px; border-radius: var(--pill); border: 1.5px solid var(--line); background: var(--surface); font-size: .82rem; font-weight: 700; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.chip[aria-pressed="true"] { background: var(--btn); color: var(--btn-fg); border-color: var(--btn); }
+.chip:disabled { opacity: .4; text-decoration: line-through; cursor: not-allowed; }
+.sw { width: 13px; height: 13px; border-radius: 50%; border: 1px solid rgba(0,0,0,.15); display: inline-block; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.toolbar select { width: auto; }
+.ftoggle { display: none; }
+@media (max-width: 880px) { .shop { grid-template-columns: 1fr; } .filters { display: none; position: static; } .filters.open { display: block; } .ftoggle { display: inline-flex; } }
+.empty { text-align: center; padding: 50px 20px; background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow-sm); }
+
+/* product */
+.pdp { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(22px, 5vw, 56px); align-items: start; padding-top: 14px; }
+.gallery { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; }
+.thumbs { display: flex; flex-direction: column; gap: 9px; }
+.thumbs button { border: 2px solid transparent; border-radius: 10px; padding: 0; overflow: hidden; cursor: pointer; aspect-ratio: 4/5; background: var(--tint); }
+.thumbs button[aria-current="true"] { border-color: var(--heading); }
+.thumbs img { width: 100%; height: 100%; object-fit: cover; }
+.main-img { position: relative; border-radius: 24px; overflow: hidden; aspect-ratio: 4/5; cursor: zoom-in; background: var(--tint); max-width: 100%; }
+.main-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .25s; }
+.main-img.zoom { cursor: zoom-out; } .main-img.zoom img { transform: scale(2); }
+@media (max-width: 880px) { .pdp { grid-template-columns: 1fr; } .gallery { grid-template-columns: 1fr; } .thumbs { flex-direction: row; order: 2; } .thumbs button { width: 64px; } }
+.qty { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: var(--pill); background: var(--surface); }
+.qty button { width: 38px; height: 42px; border: 0; background: none; cursor: pointer; font-size: 1.15rem; }
+.qty span { min-width: 30px; text-align: center; font-weight: 800; font-variant-numeric: tabular-nums; }
+.dispatch { background: var(--tint); border-radius: 10px; padding: 11px 14px; font-size: .9rem; display: flex; gap: 10px; align-items: center; }
+.dispatch svg { width: 20px; height: 20px; flex: none; }
+details.info { border-bottom: 1px solid var(--line); padding-block: 13px; }
+details.info summary { cursor: pointer; font-weight: 800; color: var(--heading); }
+details.info div { padding-top: 8px; white-space: pre-line; }
+
+/* modal */
+.overlay { position: fixed; inset: 0; background: rgba(40, 28, 22, .5); z-index: 100; display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.modal { background: var(--bg); border-radius: 24px; width: min(860px, 100%); max-height: 88vh; overflow: auto; padding: 26px; position: relative; box-shadow: var(--shadow); }
+.modal .x { position: absolute; top: 10px; right: 10px; }
+.qv { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.qv img { border-radius: var(--r); aspect-ratio: 4/5; object-fit: cover; width: 100%; }
+@media (max-width: 640px) { .qv { grid-template-columns: 1fr; } }
+.tscroll { overflow-x: auto; }
+table.t { width: 100%; border-collapse: collapse; font-size: .88rem; background: var(--surface); font-variant-numeric: tabular-nums; }
+.t th, .t td { padding: 9px 11px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+.t thead th { background: var(--tint); color: var(--heading); font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; }
+
+/* cart & checkout */
+.two { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 28px; align-items: start; }
+@media (max-width: 880px) { .two { grid-template-columns: 1fr; } }
+.line { display: grid; grid-template-columns: 84px minmax(0, 1fr) auto; gap: 14px; padding-block: 16px; border-bottom: 1px solid var(--line); align-items: center; }
+.line img { border-radius: 10px; aspect-ratio: 4/5; object-fit: cover; width: 100%; }
+.panel { background: var(--surface); border-radius: var(--r); padding: 22px; box-shadow: var(--shadow-sm); }
+.sum .r { display: flex; justify-content: space-between; padding-block: 5px; font-variant-numeric: tabular-nums; }
+.sum .tot { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 11px; font-weight: 800; font-size: 1.12rem; color: var(--heading); }
+.bar { height: 8px; background: var(--tint); border-radius: var(--pill); overflow: hidden; margin-block: 6px 12px; }
+.bar div { height: 100%; background: var(--sage); }
+.opt { display: flex; gap: 10px; align-items: center; border: 1.5px solid var(--line); border-radius: 12px; padding: 13px 15px; cursor: pointer; }
+.opt:has(input:checked) { border-color: var(--heading); background: var(--tint); }
+.opt input { width: auto; accent-color: var(--brown); }
+.note { border-radius: 10px; padding: 11px 14px; font-size: .9rem; }
+.n-warn { background: var(--warn-bg); color: var(--warn); } .n-ok { background: var(--ok-bg); color: var(--ok); } .n-bad { background: var(--bad-bg); color: var(--bad); }
+.err { color: var(--bad); font-size: .86rem; min-height: 1.2em; }
+.status { display: inline-block; padding: 3px 10px; border-radius: var(--pill); font-size: .72rem; font-weight: 800; background: var(--tint); color: var(--heading); }
+.st-PAID, .st-PROCESSING, .st-SHIPPED, .st-DELIVERED, .st-PUBLISHED { background: var(--ok-bg); color: var(--ok); }
+.st-CANCELLED, .st-REFUNDED, .st-ARCHIVED { background: var(--bad-bg); color: var(--bad); }
+
+/* admin */
+.admin { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 100vh; }
+.aside { background: #5E4839; color: #EDE2D4; padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
+.aside .logo { color: #fff; padding: 0 10px 14px; text-align: left; }
+.aside button { background: none; border: 0; color: inherit; text-align: left; padding: 9px 12px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+.aside button:hover { background: rgba(255,255,255,.08); }
+.aside button[aria-current="true"] { background: #FAF7F2; color: #5E4839; }
+.amain { padding: 26px max(16px, env(safe-area-inset-right, 0px)) 40px 26px; min-width: 0; }
+@media (max-width: 860px) { .admin { grid-template-columns: 1fr; } .aside { flex-direction: row; flex-wrap: wrap; padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); } .aside .logo { width: 100%; padding-bottom: 6px; } .amain { padding-left: max(16px, env(safe-area-inset-left, 0px)); } }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.kpi { background: var(--surface); border-radius: 14px; padding: 16px; box-shadow: var(--shadow-sm); }
+.kpi .v { font-family: var(--f-display); font-size: 1.7rem; font-weight: 700; color: var(--heading); font-variant-numeric: tabular-nums; }
+.kpi .l { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 800; }
+.agrid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 1000px) { .agrid { grid-template-columns: 1fr; } }
+.bars { display: flex; align-items: flex-end; gap: 4px; height: 150px; border-bottom: 1px solid var(--line); }
+.bars div { flex: 1; background: var(--rose); border-radius: 4px 4px 0 0; min-height: 3px; }
+.t input, .t select { padding: 6px 8px; font-size: .84rem; }
+
+.toasts { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 200; display: grid; gap: 8px; width: min(420px, calc(100vw - 32px)); }
+.toast { background: #5E4839; color: #fff; padding: 13px 16px; border-radius: 12px; box-shadow: var(--shadow); display: flex; justify-content: space-between; gap: 10px; align-items: center; font-weight: 600; }
+.toast button { background: none; border: 0; color: #fff; text-decoration: underline; font-weight: 800; cursor: pointer; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+// ===================== Demo data (mirrors the seed in baby-boutique/prisma/seed.js) =====================
+const SIZES = ['Newborn', '0–3 months', '3–6 months', '6–9 months', '9–12 months', '12–18 months', '18–24 months', '2–3 years'];
+const CATS = [
+  { slug: 'baby-clothes', name: 'Baby Clothes', bg: '--tint', desc: 'Knitted cardigans, crochet dresses, rompers and sets.' },
+  { slug: 'baby-shoes', name: 'Baby Shoes', bg: '--soft', desc: 'Soft booties and first shoes.' },
+  { slug: 'handmade-dolls', name: 'Handmade Dolls', bg: '--soft2', desc: 'Crochet dolls and plush friends.' },
+  { slug: 'gift-boxes', name: 'Gift Boxes', bg: '--tint', desc: 'Ready-to-give sets, beautifully wrapped.' },
+  { slug: 'new-arrivals', name: 'New Arrivals', bg: '--soft', desc: 'Fresh off the needles.' },
+  { slug: 'personalized-gifts', name: 'Personalized Gifts', bg: '--soft2', desc: 'Embroidered names and made-to-order pieces.' },
+];
+const RAW = [
+  ['Cloud Cable-Knit Cardigan', 'baby-clothes', 185, 1, SIZES.slice(0, 5), [['Ivory', '#F5EFE6'], ['Dusty Rose', '#D8B4AF']], '100% merino wool, extra-fine 19.5 micron', '0–12 months', 0, 1, null, 38],
+  ['Rosebud Crochet Dress', 'baby-clothes', 220, 1, SIZES.slice(1, 6), [['Blush', '#E8C9C3'], ['Sage', '#A8B8A0']], 'Organic cotton', '3–18 months', 0, 0, null, 31],
+  ['Little Acorn Romper', 'baby-clothes', 165, 0, SIZES.slice(0, 4), [['Oat', '#E6D8C3']], 'Cotton–bamboo blend', '0–9 months', 0, 0, null, 12],
+  ['Pebble Knit Sweater', 'baby-clothes', 175, 0, SIZES.slice(3, 8), [['Sage', '#A8B8A0'], ['Cocoa', '#8B6B5A']], 'Merino & cashmere blend', '6 months – 3 years', 0, 0, null, 9],
+  ['Bunny Ear Bonnet', 'baby-clothes', 75, 1, SIZES.slice(0, 4), [['Ivory', '#F5EFE6'], ['Blush', '#E8C9C3']], 'Soft baby alpaca', '0–9 months', 0, 0, null, 27],
+  ['Moss Stitch Booties', 'baby-shoes', 85, 1, ['0–3 months', '3–6 months', '6–9 months'], [['Ivory', '#F5EFE6'], ['Sage', '#A8B8A0'], ['Rose', '#D8B4AF']], '100% cotton, non-slip suede sole', '0–9 months', 0, 0, null, 35],
+  ['Mary-Jane Crochet Shoes', 'baby-shoes', 90, 0, ['3–6 months', '6–9 months', '9–12 months'], [['Blush', '#E8C9C3']], 'Mercerised cotton', '3–12 months', 0, 0, null, 6],
+  ['Hazel the Bunny Doll', 'handmade-dolls', 160, 1, null, [['Oat', '#E6D8C3']], 'Cotton yarn, hypoallergenic filling, embroidered eyes', 'Suitable from birth', 0, 1, 'Height 32 cm · width 12 cm', 22],
+  ['Olive the Little Bear', 'handmade-dolls', 145, 0, null, [['Cocoa', '#8B6B5A']], 'Cotton yarn, embroidered features', 'Suitable from birth', 0, 0, 'Height 26 cm', 14],
+  ['Lulu Crochet Doll with Dress', 'handmade-dolls', 195, 0, null, [['Rose Dress', '#D8B4AF'], ['Sage Dress', '#A8B8A0']], 'Cotton yarn, removable dress', '12 months +', 1, 0, 'Height 35 cm', 8],
+  ['Welcome Baby Gift Box', 'gift-boxes', 420, 1, null, [['Neutral', '#EDE2D4'], ['Pink', '#E8C9C3']], 'Cardigan, bonnet, booties and a mini bunny in a keepsake box', 'Newborn', 0, 1, null, 19],
+  ['Name Embroidered Blanket', 'personalized-gifts', 260, 0, null, [['Ivory', '#F5EFE6'], ['Sage', '#A8B8A0']], 'Merino wool', 'From birth', 1, 1, '80 × 100 cm', 11],
+];
+const SIZE_GUIDE = {
+  cols: ['Size', 'Baby height (cm)', 'Weight (kg)', 'Chest (cm)', 'Length (cm)'],
+  rows: [['Newborn', '50–56', '2.5–4', '38', '26'], ['0–3 months', '56–62', '4–6', '40', '28'], ['3–6 months', '62–68', '6–8', '43', '30'], ['6–9 months', '68–74', '8–9', '45', '32'], ['9–12 months', '74–80', '9–10', '47', '34'], ['12–18 months', '80–86', '10–11.5', '49', '36'], ['18–24 months', '86–92', '11.5–13', '51', '38'], ['2–3 years', '92–98', '13–15', '53', '40']],
+  note: 'Measured flat. Hand-knitted pieces may vary by ±1 cm. Between sizes? Choose the larger one.',
+};
+const PAGES = {
+  about: ['Our Story', 'We are a small studio in Doha making knitted and crocheted pieces for babies.\n\nEvery item is made by hand, in small batches, from soft, baby-safe yarns. We check each seam, wash-test our fibres and wrap every order as a gift.'],
+  contact: ['Contact Us', 'Email: hello@littlestitches.qa\nWhatsApp: +974 0000 0000\n\nWe reply within one working day.'],
+  shipping: ['Shipping Policy', 'We deliver across Qatar. Delivery is 25 QAR, free on orders over 300 QAR.\n\nReady-made items are dispatched within the time shown on each product. Made-to-order and personalised pieces take longer, and the estimate is shown before you buy.'],
+  returns: ['Return Policy', 'Unworn, unwashed items in original packaging may be returned within 14 days of delivery.\n\nPersonalised and made-to-order items cannot be returned unless faulty.'],
+  privacy: ['Privacy Policy', 'We collect only what we need to deliver your order and, if you opt in, to send our newsletter. Card details are handled by our payment partner and never stored by us.'],
+  terms: ['Terms & Conditions', 'Prices are in Qatari riyals (QAR) and include VAT where applicable. Orders are confirmed once payment is received.'],
+  faq: ['FAQ', 'Which size should I choose?\nUse the Size Guide on each product page. Measurements are in centimetres.\n\nHow do I wash knitted items?\nHand wash cold with gentle detergent and dry flat in shade.\n\nAre the dolls safe for newborns?\nOur dolls use embroidered eyes and are labelled with a recommended age.'],
+};
+
+// Soft placeholder "photo" for each product colour (SVG data URI).
+function photo(label, bg, accent) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><defs><pattern id="k" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M0 14 Q7 0 14 14 T28 14" fill="none" stroke="#745A4A" stroke-opacity=".14" stroke-width="3.5"/></pattern></defs><rect width="400" height="500" fill="${bg}"/><rect width="400" height="500" fill="url(#k)"/><circle cx="200" cy="230" r="104" fill="#fff" fill-opacity=".6"/><circle cx="200" cy="230" r="70" fill="${accent}" fill-opacity=".55"/><text x="200" y="372" font-family="Georgia,serif" font-size="25" text-anchor="middle" fill="#745A4A">${label}</text><text x="200" y="402" font-family="Georgia,serif" font-size="14" text-anchor="middle" fill="#745A4A" fill-opacity=".7">handmade with love</text></svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+const HERO_IMG = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000"><defs><pattern id="k" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M0 20 Q10 0 20 20 T40 20" fill="none" stroke="#745A4A" stroke-opacity=".12" stroke-width="5"/></pattern><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDE2D4"/><stop offset="1" stop-color="#F3DCD7"/></linearGradient></defs><rect width="800" height="1000" fill="url(#g)"/><g transform="translate(150 280)"><path d="M100 0 L200 0 L240 30 L330 70 L360 250 L300 260 L290 160 L290 460 L10 460 L10 160 L0 260 L-60 250 L-30 70 L60 30 Z" fill="#FAF7F2" stroke="#D8C7B5" stroke-width="4"/><path d="M100 0 L200 0 L240 30 L330 70 L360 250 L300 260 L290 160 L290 460 L10 460 L10 160 L0 260 L-60 250 L-30 70 L60 30 Z" fill="url(#k)"/><path d="M150 20 L150 460" stroke="#D8C7B5" stroke-width="4"/><g fill="#D8B4AF"><circle cx="165" cy="120" r="10"/><circle cx="165" cy="210" r="10"/><circle cx="165" cy="300" r="10"/><circle cx="165" cy="390" r="10"/></g></g><g transform="translate(470 560)"><ellipse cx="80" cy="-150" rx="22" ry="70" fill="#E6D8C3" transform="rotate(-12 80 -150)"/><ellipse cx="140" cy="-150" rx="22" ry="70" fill="#E6D8C3" transform="rotate(12 140 -150)"/><circle cx="110" cy="-40" r="70" fill="#E6D8C3"/><circle cx="88" cy="-45" r="6" fill="#745A4A"/><circle cx="132" cy="-45" r="6" fill="#745A4A"/><path d="M100 -20 Q110 -10 120 -20" stroke="#745A4A" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="75" cy="-25" r="10" fill="#D8B4AF"/><circle cx="145" cy="-25" r="10" fill="#D8B4AF"/><path d="M40 30 Q110 0 180 30 L200 200 L20 200 Z" fill="#A8B8A0"/><path d="M40 30 Q110 0 180 30 L200 200 L20 200 Z" fill="url(#k)"/></g><g transform="translate(150 840)"><circle r="70" fill="#D8B4AF"/><path d="M-60 -30c40 5 90 40 110 80M-70 10c40 0 80 30 95 60M-30 -62c30 20 70 60 95 100" stroke="#745A4A" stroke-opacity=".3" stroke-width="5" fill="none"/></g></svg>`);
+
+function seedState() {
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+  const products = RAW.map(([name, cat, price, featured, sizes, colors, materials, age, mto, personal, dims, sold], i) => {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
+    const variants = [];
+    (sizes || [null]).forEach((s) => colors.forEach(([c, hex]) => {
+      const sku = ['LS', String(i + 1).padStart(3, '0'), s && s.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 6), c.replace(/[^A-Za-z]/g, '').toUpperCase().slice(0, 4)].filter(Boolean).join('-');
+      variants.push({ id: sku, sku, size: s, color: c, hex, stock: mto ? 5 : Math.floor(rnd() * 7) });
+    }));
+    const short = name.split(' ').slice(0, 2).join(' ');
+    return {
+      id: slug, slug, name, cat, price: price * 100, compareAt: i === 3 ? 21000 : null, featured: !!featured, status: 'PUBLISHED',
+      sizes, variants, materials, age, mto: !!mto, personal: !!personal, dims, sold, daysOld: i * 3,
+      images: colors.map(([c, hex], k) => ({ url: photo(short, k === 0 ? ['#EDE2D4', '#F3DCD7', '#E3E9DE', '#F5EFE6'][i % 4] : hex, hex), alt: `${name} in ${c}` })),
+      short: `A soft, ${cat === 'handmade-dolls' ? 'cuddly' : 'heirloom-quality'} piece, made by hand in Doha.`,
+      desc: `${name} is made stitch by stitch from carefully chosen, baby-friendly yarn.\n\nEach piece is checked by hand, wash-tested and gift-wrapped in tissue with a handwritten card.`,
+      care: 'Hand wash cold with gentle wool detergent. Do not wring. Dry flat in shade.',
+      persLabel: personal ? 'Name to embroider (max 12 letters)' : null,
+    };
+  });
+  const reviews = [
+    { pid: 'cloud-cable-knit-cardigan', name: 'Noor', rating: 5, title: 'So soft', body: 'The merino is incredibly soft and the cardigan arrived beautifully wrapped. Perfect gift for my niece.', status: 'APPROVED', verified: true },
+    { pid: 'hazel-the-bunny-doll', name: 'Aisha', rating: 5, title: 'Her favourite toy', body: 'My daughter will not sleep without Hazel now. The embroidered eyes make me feel safe giving it to a baby.', status: 'APPROVED', verified: true },
+    { pid: 'welcome-baby-gift-box', name: 'Sarah', rating: 4, title: 'Lovely presentation', body: 'Gorgeous box and everything fits. Delivery to Al Wakrah took three days.', status: 'APPROVED', verified: true },
+    { pid: 'moss-stitch-booties', name: 'Maryam', rating: 5, title: null, body: 'They actually stay on! Ordered a second pair in sage.', status: 'PENDING', verified: false },
+  ];
+  // Example order history for the admin dashboard.
+  const orders = [];
+  const names = ['Fatima Al-Kuwari', 'Layla Hassan', 'Reem Al-Thani', 'Sara Ibrahim', 'Hana Yousef', 'Mona Saleh', 'Dana Khalil', 'Amal Nasser'];
+  for (let d = 27; d >= 0; d -= 1) {
+    const n = Math.floor(rnd() * 3);
+    for (let k = 0; k < n; k++) {
+      const p = products[Math.floor(rnd() * products.length)];
+      const v = p.variants[Math.floor(rnd() * p.variants.length)];
+      const qty = 1 + Math.floor(rnd() * 2);
+      const sub = p.price * qty;
+      const ship = sub >= 30000 ? 0 : 2500;
+      const st = d > 6 ? 'DELIVERED' : d > 3 ? 'SHIPPED' : d > 1 ? 'PROCESSING' : 'PAID';
+      orders.push({ number: `LS-2610${String(28 - d).padStart(2, '0')}-${(1000 + orders.length * 37).toString(16).toUpperCase()}`, at: Date.now() - d * 864e5 - k * 36e5, name: names[Math.floor(rnd() * names.length)], email: 'customer@example.com', status: st, items: [{ name: p.name, sku: v.sku, size: v.size, color: v.color, qty, price: p.price, img: p.images[0].url }], subtotal: sub, ship, total: sub + ship, pay: rnd() > .5 ? 'Card' : 'PayPal', city: 'Doha', example: true });
+    }
+  }
+  return {
+    products, reviews, orders, cart: [], wish: [], subs: 41,
+    settings: { brand: 'Little Stitches', tagline: 'Handmade with love in Qatar', headline: 'Little Treasures, Handmade with Love', sub: 'Beautifully crafted knitted clothes and adorable handmade dolls for your little ones.', flatFee: 25, freeOver: 300, rose: '#D8B4AF', sage: '#A8B8A0' },
+    events: { visitors: 1284, views: 3410, carts: 286, checkouts: 97 },
+  };
+}
+
+// ===================== State (kept in this browser only) =====================
+const KEY = 'little-stitches-preview-v1';
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY)) || seedState(); } catch { S = seedState(); }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* storage unavailable */ } };
+let V = { view: 'home', slug: null, filters: { cat: '', sizes: [], colors: [], min: '', max: '', avail: '', sort: 'newest', q: '', page: 1 }, admin: 'dash', order: null, menu: false, search: false };
+
+// ===================== Helpers =====================
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const money = new Intl.NumberFormat('en-QA', { style: 'currency', currency: 'QAR' });
+const fmt = (m) => money.format(m / 100);
+const stars = (n) => '★★★★★'.slice(0, Math.round(n)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(n));
+const P = (slug) => S.products.find((p) => p.slug === slug);
+const live = () => S.products.filter((p) => p.status === 'PUBLISHED');
+const totalStock = (p) => p.variants.reduce((s, v) => s + v.stock, 0);
+const stockOf = (p, v) => { const n = v ? v.stock : totalStock(p); return n <= 0 ? ['s-out', 'Out of stock'] : p.mto ? ['s-mto', 'Made to order'] : n <= 3 ? ['s-low', v ? `Only ${n} left` : 'Only a few left'] : ['s-in', 'In stock']; };
+const catName = (slug) => CATS.find((c) => c.slug === slug)?.name ?? '';
+const I = {
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+  user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6a5 5 0 0 1 9.2 5C19 15.6 12 20 12 20Z"/></svg>',
+  bag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
+  menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  truck: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg>',
+  hand: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V5.5a1.5 1.5 0 0 1 3 0V12M16 9.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-.5A6.5 6.5 0 0 1 5 16l-1.6-3.2a1.5 1.5 0 0 1 2.6-1.5L7 13"/></svg>',
+  leaf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 21c0-9 6-15 15-16-1 9-7 15-15 16Z"/><path d="M5 21 14 12"/></svg>',
+  gift: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M12 8v13M3 12h18M12 8S10 3 7.5 4 9 8 12 8Zm0 0s2-5 4.5-4S15 8 12 8Z"/></svg>',
+};
+function toast(msg, action) {
+  let box = $('.toasts');
+  if (!box) { box = document.createElement('div'); box.className = 'toasts'; box.setAttribute('role', 'status'); document.body.append(box); }
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span>${esc(msg)}</span>${action ? `<button data-go="${action[1]}">${esc(action[0])}</button>` : ''}`;
+  box.append(t);
+  setTimeout(() => t.remove(), 4000);
+}
+function cartTotals() {
+  const lines = S.cart.map((l) => { const p = P(l.pid); const v = p.variants.find((x) => x.id === l.vid); return { ...l, p, v, total: p.price * l.qty }; }).filter((l) => l.p && l.v);
+  const sub = lines.reduce((s, l) => s + l.total, 0);
+  const ship = sub === 0 || sub >= S.settings.freeOver * 100 ? 0 : S.settings.flatFee * 100;
+  return { lines, sub, ship, total: sub + ship, count: lines.reduce((s, l) => s + l.qty, 0) };
+}
+function addToCart(p, v, qty = 1, pers = '') {
+  const ex = S.cart.find((l) => l.vid === v.id && l.pers === pers);
+  const want = (ex?.qty ?? 0) + qty;
+  if (want > v.stock) { toast(v.stock ? `Only ${v.stock} left in stock` : 'Out of stock'); return false; }
+  if (ex) ex.qty = want; else S.cart.push({ pid: p.slug, vid: v.id, qty, pers });
+  S.events.carts++;
+  save(); render(); toast('Added to your cart', ['View cart', 'cart']);
+  return true;
+}
+function go(view, extra = {}) { V = { ...V, view, menu: false, search: false, ...extra }; render(); window.scrollTo({ top: 0 }); }
+
+// ===================== Layout =====================
+function header() {
+  const c = cartTotals().count;
+  const nav = [['Home', 'home'], ['Shop', 'shop'], ['Baby Clothes', 'shop:baby-clothes'], ['Handmade Dolls', 'shop:handmade-dolls'], ['Gift Sets', 'shop:gift-boxes'], ['About Us', 'page:about'], ['Contact', 'page:contact']];
+  const cur = V.view === 'shop' ? (V.filters.cat ? `shop:${V.filters.cat}` : 'shop') : V.view === 'page' ? `page:${V.slug}` : V.view;
+  return `
+  <div class="preview-bar"><div class="wrap"><span>Preview with sample products. Payments are simulated and nothing is charged.</span><button data-go="admin">Open admin</button><button data-act="reset">Reset demo</button></div></div>
+  <header class="site"><div class="wrap hdr">
+    <button class="ibtn menu-btn" data-act="menu" aria-label="Menu" aria-expanded="${V.menu}">${I.menu}</button>
+    <button class="logo" data-go="home">${esc(S.settings.brand)}</button>
+    <nav class="main ${V.menu ? 'open' : ''}" aria-label="Main">${nav.map(([l, g]) => `<button data-go="${g}" aria-current="${cur === g}">${l}</button>`).join('')}</nav>
+    <div class="icons">
+      <button class="ibtn" data-act="search" aria-label="Search">${I.search}</button>
+      <button class="ibtn hide-xs" data-go="account" aria-label="Account">${I.user}</button>
+      <button class="ibtn hide-xs" data-go="wishlist" aria-label="Wishlist">${I.heart}${S.wish.length ? `<span class="badge">${S.wish.length}</span>` : ''}</button>
+      <button class="ibtn" data-go="cart" aria-label="Cart">${I.bag}${c ? `<span class="badge">${c}</span>` : ''}</button>
+    </div></div>
+    ${V.search ? `<div class="search-row"><form class="wrap row" id="searchForm"><input id="q" type="search" placeholder="Search cardigans, booties, dolls…" value="${esc(V.filters.q)}" aria-label="Search products" style="flex:1;min-width:0"><button class="btn">Search</button></form></div>` : ''}
+  </header>`;
+}
+function footer() {
+  return `<footer class="site"><div class="wrap">
+    <div class="fgrid">
+      <div><h3>${esc(S.settings.brand)}</h3><p>Handmade knitted and crocheted baby clothes, booties and dolls, made in small batches in Doha.</p><p class="small" style="color:#EDE2D4">Instagram · @littlestitches.qa</p></div>
+      <div><h3>Shop</h3><ul><li><button data-go="shop">All products</button></li><li><button data-go="shop:baby-clothes">Baby clothes</button></li><li><button data-go="shop:handmade-dolls">Handmade dolls</button></li><li><button data-go="shop:gift-boxes">Gift sets</button></li><li><button data-go="page:about">About us</button></li></ul></div>
+      <div><h3>Help</h3><ul><li><button data-go="page:shipping">Shipping policy</button></li><li><button data-go="page:returns">Return policy</button></li><li><button data-go="page:faq">FAQ</button></li><li><button data-go="page:privacy">Privacy policy</button></li><li><button data-go="page:terms">Terms &amp; conditions</button></li></ul></div>
+      <div><h3>Contact</h3><ul><li>hello@littlestitches.qa</li><li>+974 0000 0000</li><li>Doha, Qatar</li><li><button data-go="page:contact">Contact us</button></li></ul></div>
+    </div>
+    <div class="fbottom"><span>© 2026 ${esc(S.settings.brand)}. Payments are processed by our payment partners. We never store card details.</span><span class="pay"><span>VISA</span><span>Mastercard</span><span>PayPal</span></span></div>
+  </div></footer>`;
+}
+function card(p) {
+  const [cls, label] = stockOf(p);
+  const sizes = p.sizes ? (p.sizes.length > 3 ? `${p.sizes[0]} – ${p.sizes.at(-1)}` : p.sizes.join(' · ')) : (p.dims || '');
+  const out = cls === 's-out';
+  return `<article class="card">
+    <div class="media" data-go="product:${p.slug}"><img src="${p.images[0].url}" alt="${esc(p.images[0].alt)}" loading="lazy">
+      <div class="tags">${p.daysOld < 12 ? '<span class="tag new">New</span>' : ''}${p.compareAt ? '<span class="tag">Sale</span>' : ''}${p.personal ? '<span class="tag">Personalise</span>' : ''}</div>
+      <div class="quick"><button class="btn sm block" style="background:var(--surface);color:var(--heading)" data-act="quick:${p.slug}">Quick view</button></div>
+    </div>
+    <button class="ibtn fav" data-act="fav:${p.slug}" aria-label="Save ${esc(p.name)}" aria-pressed="${S.wish.includes(p.slug)}">${I.heart}</button>
+    <div class="body">
+      <span class="small">${catName(p.cat)}</span>
+      <button class="name" data-go="product:${p.slug}">${esc(p.name)}</button>
+      <span class="small">${esc(sizes)}</span>
+      <div class="foot"><div><div class="price">${fmt(p.price)}${p.compareAt ? `<s>${fmt(p.compareAt)}</s>` : ''}</div><span class="stock ${cls}">${label}</span></div>
+      <button class="btn rose sm" data-act="${p.variants.length === 1 && !p.personal ? `add1:${p.slug}` : `quick:${p.slug}`}" ${out ? 'disabled' : ''}>${out ? 'Sold out' : 'Add'}</button></div>
+    </div></article>`;
+}
+
+// ===================== Storefront views =====================
+function home() {
+  const best = live().filter((p) => p.featured).sort((a, b) => b.sold - a.sold).slice(0, 4);
+  const fresh = live().sort((a, b) => a.daysOld - b.daysOld).slice(0, 8);
+  const revs = S.reviews.filter((r) => r.status === 'APPROVED');
+  return `
+  <section class="hero"><div class="wrap hero-grid">
+    <div><span class="eyebrow">${esc(S.settings.tagline)}</span><h1>${esc(S.settings.headline)}</h1><p class="lead">${esc(S.settings.sub)}</p>
+      <div class="row"><button class="btn" data-go="shop">Shop Collection</button><button class="btn ghost" data-go="page:about">Discover Our Story</button></div>
+      <div class="perks"><span>${I.hand} Handmade</span><span>${I.leaf} Baby-safe yarns</span><span>${I.gift} Gift wrapped</span></div></div>
+    <img class="hero-img" src="${HERO_IMG}" alt="A soft knitted baby cardigan beside a handmade crochet bunny">
+  </div></section>
+  <section class="section"><div class="wrap"><span class="eyebrow">Explore</span><h2>Shop by category</h2>
+    <div class="cats">${CATS.map((c) => `<button class="cat" data-go="shop:${c.slug}"><span class="c" style="background:var(${c.bg})">${c.name[0]}</span><strong>${c.name}</strong></button>`).join('')}</div></div></section>
+  <section class="section tint"><div class="wrap"><div class="row between"><div><span class="eyebrow">Loved by parents</span><h2>Best Sellers</h2></div><button class="btn ghost sm" data-go="shop:popular">View all</button></div><div class="grid">${best.map(card).join('')}</div></div></section>
+  <section class="section"><div class="wrap"><div class="row between"><div><span class="eyebrow">Fresh off the needles</span><h2>New Arrivals</h2></div><button class="btn ghost sm" data-go="shop">Shop new</button></div><div class="grid">${fresh.map(card).join('')}</div></div></section>
+  <section class="section tint"><div class="wrap story"><img src="${HERO_IMG}" alt="" loading="lazy"><div><span class="eyebrow">Made by hand</span><h2>Our Handmade Story</h2>
+    <p>Every piece begins as a skein of soft, baby-safe yarn and is knitted or crocheted stitch by stitch. We choose gentle natural fibres, check every seam by hand, and wrap each order as a gift.</p>
+    <div class="steps"><div class="step"><strong>Choose</strong>soft, baby-safe yarns</div><div class="step"><strong>Craft</strong>stitch by stitch</div><div class="step"><strong>Wrap</strong>ready to gift</div></div>
+    <button class="btn ghost" data-go="page:about">Read our story</button></div></div></section>
+  <section class="section"><div class="wrap"><span class="eyebrow">Kind words</span><h2>From our customers</h2>
+    <div class="reviews">${revs.map((r) => `<blockquote class="review"><div class="stars">${stars(r.rating)}</div>${r.title ? `<h3>${esc(r.title)}</h3>` : ''}<p>${esc(r.body)}</p><span class="small">${esc(r.name)}, on <button class="link" data-go="product:${r.pid}">${esc(P(r.pid)?.name)}</button></span></blockquote>`).join('')}</div></div></section>
+  <section class="wrap"><div class="news"><div><h2>Join our little circle</h2><p>New collections, restocks and gentle care tips, no more than twice a month.</p></div>
+    <form id="newsForm" class="stack"><div class="row"><input id="nlEmail" type="email" required placeholder="Your email address" aria-label="Email address" style="flex:1;min-width:0"><button class="btn">Subscribe</button></div>
+    <label class="check"><input type="checkbox" id="nlConsent"> <span>I agree to receive emails about new collections and offers. I can unsubscribe at any time.</span></label></form></div></section>`;
+}
+
+function filtered() {
+  const f = V.filters;
+  let list = live();
+  if (f.cat === 'new-arrivals') list = list.filter((p) => p.daysOld < 20);
+  else if (f.cat) list = list.filter((p) => p.cat === f.cat);
+  if (f.q) list = list.filter((p) => (p.name + ' ' + p.cat + ' ' + p.materials).toLowerCase().includes(f.q.toLowerCase()));
+  if (f.sizes.length) list = list.filter((p) => p.variants.some((v) => f.sizes.includes(v.size)));
+  if (f.colors.length) list = list.filter((p) => p.variants.some((v) => f.colors.includes(v.color)));
+  if (f.min !== '') list = list.filter((p) => p.price >= Number(f.min) * 100);
+  if (f.max !== '') list = list.filter((p) => p.price <= Number(f.max) * 100);
+  if (f.avail === 'in') list = list.filter((p) => totalStock(p) > 0 && !p.mto);
+  if (f.avail === 'mto') list = list.filter((p) => p.mto);
+  const sorts = { newest: (a, b) => a.daysOld - b.daysOld, popular: (a, b) => b.sold - a.sold, low: (a, b) => a.price - b.price, high: (a, b) => b.price - a.price };
+  return list.sort(sorts[f.sort]);
+}
+function shop() {
+  const f = V.filters;
+  const list = filtered();
+  const per = 8, pages = Math.max(1, Math.ceil(list.length / per)), page = Math.min(f.page, pages);
+  const cat = CATS.find((c) => c.slug === f.cat);
+  const sizes = SIZES.filter((s) => live().some((p) => p.sizes?.includes(s)));
+  const colors = [...new Map(live().flatMap((p) => p.variants.map((v) => [v.color, v.hex]))).entries()];
+  const chip = (key, val, label, on, extra = '') => `<button class="chip" data-f="${key}" data-v="${esc(val)}" aria-pressed="${on}">${extra}${esc(label)}</button>`;
+  const title = f.q ? `Search: “${f.q}”` : cat?.name ?? 'Shop all';
+  return `<div class="wrap"><div class="crumbs"><button data-go="home">Home</button> / Shop${cat ? ` / ${cat.name}` : ''}</div>
+    <h1 style="margin-top:8px">${esc(title)}</h1>${cat ? `<p class="muted">${cat.desc}</p>` : ''}
+    <div class="shop">
+      <aside class="filters ${V.fopen ? 'open' : ''}" aria-label="Filters">
+        <fieldset><legend>Category</legend><div class="chips">${chip('cat', '', 'All', !f.cat)}${CATS.map((c) => chip('cat', c.slug, c.name, f.cat === c.slug)).join('')}</div></fieldset>
+        <fieldset><legend>Size</legend><div class="chips">${sizes.map((s) => chip('sizes', s, s, f.sizes.includes(s))).join('')}</div></fieldset>
+        <fieldset><legend>Colour</legend><div class="chips">${colors.map(([c, h]) => chip('colors', c, c, f.colors.includes(c), `<i class="sw" style="background:${h}"></i>`)).join('')}</div></fieldset>
+        <fieldset><legend>Price (QAR)</legend><div class="row" style="flex-wrap:nowrap"><input id="fmin" type="number" min="0" placeholder="75" value="${f.min}" aria-label="Minimum price"><span>–</span><input id="fmax" type="number" min="0" placeholder="420" value="${f.max}" aria-label="Maximum price"></div></fieldset>
+        <fieldset><legend>Availability</legend><div class="chips">${chip('avail', '', 'All', !f.avail)}${chip('avail', 'in', 'In stock', f.avail === 'in')}${chip('avail', 'mto', 'Made to order', f.avail === 'mto')}</div></fieldset>
+        <button class="btn ghost sm block" data-act="clear">Clear all filters</button>
+      </aside>
+      <section>
+        <div class="toolbar"><button class="btn ghost sm ftoggle" data-act="ftoggle">Filters</button><span class="muted">${list.length} product${list.length === 1 ? '' : 's'}</span>
+          <select id="sort" aria-label="Sort">${[['newest', 'Newest'], ['popular', 'Most popular'], ['low', 'Price: low to high'], ['high', 'Price: high to low']].map(([v, l]) => `<option value="${v}" ${f.sort === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+        ${list.length ? `<div class="grid">${list.slice((page - 1) * per, page * per).map(card).join('')}</div>` : `<div class="empty"><h2>No products match</h2><p class="muted">Try removing a filter or searching for something else.</p><button class="btn" data-act="clear">Show everything</button></div>`}
+        ${pages > 1 ? `<div class="row" style="justify-content:center;margin-top:28px">${Array.from({ length: pages }, (_, i) => `<button class="chip" data-act="page:${i + 1}" aria-pressed="${i + 1 === page}">${i + 1}</button>`).join('')}</div>` : ''}
+      </section></div></div>`;
+}
+
+let sel = { size: null, color: null, qty: 1, img: 0, zoom: false };
+function pickVariant(p) {
+  return p.variants.find((v) => (!p.sizes || v.size === sel.size) && v.color === sel.color) || null;
+}
+function picker(p) {
+  const colors = [...new Map(p.variants.map((v) => [v.color, v.hex])).entries()];
+  const can = (size, color) => p.variants.some((v) => (!size || v.size === size) && (!color || v.color === color) && v.stock > 0);
+  return `<div class="stack" style="margin-block:14px">
+    <div><div class="row between"><strong style="color:var(--heading)">Colour${sel.color ? `: ${esc(sel.color)}` : ''}</strong></div>
+      <div class="chips" style="margin-top:8px">${colors.map(([c, h]) => `<button class="chip" data-pick="color" data-v="${esc(c)}" aria-pressed="${sel.color === c}" ${can(sel.size, c) ? '' : 'disabled'}><i class="sw" style="background:${h}"></i>${esc(c)}</button>`).join('')}</div></div>
+    ${p.sizes ? `<div><div class="row between"><strong style="color:var(--heading)">Size${sel.size ? `: ${esc(sel.size)}` : ''}</strong><button class="link" data-act="guide">Size guide (cm)</button></div>
+      <div class="chips" style="margin-top:8px">${p.sizes.map((s) => `<button class="chip" data-pick="size" data-v="${esc(s)}" aria-pressed="${sel.size === s}" ${can(s, sel.color) ? '' : 'disabled'}>${esc(s)}</button>`).join('')}</div></div>`
+    : `<div><strong style="color:var(--heading)">Dimensions</strong><p style="margin:4px 0 0">${esc(p.dims || 'One size')}</p></div>`}</div>`;
+}
+function product() {
+  const p = P(V.slug);
+  if (!p) return `<div class="wrap section empty"><h2>Product not found</h2></div>`;
+  const v = pickVariant(p);
+  const [cls, label] = v ? stockOf(p, v) : ['', ''];
+  const ok = v && v.stock > 0;
+  const revs = S.reviews.filter((r) => r.pid === p.slug && r.status === 'APPROVED');
+  const avg = revs.length ? revs.reduce((s, r) => s + r.rating, 0) / revs.length : 0;
+  const related = live().filter((x) => x.slug !== p.slug && x.cat === p.cat).slice(0, 4);
+  const im = p.images[sel.img] ?? p.images[0];
+  return `<div class="wrap"><div class="crumbs"><button data-go="home">Home</button> / <button data-go="shop:${p.cat}">${catName(p.cat)}</button> / ${esc(p.name)}</div>
+    <div class="pdp">
+      <div class="gallery">
+        <div class="thumbs">${p.images.map((x, i) => `<button data-act="img:${i}" aria-current="${i === sel.img}" aria-label="Show image ${i + 1}"><img src="${x.url}" alt=""></button>`).join('')}</div>
+        <div class="main-img ${sel.zoom ? 'zoom' : ''}" data-act="zoom" title="Click to zoom"><img src="${im.url}" alt="${esc(im.alt)}"></div>
+      </div>
+      <div>
+        <span class="eyebrow">${catName(p.cat)}</span><h1>${esc(p.name)}</h1>
+        ${revs.length ? `<span class="small"><span class="stars">${stars(avg)}</span> ${avg.toFixed(1)} · ${revs.length} review${revs.length > 1 ? 's' : ''}</span>` : ''}
+        <div class="price" style="font-size:1.45rem;margin-block:6px 10px">${fmt(p.price)}${p.compareAt ? `<s>${fmt(p.compareAt)}</s>` : ''}</div>
+        <p>${esc(p.short)}</p>
+        ${picker(p)}
+        ${p.personal ? `<label class="f" style="margin-bottom:12px">${esc(p.persLabel)} <span class="muted">(optional)</span><input id="pers" maxlength="12" value="${esc(sel.pers || '')}"></label>` : ''}
+        <div class="row" style="margin-bottom:14px"><div class="qty"><button data-act="qty:-1" aria-label="Decrease">−</button><span>${sel.qty}</span><button data-act="qty:1" aria-label="Increase">+</button></div><span class="stock ${cls}">${label}</span></div>
+        <div class="row"><button class="btn" style="flex:1" data-act="add" ${ok ? '' : 'disabled'}>${!v ? 'Select options' : ok ? 'Add to cart' : 'Out of stock'}</button><button class="btn rose" style="flex:1" data-act="buy" ${ok ? '' : 'disabled'}>Buy now</button><button class="ibtn" data-act="fav:${p.slug}" aria-pressed="${S.wish.includes(p.slug)}" aria-label="Save to wishlist">${I.heart}</button></div>
+        <div class="dispatch" style="margin-top:16px">${I.truck}<span>${p.mto ? 'Made to order. Dispatched in 7–14 days' : 'Ready to ship. Dispatched in 2–4 working days'}</span></div>
+        <details class="info" open><summary>Description</summary><div>${esc(p.desc)}</div></details>
+        <details class="info"><summary>Materials</summary><div>${esc(p.materials)}</div></details>
+        <details class="info"><summary>Care instructions</summary><div>${esc(p.care)}</div></details>
+        <details class="info"><summary>Recommended age</summary><div>${esc(p.age)}</div></details>
+        ${p.dims ? `<details class="info"><summary>Dimensions</summary><div>${esc(p.dims)}</div></details>` : ''}
+      </div>
+    </div>
+    <section class="section"><div class="row between"><h2>Reviews</h2><button class="btn ghost sm" data-act="review">Write a review</button></div>
+      <div class="reviews">${revs.length ? revs.map((r) => `<div class="review"><div class="stars">${stars(r.rating)}</div>${r.title ? `<h3>${esc(r.title)}</h3>` : ''}<p>${esc(r.body)}</p><span class="small">${esc(r.name)}${r.verified ? ' · Verified purchase' : ''}</span></div>`).join('') : '<p class="muted">No reviews yet. Be the first to share your thoughts.</p>'}</div></section>
+    ${related.length ? `<section class="section tint" style="border-radius:24px;padding-inline:clamp(14px,3vw,30px)"><h2>You may also like</h2><div class="grid">${related.map(card).join('')}</div></section>` : ''}
+  </div>`;
+}
+
+function cart() {
+  const t = cartTotals();
+  if (!t.lines.length) return `<div class="wrap section"><div class="empty"><h1>Your cart is empty</h1><p class="muted">Little treasures are waiting for you.</p><button class="btn" data-go="shop">Start shopping</button></div></div>`;
+  const left = Math.max(0, S.settings.freeOver * 100 - t.sub);
+  return `<div class="wrap section"><h1>Your cart</h1><div class="two">
+    <section>${t.lines.map((l, i) => `<div class="line"><img src="${l.p.images[0].url}" alt=""><div style="min-width:0"><button class="name link" style="font-size:1rem;text-decoration:none" data-go="product:${l.p.slug}">${esc(l.p.name)}</button>
+      <div class="small">${[l.v.size, l.v.color].filter(Boolean).map(esc).join(' · ')}${l.pers ? ` · “${esc(l.pers)}”` : ''} · ${fmt(l.p.price)} each</div>
+      <div class="row" style="margin-top:8px"><div class="qty"><button data-act="cq:${i}:-1" aria-label="Decrease">−</button><span>${l.qty}</span><button data-act="cq:${i}:1" aria-label="Increase">+</button></div><button class="link" data-act="cq:${i}:rm">Remove</button></div></div><strong class="price">${fmt(l.total)}</strong></div>`).join('')}</section>
+    <aside class="panel sum"><h2>Summary</h2>
+      <p class="small">${left > 0 ? `Add ${fmt(left)} more for free delivery` : 'You have free delivery'}</p><div class="bar"><div style="width:${Math.min(100, (t.sub / (S.settings.freeOver * 100)) * 100)}%"></div></div>
+      <div class="r"><span>Subtotal</span><span>${fmt(t.sub)}</span></div><div class="r"><span>Delivery</span><span>${t.ship ? fmt(t.ship) : 'Free'}</span></div><div class="r tot"><span>Total</span><span>${fmt(t.total)}</span></div>
+      <div class="stack" style="margin-top:14px"><button class="btn block" data-go="checkout">Checkout</button><button class="btn ghost block" data-go="shop">Continue shopping</button></div></aside></div></div>`;
+}
+
+function checkout() {
+  const t = cartTotals();
+  if (!t.lines.length) return cart();
+  return `<div class="wrap section"><h1>Checkout</h1><form id="coForm" class="two" novalidate>
+    <div class="stack">
+      <section class="panel stack"><h2>Contact</h2><label class="f">Email<input id="coEmail" type="email" required value="parent@example.com"></label></section>
+      <section class="panel stack"><h2>Delivery address</h2>
+        <div class="grid2"><label class="f">Full name<input id="coName" required value="Fatima Al-Kuwari"></label><label class="f">Mobile<input id="coPhone" type="tel" required value="+974 5555 1234"></label></div>
+        <label class="f">Address (building, street, zone)<input id="coLine" required value="Building 12, Street 850, Zone 66"></label>
+        <div class="grid2"><label class="f">Area<input id="coArea" value="West Bay"></label><label class="f">City<input id="coCity" required value="Doha"></label></div>
+        <label class="f">Country<select id="coCountry"><option>Qatar</option></select></label>
+        <label class="f">Gift message (optional)<textarea id="coNote" placeholder="Congratulations on your little one!"></textarea></label></section>
+      <section class="panel stack"><h2>Payment</h2>
+        <label class="opt"><input type="radio" name="pay" value="Card" checked> <span><strong>Credit / debit card</strong><br><span class="small">Visa, Mastercard, NAPS via a local Qatar gateway</span></span></label>
+        <label class="opt"><input type="radio" name="pay" value="PayPal"> <span><strong>PayPal</strong><br><span class="small">Charged in USD at the current rate</span></span></label>
+        <p class="note n-warn"><strong>Preview:</strong> placing this order simulates a successful payment. No card is charged.</p></section>
+    </div>
+    <aside class="panel sum"><h2>Your order</h2>${t.lines.map((l) => `<div class="r"><span>${l.qty} × ${esc(l.p.name)}<br><span class="small">${[l.v.size, l.v.color, l.pers && `“${l.pers}”`].filter(Boolean).map(esc).join(' · ')}</span></span><span>${fmt(l.total)}</span></div>`).join('')}
+      <div class="r"><span>Subtotal</span><span>${fmt(t.sub)}</span></div><div class="r"><span>Delivery</span><span>${t.ship ? fmt(t.ship) : 'Free'}</span></div><div class="r tot"><span>Total</span><span>${fmt(t.total)}</span></div>
+      <p class="err" id="coErr" role="alert"></p><button class="btn block">Place order &amp; pay ${fmt(t.total)}</button>
+      <p class="small" style="margin-top:10px">By placing your order you agree to our terms and return policy.</p></aside></form></div>`;
+}
+
+function order() {
+  const o = S.orders.find((x) => x.number === V.order);
+  if (!o) return `<div class="wrap section empty"><h2>Order not found</h2></div>`;
+  return `<div class="wrap section"><p class="note n-ok">Payment received. Thank you for your order!</p><span class="eyebrow">Order ${o.number}</span><h1>We're preparing your parcel</h1>
+    <p class="muted">${new Date(o.at).toLocaleString()} · ${esc(o.email)} · Paid by ${o.pay}</p>
+    <div class="two"><section class="panel">${o.items.map((i) => `<div class="line"><img src="${i.img}" alt=""><div><strong>${esc(i.name)}</strong><div class="small">${[i.size, i.color, i.pers && `“${i.pers}”`].filter(Boolean).map(esc).join(' · ')} · ${i.qty} × ${fmt(i.price)}</div></div><strong>${fmt(i.qty * i.price)}</strong></div>`).join('')}</section>
+    <aside class="panel sum"><div class="r"><span>Subtotal</span><span>${fmt(o.subtotal)}</span></div><div class="r"><span>Delivery</span><span>${o.ship ? fmt(o.ship) : 'Free'}</span></div><div class="r tot"><span>Total</span><span>${fmt(o.total)}</span></div>
+      <h3 style="margin-top:14px">Delivering to</h3><p>${esc(o.name)}<br>${esc(o.address)}<br>${esc(o.city)}, Qatar</p><button class="btn ghost block" data-go="shop">Continue shopping</button></aside></div></div>`;
+}
+
+function wishlist() {
+  const items = S.wish.map(P).filter(Boolean);
+  return `<div class="wrap section"><h1>Your wishlist</h1>${items.length ? `<div class="grid">${items.map(card).join('')}</div>` : '<div class="empty"><h2>Nothing saved yet</h2><p class="muted">Tap the heart on any product to save it here.</p><button class="btn" data-go="shop">Browse the shop</button></div>'}</div>`;
+}
+function account() {
+  const mine = S.orders.filter((o) => !o.example);
+  return `<div class="wrap section"><span class="eyebrow">My account</span><h1>Hello, Fatima</h1><div class="two">
+    <section class="panel"><h2>Orders</h2>${mine.length ? mine.map((o) => `<div class="row between" style="padding-block:10px;border-bottom:1px solid var(--line)"><button class="link" data-act="vieworder:${o.number}">${o.number}</button><span><span class="status st-${o.status}">${o.status}</span> <strong class="price">${fmt(o.total)}</strong></span></div>`).join('') : '<p class="muted">Orders you place in this preview appear here.</p>'}</section>
+    <aside class="panel stack"><h2>Profile</h2><label class="f">Name<input value="Fatima Al-Kuwari"></label><label class="f">Phone<input value="+974 5555 1234"></label><p class="small">In the full store, accounts use secure sign-in with hashed passwords and server-side sessions.</p></aside></div></div>`;
+}
+function page() {
+  const [title, body] = PAGES[V.slug] ?? ['Page', ''];
+  return `<div class="wrap section"><div class="crumbs" style="padding-top:0"><button data-go="home">Home</button> / ${title}</div><h1>${title}</h1><div style="max-width:68ch;white-space:pre-line">${esc(body)}</div></div>`;
+}
+
+// ===================== Admin =====================
+function admin() {
+  const tabs = [['dash', 'Dashboard'], ['orders', 'Orders'], ['products', 'Products'], ['inventory', 'Inventory'], ['reviews', 'Reviews'], ['config', 'Store settings']];
+  return `<div class="admin"><aside class="aside"><button class="logo" data-go="home">${esc(S.settings.brand)} ↗</button>${tabs.map(([k, l]) => `<button data-admin="${k}" aria-current="${V.admin === k}">${l}</button>`).join('')}</aside>
+    <main class="amain">${({ dash: aDash, orders: aOrders, products: aProducts, inventory: aInventory, reviews: aReviews, config: aConfig, edit: aEdit }[V.admin] || aDash)()}</main></div>`;
+}
+function aDash() {
+  const paid = S.orders.filter((o) => !['CANCELLED', 'REFUNDED'].includes(o.status));
+  const rev = paid.reduce((s, o) => s + o.total, 0);
+  const days = Array.from({ length: 28 }, (_, i) => { const start = new Date(Date.now() - (27 - i) * 864e5).setHours(0, 0, 0, 0); return paid.filter((o) => o.at >= start && o.at < start + 864e5).reduce((s, o) => s + o.total, 0); });
+  const max = Math.max(1, ...days);
+  const top = Object.entries(paid.flatMap((o) => o.items).reduce((m, i) => ((m[i.name] = (m[i.name] || 0) + i.qty), m), {})).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const low = S.products.flatMap((p) => p.variants.filter((v) => v.stock <= 2).map((v) => ({ p, v }))).slice(0, 8);
+  const e = S.events;
+  return `<div class="row between"><h1>Dashboard</h1><span class="muted">Last 28 days · example data</span></div>
+    <div class="kpis">
+      <div class="kpi"><div class="l">Revenue</div><div class="v">${fmt(rev)}</div></div>
+      <div class="kpi"><div class="l">Orders</div><div class="v">${paid.length}</div></div>
+      <div class="kpi"><div class="l">Avg. order</div><div class="v">${fmt(paid.length ? Math.round(rev / paid.length) : 0)}</div></div>
+      <div class="kpi"><div class="l">To fulfil</div><div class="v">${S.orders.filter((o) => ['PAID', 'PROCESSING'].includes(o.status)).length}</div></div>
+      <div class="kpi"><div class="l">Conversion</div><div class="v">${((paid.length / e.visitors) * 100).toFixed(1)}%</div></div>
+      <div class="kpi"><div class="l">Subscribers</div><div class="v">${S.subs}</div></div>
+    </div>
+    <div class="agrid">
+      <section class="panel"><h2>Revenue by day</h2><div class="bars">${days.map((d, i) => `<div style="height:${Math.round((d / max) * 100)}%" title="${new Date(Date.now() - (27 - i) * 864e5).toLocaleDateString()}: ${fmt(d)}"></div>`).join('')}</div><div class="row between small" style="margin-top:6px"><span>28 days ago</span><span>Today</span></div></section>
+      <section class="panel sum"><h2>Shopper funnel</h2><div class="r"><span>Visitors</span><strong>${e.visitors.toLocaleString()}</strong></div><div class="r"><span>Product views</span><strong>${e.views.toLocaleString()}</strong></div><div class="r"><span>Added to cart</span><strong>${e.carts}</strong></div><div class="r"><span>Started checkout</span><strong>${e.checkouts}</strong></div><div class="r"><span>Purchased</span><strong>${paid.length}</strong></div></section>
+      <section class="panel"><h2>Top products</h2><div class="tscroll"><table class="t"><thead><tr><th>Product</th><th>Units</th></tr></thead><tbody>${top.map(([n, q]) => `<tr><td>${esc(n)}</td><td>${q}</td></tr>`).join('')}</tbody></table></div></section>
+      <section class="panel"><h2>Low stock</h2><div class="tscroll"><table class="t"><thead><tr><th>Item</th><th>SKU</th><th>Stock</th></tr></thead><tbody>${low.map(({ p, v }) => `<tr><td>${esc(p.name)} <span class="small">${[v.size, v.color].filter(Boolean).join(' · ')}</span></td><td>${v.sku}</td><td style="color:${v.stock ? 'var(--warn)' : 'var(--bad)'};font-weight:800">${v.stock}</td></tr>`).join('')}</tbody></table></div></section>
+    </div>`;
+}
+const NEXT = { PAID: ['PROCESSING', 'CANCELLED', 'REFUNDED'], PROCESSING: ['SHIPPED', 'CANCELLED', 'REFUNDED'], SHIPPED: ['DELIVERED', 'REFUNDED'], DELIVERED: ['REFUNDED'], CANCELLED: [], REFUNDED: [] };
+function aOrders() {
+  const list = [...S.orders].sort((a, b) => b.at - a.at);
+  return `<h1>Orders</h1><p class="muted">Move an order through its stages. Only allowed next steps are offered. Cancelling returns items to stock.</p>
+    <div class="tscroll"><table class="t"><thead><tr><th>Order</th><th>Date</th><th>Customer</th><th>Items</th><th>Total</th><th>Paid by</th><th>Status</th><th>Move to</th></tr></thead><tbody>
+    ${list.map((o) => `<tr><td><strong>${o.number}</strong>${o.example ? '' : ' <span class="tag new">New</span>'}</td><td>${new Date(o.at).toLocaleDateString()}</td><td>${esc(o.name)}</td><td>${o.items.map((i) => `${i.qty}× ${esc(i.name)}${i.pers ? ` (“${esc(i.pers)}”)` : ''}`).join('<br>')}</td><td class="price">${fmt(o.total)}</td><td>${o.pay}</td><td><span class="status st-${o.status}">${o.status}</span></td>
+      <td>${NEXT[o.status].length ? `<select data-ostatus="${o.number}" aria-label="Change status"><option value="">—</option>${NEXT[o.status].map((s) => `<option>${s}</option>`).join('')}</select>` : '—'}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function aProducts() {
+  return `<div class="row between"><h1>Products</h1><button class="btn sm" data-act="newproduct">+ New product</button></div>
+    <div class="tscroll"><table class="t"><thead><tr><th></th><th>Name</th><th>Status</th><th>Category</th><th>Price</th><th>Stock</th><th>Variants</th><th>Featured</th><th></th></tr></thead><tbody>
+    ${S.products.map((p) => `<tr><td><img src="${p.images[0].url}" alt="" style="width:42px;height:52px;object-fit:cover;border-radius:6px"></td><td><strong>${esc(p.name)}</strong></td><td><span class="status st-${p.status}">${p.status}</span></td><td>${catName(p.cat)}</td><td class="price">${fmt(p.price)}</td><td>${totalStock(p)}</td><td>${p.variants.length}</td><td>${p.featured ? '★' : ''}</td><td><button class="btn ghost sm" data-act="edit:${p.slug}">Edit</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+function aEdit() {
+  const p = P(V.slug);
+  return `<button class="link" data-admin="products">← All products</button><h1 style="margin-top:10px">${esc(p.name)}</h1>
+    <form id="editForm" class="panel stack">
+      <div class="grid2"><label class="f">Name<input id="eName" value="${esc(p.name)}" required></label><label class="f">Status<select id="eStatus">${['PUBLISHED', 'DRAFT', 'ARCHIVED'].map((s) => `<option ${p.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+      <label class="f">Price (QAR)<input id="ePrice" type="number" step="0.01" min="0" value="${(p.price / 100).toFixed(2)}"></label><label class="f">Category<select id="eCat">${CATS.map((c) => `<option value="${c.slug}" ${p.cat === c.slug ? 'selected' : ''}>${c.name}</option>`).join('')}</select></label></div>
+      <label class="f">Short description<input id="eShort" value="${esc(p.short)}"></label>
+      <label class="f">Description<textarea id="eDesc">${esc(p.desc)}</textarea></label>
+      <div class="grid2"><label class="f">Materials<input id="eMat" value="${esc(p.materials)}"></label><label class="f">Recommended age<input id="eAge" value="${esc(p.age)}"></label></div>
+      <div class="row"><label class="check"><input type="checkbox" id="eFeat" ${p.featured ? 'checked' : ''}> <span>Featured in Best Sellers</span></label><label class="check"><input type="checkbox" id="ePers" ${p.personal ? 'checked' : ''}> <span>Personalisable</span></label><label class="check"><input type="checkbox" id="eMto" ${p.mto ? 'checked' : ''}> <span>Made to order</span></label></div>
+      <div><button class="btn">Save product</button></div></form>
+    <section class="panel" style="margin-top:18px"><h2>Variants &amp; stock</h2><p class="muted">Each size and colour has its own SKU and stock. Every change is logged in the full store.</p>
+      <div class="tscroll"><table class="t"><thead><tr><th>SKU</th><th>Size</th><th>Colour</th><th>Stock</th><th>Adjust</th></tr></thead><tbody>${p.variants.map((v, i) => `<tr><td>${v.sku}</td><td>${v.size ?? '—'}</td><td><i class="sw" style="background:${v.hex}"></i> ${esc(v.color)}</td><td><strong>${v.stock}</strong></td><td><div class="row" style="flex-wrap:nowrap"><button class="btn ghost sm" data-act="vs:${i}:-1" aria-label="Remove one">−1</button><button class="btn ghost sm" data-act="vs:${i}:1" aria-label="Add one">+1</button><button class="btn ghost sm" data-act="vs:${i}:5">+5</button></div></td></tr>`).join('')}</tbody></table></div></section>
+    <section class="panel" style="margin-top:18px"><h2>Photos (${p.images.length})</h2><p class="muted">Add as many photos as you like. The first photo is shown on product cards. Uploads in this preview stay in your browser.</p>
+      <div class="row">${p.images.map((im, i) => `<div class="stack" style="width:110px;gap:6px"><img src="${im.url}" alt="" style="border-radius:10px;aspect-ratio:4/5;object-fit:cover;width:100%;${i === 0 ? 'outline:3px solid var(--sage)' : ''}"><div class="row" style="gap:6px">${i === 0 ? '<span class="small">★ Main</span>' : `<button class="link" data-act="feat:${i}">Make main</button>`}${p.images.length > 1 ? `<button class="link" style="color:var(--bad)" data-act="delimg:${i}">Delete</button>` : ''}</div></div>`).join('')}</div>
+      <label class="btn ghost sm" style="margin-top:14px">Upload photos<input type="file" id="upload" accept="image/*" multiple hidden></label></section>`;
+}
+function aInventory() {
+  const rows = S.products.flatMap((p) => p.variants.map((v, i) => ({ p, v, i }))).sort((a, b) => a.v.stock - b.v.stock);
+  return `<h1>Inventory</h1><p class="muted">Lowest stock first.</p><div class="tscroll"><table class="t"><thead><tr><th>Product</th><th>SKU</th><th>Size</th><th>Colour</th><th>Stock</th></tr></thead><tbody>
+    ${rows.map(({ p, v }) => `<tr><td>${esc(p.name)}</td><td>${v.sku}</td><td>${v.size ?? '—'}</td><td>${esc(v.color)}</td><td style="font-weight:800;color:${v.stock === 0 ? 'var(--bad)' : v.stock <= 2 ? 'var(--warn)' : 'inherit'}">${v.stock}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function aReviews() {
+  return `<h1>Reviews</h1><p class="muted">New reviews wait here until you approve them.</p><div class="stack">${S.reviews.map((r, i) => `<article class="panel"><div class="row between"><strong><span class="stars">${stars(r.rating)}</span> ${esc(r.title ?? '')}</strong><span class="status st-${r.status === 'APPROVED' ? 'PAID' : r.status === 'REJECTED' ? 'CANCELLED' : ''}">${r.status}</span></div><p>${esc(r.body)}</p><p class="small">${esc(r.name)} on ${esc(P(r.pid)?.name)}</p>
+    <div class="row"><button class="btn sm" data-act="rv:${i}:APPROVED">Approve</button><button class="btn ghost sm" data-act="rv:${i}:REJECTED">Reject</button></div></article>`).join('')}</div>`;
+}
+function aConfig() {
+  const s = S.settings;
+  return `<h1>Store settings</h1><p class="muted">Change the brand and homepage text without touching code. Changes show on the storefront right away.</p>
+    <form id="cfgForm" class="panel stack">
+      <div class="grid2"><label class="f">Brand name<input id="cBrand" value="${esc(s.brand)}"></label><label class="f">Tagline<input id="cTag" value="${esc(s.tagline)}"></label></div>
+      <label class="f">Hero headline<input id="cHead" value="${esc(s.headline)}"></label>
+      <label class="f">Hero subheading<textarea id="cSub">${esc(s.sub)}</textarea></label>
+      <div class="grid2"><label class="f">Delivery fee (QAR)<input id="cFee" type="number" min="0" value="${s.flatFee}"></label><label class="f">Free delivery from (QAR)<input id="cFree" type="number" min="0" value="${s.freeOver}"></label></div>
+      <div class="grid2"><label class="f">Accent colour (dusty rose)<input id="cRose" type="color" value="${s.rose}"></label><label class="f">Secondary colour (sage)<input id="cSage" type="color" value="${s.sage}"></label></div>
+      <div><button class="btn">Save settings</button></div></form>`;
+}
+
+// ===================== Modals =====================
+function modal(html) {
+  closeModal();
+  const o = document.createElement('div');
+  o.className = 'overlay';
+  o.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><button class="ibtn x" data-act="close" aria-label="Close">${I.x}</button>${html}</div>`;
+  o.addEventListener('click', (e) => { if (e.target === o) closeModal(); });
+  document.body.append(o);
+  $('.x', o).focus();
+}
+function closeModal() { $('.overlay')?.remove(); }
+function quickView(slug) {
+  const p = P(slug);
+  sel = { size: p.sizes?.length === 1 ? p.sizes[0] : null, color: p.variants.length && new Set(p.variants.map((v) => v.color)).size === 1 ? p.variants[0].color : null, qty: 1, img: 0, zoom: false, quick: slug };
+  drawQuick();
+}
+function drawQuick() {
+  const p = P(sel.quick);
+  const v = pickVariant(p);
+  const ok = v && v.stock > 0;
+  const [cls, label] = v ? stockOf(p, v) : ['', ''];
+  modal(`<div class="qv"><img src="${p.images[0].url}" alt="${esc(p.images[0].alt)}"><div><h2>${esc(p.name)}</h2><div class="price" style="font-size:1.3rem">${fmt(p.price)}</div><p>${esc(p.short)}</p>${picker(p)}
+    ${p.personal ? `<label class="f" style="margin-bottom:12px">${esc(p.persLabel)} <span class="muted">(optional)</span><input id="qpers" maxlength="12"></label>` : ''}
+    <p><span class="stock ${cls}">${label}</span></p><div class="stack"><button class="btn" data-act="qadd" ${ok ? '' : 'disabled'}>${!v ? 'Select options' : ok ? 'Add to cart' : 'Out of stock'}</button><button class="link" data-go="product:${p.slug}">View full details</button></div></div></div>`);
+}
+function sizeGuide() {
+  modal(`<h2>Baby clothing size guide</h2><div class="tscroll"><table class="t"><thead><tr>${SIZE_GUIDE.cols.map((c) => `<th>${c}</th>`).join('')}</tr></thead><tbody>${SIZE_GUIDE.rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td>${c}</td>` : `<th>${c}</th>`)).join('')}</tr>`).join('')}</tbody></table></div><p class="small" style="margin-top:10px">${SIZE_GUIDE.note}</p>`);
+}
+function reviewForm() {
+  modal(`<h2>Write a review</h2><form id="rvForm" class="stack"><label class="f">Rating<select id="rvRating">${[5, 4, 3, 2, 1].map((n) => `<option value="${n}">${stars(n)} (${n})</option>`).join('')}</select></label><label class="f">Your name<input id="rvName" required value="Fatima"></label><label class="f">Your review<textarea id="rvBody" required minlength="10">Beautiful quality and so soft.</textarea></label><button class="btn">Submit review</button></form>`);
+}
+
+// ===================== Render & events =====================
+function render() {
+  document.documentElement.style.setProperty('--rose', S.settings.rose);
+  document.documentElement.style.setProperty('--sage', S.settings.sage);
+  if (V.view === 'admin') { $('#app').innerHTML = admin(); return; }
+  const views = { home, shop, product, cart, checkout, order, wishlist, account, page };
+  $('#app').innerHTML = header() + `<main id="main">${(views[V.view] || home)()}</main>` + footer();
+  if (V.search) $('#q')?.focus();
+}
+
+document.addEventListener('click', (e) => {
+  const g = e.target.closest('[data-go]');
+  if (g) {
+    e.preventDefault();
+    closeModal();
+    const [v, arg] = g.dataset.go.split(':');
+    if (v === 'shop') {
+      const f = { cat: '', sizes: [], colors: [], min: '', max: '', avail: '', sort: 'newest', q: '', page: 1 };
+      if (arg === 'popular') f.sort = 'popular'; else if (arg) f.cat = arg;
+      return go('shop', { filters: f, fopen: false });
+    }
+    if (v === 'product') {
+      const p = P(arg);
+      sel = { size: p.sizes?.length === 1 ? p.sizes[0] : null, color: new Set(p.variants.map((x) => x.color)).size === 1 ? p.variants[0].color : null, qty: 1, img: 0, zoom: false };
+      S.events.views++; save();
+      return go('product', { slug: arg });
+    }
+    if (v === 'page') return go('page', { slug: arg });
+    if (v === 'admin') return go('admin', { admin: 'dash' });
+    return go(v);
+  }
+  const ad = e.target.closest('[data-admin]');
+  if (ad) { V.admin = ad.dataset.admin; render(); window.scrollTo({ top: 0 }); return; }
+  const pk = e.target.closest('[data-pick]');
+  if (pk && !pk.disabled) {
+    sel[pk.dataset.pick] = pk.dataset.v;
+    const p = P(sel.quick || V.slug);
+    const v = pickVariant(p);
+    if (v) { const ci = p.variants.filter((x, i, a) => a.findIndex((y) => y.color === x.color) === i).findIndex((x) => x.color === v.color); if (p.images[ci]) sel.img = ci; }
+    if (sel.quick && $('.overlay')) drawQuick(); else { sel.pers = $('#pers')?.value; render(); }
+    return;
+  }
+  const f = e.target.closest('[data-f]');
+  if (f) {
+    const k = f.dataset.f, val = f.dataset.v;
+    if (k === 'sizes' || k === 'colors') { const arr = V.filters[k]; V.filters[k] = arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]; } else V.filters[k] = val;
+    V.filters.page = 1;
+    render();
+    return;
+  }
+  const a = e.target.closest('[data-act]');
+  if (!a) return;
+  const [act, x, y] = a.dataset.act.split(':');
+  const p = P(V.slug);
+  switch (act) {
+    case 'menu': V.menu = !V.menu; render(); break;
+    case 'search': V.search = !V.search; render(); break;
+    case 'reset': S = seedState(); save(); go('home'); toast('Preview reset to the original sample data'); break;
+    case 'close': closeModal(); break;
+    case 'quick': quickView(x); break;
+    case 'add1': { const q = P(x); addToCart(q, q.variants[0]); break; }
+    case 'fav': { const on = S.wish.includes(x); S.wish = on ? S.wish.filter((s) => s !== x) : [...S.wish, x]; save(); render(); toast(on ? 'Removed from wishlist' : 'Saved to wishlist', on ? null : ['View', 'wishlist']); if (sel.quick && $('.overlay')) drawQuick(); break; }
+    case 'ftoggle': V.fopen = !V.fopen; render(); break;
+    case 'clear': V.filters = { cat: V.filters.cat, sizes: [], colors: [], min: '', max: '', avail: '', sort: V.filters.sort, q: '', page: 1 }; if (a.closest('.empty')) V.filters.cat = ''; render(); break;
+    case 'page': V.filters.page = Number(x); render(); window.scrollTo({ top: 0 }); break;
+    case 'img': sel.img = Number(x); sel.zoom = false; sel.pers = $('#pers')?.value; render(); break;
+    case 'zoom': sel.zoom = !sel.zoom; sel.pers = $('#pers')?.value; render(); break;
+    case 'guide': sizeGuide(); break;
+    case 'qty': { const v = pickVariant(p); sel.qty = Math.max(1, Math.min(v ? Math.max(1, v.stock) : 20, sel.qty + Number(x))); sel.pers = $('#pers')?.value; render(); break; }
+    case 'add': addToCart(p, pickVariant(p), sel.qty, ($('#pers')?.value || '').trim()); break;
+    case 'buy': if (addToCart(p, pickVariant(p), sel.qty, ($('#pers')?.value || '').trim())) go('checkout'); break;
+    case 'qadd': { const q = P(sel.quick); if (addToCart(q, pickVariant(q), 1, ($('#qpers')?.value || '').trim())) { closeModal(); sel.quick = null; } break; }
+    case 'review': reviewForm(); break;
+    case 'cq': { const l = S.cart[Number(x)]; if (y === 'rm') S.cart.splice(Number(x), 1); else { const v = P(l.pid).variants.find((q) => q.id === l.vid); const n = l.qty + Number(y); if (n > v.stock) { toast(`Only ${v.stock} left in stock`); break; } if (n <= 0) S.cart.splice(Number(x), 1); else l.qty = n; } save(); render(); break; }
+    case 'vieworder': go('order', { order: x }); break;
+    case 'newproduct': {
+      const n = S.products.length + 1;
+      const slug = `new-handmade-piece-${n}`;
+      S.products.unshift({ id: slug, slug, name: 'New Handmade Piece', cat: 'baby-clothes', price: 15000, compareAt: null, featured: false, status: 'DRAFT', sizes: ['Newborn', '0–3 months'], variants: [['Newborn', 'Ivory'], ['0–3 months', 'Ivory']].map(([s, c]) => ({ id: `LS-NEW${n}-${s.replace(/\W/g, '').toUpperCase()}`, sku: `LS-NEW${n}-${s.replace(/\W/g, '').toUpperCase()}`, size: s, color: c, hex: '#F5EFE6', stock: 3 })), materials: 'Merino wool', age: '0–3 months', mto: false, personal: false, dims: null, sold: 0, daysOld: 0, images: [{ url: photo('New Piece', '#F5EFE6', '#D8B4AF'), alt: 'New handmade piece' }], short: 'A new handmade piece.', desc: 'Describe the piece here.', care: 'Hand wash cold. Dry flat.', persLabel: null });
+      save(); V.slug = slug; V.admin = 'edit'; render(); toast('Draft created. Publish it when it is ready.');
+      break;
+    }
+    case 'edit': V.slug = x; V.admin = 'edit'; render(); window.scrollTo({ top: 0 }); break;
+    case 'vs': { const v = p.variants[Number(x)]; v.stock = Math.max(0, v.stock + Number(y)); save(); render(); break; }
+    case 'feat': { const [im] = p.images.splice(Number(x), 1); p.images.unshift(im); save(); render(); break; }
+    case 'delimg': p.images.splice(Number(x), 1); save(); render(); toast('Photo deleted'); break;
+    case 'rv': S.reviews[Number(x)].status = y; save(); render(); toast(y === 'APPROVED' ? 'Review is now public' : 'Review hidden'); break;
+  }
+});
+
+document.addEventListener('change', (e) => {
+  const t = e.target;
+  if (t.id === 'sort') { V.filters.sort = t.value; V.filters.page = 1; render(); }
+  if (t.id === 'fmin' || t.id === 'fmax') { V.filters[t.id === 'fmin' ? 'min' : 'max'] = t.value; V.filters.page = 1; render(); }
+  if (t.dataset.ostatus && t.value) {
+    const o = S.orders.find((x) => x.number === t.dataset.ostatus);
+    if (t.value === 'CANCELLED' || t.value === 'REFUNDED') o.items.forEach((i) => { const v = S.products.flatMap((p) => p.variants).find((q) => q.sku === i.sku); if (v) v.stock += i.qty; });
+    o.status = t.value; save(); render(); toast(`Order ${o.number} is now ${t.value}`);
+  }
+  if (t.id === 'upload' && t.files.length) {
+    const p = P(V.slug);
+    let pending = t.files.length;
+    [...t.files].forEach((file) => {
+      if (!file.type.startsWith('image/')) { pending--; toast(`${file.name} is not an image`); return; }
+      if (file.size > 8 * 1024 * 1024) { pending--; toast(`${file.name} is larger than 8 MB`); return; }
+      const r = new FileReader();
+      r.onload = () => { p.images.push({ url: r.result, alt: p.name }); if (--pending === 0) { save(); render(); toast('Photos added'); } };
+      r.readAsDataURL(file);
+    });
+  }
+});
+
+document.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const id = e.target.id;
+  if (id === 'searchForm') { V.filters = { cat: '', sizes: [], colors: [], min: '', max: '', avail: '', sort: 'newest', q: $('#q').value.trim(), page: 1 }; go('shop'); }
+  if (id === 'newsForm') {
+    if (!$('#nlEmail').checkValidity() || !$('#nlEmail').value) return toast('Enter a valid email address');
+    if (!$('#nlConsent').checked) return toast('Tick the consent box to subscribe');
+    S.subs++; save(); e.target.reset(); toast('Thank you for subscribing!');
+  }
+  if (id === 'coForm') {
+    const req = ['coEmail', 'coName', 'coPhone', 'coLine', 'coCity'];
+    const bad = req.find((r) => !$('#' + r).value.trim() || !$('#' + r).checkValidity());
+    if (bad) { $('#coErr').textContent = 'Please fill in every required field.'; $('#' + bad).focus(); return; }
+    const t = cartTotals();
+    for (const l of t.lines) if (l.qty > l.v.stock) { $('#coErr').textContent = `Sorry, only ${l.v.stock} of ${l.p.name} left.`; return; }
+    t.lines.forEach((l) => { l.v.stock -= l.qty; l.p.sold += l.qty; });
+    const num = `LS-261024-${Math.random().toString(16).slice(2, 8).toUpperCase()}`;
+    S.orders.push({ number: num, at: Date.now(), name: $('#coName').value, email: $('#coEmail').value, address: [$('#coLine').value, $('#coArea').value].filter(Boolean).join(', '), city: $('#coCity').value, status: 'PAID', pay: e.target.pay.value, items: t.lines.map((l) => ({ name: l.p.name, sku: l.v.sku, size: l.v.size, color: l.v.color, qty: l.qty, price: l.p.price, img: l.p.images[0].url, pers: l.pers })), subtotal: t.sub, ship: t.ship, total: t.total });
+    S.cart = []; S.events.checkouts++; save();
+    go('order', { order: num });
+  }
+  if (id === 'rvForm') {
+    S.reviews.push({ pid: V.slug, name: $('#rvName').value || 'Guest', rating: Number($('#rvRating').value), title: null, body: $('#rvBody').value, status: 'PENDING', verified: false });
+    save(); closeModal(); toast('Thank you! Your review appears once the shop approves it.');
+  }
+  if (id === 'editForm') {
+    const p = P(V.slug);
+    Object.assign(p, { name: $('#eName').value.trim() || p.name, status: $('#eStatus').value, price: Math.round(Number($('#ePrice').value) * 100), cat: $('#eCat').value, short: $('#eShort').value, desc: $('#eDesc').value, materials: $('#eMat').value, age: $('#eAge').value, featured: $('#eFeat').checked, personal: $('#ePers').checked, mto: $('#eMto').checked });
+    if (p.personal && !p.persLabel) p.persLabel = 'Name to embroider (max 12 letters)';
+    save(); render(); toast('Product saved');
+  }
+  if (id === 'cfgForm') {
+    Object.assign(S.settings, { brand: $('#cBrand').value, tagline: $('#cTag').value, headline: $('#cHead').value, sub: $('#cSub').value, flatFee: Number($('#cFee').value), freeOver: Number($('#cFree').value), rose: $('#cRose').value, sage: $('#cSage').value });
+    save(); render(); toast('Settings saved. Open the store to see them.');
+  }
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+const start = (location.hash || '').slice(1);
+if (start === 'admin') V.view = 'admin';
+else if (start === 'shop') V.view = 'shop';
+render();
+</script>
+</body>
+</html>
