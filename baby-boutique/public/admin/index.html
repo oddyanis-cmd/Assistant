@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Admin</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <script type="module" src="/admin/admin.js"></script>
+</head>
+<body class="admin">
+  <div class="admin-shell">
+    <aside class="admin-side" id="side">
+      <a class="logo" href="#/" id="admin-brand">Admin</a>
+      <nav aria-label="Admin">
+        <a href="#/" data-nav="dashboard">Dashboard</a>
+        <a href="#/orders" data-nav="orders">Orders</a>
+        <a href="#/products" data-nav="products">Products</a>
+        <a href="#/inventory" data-nav="inventory">Inventory</a>
+        <a href="#/categories" data-nav="categories">Categories</a>
+        <a href="#/size-guides" data-nav="size-guides">Size guides</a>
+        <a href="#/reviews" data-nav="reviews">Reviews</a>
+        <a href="#/customers" data-nav="customers" data-admin>Customers</a>
+        <a href="#/pages" data-nav="pages" data-admin>Pages</a>
+        <a href="#/newsletter" data-nav="newsletter" data-admin>Newsletter</a>
+        <a href="#/settings" data-nav="settings" data-admin>Settings</a>
+      </nav>
+      <div class="admin-side-foot"><a href="/" target="_blank" rel="noopener">View store ↗</a><button class="link-btn" id="admin-logout">Log out</button></div>
+    </aside>
+    <div class="admin-main">
+      <header class="admin-top"><button class="icon-btn admin-menu" id="admin-menu" aria-label="Menu">☰</button><span id="admin-user"></span></header>
+      <main id="view" tabindex="-1"><div class="skeleton skeleton-qv"></div></main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <defs>
+    <pattern id="knit" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M0 20 Q10 0 20 20 T40 20" fill="none" stroke="#745A4A" stroke-opacity=".12" stroke-width="5"/></pattern>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EDE2D4"/><stop offset="1" stop-color="#F3DCD7"/></linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <!-- cardigan -->
+  <g transform="translate(150 280)">
+    <path d="M100 0 L200 0 L240 30 L330 70 L360 250 L300 260 L290 160 L290 460 L10 460 L10 160 L0 260 L-60 250 L-30 70 L60 30 Z" fill="#FAF7F2" stroke="#D8C7B5" stroke-width="4"/>
+    <path d="M100 0 L200 0 L240 30 L330 70 L360 250 L300 260 L290 160 L290 460 L10 460 L10 160 L0 260 L-60 250 L-30 70 L60 30 Z" fill="url(#knit)"/>
+    <path d="M150 20 L150 460" stroke="#D8C7B5" stroke-width="4"/>
+    <g fill="#D8B4AF"><circle cx="165" cy="120" r="10"/><circle cx="165" cy="210" r="10"/><circle cx="165" cy="300" r="10"/><circle cx="165" cy="390" r="10"/></g>
+  </g>
+  <!-- bunny doll -->
+  <g transform="translate(470 560)">
+    <ellipse cx="80" cy="-150" rx="22" ry="70" fill="#E6D8C3" transform="rotate(-12 80 -150)"/>
+    <ellipse cx="140" cy="-150" rx="22" ry="70" fill="#E6D8C3" transform="rotate(12 140 -150)"/>
+    <circle cx="110" cy="-40" r="70" fill="#E6D8C3"/>
+    <circle cx="88" cy="-45" r="6" fill="#745A4A"/><circle cx="132" cy="-45" r="6" fill="#745A4A"/>
+    <path d="M100 -20 Q110 -10 120 -20" stroke="#745A4A" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <circle cx="75" cy="-25" r="10" fill="#D8B4AF" opacity=".7"/><circle cx="145" cy="-25" r="10" fill="#D8B4AF" opacity=".7"/>
+    <path d="M40 30 Q110 0 180 30 L200 200 L20 200 Z" fill="#A8B8A0"/>
+    <path d="M40 30 Q110 0 180 30 L200 200 L20 200 Z" fill="url(#knit)"/>
+  </g>
+  <!-- yarn ball -->
+  <g transform="translate(150 840)"><circle r="70" fill="#D8B4AF"/><path d="M-60 -30c40 5 90 40 110 80M-70 10c40 0 80 30 95 60M-30 -62c30 20 70 60 95 100" stroke="#745A4A" stroke-opacity=".3" stroke-width="5" fill="none"/></g>
+</svg>

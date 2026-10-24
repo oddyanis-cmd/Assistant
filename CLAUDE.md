@@ -1,9 +1,10 @@
 # Repository guide (read me first)
 
-This repo holds **three independent projects**. The **active** one is **`shiny-beauty-center/`**.
+This repo holds **several independent projects**. The **active** one is **`shiny-beauty-center/`**.
 
 ## Projects
 - **`shiny-beauty-center/`** ← ACTIVE: women-only beauty-salon platform (client PWA + staff/admin portal). Built, security-hardened, **deployed and beta-live**.
+- **`baby-boutique/`** — handmade baby knitwear & dolls e-commerce (Express 5 + Prisma + Postgres, vanilla JS storefront + admin SPA). Payment adapters (Stripe/PayPal/dev); see its README for Qatar payment caveats. Tests: `npm test` against a `*_test` DB.
 - **`belza-salon/`** — earlier hair-salon booking app (Next.js + Prisma + Postgres + Stripe). Self-contained.
 - **repo root** (`agent.py`, `main.py`, `tools/`, `database/`) — a Python/FastAPI personal AI assistant (WhatsApp + Claude agentic loop). Separate from the web apps.
 - **`.claude/agents/`** — a 7-role "AI company" team (tech-lead-architect, full-stack-developer, product-designer, growth-marketer, data-research-analyst, finance-analyst, hr-admin-advisor) plus **Quinn** (qa-test-engineer) and **Sage** (security-reviewer). These are Claude Code subagents used to build the apps.

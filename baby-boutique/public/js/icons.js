@@ -1,0 +1,22 @@
+const s = (d, extra = '') => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${d}</svg>`;
+export const icons = {
+  search: s('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>'),
+  user: s('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'),
+  heart: s('<path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6a5 5 0 0 1 9.2 5C19 15.6 12 20 12 20Z"/>'),
+  bag: s('<path d="M5 8h14l-1.2 12.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>'),
+  menu: s('<path d="M4 7h16M4 12h16M4 17h16"/>'),
+  close: s('<path d="M6 6l12 12M18 6 6 18"/>'),
+  eye: s('<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>'),
+  truck: s('<path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>'),
+  hand: s('<path d="M7 11V6a1.5 1.5 0 0 1 3 0v4M10 10V4.5a1.5 1.5 0 0 1 3 0V10M13 10V5.5a1.5 1.5 0 0 1 3 0V12M16 9.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-.5A6.5 6.5 0 0 1 5 16l-1.6-3.2a1.5 1.5 0 0 1 2.6-1.5L7 13"/>'),
+  leaf: s('<path d="M5 21c0-9 6-15 15-16-1 9-7 15-15 16Z"/><path d="M5 21 14 12"/>'),
+  gift: s('<rect x="3" y="8" width="18" height="13" rx="1"/><path d="M12 8v13M3 12h18M12 8S10 3 7.5 4 9 8 12 8Zm0 0s2-5 4.5-4S15 8 12 8Z"/>'),
+  shield: s('<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/>'),
+  yarn: s('<circle cx="12" cy="12" r="8"/><path d="M6 7c4 1 9 6 11 11M4.5 12c4 0 8 3 9.5 7.5M9 4.5c3 2 7 6 10 10"/>'),
+  chevronL: s('<path d="m15 18-6-6 6-6"/>'),
+  chevronR: s('<path d="m9 18 6-6-6-6"/>'),
+  instagram: s('<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5" fill="currentColor"/>'),
+  facebook: s('<path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V10H6v4h3v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h2Z"/>'),
+  tiktok: s('<path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.5 3 2.5 5 6 5"/>'),
+  pinterest: s('<circle cx="12" cy="12" r="9"/><path d="M11 8.5c3-1 5 .5 5 3s-2 4-4 3.5M11.5 10 9 21"/>'),
+};

@@ -1,0 +1,410 @@
+// Handmade baby boutique — data model.
+// Money is stored as integer minor units (dirham for QAR: 1 QAR = 100 dirham).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  STAFF
+  ADMIN
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ProductType {
+  CLOTHING
+  SHOES
+  ACCESSORY
+  DOLL
+  GIFT_SET
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ---------- Identity ----------
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  passwordHash   String
+  name           String
+  phone          String?
+  role           Role      @default(CUSTOMER)
+  failedLogins   Int       @default(0)
+  lockedUntil    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  sessions       Session[]
+  addresses      Address[]
+  orders         Order[]
+  reviews        Review[]
+  wishlist       WishlistItem[]
+  cart           Cart?
+}
+
+/// Server-side session. Only a SHA-256 hash of the cookie token is stored.
+model Session {
+  id         String   @id // sha256(token)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  ip         String?
+  userAgent  String?
+
+  @@index([userId])
+}
+
+model Address {
+  id         String  @id @default(cuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName   String
+  phone      String
+  line1      String
+  line2      String?
+  area       String?
+  city       String
+  country    String  @default("QA")
+  postalCode String?
+  isDefault  Boolean @default(false)
+
+  @@index([userId])
+}
+
+// ---------- Catalog ----------
+
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  imageUrl    String?
+  parentId    String?
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  showOnHome  Boolean    @default(false)
+  products    Product[]
+}
+
+model SizeGuide {
+  id       String    @id @default(cuid())
+  name     String
+  /// [{ size: "0–3 months", chestCm: 40, lengthCm: 30, heightCm: "56–62" }, ...]
+  columns  Json
+  rows     Json
+  notes    String?
+  products Product[]
+}
+
+model Product {
+  id                   String           @id @default(cuid())
+  name                 String
+  slug                 String           @unique
+  shortDescription     String?
+  description          String           @default("")
+  type                 ProductType      @default(CLOTHING)
+  status               ProductStatus    @default(DRAFT)
+  basePrice            Int
+  compareAtPrice       Int?
+  currency             String           @default("QAR")
+  categoryId           String?
+  category             Category?        @relation(fields: [categoryId], references: [id])
+  sizeGuideId          String?
+  sizeGuide            SizeGuide?       @relation(fields: [sizeGuideId], references: [id])
+  materials            String?
+  careInstructions     String?
+  ageRange             String?
+  /// For dolls/toys: e.g. "Height 32 cm, width 12 cm"
+  dimensionsCm         String?
+  dispatchMinDays      Int              @default(2)
+  dispatchMaxDays      Int              @default(5)
+  madeToOrder          Boolean          @default(false)
+  isFeatured           Boolean          @default(false)
+  isPersonalizable     Boolean          @default(false)
+  personalizationLabel String?
+  tags                 String[]         @default([])
+  salesCount           Int              @default(0)
+  publishedAt          DateTime?
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  images               ProductImage[]
+  variants             ProductVariant[]
+  reviews              Review[]
+  wishlistedBy         WishlistItem[]
+
+  @@index([status, publishedAt])
+  @@index([categoryId])
+}
+
+/// Binary data lives in object storage; this row only holds URLs and metadata.
+model ProductImage {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  provider   String   // "local" | "cloudinary" | "s3"
+  storageKey String
+  url        String
+  thumbUrl   String
+  mediumUrl  String
+  width      Int?
+  height     Int?
+  bytes      Int      @default(0)
+  alt        String?
+  position   Int      @default(0)
+  isFeatured Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([productId, position])
+}
+
+model ProductVariant {
+  id                String              @id @default(cuid())
+  productId         String
+  product           Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sku               String              @unique
+  size              String?
+  color             String?
+  colorHex          String?
+  /// Overrides product.basePrice when set
+  price             Int?
+  stock             Int                 @default(0)
+  lowStockThreshold Int                 @default(2)
+  isActive          Boolean             @default(true)
+  position          Int                 @default(0)
+  movements         InventoryMovement[]
+  cartItems         CartItem[]
+  orderItems        OrderItem[]
+
+  @@unique([productId, size, color])
+}
+
+model InventoryMovement {
+  id        String         @id @default(cuid())
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  delta     Int
+  reason    String // "restock" | "sale" | "cancel" | "adjustment" | "refund"
+  note      String?
+  orderId   String?
+  userId    String?
+  createdAt DateTime       @default(now())
+
+  @@index([variantId, createdAt])
+}
+
+// ---------- Shopping ----------
+
+model Cart {
+  id        String     @id @default(cuid())
+  /// sha256 of the guest cart cookie token; null once bound to a user
+  tokenHash String?    @unique
+  userId    String?    @unique
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  updatedAt DateTime   @updatedAt
+  createdAt DateTime   @default(now())
+}
+
+model CartItem {
+  id              String         @id @default(cuid())
+  cartId          String
+  cart            Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variantId       String
+  variant         ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  quantity        Int
+  personalization String         @default("")
+
+  @@unique([cartId, variantId, personalization])
+}
+
+model WishlistItem {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, productId])
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  number          String        @unique
+  userId          String?
+  user            User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email           String
+  status          OrderStatus   @default(PENDING_PAYMENT)
+  currency        String        @default("QAR")
+  subtotal        Int
+  shippingFee     Int
+  discount        Int           @default(0)
+  total           Int
+  shippingAddress Json
+  customerNote    String?
+  paymentProvider String?
+  /// sha256 of a secret token emailed/shown to guests so they can view & pay this order without an account
+  accessTokenHash String        @unique
+  trackingNumber  String?
+  adminNote       String?
+  /// Stock is reserved when the order is created; released if payment expires/cancels.
+  stockReleased   Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  paidAt          DateTime?
+  items           OrderItem[]
+  payments        Payment[]
+
+  @@index([status, createdAt])
+  @@index([userId])
+}
+
+model OrderItem {
+  id              String          @id @default(cuid())
+  orderId         String
+  order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId       String?
+  variant         ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  productName     String
+  sku             String
+  size            String?
+  color           String?
+  imageUrl        String?
+  unitPrice       Int
+  quantity        Int
+  personalization String          @default("")
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  orderId     String
+  order       Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider    String // "stripe" | "paypal" | "dev"
+  providerRef String
+  status      PaymentStatus @default(PENDING)
+  amount      Int
+  currency    String
+  raw         Json?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([provider, providerRef])
+}
+
+/// Webhook idempotency ledger.
+model WebhookEvent {
+  id         String   @id // provider:eventId
+  provider   String
+  type       String
+  receivedAt DateTime @default(now())
+}
+
+// ---------- Engagement ----------
+
+model Review {
+  id        String       @id @default(cuid())
+  productId String
+  product   Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating    Int
+  title     String?
+  body      String
+  status    ReviewStatus @default(PENDING)
+  verified  Boolean      @default(false)
+  createdAt DateTime     @default(now())
+
+  @@unique([productId, userId])
+  @@index([status])
+}
+
+model NewsletterSubscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  consentText    String
+  consentAt      DateTime  @default(now())
+  ip             String?
+  source         String    @default("footer")
+  unsubscribedAt DateTime?
+}
+
+// ---------- Content & configuration ----------
+
+/// Key/value site configuration editable from the admin (brand, hero, home, footer, media limits, shipping...).
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+/// CMS pages: about, shipping, returns, privacy, terms, faq, ...
+model Page {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  body        String
+  isPublished Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+// ---------- Ops ----------
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  type      String // page_view | product_view | add_to_cart | checkout_start | purchase | search
+  path      String?
+  productId String?
+  visitorId String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([productId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+}
