@@ -7,7 +7,7 @@
 <meta name="description" content="YAOUA: handmade crochet baby clothes, dolls, rattles and gift boxes, made in Qatar.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Caveat:wght@600;700&family=Nunito+Sans:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Caveat:wght@600;700&family=Fredoka:wght@700&family=Nunito+Sans:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
 <style>
 /* Layout: airy boutique storefront. Warm ivory ground, photo-led sections, sticky header; admin is a sidebar app. */
 :root {
@@ -351,6 +351,10 @@ footer.site::before { content: ""; position: absolute; left: 0; right: 0; top: -
 .yarn-tag { position: absolute; left: 12px; bottom: 12px; z-index: 2; font-family: var(--f-hand); font-size: 1.05rem; font-weight: 700; color: #5E4839; background: #FFF8EF; padding: 2px 12px 2px 18px; border-radius: 4px 12px 12px 4px; box-shadow: var(--shadow-sm); }
 .yarn-tag::before { content: ""; position: absolute; left: 6px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: var(--rust); }
 
+.logo svg.knit-logo { width: auto; height: 58px; display: block; overflow: visible; }
+.aside .logo svg.knit-logo { height: 40px; }
+.foot-logo .knit-logo { height: 52px; width: auto; display: block; margin-bottom: 12px; overflow: visible; }
+@media (max-width: 460px) { .logo svg.knit-logo { height: 40px; } }
 /* legal */
 .tba { font-style: italic; opacity: .8; border-bottom: 1px dotted currentColor; unicode-bidi: isolate; }
 mark.ph { unicode-bidi: isolate; display: inline-block; direction: ltr; background: #FFE9A8; color: #6B4A00; border-radius: 4px; padding: 0 4px; font-weight: 700; }
@@ -385,6 +389,7 @@ mark.ph { unicode-bidi: isolate; display: inline-block; direction: ltr; backgrou
 [dir="rtl"] .eyebrow { letter-spacing: 0; font-size: .82rem; }
 [dir="rtl"] .card .name, [dir="rtl"] .fgrid button, [dir="rtl"] .logo .wm { text-align: right; }
 [dir="rtl"] .logo .wm b { direction: ltr; }
+[dir="rtl"] .knit-logo { direction: ltr; }
 [dir="rtl"] .collage { padding: 0 40px 40px 0; }
 [dir="rtl"] .collage .float { left: auto; right: 0; }
 [dir="rtl"] .collage .stamp { right: auto; left: -6px; }
@@ -402,6 +407,22 @@ mark.ph { unicode-bidi: isolate; display: inline-block; direction: ltr; backgrou
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <pattern id="knit" width="7" height="6.4" patternUnits="userSpaceOnUse">
+    <rect width="7" height="6.4" fill="#6E2C18"/>
+    <ellipse cx="2" cy="3.2" rx="1.45" ry="2.9" transform="rotate(-30 2 3.2)" fill="#C2603A"/>
+    <ellipse cx="5" cy="3.2" rx="1.45" ry="2.9" transform="rotate(30 5 3.2)" fill="#C2603A"/>
+    <ellipse cx="1.7" cy="2.4" rx=".5" ry="1.3" transform="rotate(-30 1.7 2.4)" fill="#E59A73"/>
+    <ellipse cx="5.3" cy="2.4" rx=".5" ry="1.3" transform="rotate(30 5.3 2.4)" fill="#E59A73"/>
+  </pattern>
+  <pattern id="knitLight" width="7" height="6.4" patternUnits="userSpaceOnUse">
+    <rect width="7" height="6.4" fill="#B98A3E"/>
+    <ellipse cx="2" cy="3.2" rx="1.45" ry="2.9" transform="rotate(-30 2 3.2)" fill="#F1CF86"/>
+    <ellipse cx="5" cy="3.2" rx="1.45" ry="2.9" transform="rotate(30 5 3.2)" fill="#F1CF86"/>
+    <ellipse cx="1.7" cy="2.4" rx=".5" ry="1.3" transform="rotate(-30 1.7 2.4)" fill="#FFF1CC"/>
+    <ellipse cx="5.3" cy="2.4" rx=".5" ry="1.3" transform="rotate(30 5.3 2.4)" fill="#FFF1CC"/>
+  </pattern>
+</defs></svg>
 <div id="app"></div>
 
 <script>
@@ -801,6 +822,12 @@ const I = {
   shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6Z"/><path d="m9 12 2 2 4-4"/></svg>',
   yarn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8"/><path d="M6 7c4 1 9 6 11 11M4.5 12c4 0 8 3 9.5 7.5M9 4.5c3 2 7 6 10 10"/></svg>',
 };
+/** The YAOUA wordmark, knitted: letters filled with stockinette stitches. */
+function knitLogo(light = false) {
+  const name = esc(S.settings.brand);
+  const w = 14 + 49 * Math.max(1, S.settings.brand.length);
+  return `<svg class="knit-logo" viewBox="0 0 ${w} 72" role="img" aria-label="${name}"><text x="6" y="58" font-family="Fredoka, 'Arial Rounded MT Bold', 'Trebuchet MS', sans-serif" font-weight="700" font-size="62" letter-spacing="3" fill="url(#${light ? 'knitLight' : 'knit'})" stroke="${light ? '#8A6424' : '#6E2C18'}" stroke-width="2.2" stroke-linejoin="round" paint-order="stroke">${name}</text></svg>`;
+}
 function toast(msg, action) {
   let box = $('.toasts');
   if (!box) { box = document.createElement('div'); box.className = 'toasts'; box.setAttribute('role', 'status'); document.body.append(box); }
@@ -838,7 +865,7 @@ function header() {
   <div class="announce"><span class="ar">${S.lang === 'ar' ? `توصيل مجاني داخل قطر للطلبات فوق ${S.settings.freeOver} ريال · كل طلب مغلّف كهدية` : ''}</span>${S.lang === 'ar' ? '' : `Free delivery across Qatar over ${S.settings.freeOver} QAR · Every order gift-wrapped · التوصيل مجاني داخل قطر للطلبات فوق ${S.settings.freeOver} ريال`}</div>
   <header class="site"><div class="wrap hdr">
     <button class="ibtn menu-btn" data-act="menu" aria-label="Menu" aria-expanded="${V.menu}">${I.menu}</button>
-    <button class="logo" data-go="home" aria-label="${esc(S.settings.brand)} home">${I.logo}<span class="wm"><b>${esc(S.settings.brand)}</b><i>fait main au crochet</i></span></button>
+    <button class="logo" data-go="home" aria-label="${esc(S.settings.brand)} home">${knitLogo()}</button>
     <nav class="main ${V.menu ? 'open' : ''}" aria-label="Main">${nav.map(([l, g]) => `<button data-go="${g}" aria-current="${cur === g}">${l}</button>`).join('')}</nav>
     <div class="icons">
       <button class="lang-btn" data-act="lang" lang="${S.lang === 'ar' ? 'en' : 'ar'}" aria-label="${S.lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}"><span class="l-long">${S.lang === 'ar' ? 'English' : 'العربية'}</span><span class="l-short">${S.lang === 'ar' ? 'EN' : 'ع'}</span></button>
@@ -854,7 +881,7 @@ function footer() {
   const L = S.settings.legal;
   return `<footer class="site"><div class="wrap">
     <div class="fgrid">
-      <div><h3 style="font-size:1.7rem;letter-spacing:.2em">${esc(S.settings.brand)}</h3><p class="hand" style="color:#F2C9A8">fait main au crochet</p><p>Handmade crochet baby clothes, dolls and gifts, made in small batches in Qatar and wrapped with love.</p><p class="small" style="color:#CDB9A8">Instagram · @yaoua.qa</p></div>
+      <div><div class="foot-logo">${knitLogo(true)}</div><p>Handmade crochet baby clothes, dolls and gifts, made in small batches in Qatar and wrapped with love.</p><p class="small" style="color:#CDB9A8">Instagram · @yaoua.qa</p></div>
       <div><h3>Shop</h3><ul><li><button data-go="shop">Shop all</button></li><li><button data-go="shop:baby-clothes">Baby clothes</button></li><li><button data-go="shop:handmade-dolls">Handmade dolls</button></li><li><button data-go="shop:gift-boxes">Gift boxes</button></li><li><button data-go="shop:baby-accessories">Accessories</button></li><li><button data-go="page:about">Our story</button></li></ul></div>
       <div><h3>Customer care &amp; legal</h3><ul>${LEGAL_LINKS.map(([k, l]) => `<li><button data-go="page:${k}">${l}</button></li>`).join('')}</ul></div>
       <div><h3>Contact</h3><ul><li>${ph(L.email)}</li><li>${ph(L.phone)}</li><li>WhatsApp ${ph(L.whatsapp)}</li><li>${esc(L.hours)}</li><li><button data-go="page:contact">Contact us</button></li><li><button data-go="page:complaints">Make a complaint</button></li></ul></div>
@@ -1098,7 +1125,7 @@ function order() {
   return `<div class="wrap section"><div class="noprint"><p class="note n-ok">Payment received. Thank you for your order! Your electronic invoice is below.</p></div>
     <div class="invoice" style="margin-top:18px">
       <div class="ih">
-        <div><div class="logo" style="cursor:default">${I.logo}<span class="wm"><b>${esc(S.settings.brand)}</b><i>fait main au crochet</i></span></div>
+        <div><div class="logo" style="cursor:default">${knitLogo()}</div>
           <p class="small" style="margin-top:10px">${ph(L.legalName)}<br>CR No. ${ph(L.cr)} · E-commerce licence No. ${ph(L.ecom)}<br>${ph(L.address)}<br>${ph(L.email)} · ${ph(L.phone)}</p></div>
         <div style="text-align:right"><h2 style="margin:0">Invoice <span class="ar" style="font-size:.8em">فاتورة</span></h2><p class="small">Invoice / order No. <strong>${o.number}</strong><br>Date: ${new Date(o.at).toLocaleString('en-GB')}<br>Payment: ${o.pay} · Status: ${o.status}</p></div>
       </div>
@@ -1140,7 +1167,7 @@ function page() {
 // ===================== Admin =====================
 function admin() {
   const tabs = [['dash', 'Dashboard'], ['orders', 'Orders'], ['products', 'Products'], ['inventory', 'Inventory'], ['reviews', 'Reviews'], ['config', 'Store settings']];
-  return `<div class="admin"><aside class="aside"><button class="logo" data-go="home">${I.logo}<span class="wm"><b>${esc(S.settings.brand)}</b><i>admin · view store ↗</i></span></button>${tabs.map(([k, l]) => `<button data-admin="${k}" aria-current="${V.admin === k || (V.admin === 'edit' && k === 'products')}">${l}</button>`).join('')}</aside>
+  return `<div class="admin"><aside class="aside"><button class="logo" data-go="home" title="View store">${knitLogo(true)}</button>${tabs.map(([k, l]) => `<button data-admin="${k}" aria-current="${V.admin === k || (V.admin === 'edit' && k === 'products')}">${l}</button>`).join('')}</aside>
     <main class="amain">${({ dash: aDash, orders: aOrders, products: aProducts, inventory: aInventory, reviews: aReviews, config: aConfig, edit: aEdit }[V.admin] || aDash)()}</main></div>`;
 }
 function aDash() {
