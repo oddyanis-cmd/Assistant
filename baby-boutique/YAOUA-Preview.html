@@ -352,6 +352,7 @@ footer.site::before { content: ""; position: absolute; left: 0; right: 0; top: -
 .yarn-tag::before { content: ""; position: absolute; left: 6px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: var(--rust); }
 
 /* legal */
+.tba { font-style: italic; opacity: .8; border-bottom: 1px dotted currentColor; unicode-bidi: isolate; }
 mark.ph { unicode-bidi: isolate; display: inline-block; direction: ltr; background: #FFE9A8; color: #6B4A00; border-radius: 4px; padding: 0 4px; font-weight: 700; }
 .legal { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
 .legal section { background: var(--surface); border-radius: var(--r); padding: 24px; box-shadow: var(--shadow-sm); outline: 1.6px dashed var(--stitch); outline-offset: -7px; min-width: 0; }
@@ -512,7 +513,8 @@ const SIZE_GUIDE = {
 };
 // ===================== Legal & policy pages (English + Arabic) =====================
 // Bracketed values such as [CR number] are placeholders the owner fills in Admin > Legal details.
-const ph = (s) => esc(s).replace(/\[([^\]]+)\]/g, '<mark class="ph">[$1]</mark>');
+const ph = (s) => esc(s).replace(/\[([^\]]+)\]/g, '<span class="tba" title="$1">To be added</span>');
+const phAr = (s) => esc(s).replace(/\[([^\]]+)\]/g, '<span class="tba" title="$1">سيُضاف لاحقاً</span>');
 const LEGAL_DEFAULTS = () => ({
   legalName: '[Registered business name as shown on the CR]',
   owner: '[Owner / authorised signatory full name]',
@@ -527,11 +529,33 @@ const LEGAL_DEFAULTS = () => ({
   hoursAr: 'من الأحد إلى الخميس، من 9:00 صباحاً حتى 5:00 مساءً (بتوقيت الدوحة)',
   updated: '24 November 2026',
 });
-const LEGAL_LINKS = [['seller', 'Seller information'], ['terms', 'Terms & conditions'], ['privacy', 'Privacy policy'], ['cookies', 'Cookie policy'], ['shipping', 'Shipping & delivery'], ['returns', 'Returns & refunds'], ['complaints', 'Complaints'], ['safety', 'Product safety'], ['faq', 'FAQ']];
+const LEGAL_LINKS = [['legal', 'Legal & regulations'], ['seller', 'Seller information'], ['terms', 'Terms & conditions'], ['privacy', 'Privacy policy'], ['cookies', 'Cookie policy'], ['shipping', 'Shipping & delivery'], ['returns', 'Returns & refunds'], ['complaints', 'Complaints'], ['safety', 'Product safety'], ['faq', 'FAQ']];
 
 function legalPages() {
   const L = S.settings.legal, fee = S.settings.flatFee, free = S.settings.freeOver;
   return {
+    legal: { t: 'Legal & regulations', ta: 'القوانين والأنظمة', en: [
+      ['About this page', `${S.settings.brand} is an online store in the State of Qatar operating under a Commercial Registration (CR No. ${L.cr}) and an e-commerce licence (No. ${L.ecom}) issued by the Ministry of Commerce and Industry. This page summarises the rules that protect you when you shop with us and links to our full policies.`],
+      ['Your rights as a consumer (Law No. 8 of 2008)', '• Clear, accurate information about every product, in Arabic\n• Prices clearly shown in Qatari riyals before you buy\n• An invoice for every purchase, showing the date, items and price\n• Products that match their description and are safe to use\n• Repair, replacement or a refund if a product is faulty\n• Protection from misleading descriptions and advertising\n• The right to complain to the Ministry of Commerce and Industry'],
+      ['Buying online (Decree-Law No. 16 of 2010)', '• We show who we are, our address and how to contact us\n• You see the full price and the contract terms before you order\n• You can check and correct your order before confirming it\n• We confirm every order and send an electronic invoice\n• Electronic orders, confirmations and invoices are legally valid records\n• We use your personal information only for the purposes we tell you'],
+      ['Licensed e-commerce (Ministerial Decision No. 25 of 2026)', '• We sell online under a CR and an e-commerce licence from the Ministry of Commerce and Industry, shown at the bottom of every page\n• We offer secure electronic payment\n• We publish our return, exchange and refund policy\n• We have a complaints process with clear timeframes'],
+      ['Your personal data (Law No. 13 of 2016)', '• We collect only what we need to deliver your order\n• Marketing emails only with your separate consent\n• You can see, correct or delete your data and withdraw consent\n• Children’s data is used only with a parent’s or guardian’s permission\n• You can complain to the National Cyber Security Agency (NCSA)'],
+      ['Product safety', '• Toys sold in Qatar must meet the GCC Technical Regulation on Children’s Toys\n• Every product page shows age suitability and safety warnings\n• Toys and accessories should always be used under adult supervision'],
+      ['Our full policies', 'Seller information · Terms & conditions · Privacy policy · Cookie policy · Shipping & delivery · Returns & refunds · Complaints · Product safety. Use the buttons at the top of this page.'],
+      ['Official contacts', 'Ministry of Commerce and Industry, Consumer Protection: hotline 16001, the MoCI mobile app, www.moci.gov.qa\nNational Cyber Security Agency (personal data): www.ncsa.gov.qa\nOfficial texts of Qatari laws: Al Meezan, www.almeezan.qa'],
+      ['Important', 'This page is a plain-language summary for your convenience. The official texts of the laws prevail. Nothing in our policies limits your rights under Qatari law.'],
+    ], ar: [
+      ['عن هذه الصفحة', `${S.settings.brand} متجر إلكتروني في دولة قطر يعمل بموجب سجل تجاري رقم ${L.cr} وترخيص تجارة إلكترونية رقم ${L.ecom} صادرين عن وزارة التجارة والصناعة. تلخص هذه الصفحة القواعد التي تحميك عند التسوق معنا، مع روابط لسياساتنا الكاملة.`],
+      ['حقوقك كمستهلك (القانون رقم 8 لسنة 2008)', '• معلومات واضحة ودقيقة عن كل منتج باللغة العربية\n• أسعار واضحة بالريال القطري قبل الشراء\n• فاتورة لكل عملية شراء تتضمن التاريخ والمنتجات والسعر\n• منتجات مطابقة للوصف وآمنة للاستخدام\n• الإصلاح أو الاستبدال أو استرداد المبلغ إذا كان المنتج معيباً\n• الحماية من الوصف والإعلان المضلل\n• الحق في تقديم شكوى إلى وزارة التجارة والصناعة'],
+      ['الشراء عبر الإنترنت (المرسوم بقانون رقم 16 لسنة 2010)', '• نعرض هويتنا وعنواننا ووسائل التواصل معنا\n• ترى السعر الكامل وشروط العقد قبل الطلب\n• يمكنك مراجعة طلبك وتصحيحه قبل التأكيد\n• نؤكد كل طلب ونرسل فاتورة إلكترونية\n• الطلبات والتأكيدات والفواتير الإلكترونية سجلات معتمدة قانوناً\n• نستخدم بياناتك الشخصية فقط للأغراض التي نبلغك بها'],
+      ['التجارة الإلكترونية المرخصة (القرار الوزاري رقم 25 لسنة 2026)', '• نبيع عبر الإنترنت بموجب سجل تجاري وترخيص تجارة إلكترونية من وزارة التجارة والصناعة، معروضين أسفل كل صفحة\n• نوفر الدفع الإلكتروني الآمن\n• ننشر سياسة الإرجاع والاستبدال والاسترداد\n• لدينا آلية للشكاوى بمدد زمنية واضحة'],
+      ['بياناتك الشخصية (القانون رقم 13 لسنة 2016)', '• نجمع فقط ما نحتاجه لتوصيل طلبك\n• لا نرسل رسائل تسويقية إلا بموافقتك المنفصلة\n• يحق لك الاطلاع على بياناتك وتصحيحها وحذفها وسحب موافقتك\n• لا تُستخدم بيانات الأطفال إلا بإذن الوالد أو الولي\n• يمكنك تقديم شكوى إلى الوكالة الوطنية للأمن السيبراني'],
+      ['سلامة المنتجات', '• يجب أن تستوفي الألعاب المباعة في قطر اللائحة الفنية الخليجية لألعاب الأطفال\n• تعرض صفحة كل منتج العمر المناسب وتحذيرات السلامة\n• يجب استخدام الألعاب والإكسسوارات دائماً تحت إشراف شخص بالغ'],
+      ['سياساتنا الكاملة', 'معلومات البائع · الشروط والأحكام · سياسة الخصوصية · سياسة ملفات تعريف الارتباط · الشحن والتوصيل · الإرجاع والاسترداد · الشكاوى · سلامة المنتجات. استخدم الأزرار في أعلى هذه الصفحة.'],
+      ['جهات رسمية', 'وزارة التجارة والصناعة، إدارة حماية المستهلك: الخط الساخن 16001، تطبيق الوزارة، www.moci.gov.qa\nالوكالة الوطنية للأمن السيبراني (البيانات الشخصية): www.ncsa.gov.qa\nالنصوص الرسمية للقوانين القطرية: الميزان، www.almeezan.qa'],
+      ['تنبيه', 'هذه الصفحة ملخص مبسط للتسهيل، والنصوص الرسمية للقوانين هي المرجع. لا تحدّ سياساتنا من حقوقك وفقاً للقانون القطري.'],
+    ] },
+
     seller: { t: 'Seller information', ta: 'معلومات البائع', en: [
       ['Business details', `Trading name: YAOUA\nRegistered name: ${L.legalName}\nOwner / authorised signatory: ${L.owner}\nCommercial Registration (CR) No.: ${L.cr}\nE-commerce licence No.: ${L.ecom}\nLicensing authority: Ministry of Commerce and Industry (MoCI), State of Qatar\nBusiness activity: online retail of handmade crocheted baby clothing, accessories and soft toys`],
       ['Address and contact', `Address: ${L.address}\nEmail: ${L.email}\nPhone: ${L.phone}\nWhatsApp: ${L.whatsapp}\nCustomer service hours: ${L.hours}\nWebsite: ${L.website}`],
@@ -837,7 +861,7 @@ function footer() {
     </div>
     <div class="legal-strip">
       <div lang="en"><strong style="color:#fff">${esc(S.settings.brand)}</strong> · ${ph(L.legalName)}<br>Commercial Registration No. ${ph(L.cr)} · E-commerce licence No. ${ph(L.ecom)}<br>Licensed by the Ministry of Commerce and Industry, State of Qatar<br>${ph(L.address)}<br>All prices in Qatari riyals (QAR). Consumer complaints: MoCI hotline 16001.</div>
-      <div class="ar"><strong style="color:#fff">${esc(S.settings.brand)}</strong> · ${ph(L.legalName)}<br>سجل تجاري رقم ${ph(L.cr)} · ترخيص تجارة إلكترونية رقم ${ph(L.ecom)}<br>مرخّص من وزارة التجارة والصناعة، دولة قطر<br>${ph(L.address)}<br>جميع الأسعار بالريال القطري. شكاوى المستهلكين: الخط الساخن لوزارة التجارة والصناعة 16001</div>
+      <div class="ar"><strong style="color:#fff">${esc(S.settings.brand)}</strong> · ${phAr(L.legalName)}<br>سجل تجاري رقم ${phAr(L.cr)} · ترخيص تجارة إلكترونية رقم ${phAr(L.ecom)}<br>مرخّص من وزارة التجارة والصناعة، دولة قطر<br>${phAr(L.address)}<br>جميع الأسعار بالريال القطري. شكاوى المستهلكين: الخط الساخن لوزارة التجارة والصناعة 16001</div>
     </div>
     <div class="fbottom"><span>© 2026 ${esc(S.settings.brand)}. Payments are processed by a licensed payment provider. We never store card details.</span><span class="pay"><span>VISA</span><span>Mastercard</span><span>NAPS</span></span></div>
   </div></footer>`;
@@ -1063,6 +1087,7 @@ function checkout() {
         <label class="check"><input type="checkbox" id="coNews"> <span>Send me news and offers by email. <span class="muted">(optional)</span></span></label>
       </div>
       <p class="small">The total above includes delivery. You will receive an order confirmation and an electronic invoice.</p>
+      <p class="small"><button type="button" class="link" data-go="page:legal">Our customer rights and legal information</button></p>
       <p class="err" id="coErr" role="alert"></p><button class="btn block">Place order &amp; pay ${fmt(t.total)}</button></aside></form></div>`;
 }
 
@@ -1102,12 +1127,12 @@ function page() {
   const pg = legalPages()[V.slug];
   if (!pg) return `<div class="wrap section"><div class="empty"><h2>Page not found</h2></div></div>`;
   const isLegal = LEGAL_LINKS.some(([k]) => k === V.slug);
-  const block = (secs, ar) => secs.map(([h, b]) => `<h3>${esc(h)}</h3><p>${ph(b)}</p>`).join('');
+  const block = (secs, ar) => secs.map(([h, b]) => `<h3>${esc(h)}</h3><p>${(ar ? phAr : ph)(b)}</p>`).join('');
   return `<div class="wrap section"><div class="crumbs" style="padding-top:0"><button data-go="home">Home</button> / <span lang="${S.lang === 'ar' ? 'ar' : 'en'}">${esc(S.lang === 'ar' ? pg.ta : pg.t)}</span></div>
     <div class="row between" style="align-items:end">${S.lang === 'ar' ? `<h1 class="ar" style="margin:8px 0 0">${esc(pg.ta)}</h1><h2 lang="en" style="margin:0">${esc(pg.t)}</h2>` : `<h1 style="margin:8px 0 0">${esc(pg.t)}</h1><h2 class="ar" style="margin:0">${esc(pg.ta)}</h2>`}</div>
-    ${isLegal ? `<p class="small">Last updated ${esc(S.settings.legal.updated)} · Highlighted items are details the store owner still has to fill in.</p><nav class="legal-nav" aria-label="Legal pages">${LEGAL_LINKS.map(([k, l]) => `<button class="chip" data-go="page:${k}" aria-pressed="${k === V.slug}">${l}</button>`).join('')}</nav>` : ''}
+    ${isLegal ? `<p class="small">Last updated ${esc(S.settings.legal.updated)}</p><nav class="legal-nav" aria-label="Legal pages">${LEGAL_LINKS.map(([k, l]) => `<button class="chip" data-go="page:${k}" aria-pressed="${k === V.slug}">${l}</button>`).join('')}</nav>` : ''}
     ${pg.img ? `<div class="story" style="margin-block:18px 28px"><div class="ph"><img src="${IMG(pg.img)}" alt=""></div><div><p class="hand" style="font-size:2rem">une maille à la fois</p><p>${esc(pg.en[0][1])}</p></div></div>` : ''}
-    <div class="legal"><section lang="en">${block(pg.en)}</section><section class="ar" lang="ar" dir="rtl">${block(pg.ar)}</section></div>
+    <div class="legal"><section lang="en">${block(pg.en)}</section><section class="ar" lang="ar" dir="rtl">${block(pg.ar, true)}</section></div>
     ${V.slug === 'contact' ? `<form id="contactForm" class="panel stack" style="margin-top:24px;max-width:640px"><h2>Send us a message</h2><div class="grid2"><label class="f">Name<input id="ctName" required></label><label class="f">Email<input id="ctEmail" type="email" required></label></div><label class="f">Order number (optional)<input id="ctOrder"></label><label class="f">Message<textarea id="ctMsg" required></textarea></label><p class="small">We use your details only to reply to you. See our Privacy policy.</p><div><button class="btn">Send message</button></div></form>` : ''}
   </div>`;
 }
@@ -1244,7 +1269,7 @@ const AR_UI = {
   'Search rompers, dolls, gift boxes…': 'ابحث عن الملابس والدمى وصناديق الهدايا…',
   'Handmade crochet baby clothes, dolls and gifts, made in small batches in Qatar and wrapped with love.': 'ملابس أطفال ودمى وهدايا مصنوعة يدوياً بالكروشيه، بكميات صغيرة في قطر ومغلفة بحب.',
   'Handmade dolls': 'الدمى اليدوية', 'Customer care & legal': 'خدمة العملاء والمعلومات القانونية',
-  'Seller information': 'معلومات البائع', 'Terms & conditions': 'الشروط والأحكام', 'Privacy policy': 'سياسة الخصوصية', 'Cookie policy': 'سياسة ملفات تعريف الارتباط',
+  'Seller information': 'معلومات البائع', 'Legal & regulations': 'القوانين والأنظمة', 'Our customer rights and legal information': 'حقوقك والمعلومات القانونية', 'To be added': 'سيُضاف لاحقاً', 'Terms & conditions': 'الشروط والأحكام', 'Privacy policy': 'سياسة الخصوصية', 'Cookie policy': 'سياسة ملفات تعريف الارتباط',
   'Shipping & delivery': 'الشحن والتوصيل', 'Returns & refunds': 'الإرجاع والاسترداد', 'Complaints': 'الشكاوى', 'Product safety': 'سلامة المنتجات', 'FAQ': 'الأسئلة الشائعة',
   'Contact us': 'تواصل معنا', 'Make a complaint': 'تقديم شكوى', 'WhatsApp': 'واتساب', 'Instagram': 'إنستغرام',
   'Fait main au crochet': 'Fait main au crochet', 'Handmade in Qatar': 'صُنع يدوياً في قطر',
