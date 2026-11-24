@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>YAOUA Website Compliance Checklist</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito+Sans:wght@400;700;800&family=Noto+Naskh+Arabic:wght@400;700&display=swap">
+<style>
+  :root { --bg: #FAF7F2; --ink: #3E2F26; --muted: #7D6C60; --line: #E2D5C6; --rust: #A9472B; --ok: #3F5A37; --okbg: #E3EDDD; --todo: #7A5414; --todobg: #FBEBD0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 'Nunito Sans', system-ui, sans-serif; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px max(16px, env(safe-area-inset-left, 0px)) 48px; }
+  h1, h2 { font-family: 'Fraunces', Georgia, serif; margin: 0 0 6px; }
+  h1 { font-size: 2.2rem; letter-spacing: .04em; } h2 { font-size: 1.4rem; margin-top: 30px; }
+  .ar { font-family: 'Noto Naskh Arabic', Tahoma, serif; direction: rtl; }
+  .muted { color: var(--muted); }
+  .head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: end; border-bottom: 2px dashed rgba(169,71,43,.45); padding-bottom: 14px; }
+  .box { background: #fff; border-radius: 16px; padding: 18px 20px; margin-top: 16px; outline: 1.5px dashed rgba(169,71,43,.4); outline-offset: -6px; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: #fff; font-size: .9rem; }
+  th, td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: #EDE2D4; font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; }
+  td .ar { display: block; font-size: .88rem; color: var(--muted); }
+  .s { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: .74rem; font-weight: 800; white-space: nowrap; }
+  .done { background: var(--okbg); color: var(--ok); } .todo { background: var(--todobg); color: var(--todo); }
+  ol li, ul li { margin-bottom: 4px; }
+  @media print { body { background: #fff; } .box { outline: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div><h1>YAOUA</h1><div class="muted">Website compliance checklist · prepared 24 November 2026</div></div>
+    <div class="ar" style="text-align:right"><h1 style="font-family:'Noto Naskh Arabic',serif;letter-spacing:0">قائمة التحقق من امتثال الموقع</h1><div class="muted">متجر YAOUA الإلكتروني لمنتجات الكروشيه اليدوية</div></div>
+  </div>
+
+  <div class="box">
+    <strong>Purpose.</strong> This document maps each legal requirement for an online store in Qatar to the place on the YAOUA website where it is met, and lists what is still needed from the business owner.
+    <strong>Status:</strong> <span class="s done">Done on website</span> means it is built and visible. <span class="s todo">Needs owner input</span> means the website has a highlighted placeholder until the owner's official document or decision is provided.
+    <p class="muted" style="margin:8px 0 0">Requirements were compiled from public summaries of the laws below and should be confirmed with the Ministry of Commerce and Industry before submission. This is not legal advice.</p>
+  </div>
+
+  <h2>1. Requirements and where they are met</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>#</th><th>Requirement</th><th>Legal basis</th><th>Where on the website</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Seller identity: registered name, address, email, phone<span class="ar">هوية البائع: الاسم والعنوان ووسائل التواصل</span></td><td>Decree-Law 16/2010 (E-Commerce); MoCI Decision 25/2026</td><td>Footer of every page, Seller information page, every invoice</td><td><span class="s todo">Needs owner input</span></td></tr>
+      <tr><td>2</td><td>Commercial Registration (CR) number displayed<span class="ar">عرض رقم السجل التجاري</span></td><td>Decree-Law 16/2010; MoCI Decision 25/2026</td><td>Footer, Seller information, product pages ("Sold by"), invoices</td><td><span class="s todo">Needs owner input</span></td></tr>
+      <tr><td>3</td><td>E-commerce licence number displayed<span class="ar">عرض رقم ترخيص التجارة الإلكترونية</span></td><td>MoCI Decision 25/2026</td><td>Footer, Seller information, invoices</td><td><span class="s todo">Needs owner input</span></td></tr>
+      <tr><td>4</td><td>Licensing authority named<span class="ar">ذكر جهة الترخيص</span></td><td>Decree-Law 16/2010</td><td>Footer ("Licensed by the Ministry of Commerce and Industry"), Seller information</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>5</td><td>Codes of conduct disclosed<span class="ar">الإفصاح عن مدونات السلوك</span></td><td>Decree-Law 16/2010</td><td>Seller information page</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>6</td><td>Clear product descriptions: materials, sizes, age, care, safety<span class="ar">وصف واضح للمنتجات</span></td><td>Law 8/2008 (Consumer Protection)</td><td>Every product page (description, specifications, care, safety note)</td><td><span class="s todo">Needs owner input</span> (confirm real materials, sizes, prices)</td></tr>
+      <tr><td>7</td><td>Prices in QAR; full total including delivery shown before ordering<span class="ar">الأسعار بالريال القطري وإظهار الإجمالي قبل الطلب</span></td><td>Law 8/2008; Decree-Law 16/2010</td><td>Product pages, cart, checkout summary</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>8</td><td>Ordering steps, chance to correct errors, order confirmation and electronic invoice<span class="ar">خطوات الطلب وتصحيح الأخطاء والفاتورة الإلكترونية</span></td><td>Decree-Law 16/2010</td><td>Cart → checkout → confirmation page with printable invoice</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>9</td><td>Customer must accept terms before ordering<span class="ar">موافقة العميل على الشروط قبل الطلب</span></td><td>Decree-Law 16/2010</td><td>Required checkbox at checkout</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>10</td><td>Terms &amp; conditions (Arabic and English)<span class="ar">الشروط والأحكام بالعربية والإنجليزية</span></td><td>Law 8/2008; Decree-Law 16/2010</td><td>Terms &amp; conditions page</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>11</td><td>Return, exchange and refund policy; rights for faulty goods<span class="ar">سياسة الإرجاع والاستبدال والاسترداد</span></td><td>Law 8/2008; MoCI Decision 25/2026</td><td>Returns &amp; refunds page; summary on invoices and product pages</td><td><span class="s todo">Needs owner input</span> (confirm 14 / 30 / 14-day periods)</td></tr>
+      <tr><td>12</td><td>Delivery terms: areas, cost, timing, damaged parcels<span class="ar">شروط التوصيل</span></td><td>Law 8/2008</td><td>Shipping &amp; delivery page, cart, product pages</td><td><span class="s todo">Needs owner input</span> (courier and real fees)</td></tr>
+      <tr><td>13</td><td>Complaint handling, with escalation to MoCI (16001)<span class="ar">آلية الشكاوى والتصعيد للوزارة</span></td><td>MoCI Decision 25/2026; Law 8/2008</td><td>Complaints page, footer, invoices, contact form</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>14</td><td>Electronic payment options<span class="ar">خيارات الدفع الإلكتروني</span></td><td>MoCI Decision 25/2026</td><td>Checkout (card, NAPS, PayPal). Card data handled only by the payment gateway</td><td><span class="s todo">Needs owner input</span> (payment gateway contract)</td></tr>
+      <tr><td>15</td><td>Privacy notice: controller, data collected, purposes, sharing, retention<span class="ar">إشعار الخصوصية</span></td><td>Law 13/2016 (Personal Data Privacy); NCSA guidelines</td><td>Privacy policy page (Arabic and English)</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>16</td><td>Children's data: guardian consent, minimal use<span class="ar">بيانات الأطفال وموافقة الولي</span></td><td>Law 13/2016</td><td>Privacy policy "Children" section; personalisation names deleted after 90 days</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>17</td><td>Separate, optional consent for marketing emails<span class="ar">موافقة منفصلة واختيارية على التسويق</span></td><td>Law 13/2016</td><td>Newsletter form with consent box; optional box at checkout</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>18</td><td>Data subject rights: access, correction, deletion, withdraw consent<span class="ar">حقوق صاحب البيانات</span></td><td>Law 13/2016</td><td>Account page ("Download my data", "Request deletion"), Privacy policy</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>19</td><td>Cookie / browser storage notice<span class="ar">إشعار ملفات تعريف الارتباط</span></td><td>Law 13/2016</td><td>Cookie banner on first visit; Cookie policy page</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>20</td><td>Security: encrypted connection, no card storage, protected accounts<span class="ar">أمن البيانات</span></td><td>Law 13/2016</td><td>Built into the full store (hashed passwords, secure sessions); HTTPS certificate when hosted</td><td><span class="s todo">Needs owner input</span> (hosting and domain)</td></tr>
+      <tr><td>21</td><td>Arabic language for customers<span class="ar">اللغة العربية</span></td><td>Consumer protection practice in Qatar</td><td>Full Arabic version (العربية button), right-to-left layout; legal pages bilingual; Arabic text prevails</td><td><span class="s done">Done on website</span></td></tr>
+      <tr><td>22</td><td>Toy safety information and conformity<span class="ar">سلامة الألعاب والمطابقة</span></td><td>GCC Technical Regulation on Children's Toys (GSO)</td><td>Product safety page, safety notes on each toy</td><td><span class="s todo">Needs owner input</span> (test reports or conformity certificate)</td></tr>
+      <tr><td>23</td><td>One licence per website or sales channel<span class="ar">ترخيص لكل موقع أو قناة بيع</span></td><td>MoCI Decision 25/2026</td><td>Domain to be named in the licence application</td><td><span class="s todo">Needs owner input</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>2. Documents and decisions needed from the owner</h2>
+  <div class="box"><ol>
+    <li><strong>Commercial Registration (CR) certificate</strong>: registered name, CR number, owner, activity, address.</li>
+    <li><strong>E-commerce licence</strong> from the MoCI Single Window (MoCI Decision No. 25 of 2026). It must name the website domain.</li>
+    <li><strong>Home-business licence or municipality approval</strong>, if operating from a residence.</li>
+    <li><strong>Owner's Qatar ID</strong> (for the CR and licence applications only; not shown on the website).</li>
+    <li><strong>Domain name</strong> (e.g. yaoua.qa) and business email address.</li>
+    <li><strong>Customer service contacts</strong>: phone, WhatsApp, working hours.</li>
+    <li><strong>Payment gateway agreement</strong> (e.g. a Qatar-licensed gateway supporting cards and NAPS).</li>
+    <li><strong>Delivery partner</strong>, real delivery fee and delivery times.</li>
+    <li><strong>Product data</strong>: final prices, sizes, dimensions, yarn and filling composition (from supplier labels).</li>
+    <li><strong>Toy safety evidence</strong>: test reports or GCC conformity (G-mark) certificate for dolls, rattle and pacifier clip, if available.</li>
+    <li><strong>Policy confirmation</strong>: return period (14 days), faulty-item reporting period (30 days), refund time (14 days).</li>
+    <li><strong>Logo</strong> files, if a professional logo exists.</li>
+  </ol></div>
+
+  <h2>3. How to fill in the website</h2>
+  <div class="box">Open the website, select <strong>Open admin</strong>, then <strong>Store settings → Legal &amp; business details</strong>. Enter the CR number, licence number, registered name, owner, address and contacts once. They then appear automatically in the footer, Seller information page, all policies and every invoice. Highlighted yellow items on the website show anything still missing.</div>
+
+  <h2>4. Laws referenced</h2>
+  <div class="box"><ul>
+    <li>Law No. 8 of 2008 on Consumer Protection and its executive regulations</li>
+    <li>Decree-Law No. 16 of 2010 promulgating the Electronic Transactions and Commerce Law</li>
+    <li>Law No. 13 of 2016 on Personal Data Privacy Protection, and NCSA privacy notice guidelines</li>
+    <li>MoCI Ministerial Decision No. 25 of 2026 on licensing e-commerce activities</li>
+    <li>GCC Technical Regulation on Children's Toys (GSO)</li>
+  </ul></div>
+</div>
+</body>
+</html>

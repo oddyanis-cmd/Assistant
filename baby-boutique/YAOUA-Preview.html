@@ -374,6 +374,30 @@ mark.ph { unicode-bidi: isolate; display: inline-block; direction: ltr; backgrou
   body { background: #fff; }
   .invoice { box-shadow: none; outline: none; }
 }
+
+/* ===== Arabic / RTL ===== */
+.lang-btn { border: 1.5px dashed var(--stitch); background: var(--surface); color: var(--heading); border-radius: var(--pill); padding: 5px 12px; font-weight: 800; font-size: .82rem; cursor: pointer; margin-inline-end: 4px; }
+.lang-btn[lang="ar"] { font-family: var(--f-ar); font-size: .9rem; }
+[dir="rtl"] body { font-family: var(--f-ar), var(--f-body); line-height: 1.85; }
+[dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] .card .name, [dir="rtl"] .cat strong, [dir="rtl"] .step strong, [dir="rtl"] .filters legend { font-family: var(--f-ar); font-weight: 700; letter-spacing: 0; line-height: 1.35; }
+[dir="rtl"] h1 em, [dir="rtl"] h2 em { font-family: var(--f-ar); margin-right: 0; margin-left: .18em; font-size: 1em; }
+[dir="rtl"] .eyebrow { letter-spacing: 0; font-size: .82rem; }
+[dir="rtl"] .card .name, [dir="rtl"] .fgrid button, [dir="rtl"] .logo .wm { text-align: right; }
+[dir="rtl"] .logo .wm b { direction: ltr; }
+[dir="rtl"] .collage { padding: 0 40px 40px 0; }
+[dir="rtl"] .collage .float { left: auto; right: 0; }
+[dir="rtl"] .collage .stamp { right: auto; left: -6px; }
+[dir="rtl"] .tags { left: auto; right: 10px; }
+[dir="rtl"] .fav { right: auto; left: 8px; }
+[dir="rtl"] .badge { right: auto; left: 0; }
+[dir="rtl"] .main-img .hint { right: auto; left: 12px; }
+[dir="rtl"] .yarn-tag { left: auto; right: 12px; }
+[dir="rtl"] .story .ph .note { right: auto; left: -12px; }
+[dir="rtl"] .invoice .sum { margin-left: 0 !important; margin-right: auto; }
+[dir="rtl"] .invoice .ih > div:last-child { text-align: left !important; }
+@media (max-width: 860px) { [dir="rtl"] .collage { padding: 0 24px 30px 0; } }
+.l-short { display: none; }
+@media (max-width: 460px) { .lang-btn { padding: 4px 10px; margin-inline-end: 0; } .l-long { display: none; } .l-short { display: inline; } .hdr { gap: 8px; } .icons .ibtn { width: 38px; } }
 </style>
 </head>
 <body>
@@ -710,7 +734,7 @@ function seedState() {
   return {
     products, reviews, orders, cart: [], wish: [], subs: 58,
     settings: { brand: 'YAOUA', tagline: 'Fait main au crochet · Handmade in Qatar', headline: 'Tiny treasures, *crocheted* by hand', sub: 'Crocheted rompers, ponchos and cuddly friends, made stitch by stitch in Qatar and wrapped as a gift.', flatFee: 25, freeOver: 300, rose: '#D8B4AF', sage: '#A8B8A0', legal: LEGAL_DEFAULTS() },
-    cookieOk: false,
+    cookieOk: false, lang: 'en',
     events: { visitors: 1462, views: 3984, carts: 318, checkouts: 104 },
   };
 }
@@ -729,7 +753,7 @@ const $ = (s, r = document) => r.querySelector(s);
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*(.+?)\*/g, '<em>$1</em>');
 const plain = (s) => String(s ?? '').replace(/\*/g, '');
-const money = new Intl.NumberFormat('en-QA', { style: 'currency', currency: 'QAR' });
+let money = new Intl.NumberFormat('en-QA', { style: 'currency', currency: 'QAR' });
 const fmt = (m) => money.format(m / 100);
 const stars = (n) => '★★★★★'.slice(0, Math.round(n)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(n));
 const P = (slug) => S.products.find((p) => p.slug === slug);
@@ -758,7 +782,7 @@ function toast(msg, action) {
   if (!box) { box = document.createElement('div'); box.className = 'toasts'; box.setAttribute('role', 'status'); document.body.append(box); }
   const t = document.createElement('div');
   t.className = 'toast';
-  t.innerHTML = `<span>${esc(msg)}</span>${action ? `<button data-go="${action[1]}">${esc(action[0])}</button>` : ''}`;
+  t.innerHTML = `<span>${esc(tr(msg))}</span>${action ? `<button data-go="${action[1]}">${esc(tr(action[0]))}</button>` : ''}`;
   box.append(t);
   setTimeout(() => t.remove(), 4000);
 }
@@ -787,12 +811,13 @@ function header() {
   const cur = V.view === 'shop' ? (V.filters.cat ? `shop:${V.filters.cat}` : 'shop') : V.view === 'page' ? `page:${V.slug}` : V.view;
   return `
   <div class="preview-bar"><div class="wrap"><span>Preview: payments are simulated and nothing is charged.</span><button data-go="admin">Open admin</button><button data-act="reset">Reset demo</button></div></div>
-  <div class="announce">Free delivery across Qatar over ${S.settings.freeOver} QAR · Every order gift-wrapped · التوصيل مجاني داخل قطر للطلبات فوق ${S.settings.freeOver} ريال</div>
+  <div class="announce"><span class="ar">${S.lang === 'ar' ? `توصيل مجاني داخل قطر للطلبات فوق ${S.settings.freeOver} ريال · كل طلب مغلّف كهدية` : ''}</span>${S.lang === 'ar' ? '' : `Free delivery across Qatar over ${S.settings.freeOver} QAR · Every order gift-wrapped · التوصيل مجاني داخل قطر للطلبات فوق ${S.settings.freeOver} ريال`}</div>
   <header class="site"><div class="wrap hdr">
     <button class="ibtn menu-btn" data-act="menu" aria-label="Menu" aria-expanded="${V.menu}">${I.menu}</button>
     <button class="logo" data-go="home" aria-label="${esc(S.settings.brand)} home">${I.logo}<span class="wm"><b>${esc(S.settings.brand)}</b><i>fait main au crochet</i></span></button>
     <nav class="main ${V.menu ? 'open' : ''}" aria-label="Main">${nav.map(([l, g]) => `<button data-go="${g}" aria-current="${cur === g}">${l}</button>`).join('')}</nav>
     <div class="icons">
+      <button class="lang-btn" data-act="lang" lang="${S.lang === 'ar' ? 'en' : 'ar'}" aria-label="${S.lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}"><span class="l-long">${S.lang === 'ar' ? 'English' : 'العربية'}</span><span class="l-short">${S.lang === 'ar' ? 'EN' : 'ع'}</span></button>
       <button class="ibtn" data-act="search" aria-label="Search">${I.search}</button>
       <button class="ibtn hide-xs" data-go="account" aria-label="Account">${I.user}</button>
       <button class="ibtn hide-xs" data-go="wishlist" aria-label="Wishlist">${I.heart}${S.wish.length ? `<span class="badge">${S.wish.length}</span>` : ''}</button>
@@ -811,7 +836,7 @@ function footer() {
       <div><h3>Contact</h3><ul><li>${ph(L.email)}</li><li>${ph(L.phone)}</li><li>WhatsApp ${ph(L.whatsapp)}</li><li>${esc(L.hours)}</li><li><button data-go="page:contact">Contact us</button></li><li><button data-go="page:complaints">Make a complaint</button></li></ul></div>
     </div>
     <div class="legal-strip">
-      <div><strong style="color:#fff">${esc(S.settings.brand)}</strong> · ${ph(L.legalName)}<br>Commercial Registration No. ${ph(L.cr)} · E-commerce licence No. ${ph(L.ecom)}<br>Licensed by the Ministry of Commerce and Industry, State of Qatar<br>${ph(L.address)}<br>All prices in Qatari riyals (QAR). Consumer complaints: MoCI hotline 16001.</div>
+      <div lang="en"><strong style="color:#fff">${esc(S.settings.brand)}</strong> · ${ph(L.legalName)}<br>Commercial Registration No. ${ph(L.cr)} · E-commerce licence No. ${ph(L.ecom)}<br>Licensed by the Ministry of Commerce and Industry, State of Qatar<br>${ph(L.address)}<br>All prices in Qatari riyals (QAR). Consumer complaints: MoCI hotline 16001.</div>
       <div class="ar"><strong style="color:#fff">${esc(S.settings.brand)}</strong> · ${ph(L.legalName)}<br>سجل تجاري رقم ${ph(L.cr)} · ترخيص تجارة إلكترونية رقم ${ph(L.ecom)}<br>مرخّص من وزارة التجارة والصناعة، دولة قطر<br>${ph(L.address)}<br>جميع الأسعار بالريال القطري. شكاوى المستهلكين: الخط الساخن لوزارة التجارة والصناعة 16001</div>
     </div>
     <div class="fbottom"><span>© 2026 ${esc(S.settings.brand)}. Payments are processed by a licensed payment provider. We never store card details.</span><span class="pay"><span>VISA</span><span>Mastercard</span><span>NAPS</span></span></div>
@@ -870,7 +895,7 @@ function home() {
   </div></section>
   ${box ? `<section class="section"><div class="wrap"><div class="feature">
     <div class="ph"><img src="${IMG(18)}" alt="Ella Elephant Gift Box with doll, rattle, pacifier clip and handwritten card"></div>
-    <div class="tx"><span class="eyebrow">The perfect new-baby gift</span><h2>${esc(box.name)}</h2><p>${esc(box.short)} Arrives ready to give, so you can send it straight to the hospital or the baby shower.</p>
+    <div class="tx"><span class="eyebrow">The perfect new-baby gift</span><h2>${esc(box.name)}</h2><p>${esc(box.short)} <span>Arrives ready to give, so you can send it straight to the hospital or the baby shower.</span></p>
       <ul>${box.includes.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
       <div class="price">${fmt(box.price)} ${box.compareAt ? `<s>${fmt(box.compareAt)} bought separately</s>` : ''}</div>
       <div class="row"><button class="btn light" data-go="product:${box.slug}">See the gift box</button></div></div>
@@ -1078,8 +1103,8 @@ function page() {
   if (!pg) return `<div class="wrap section"><div class="empty"><h2>Page not found</h2></div></div>`;
   const isLegal = LEGAL_LINKS.some(([k]) => k === V.slug);
   const block = (secs, ar) => secs.map(([h, b]) => `<h3>${esc(h)}</h3><p>${ph(b)}</p>`).join('');
-  return `<div class="wrap section"><div class="crumbs" style="padding-top:0"><button data-go="home">Home</button> / ${esc(pg.t)}</div>
-    <div class="row between" style="align-items:end"><h1 style="margin:8px 0 0">${esc(pg.t)}</h1><h2 class="ar" style="margin:0">${esc(pg.ta)}</h2></div>
+  return `<div class="wrap section"><div class="crumbs" style="padding-top:0"><button data-go="home">Home</button> / <span lang="${S.lang === 'ar' ? 'ar' : 'en'}">${esc(S.lang === 'ar' ? pg.ta : pg.t)}</span></div>
+    <div class="row between" style="align-items:end">${S.lang === 'ar' ? `<h1 class="ar" style="margin:8px 0 0">${esc(pg.ta)}</h1><h2 lang="en" style="margin:0">${esc(pg.t)}</h2>` : `<h1 style="margin:8px 0 0">${esc(pg.t)}</h1><h2 class="ar" style="margin:0">${esc(pg.ta)}</h2>`}</div>
     ${isLegal ? `<p class="small">Last updated ${esc(S.settings.legal.updated)} · Highlighted items are details the store owner still has to fill in.</p><nav class="legal-nav" aria-label="Legal pages">${LEGAL_LINKS.map(([k, l]) => `<button class="chip" data-go="page:${k}" aria-pressed="${k === V.slug}">${l}</button>`).join('')}</nav>` : ''}
     ${pg.img ? `<div class="story" style="margin-block:18px 28px"><div class="ph"><img src="${IMG(pg.img)}" alt=""></div><div><p class="hand" style="font-size:2rem">une maille à la fois</p><p>${esc(pg.en[0][1])}</p></div></div>` : ''}
     <div class="legal"><section lang="en">${block(pg.en)}</section><section class="ar" lang="ar" dir="rtl">${block(pg.ar)}</section></div>
@@ -1182,6 +1207,7 @@ function modal(html) {
   o.innerHTML = `<div class="modal" role="dialog" aria-modal="true"><button class="ibtn x" data-act="close" aria-label="Close">${I.x}</button>${html}</div>`;
   o.addEventListener('click', (e) => { if (e.target === o) closeModal(); });
   document.body.append(o);
+  translateDOM(o);
   $('.x', o).focus();
 }
 function closeModal() { $('.overlay')?.remove(); }
@@ -1206,17 +1232,212 @@ function reviewForm() {
   modal(`<h2>Write a review</h2><form id="rvForm" class="stack"><label class="f">Rating<select id="rvRating">${[5, 4, 3, 2, 1].map((n) => `<option value="${n}">${stars(n)} (${n})</option>`).join('')}</select></label><label class="f">Your name<input id="rvName" required value="Fatima"></label><label class="f">Your review<textarea id="rvBody" required minlength="10">Beautiful quality and so soft.</textarea></label><button class="btn">Submit review</button></form>`);
 }
 
+// ===================== Arabic version (العربية) =====================
+// The storefront is written in English; in Arabic mode every rendered text node and label is
+// translated through this dictionary and these pattern rules, and the page switches to right-to-left.
+const AR_UI = {
+  'Preview: payments are simulated and nothing is charged.': 'نسخة تجريبية: الدفع محاكاة ولا يتم خصم أي مبلغ.',
+  'Open admin': 'لوحة الإدارة', 'Reset demo': 'إعادة ضبط العرض',
+  'Home': 'الرئيسية', 'Shop All': 'جميع المنتجات', 'Shop all': 'جميع المنتجات', 'Shop': 'المتجر', 'Baby Clothes': 'ملابس الأطفال', 'Baby clothes': 'ملابس الأطفال', 'Dolls': 'الدمى',
+  'Gift Boxes': 'صناديق الهدايا', 'Gift boxes': 'صناديق الهدايا', 'Accessories': 'الإكسسوارات', 'Our Story': 'قصتنا', 'Our story': 'قصتنا', 'Contact': 'تواصل معنا',
+  'Search': 'بحث', 'Account': 'حسابي', 'Wishlist': 'المفضلة', 'Cart': 'السلة', 'Menu': 'القائمة', 'Search products': 'البحث في المنتجات',
+  'Search rompers, dolls, gift boxes…': 'ابحث عن الملابس والدمى وصناديق الهدايا…',
+  'Handmade crochet baby clothes, dolls and gifts, made in small batches in Qatar and wrapped with love.': 'ملابس أطفال ودمى وهدايا مصنوعة يدوياً بالكروشيه، بكميات صغيرة في قطر ومغلفة بحب.',
+  'Handmade dolls': 'الدمى اليدوية', 'Customer care & legal': 'خدمة العملاء والمعلومات القانونية',
+  'Seller information': 'معلومات البائع', 'Terms & conditions': 'الشروط والأحكام', 'Privacy policy': 'سياسة الخصوصية', 'Cookie policy': 'سياسة ملفات تعريف الارتباط',
+  'Shipping & delivery': 'الشحن والتوصيل', 'Returns & refunds': 'الإرجاع والاسترداد', 'Complaints': 'الشكاوى', 'Product safety': 'سلامة المنتجات', 'FAQ': 'الأسئلة الشائعة',
+  'Contact us': 'تواصل معنا', 'Make a complaint': 'تقديم شكوى', 'WhatsApp': 'واتساب', 'Instagram': 'إنستغرام',
+  'Fait main au crochet': 'Fait main au crochet', 'Handmade in Qatar': 'صُنع يدوياً في قطر',
+  'Tiny treasures,': 'كنوز صغيرة', 'crocheted': 'محاكة', 'by hand': 'يدوياً بالكروشيه',
+  'Crocheted rompers, ponchos and cuddly friends, made stitch by stitch in Qatar and wrapped as a gift.': 'ملابس وبونشو ودمى لطيفة مصنوعة بالكروشيه غرزة بغرزة في قطر ومغلفة كهدية.',
+  'Shop the collection': 'تسوّق المجموعة', 'Find a gift': 'ابحث عن هدية', 'Made by hand': 'صنع يدوي', 'Baby-safe yarns': 'خيوط آمنة للأطفال', 'Gift-wrapped free': 'تغليف هدايا مجاني',
+  'Made in Qatar': 'صُنع في قطر', 'Every piece is crocheted by hand.': 'كل قطعة مصنوعة يدوياً بالكروشيه.',
+  'Handmade in Doha': 'مصنوع يدوياً في الدوحة', 'Small batches, checked by hand': 'كميات صغيرة تُفحص يدوياً', 'Baby-safe materials': 'خامات آمنة للأطفال',
+  'Soft yarns, locking safety eyes': 'خيوط ناعمة وعيون آمنة مثبتة', 'Gift-ready': 'جاهز للإهداء', 'Kraft box, tissue & handwritten card': 'علبة كرافت وورق ناعم وبطاقة بخط اليد',
+  'Delivery across Qatar': 'توصيل داخل قطر', 'Explore': 'اكتشف', 'Shop by category': 'تسوّق حسب الفئة',
+  'Handmade Dolls': 'الدمى اليدوية', 'New Arrivals': 'وصل حديثاً', 'Personalised': 'مخصّص',
+  'Loved by parents': 'المفضلة لدى الأهالي', 'Best sellers': 'الأكثر مبيعاً', 'View all': 'عرض الكل',
+  'New': 'جديد', 'Personalise': 'قابل للتخصيص', 'Quick view': 'نظرة سريعة', 'In stock': 'متوفر', 'Sold out': 'نفدت الكمية', 'Add': 'أضف',
+  'The perfect new-baby gift': 'الهدية المثالية للمولود', 'Arrives ready to give, so you can send it straight to the hospital or the baby shower.': 'يصل جاهزاً للإهداء، فيمكنك إرساله مباشرة إلى المستشفى أو حفل استقبال المولود.',
+  'See the gift box': 'شاهد صندوق الهدية', 'Fresh off the hook': 'جديد من الصنارة', 'New arrivals': 'وصل حديثاً', 'Shop new': 'تسوّق الجديد',
+  'Our handmade story': 'قصتنا اليدوية', 'Slow-made for your': 'مصنوع بتأنٍّ من أجل', 'little one': 'صغيرك',
+  'Every piece starts as a ball of soft, baby-friendly yarn and a crochet hook. We work in small batches in our Doha studio, so each seam, button and safety eye is checked by the same hands that made it.': 'تبدأ كل قطعة بكرة خيط ناعمة مناسبة للأطفال وإبرة كروشيه. نعمل بكميات صغيرة في استوديونا في الدوحة، لذلك تُفحص كل خياطة وكل زر وكل عين آمنة بالأيدي نفسها التي صنعتها.',
+  'Choose': 'اختيار', 'soft, gentle yarns': 'خيوط ناعمة ولطيفة', 'Crochet': 'حياكة', 'stitch by stitch': 'غرزة بغرزة', 'Wrap': 'تغليف', 'boxed with a card': 'في علبة مع بطاقة', 'Read our story': 'اقرأ قصتنا',
+  'Kind words': 'كلمات لطيفة', 'From our customers': 'من عملائنا', 'From the studio': 'من الاستوديو',
+  'Join our little circle': 'انضم إلى دائرتنا الصغيرة', 'New pieces, restocks and gentle care tips, no more than twice a month.': 'قطع جديدة وإعادة توفير ونصائح للعناية، مرتين في الشهر كحد أقصى.',
+  'Your email address': 'بريدك الإلكتروني', 'Email address': 'البريد الإلكتروني', 'Subscribe': 'اشتراك',
+  'I agree to receive emails about new collections and offers. I can unsubscribe at any time.': 'أوافق على استلام رسائل عن المجموعات الجديدة والعروض، ويمكنني إلغاء الاشتراك في أي وقت.',
+  'Every piece is handmade in Doha.': 'كل قطعة مصنوعة يدوياً في الدوحة.', 'Category': 'الفئة', 'All': 'الكل', 'Size': 'المقاس', 'Colour': 'اللون', 'Price (QAR)': 'السعر (ريال)',
+  'Availability': 'التوفر', 'Clear filters': 'مسح الفلاتر', 'Filters': 'الفلاتر', 'Featured': 'المميزة', 'Newest': 'الأحدث', 'Most popular': 'الأكثر شعبية',
+  'Price: low to high': 'السعر: من الأقل إلى الأعلى', 'Price: high to low': 'السعر: من الأعلى إلى الأقل', 'Sort': 'الترتيب', 'Minimum price': 'أقل سعر', 'Maximum price': 'أعلى سعر',
+  'No pieces match': 'لا توجد قطع مطابقة', 'Try removing a filter or searching for something else.': 'جرّب إزالة أحد الفلاتر أو البحث عن شيء آخر.', 'Show everything': 'عرض الكل',
+  'Price in Qatari riyals (QAR). Delivery is shown before you pay.': 'السعر بالريال القطري. تظهر رسوم التوصيل قبل الدفع.',
+  'Colour:': 'اللون:', 'Size guide (cm)': 'دليل المقاسات (سم)', 'Dimensions:': 'الأبعاد:', '(optional, free)': '(اختياري، مجاناً)', '(optional)': '(اختياري)',
+  'Choose a size': 'اختر المقاس', 'Add to cart': 'أضف إلى السلة', 'Buy now': 'اشترِ الآن', 'Save to wishlist': 'إضافة إلى المفضلة',
+  'Decrease quantity': 'إنقاص الكمية', 'Increase quantity': 'زيادة الكمية', 'Decrease': 'إنقاص', 'Increase': 'زيادة',
+  'Sizes': 'المقاسات', 'Age': 'العمر', 'Materials': 'الخامات', 'Origin': 'المنشأ', 'Sold by': 'البائع', 'CR': 'سجل تجاري', 'SKU': 'رمز المنتج',
+  'Description': 'الوصف', "What's in the box": 'محتويات الصندوق', 'Care instructions': 'تعليمات العناية', 'Delivery & returns': 'التوصيل والإرجاع', 'Safety:': 'تنبيه السلامة:',
+  'Click to zoom': 'اضغط للتكبير', 'Click to zoom out': 'اضغط للتصغير', 'fait main': 'fait main',
+  'Reviews': 'التقييمات', 'Write a review': 'اكتب تقييماً', 'No reviews yet. Be the first to share your thoughts.': 'لا توجد تقييمات بعد. كن أول من يشارك رأيه.', 'Verified purchase': 'شراء مؤكد',
+  'Pairs beautifully with': 'يتناسق بشكل جميل مع', 'You may also like': 'قد يعجبك أيضاً', 'View full details': 'عرض التفاصيل الكاملة',
+  'Size guide': 'دليل المقاسات', 'All measurements in centimetres.': 'جميع القياسات بالسنتيمتر.', 'Baby height (cm)': 'طول الطفل (سم)', 'Weight (kg)': 'الوزن (كغ)', 'Chest (cm)': 'محيط الصدر (سم)', 'Length (cm)': 'الطول (سم)',
+  'Romper length is shoulder to ankle; ponchos are one length per size. Measurements are taken flat and hand-crocheted pieces can vary by ±1 cm. Between sizes? Choose the larger one.': 'يُقاس طول الأفرهول من الكتف إلى الكاحل، وللبونشو طول واحد لكل مقاس. القياسات مأخوذة والقطعة مفرودة وقد تختلف القطع اليدوية بمقدار ±1 سم. إذا كان طفلك بين مقاسين فاختر الأكبر.',
+  'Rating': 'التقييم', 'Your name': 'اسمك', 'Your review': 'تقييمك', 'Submit review': 'إرسال التقييم', 'Close': 'إغلاق',
+  'Your cart is empty': 'سلتك فارغة', 'Little treasures are waiting for you.': 'كنوز صغيرة بانتظارك.', 'Start shopping': 'ابدأ التسوق', 'Your cart': 'سلة التسوق',
+  'Remove': 'إزالة', 'Summary': 'الملخص', 'Subtotal': 'المجموع الفرعي', 'Delivery': 'التوصيل', 'Free': 'مجاني', 'Gift wrapping': 'تغليف الهدايا', 'Total': 'الإجمالي',
+  'Checkout': 'إتمام الشراء', 'Continue shopping': 'متابعة التسوق', 'You have free delivery': 'لديك توصيل مجاني',
+  'Email': 'البريد الإلكتروني', 'Delivery address': 'عنوان التوصيل', 'Full name': 'الاسم الكامل', 'Mobile': 'رقم الجوال', 'Address (building, street, zone)': 'العنوان (المبنى، الشارع، المنطقة)',
+  'Area': 'المنطقة', 'City': 'المدينة', 'Country': 'الدولة', 'Qatar': 'قطر', 'Gift message or note (optional)': 'رسالة الهدية أو ملاحظة (اختياري)',
+  'Congratulations on your little one! Please embroider the eyes.': 'مبروك المولود الجديد! يُرجى تطريز العيون.',
+  'Payment': 'الدفع', 'Credit / debit card': 'بطاقة ائتمان / خصم', 'Visa, Mastercard and NAPS through a Qatar payment gateway': 'فيزا وماستركارد ونابس عبر بوابة دفع قطرية',
+  'Charged in USD at the current rate': 'يُخصم بالدولار الأمريكي بسعر الصرف الحالي', 'Preview:': 'تجريبي:',
+  'placing this order simulates a successful payment. No card is charged.': 'تأكيد هذا الطلب يحاكي دفعاً ناجحاً، ولا يتم خصم أي مبلغ من البطاقة.',
+  'Your order': 'طلبك', 'I have read and agree to the': 'قرأت وأوافق على', 'and': 'و', '(required)': '(إلزامي)', 'Send me news and offers by email.': 'أرسلوا لي الأخبار والعروض عبر البريد الإلكتروني.',
+  'The total above includes delivery. You will receive an order confirmation and an electronic invoice.': 'الإجمالي أعلاه يشمل التوصيل. ستصلك رسالة تأكيد الطلب وفاتورة إلكترونية.',
+  'Please fill in every required field.': 'يُرجى تعبئة جميع الحقول المطلوبة.', 'Please tick the box to agree to the terms, returns and privacy policies.': 'يُرجى تحديد خانة الموافقة على الشروط وسياسة الإرجاع وسياسة الخصوصية.',
+  'Payment received. Thank you for your order! Your electronic invoice is below.': 'تم استلام الدفع. شكراً لطلبك! فاتورتك الإلكترونية أدناه.',
+  'Invoice / order No.': 'رقم الفاتورة / الطلب', 'Bill & deliver to': 'الفوترة والتوصيل إلى', 'Note': 'ملاحظة', 'Item': 'المنتج', 'Qty': 'الكمية', 'Unit price': 'سعر الوحدة', 'Amount': 'المبلغ',
+  'Total paid (QAR)': 'الإجمالي المدفوع (ريال)', 'Print or save invoice as PDF': 'طباعة الفاتورة أو حفظها PDF', 'CR No.': 'سجل تجاري رقم', 'E-commerce licence No.': 'ترخيص تجارة إلكترونية رقم', 'State of Qatar': 'دولة قطر',
+  'Returns within 14 days for unused items; faulty items are repaired, replaced or refunded under Law No. 8 of 2008 on Consumer Protection. Complaints:': 'الإرجاع خلال 14 يوماً للقطع غير المستخدمة، وتُصلح القطع المعيبة أو تُستبدل أو يُرد ثمنها وفقاً للقانون رقم (8) لسنة 2008 بشأن حماية المستهلك. الشكاوى:',
+  'or MoCI hotline 16001.': 'أو الخط الساخن لوزارة التجارة والصناعة 16001.',
+  'Your wishlist': 'قائمة المفضلة', 'Nothing saved yet': 'لا توجد عناصر محفوظة بعد', 'Tap the heart on any piece to save it here.': 'اضغط على القلب في أي قطعة لحفظها هنا.', 'Browse the shop': 'تصفح المتجر',
+  'My account': 'حسابي', 'Orders': 'الطلبات', 'Orders you place in this preview appear here.': 'تظهر هنا الطلبات التي تقدمها في هذه النسخة التجريبية.', 'Profile': 'الملف الشخصي', 'Name': 'الاسم', 'Phone': 'الهاتف',
+  'In the full store, accounts use secure sign-in with hashed passwords and server-side sessions.': 'في المتجر الكامل، تستخدم الحسابات تسجيل دخول آمناً مع تشفير كلمات المرور.',
+  'Your privacy rights': 'حقوق الخصوصية', 'Under Law No. 13 of 2016 you can see, correct or delete your personal data and withdraw consent.': 'بموجب القانون رقم (13) لسنة 2016 يحق لك الاطلاع على بياناتك الشخصية أو تصحيحها أو حذفها وسحب موافقتك.',
+  'Download my data': 'تنزيل بياناتي', 'Request deletion': 'طلب الحذف',
+  'Highlighted items are details the store owner still has to fill in.': 'العناصر المظللة بيانات لم يُدخلها صاحب المتجر بعد.', 'Legal pages': 'الصفحات القانونية',
+  'Send us a message': 'أرسل لنا رسالة', 'Order number (optional)': 'رقم الطلب (اختياري)', 'Message': 'الرسالة', 'We use your details only to reply to you. See our Privacy policy.': 'نستخدم بياناتك فقط للرد عليك. راجع سياسة الخصوصية.', 'Send message': 'إرسال',
+  'une maille à la fois': 'une maille à la fois', 'Page not found': 'الصفحة غير موجودة', 'Product not found': 'المنتج غير موجود', 'Back to shop': 'العودة إلى المتجر', 'Order not found': 'الطلب غير موجود',
+  'View cart': 'عرض السلة', 'View': 'عرض', 'Choose a size first': 'اختر المقاس أولاً', 'Saved to wishlist': 'تمت الإضافة إلى المفضلة', 'Removed from wishlist': 'تمت الإزالة من المفضلة',
+  'Enter a valid email address': 'أدخل بريداً إلكترونياً صحيحاً', 'Tick the consent box to subscribe': 'حدد خانة الموافقة للاشتراك', 'Thank you for subscribing!': 'شكراً لاشتراكك!',
+  'Thank you! Your review appears once the shop approves it.': 'شكراً لك! سيظهر تقييمك بعد موافقة المتجر.', 'Your data file is downloading': 'جارٍ تنزيل ملف بياناتك',
+  'Deletion request received. We will confirm by email once your data is deleted.': 'تم استلام طلب الحذف، وسنؤكد لك عبر البريد بعد حذف بياناتك.',
+  'Thank you. We will reply within one working day.': 'شكراً لك، سنرد خلال يوم عمل واحد.', 'Preview reset to the original products': 'تمت إعادة العرض إلى المنتجات الأصلية',
+  'PAID': 'مدفوع', 'PROCESSING': 'قيد التجهيز', 'SHIPPED': 'تم الشحن', 'DELIVERED': 'تم التوصيل', 'CANCELLED': 'ملغى', 'REFUNDED': 'مسترد', 'Card': 'بطاقة',
+  'Newborn': 'حديث الولادة', '0–3 months': '0–3 أشهر', '3–6 months': '3–6 أشهر', '6–9 months': '6–9 أشهر', '6–12 months': '6–12 شهراً', '12–24 months': '12–24 شهراً', '2–3 years': '2–3 سنوات',
+  'Buttercup & Rust': 'أصفر زبدي وطوبي', 'Pink, Grey & Cream': 'وردي ورمادي وكريمي', 'Rust overalls & hat': 'أفرهول وقبعة بلون الطوب', 'Mustard & Olive': 'خردلي وزيتوني',
+  'Grey & Coral': 'رمادي ومرجاني', 'Classic Black & White': 'أسود وأبيض كلاسيكي', 'Pink & Cream': 'وردي وكريمي', 'Sunshine Yellow': 'أصفر مشمس', 'Mustard & Rust': 'خردلي وطوبي',
+  'Candy Pink & Cream': 'وردي فاتح وكريمي', 'Mustard, Olive & Cream': 'خردلي وزيتوني وكريمي',
+  'Crocheted rompers and ponchos, made to measure in small batches.': 'أفرهولات وبونشو بالكروشيه، تُصنع بكميات صغيرة.', 'Crochet friends with embroidered faces and tiny outfits.': 'دمى كروشيه بوجوه مطرزة وملابس صغيرة.',
+  'Ready-to-give sets in a keepsake kraft box with a handwritten card.': 'مجموعات جاهزة للإهداء في علبة كرافت تذكارية مع بطاقة بخط اليد.', 'Rattles, pacifier clips and pretty storage for little things.': 'خشخيشات ومشابك لهاية وحافظات جميلة للأشياء الصغيرة.',
+  'The latest pieces from the studio.': 'أحدث القطع من الاستوديو.', 'Pieces we can embroider with a name.': 'قطع يمكننا تطريز اسم عليها.',
+};
+const DOLL_CARE_AR = 'نظّفها موضعياً بقطعة قماش مبللة، أو اغسلها يدوياً بماء بارد داخل كيس غسيل. أعد تشكيلها وجففها مسطحة في الظل. لا تستخدم المجفف.';
+const KNIT_CARE_AR = 'اغسلها يدوياً بماء بارد ومنظف لطيف للأطفال. لا تعصرها. أعد تشكيلها وجففها مسطحة في الظل.';
+const DOLL_SAFETY_AR = 'العيون الآمنة مثبتة بحلقات قفل من الداخل. للأطفال دون 12 شهراً يمكننا تطريز العيون بدلاً منها، فقط اطلب ذلك في ملاحظة الطلب.';
+const SOFT_DOLL_MAT_AR = 'خيوط قطنية، حشوة بوليستر مضادة للحساسية، عيون آمنة';
+const PAR = {
+  'buttercup-crochet-romper': { name: 'أفرهول الكروشيه الأصفر', short: 'أفرهول دافئ بالكروشيه باللون الأصفر الزبدي مع حواف بلون الطوب.', desc: 'محاك غرزة بغرزة بخيط أصفر زبدي ناعم، ومزين بحواف بلون الطوب على الأكمام والكاحلين وشريط الأزرار.\n\nخمسة أزرار صدفية تفتح من الأمام بالكامل لتسهيل تغيير الحفاض، والقصة المريحة تمنح الطفل حرية الحركة. يُلبس فوق صديري بياقة ناعمة للتصوير، أو وحده في الأمسيات الباردة.', materials: 'خيط أطفال ناعم من القطن والأكريليك، حواف بلون الطوب، خمسة أزرار صدفية مخيطة بخيط مزدوج', age: 'من الولادة حتى 9 أشهر' },
+  'blossom-fringe-poncho': { name: 'بونشو بلوسوم بالشراشيب', short: 'بونشو بغرز مفتوحة على شكل V بالوردي والرمادي والكريمي مع شراشيب.', desc: 'بونشو خفيف بغرزة الصدفة المفتوحة يُلبس فوق صديري أو قميص بأكمام طويلة. خطوط بالوردي الفاتح والرمادي والكريمي تلتقي على شكل V في الأمام والخلف، مع شراشيب كاملة على الحافة.\n\nفتحة الرقبة برباط مضفور قصير بشراشيب.', materials: 'خيط أطفال ناعم من الأكريليك والصوف، شراشيب معقودة يدوياً', age: 'من 6 أشهر حتى 3 سنوات', safety: 'رباط الرقبة قصير ومعقود بإحكام. راقب الطفل دائماً أثناء ارتدائه وانزعه قبل النوم.' },
+  'duckie-in-overalls': { name: 'البطة في الأفرهول', short: 'بطة صفراء فاتحة بأفرهول بلون الطوب وقبعة مخططة.', desc: 'بطتنا الصغيرة ترتدي أفرهول بلون الطوب بحمالات متقاطعة، وأقداماً برتقالية صغيرة، وقبعة بخط وردي. تتناسق بشكل جميل مع أفرهول الكروشيه الأصفر.', materials: SOFT_DOLL_MAT_AR, age: 'من الولادة (راجع تنبيه السلامة)', dims: 'الطول حوالي 24 سم مع القبعة', personal: 'الاسم المطرز على الأفرهول (حتى 10 أحرف)' },
+  'ella-the-elephant': { name: 'الفيلة إيلا', short: 'فيلة خردلية بتنورة زيتونية مكشكشة وفيونكة صفراء وخصلة مجعدة.', desc: 'لإيلا أذنان كبيرتان مبطنتان بالزيتوني، ورموش مطرزة، وذراعان وساقان مخططتان، وتنورة زيتونية مكشكشة، وخصلة مجعدة مزينة بفيونكة صفراء. ناعمة للاحتضان وجميلة على رف غرفة الطفل.', materials: 'خيوط قطنية لامعة، حشوة بوليستر مضادة للحساسية، عيون آمنة', age: 'من الولادة (راجع تنبيه السلامة)', dims: 'الطول حوالي 34 سم', personal: 'الاسم على بطاقة الهدية' },
+  'ella-elephant-gift-box': { name: 'صندوق هدية الفيلة إيلا', short: 'الفيلة إيلا مع الخشخيشة المطابقة ومشبك لهاية بالزهرة، في صندوق هدية.', desc: 'هديتنا المفضلة للمولود الجديد. تصل جميع القطع على ورق مجعد وورق ناعم داخل علبة كرافت تذكارية، مع بطاقة مكتوبة بخط اليد "صُنع بحب".', includes: ['دمية الفيلة إيلا (34 سم)', 'خشخيشة إيلا بحلقة من خشب الزان', 'مشبك اللهاية بالزهرة', 'علبة كرافت تذكارية مع ورق ناعم وورق مجعد', 'بطاقة مكتوبة بخط اليد برسالتك'], materials: 'خيوط قطنية، خشب زان غير معالج، حشوة مضادة للحساسية', age: 'من الولادة (راجع تنبيه السلامة)', dims: 'العلبة حوالي 35 × 30 × 10 سم', personal: 'رسالة البطاقة المكتوبة بخط اليد', safety: 'راقب الطفل أثناء اللعب بالخشخيشة والمشبك. لا تربط مشبك اللهاية حول الرقبة ولا تعلّقه بالسرير.' },
+  'ella-elephant-rattle': { name: 'خشخيشة الفيلة إيلا', short: 'رأس فيل بالكروشيه على حلقة ناعمة من خشب الزان، مع صوت خشخشة لطيف.', desc: 'تمسك الأيدي الصغيرة حلقة الزان الناعمة بينما يصدر رأس الكروشيه الناعم صوت خشخشة لطيفاً. تتناسق مع الفيلة إيلا.', materials: 'حلقة من خشب الزان غير المعالج والمصقول، خيوط قطنية، جرس خشخشة مغلق', care: 'امسح الحلقة بقطعة قماش مبللة، ونظّف الرأس موضعياً. لا تنقع الخشب.', age: 'من 3 أشهر', dims: 'قطر حلقة الزان 7 سم، والطول الكلي حوالي 14 سم', safety: 'افحص الخشخيشة قبل كل استخدام وراقب الطفل أثناء اللعب. توقف عن استخدامها إذا تلفت.' },
+  'daisy-pacifier-clip': { name: 'مشبك اللهاية بالزهرة', short: 'مشبك لهاية بزهرة أقحوان وخرز كروشيه مع مشبك من خشب الزان.', desc: 'يبقي اللهاية قريبة وبعيدة عن الأرض. خرز كروشيه خردلي وزيتوني يحيط بزهرة أقحوان كريمية، مع خرز طبيعي من خشب الزان ومشبك متين.', materials: 'مشبك وخرز من خشب الزان، خرز قطني بالكروشيه، حبل قطني مضفور', care: 'امسحه بقطعة قماش مبللة. لا تنقع المشبك.', age: 'من الولادة', dims: 'الطول حوالي 20 سم', personal: 'حرف إضافي على خرزة (A–Z)', safety: 'لا تربطه أبداً حول رقبة الطفل ولا تعلّقه بالسرير أو العربة أثناء النوم. افحصه قبل كل استخدام.' },
+  'hana-the-hippo-ballerina': { name: 'فرس النهر هناء الراقصة', short: 'فرس نهر رمادي بتنورة توتو مرجانية مكشكشة وفيونكة مطابقة.', desc: 'تصل هناء في صندوق الهدية مرتدية تنورة توتو مرجانية مكشكشة مع فيونكة صغيرة بين أذنيها. قاعدتها الثقيلة الناعمة تساعدها على الجلوس على الرف.', materials: 'خيط ناعم من القطن والأكريليك، حشوة بوليستر مضادة للحساسية، عيون آمنة', age: 'من الولادة (راجع تنبيه السلامة)', dims: 'الطول حوالي 26 سم', personal: 'الاسم على بطاقة الهدية' },
+  'pip-the-penguin': { name: 'البطريق بيب', short: 'بطريق كلاسيكي بالأسود والأبيض بمنقار وأقدام صفراء.', desc: 'بيب محاك بخيط قطني أسود لامع وأبيض ناعم، بمنقار أصفر مشمس وأقدام ممتلئة. يجلس بمفرده ويصل في صندوق هدية.', materials: 'خيوط قطنية لامعة، حشوة بوليستر مضادة للحساسية، عيون آمنة', age: 'من الولادة (راجع تنبيه السلامة)', dims: 'الطول حوالي 25 سم', personal: 'الاسم على بطاقة الهدية' },
+  'rosie-the-pink-penguin': { name: 'البطريق الوردي روزي', short: 'بطريق وردي صغير بحجم الجيب، مناسب للأيدي الصغيرة.', desc: 'روزي صغيرة وطرية وسهلة الإمساك، ببطن كريمي ومنقار وأقدام صفراء. إضافة لطيفة لأي هدية.', materials: SOFT_DOLL_MAT_AR, age: 'من الولادة (راجع تنبيه السلامة)', dims: 'الطول حوالي 12 سم' },
+  'little-hatchling-chick': { name: 'الصوص الصغير في البيضة', short: 'صوص أصفر مبهج يطل من قشرة بيضة بالكروشيه.', desc: 'صوص صغير يلوّح من قشرة بيضة كريمية بحافة مموجة. تذكار لطيف للمواليد الجدد ولعبة أولى مثالية.', materials: SOFT_DOLL_MAT_AR, age: 'من الولادة (راجع تنبيه السلامة)', dims: 'الطول حوالي 13 سم' },
+  'ginger-the-giraffe': { name: 'الزرافة جنجر', short: 'زرافة خردلية ببقع طوبية وقرون كريمية ورموش مطرزة.', desc: 'لجنجر خطم كريمي بابتسامة مطرزة، وأذنان وحوافر وبقع بلون الطوب، وتلويحة ودودة. محاكة بإحكام فلا تظهر الحشوة.', materials: 'خيوط قطنية لامعة، حشوة بوليستر مضادة للحساسية، عيون آمنة', age: 'من الولادة (راجع تنبيه السلامة)', dims: 'الطول حوالي 22 سم', personal: 'الاسم على بطاقة الهدية' },
+  'pearl-turtle-treasure-pouch': { name: 'حقيبة السلحفاة بيرل', short: 'سلحفاة صدفتها الوردية المكشكشة حقيبة برباط لحفظ الفيونكات والمشابك.', desc: 'تحفظ بيرل فيونكات الشعر والمشابك والكنوز الصغيرة مرتبة على التسريحة. صدفتها الوردية مزينة بخرز اللؤلؤ وتنفتح على اتساعها برباط كريمي، ثم تُغلق على شكل كشكشة جميلة.', materials: 'خيط من القطن والأكريليك، خرز لؤلؤ مخيط، رباط قطني، حشوة بوليستر في الرأس والأرجل', care: 'تنظيف موضعي فقط.', age: 'ديكور لغرفة الطفل (ليست لعبة)', dims: 'حوالي 22 × 18 سم، وقطر فتحة الحقيبة 12 سم', safety: 'قطعة تخزين زخرفية بها خرز صغير مخيط، وليست لعبة. تُحفظ بعيداً عن متناول الأطفال دون 3 سنوات.' },
+};
+
+const AR_RULES = [
+  [/^Only (\d+) left$/, (m) => `متبقٍ ${m[1]} فقط`],
+  [/^Only (\d+) left in stock$/, (m) => `متبقٍ ${m[1]} فقط في المخزون`],
+  [/^(\d+) pieces?$/, (m) => `${m[1]} قطع`],
+  [/^Save (\d+)%$/, (m) => `وفّر ${m[1]}%`],
+  [/^Free over (\d+) QAR$/, (m) => `مجاني فوق ${m[1]} ريال`],
+  [/^Search: “(.*)”$/, (m) => `نتائج البحث: «${m[1]}»`],
+  [/^Size: (.+)$/, (m) => `المقاس: ${trCore(m[1]) ?? m[1]}`],
+  [/^Add (.+) more for free delivery$/, (m) => `أضف ${m[1]} للحصول على توصيل مجاني`],
+  [/^([^·]+) each$/, (m) => `${m[1]} للقطعة`],
+  [/^\/ (.+)$/, (m) => `/ ${trCore(m[1]) ?? m[1]}`],
+  [/^· (.+)$/, (m) => `· ${trCore(m[1]) ?? m[1]}`],
+  [/^(.+) bought separately$/, (m) => `${m[1]} عند الشراء منفصلاً`],
+  [/^(.+) added to your cart$/, (m) => `تمت إضافة «${trCore(m[1]) ?? m[1]}» إلى السلة`],
+  [/^(\d+) × (.+)$/, (m) => `${m[1]} × ${trCore(m[2]) ?? m[2]}`],
+  [/^Place order & pay (.+)$/, (m) => `تأكيد الطلب والدفع ${m[1]}`],
+  [/^Handmade to order · dispatched in (\d+)–(\d+) working days · gift-wrapped free$/, (m) => `يُصنع يدوياً حسب الطلب · يُشحن خلال ${m[1]}–${m[2]} أيام عمل · تغليف هدايا مجاني`],
+  [/^Delivery across Qatar for (\d+) QAR, free over (\d+) QAR\. Unworn items can be returned within 14 days\. Personalised pieces are final sale\.$/, (m) => `التوصيل داخل قطر بـ ${m[1]} ريالاً، ومجاني فوق ${m[2]} ريال. يمكن إرجاع القطع غير المستخدمة خلال 14 يوماً. القطع المخصصة غير قابلة للإرجاع.`],
+  [/^([\d.]+) · (\d+) reviews?$/, (m) => `${m[1]} · ${m[2]} تقييم`],
+  [/^Date: (.+)$/, (m) => `التاريخ: ${m[1]}`],
+  [/^Payment: (.+)$/, (m) => `الدفع: ${trCore(m[1]) ?? m[1]}`],
+  [/^Status: (.+)$/, (m) => `الحالة: ${trCore(m[1]) ?? m[1]}`],
+  [/^Personalisation: “(.*)”$/, (m) => `التخصيص: «${m[1]}»`],
+  [/^Hello, (.+)$/, (m) => `أهلاً ${m[1]}`],
+  [/^Last updated ([^·]+)$/, (m) => `آخر تحديث: ${m[1]}`],
+  [/^© (\d{4}) (.+?)\. Payments are processed by a licensed payment provider\. We never store card details\.$/, (m) => `© ${m[1]} ${m[2]}. تتم معالجة المدفوعات عبر مزود دفع مرخّص، ولا نحتفظ ببيانات البطاقات.`],
+  [/^Order (.+) is now (.+)$/, (m) => `الطلب ${m[1]} أصبح ${trCore(m[2]) ?? m[2]}`],
+  [/^Save (.+)$/, (m) => `حفظ ${m[1]}`],
+];
+
+const AR = new Map(Object.entries(AR_UI));
+(function buildProductDict() {
+  for (const r of RAW) {
+    const a = PAR[r.slug];
+    if (!a) continue;
+    const pairs = [['name'], ['short'], ['desc'], ['materials'], ['age'], ['dims'], ['personal'], ['safety'], ['care']];
+    for (const [k] of pairs) if (r[k] && a[k]) AR.set(r[k], a[k]);
+    if (r.includes && a.includes) {
+      r.includes.forEach((x, i) => AR.set(x, a.includes[i]));
+      AR.set(r.includes.map((x) => '• ' + x).join('\n'), a.includes.map((x) => '• ' + x).join('\n'));
+    }
+  }
+  AR.set(DOLL_CARE, DOLL_CARE_AR); AR.set(KNIT_CARE, KNIT_CARE_AR); AR.set(DOLL_SAFETY, DOLL_SAFETY_AR);
+})();
+
+const SEPS = [' · ', ' / ', ' – ', ', '];
+function trCore(c) {
+  if (AR.has(c)) return AR.get(c);
+  if (S.settings.legal && c === S.settings.legal.hours) return S.settings.legal.hoursAr;
+  if (/^[\d\s.,:%+×–\-\/()#]*$/.test(c)) return c;
+  for (const [re, f] of AR_RULES) { const m = c.match(re); if (m) return f(m); }
+  for (const sep of SEPS) {
+    if (!c.includes(sep)) continue;
+    const out = c.split(sep).map((p) => (p === '' ? '' : trCore(p) ?? (/^[@\w.+\-]+$/.test(p) || /[؀-ۿ]/.test(p) || /ر\.ق|QAR/.test(p) ? p : null)));
+    if (out.every((x) => x != null)) return out.join(sep === ', ' ? '، ' : sep);
+  }
+  return null;
+}
+function tr(str) {
+  if (S.lang !== 'ar' || !str) return str;
+  const m = String(str).match(/^(\s*)([\s\S]*?)(\s*)$/);
+  if (!m[2]) return str;
+  const out = trCore(m[2]);
+  return out == null ? str : m[1] + out + m[3];
+}
+function translateDOM(root) {
+  if (S.lang !== 'ar' || !root) return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode: (n) => { const c = n.parentElement.closest('[lang], .ar, script, style, mark'); return c && c !== document.documentElement ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT; },
+  });
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+  for (const n of nodes) { const t = tr(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; }
+  root.querySelectorAll('[placeholder], [aria-label], [title]').forEach((el) => {
+    for (const a of ['placeholder', 'aria-label', 'title']) if (el.hasAttribute(a)) el.setAttribute(a, tr(el.getAttribute(a)));
+  });
+}
+
 // ===================== Render & events =====================
 function render() {
   $('.cookie')?.remove();
   document.documentElement.style.setProperty('--rose', S.settings.rose);
   document.documentElement.style.setProperty('--sage', S.settings.sage);
+  const ar = S.lang === 'ar' && V.view !== 'admin';
+  document.documentElement.lang = ar ? 'ar' : 'en';
+  document.documentElement.dir = ar ? 'rtl' : 'ltr';
+  money = new Intl.NumberFormat(ar ? 'ar-QA-u-nu-latn' : 'en-QA', { style: 'currency', currency: 'QAR' });
   if (V.view === 'admin') { $('#app').innerHTML = admin(); document.title = `Admin · ${S.settings.brand}`; return; }
   const views = { home, shop, product, cart, checkout, order, wishlist, account, page };
   $('#app').innerHTML = header() + `<main id="main">${(views[V.view] || home)()}</main>` + footer();
+  translateDOM($('#app'));
   document.title = V.view === 'product' && P(V.slug) ? `${P(V.slug).name} · ${S.settings.brand}` : V.view === 'page' && legalPages()[V.slug] ? `${legalPages()[V.slug].t} · ${S.settings.brand}` : `${S.settings.brand} · ${plain(S.settings.tagline)}`;
   if (V.search) $('#q')?.focus();
-  if (!S.cookieOk) document.body.insertAdjacentHTML('beforeend', `<div class="cookie" role="region" aria-label="Cookies"><span>We only use essential browser storage to keep your cart and preferences. No advertising or tracking cookies. <button class="link" data-go="page:cookies">Cookie policy</button></span><span class="ar">نستخدم فقط التخزين الضروري لحفظ السلة والتفضيلات، دون ملفات تتبع أو إعلانات.</span><div><button class="btn sm" data-act="cookieok">OK</button></div></div>`);
+  if (!S.cookieOk) document.body.insertAdjacentHTML('beforeend', S.lang === 'ar' && V.view !== 'admin'
+    ? `<div class="cookie" role="region" aria-label="ملفات تعريف الارتباط" dir="rtl"><span class="ar">نستخدم فقط التخزين الضروري في المتصفح لحفظ السلة والتفضيلات، دون ملفات تتبع أو إعلانات. <button class="link" data-go="page:cookies">سياسة ملفات تعريف الارتباط</button></span><div><button class="btn sm" data-act="cookieok">موافق</button></div></div>`
+    : `<div class="cookie" role="region" aria-label="Cookies"><span>We only use essential browser storage to keep your cart and preferences. No advertising or tracking cookies. <button class="link" data-go="page:cookies">Cookie policy</button></span><span class="ar">نستخدم فقط التخزين الضروري لحفظ السلة والتفضيلات، دون ملفات تتبع أو إعلانات.</span><div><button class="btn sm" data-act="cookieok">OK</button></div></div>`);
 }
 
 document.addEventListener('click', (e) => {
@@ -1296,6 +1517,7 @@ document.addEventListener('click', (e) => {
     case 'delimg': p.imgs.splice(Number(x), 1); save(); render(); toast('Photo removed'); break;
     case 'rv': S.reviews[Number(x)].status = y; save(); render(); toast(y === 'APPROVED' ? 'Review is now public' : 'Review hidden'); break;
     case 'print': window.print(); break;
+    case 'lang': S.lang = S.lang === 'ar' ? 'en' : 'ar'; save(); render(); window.scrollTo({ top: 0 }); break;
     case 'cookieok': S.cookieOk = true; save(); $('.cookie')?.remove(); break;
     case 'mydata': {
       const data = { customer: { name: 'Fatima Al-Kuwari', email: 'parent@example.com', phone: '+974 5555 1234' }, orders: S.orders.filter((o) => !o.example), wishlist: S.wish, newsletter: 'see account' };
@@ -1342,8 +1564,8 @@ document.addEventListener('submit', (e) => {
   if (id === 'coForm') {
     const req = ['coEmail', 'coName', 'coPhone', 'coLine', 'coCity'];
     const bad = req.find((r) => !$('#' + r).value.trim() || !$('#' + r).checkValidity());
-    if (bad) { $('#coErr').textContent = 'Please fill in every required field.'; $('#' + bad).focus(); return; }
-    if (!$('#coTerms').checked) { $('#coErr').textContent = 'Please tick the box to agree to the terms, returns and privacy policies.'; $('#coTerms').focus(); return; }
+    if (bad) { $('#coErr').textContent = tr('Please fill in every required field.'); $('#' + bad).focus(); return; }
+    if (!$('#coTerms').checked) { $('#coErr').textContent = tr('Please tick the box to agree to the terms, returns and privacy policies.'); $('#coTerms').focus(); return; }
     if ($('#coNews').checked) S.subs++;
     const t = cartTotals();
     for (const l of t.lines) if (l.qty > l.v.stock) { $('#coErr').textContent = `Sorry, only ${l.v.stock} of ${l.p.name} left.`; return; }
