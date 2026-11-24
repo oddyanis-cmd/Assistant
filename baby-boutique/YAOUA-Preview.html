@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Little Stitches Boutique</title>
-<meta name="description" content="Handmade crochet baby clothes, dolls, rattles and gift boxes, made in Doha.">
+<title>YAOUA · Fait main au crochet</title>
+<meta name="description" content="YAOUA: handmade crochet baby clothes, dolls, rattles and gift boxes, made in Qatar.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Caveat:wght@600;700&family=Nunito+Sans:wght@400;600;700;800&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap">
 <style>
 /* Layout: airy boutique storefront. Warm ivory ground, photo-led sections, sticky header; admin is a sidebar app. */
 :root {
@@ -16,7 +16,9 @@
   --muted: #8A7A6E; --line: #E7DCCF; --btn: #6B5142; --btn-fg: #FFFFFF; --soft: #F3DCD7; --soft2: #E3E9DE;
   --ok: #4F6B47; --ok-bg: #E3EDDD; --warn: #8A5F12; --warn-bg: #FBEBD0; --bad: #A4473D; --bad-bg: #F6DCD8;
   --shadow: 0 14px 40px rgba(94, 72, 57, .12); --shadow-sm: 0 2px 10px rgba(94, 72, 57, .07);
-  --f-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --f-display: 'Fraunces', Georgia, 'Times New Roman', serif; --f-hand: 'Caveat', 'Segoe Script', cursive; --f-ar: 'Noto Naskh Arabic', 'Geeza Pro', Tahoma, serif;
+  --stitch: rgba(169, 71, 43, .45); --stitch-light: rgba(255, 255, 255, .55);
+  --knit: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='16'%3E%3Cpath d='M1.5 1.5c1.2 6 4 10.5 7.5 13M16.5 1.5c-1.2 6-4 10.5-7.5 13' fill='none' stroke='%23745A4A' stroke-opacity='.075' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
   --f-body: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --r: 20px; --pill: 999px;
 }
@@ -24,12 +26,14 @@
   --bg: #211915; --surface: #2D231E; --tint: #382C25; --tint2: #30251F; --fg: #EDE2D4; --heading: #F2D9D3; --muted: #B7A595; --line: #4A3B32;
   --btn: #D8B4AF; --btn-fg: #2A1F1A; --soft: #4A3431; --soft2: #34402F;
   --ok: #B8D3AE; --ok-bg: #2F3D2B; --warn: #F0CF8F; --warn-bg: #4A3A1C; --bad: #F2B3AA; --bad-bg: #4D2A26;
-  --shadow: 0 14px 40px rgba(0,0,0,.4); --shadow-sm: 0 2px 10px rgba(0,0,0,.3); color-scheme: dark; } }
+  --shadow: 0 14px 40px rgba(0,0,0,.4); --shadow-sm: 0 2px 10px rgba(0,0,0,.3); color-scheme: dark;
+  --stitch: rgba(242, 201, 168, .4); --knit: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='16'%3E%3Cpath d='M1.5 1.5c1.2 6 4 10.5 7.5 13M16.5 1.5c-1.2 6-4 10.5-7.5 13' fill='none' stroke='%23F2D9D3' stroke-opacity='.06' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E"); } }
 :root[data-theme="dark"] {
   --bg: #211915; --surface: #2D231E; --tint: #382C25; --tint2: #30251F; --fg: #EDE2D4; --heading: #F2D9D3; --muted: #B7A595; --line: #4A3B32;
   --btn: #D8B4AF; --btn-fg: #2A1F1A; --soft: #4A3431; --soft2: #34402F;
   --ok: #B8D3AE; --ok-bg: #2F3D2B; --warn: #F0CF8F; --warn-bg: #4A3A1C; --bad: #F2B3AA; --bad-bg: #4D2A26;
-  --shadow: 0 14px 40px rgba(0,0,0,.4); --shadow-sm: 0 2px 10px rgba(0,0,0,.3); color-scheme: dark; }
+  --shadow: 0 14px 40px rgba(0,0,0,.4); --shadow-sm: 0 2px 10px rgba(0,0,0,.3); color-scheme: dark;
+  --stitch: rgba(242, 201, 168, .4); --knit: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='16'%3E%3Cpath d='M1.5 1.5c1.2 6 4 10.5 7.5 13M16.5 1.5c-1.2 6-4 10.5-7.5 13' fill='none' stroke='%23F2D9D3' stroke-opacity='.06' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E"); }
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -40,7 +44,7 @@ a { color: inherit; }
 button, input, select, textarea { font: inherit; color: inherit; }
 h1, h2, h3 { font-family: var(--f-display); color: var(--heading); font-weight: 600; line-height: 1.08; margin: 0 0 .4em; text-wrap: balance; letter-spacing: .005em; }
 h1 { font-size: clamp(2.3rem, 5.4vw, 4rem); } h2 { font-size: clamp(1.8rem, 3.4vw, 2.6rem); } h3 { font-size: 1.3rem; }
-h1 em, h2 em { font-style: italic; color: var(--rust); font-weight: 500; }
+h1 em, h2 em { font-family: var(--f-hand); font-style: normal; color: var(--rust); font-weight: 700; font-size: 1.15em; letter-spacing: 0; margin-right: .18em; }
 p { margin: 0 0 1em; }
 :focus-visible { outline: 3px solid var(--sage); outline-offset: 2px; border-radius: 6px; }
 .wrap { max-width: 1220px; margin: 0 auto; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: max(18px, env(safe-area-inset-right, 0px)); }
@@ -315,6 +319,61 @@ table.t { width: 100%; border-collapse: collapse; font-size: .88rem; background:
 .toast { background: #3E2F26; color: #fff; padding: 13px 16px; border-radius: 14px; box-shadow: var(--shadow); display: flex; justify-content: space-between; gap: 10px; align-items: center; font-weight: 600; }
 .toast button { background: none; border: 0; color: #fff; text-decoration: underline; font-weight: 800; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ===== YAOUA knit & crochet look ===== */
+body { background-image: var(--knit); }
+.hero, .tint, .announce, .trust { background-image: var(--knit); }
+.hero { background: var(--knit), radial-gradient(1200px 500px at 85% 10%, var(--soft), transparent 60%), linear-gradient(180deg, var(--tint2), var(--bg)); }
+.tint { position: relative; }
+.tint::before, .tint::after { content: ""; position: absolute; left: 0; right: 0; height: 12px; background-repeat: repeat-x; background-size: 26px 12px; pointer-events: none; }
+.tint::before { top: -11px; background-image: radial-gradient(circle at 13px 12px, var(--tint2) 10.5px, transparent 11.5px); }
+.tint::after { bottom: -11px; background-image: radial-gradient(circle at 13px 0, var(--tint2) 10.5px, transparent 11.5px); }
+footer.site { position: relative; }
+footer.site::before { content: ""; position: absolute; left: 0; right: 0; top: -11px; height: 12px; background: radial-gradient(circle at 13px 12px, #3E2F26 10.5px, transparent 11.5px) repeat-x; background-size: 26px 12px; }
+.card, .panel, .review, .step, .kpi, .filters, .news, .feature, .specs { outline: 1.6px dashed var(--stitch); outline-offset: -7px; }
+.card .media { z-index: 0; } .card .body { position: relative; z-index: 1; }
+.news, .feature { outline-color: var(--stitch-light); outline-offset: -10px; }
+.btn:not(.ghost):not(.link) { outline: 1.4px dashed rgba(255,255,255,.55); outline-offset: -5px; }
+.btn.rose, .btn.light { outline-color: rgba(94,72,57,.35); }
+.btn:focus-visible { outline: 3px solid var(--sage); outline-offset: 2px; }
+.logo { gap: 10px; }
+.logo .wm { display: grid; line-height: 1; text-align: left; }
+.logo .wm b { font-family: var(--f-display); font-weight: 700; letter-spacing: .22em; font-size: 1.5rem; }
+.logo .wm i { font-family: var(--f-hand); font-style: normal; font-weight: 700; color: var(--rust); font-size: 1rem; letter-spacing: .02em; margin-top: 2px; }
+.logo svg { width: 38px; height: 38px; }
+.aside .logo .wm i { color: #F2C9A8; }
+.hand { font-family: var(--f-hand); font-weight: 700; color: var(--rust); font-size: 1.35rem; line-height: 1.1; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; }
+.eyebrow::before { content: ""; width: 22px; height: 8px; background: radial-gradient(circle at 4px 4px, currentColor 2.4px, transparent 3px) repeat-x; background-size: 7px 8px; opacity: .8; }
+.head.center .eyebrow::after { content: ""; width: 22px; height: 8px; background: radial-gradient(circle at 4px 4px, currentColor 2.4px, transparent 3px) repeat-x; background-size: 7px 8px; opacity: .8; }
+.cat .c { border: 5px solid var(--surface); outline: 1.6px dashed var(--stitch); outline-offset: 3px; }
+.collage .main { outline: 2px dashed var(--stitch-light); outline-offset: -12px; }
+.yarn-tag { position: absolute; left: 12px; bottom: 12px; z-index: 2; font-family: var(--f-hand); font-size: 1.05rem; font-weight: 700; color: #5E4839; background: #FFF8EF; padding: 2px 12px 2px 18px; border-radius: 4px 12px 12px 4px; box-shadow: var(--shadow-sm); }
+.yarn-tag::before { content: ""; position: absolute; left: 6px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: var(--rust); }
+
+/* legal */
+mark.ph { unicode-bidi: isolate; display: inline-block; direction: ltr; background: #FFE9A8; color: #6B4A00; border-radius: 4px; padding: 0 4px; font-weight: 700; }
+.legal { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+.legal section { background: var(--surface); border-radius: var(--r); padding: 24px; box-shadow: var(--shadow-sm); outline: 1.6px dashed var(--stitch); outline-offset: -7px; min-width: 0; }
+.legal h3 { margin-top: 18px; font-size: 1.15rem; } .legal h3:first-child { margin-top: 0; }
+.legal p { white-space: pre-line; margin: 0 0 6px; overflow-wrap: anywhere; }
+.ar { direction: rtl; text-align: right; font-family: var(--f-ar); line-height: 1.9; }
+.ar h2, .ar h3 { font-family: var(--f-ar); font-weight: 700; }
+.legal-nav { display: flex; flex-wrap: wrap; gap: 7px; margin-block: 8px 24px; }
+@media (max-width: 880px) { .legal { grid-template-columns: 1fr; } }
+.legal-strip { border-top: 1px solid rgba(255,255,255,.14); margin-top: 28px; padding-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; font-size: .82rem; }
+.legal-strip .ar { font-size: .86rem; }
+.legal-strip mark.ph { font-size: .78rem; }
+@media (max-width: 760px) { .legal-strip { grid-template-columns: 1fr; } }
+.cookie { position: fixed; z-index: 150; left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); max-width: 560px; margin-inline: auto; background: var(--surface); color: var(--fg); border-radius: 18px; padding: 16px 18px; box-shadow: var(--shadow); outline: 1.6px dashed var(--stitch); outline-offset: -7px; display: grid; gap: 10px; font-size: .88rem; }
+.invoice { background: var(--surface); border-radius: var(--r); padding: clamp(18px, 4vw, 36px); box-shadow: var(--shadow-sm); }
+.invoice .ih { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; border-bottom: 2px dashed var(--stitch); padding-bottom: 16px; margin-bottom: 16px; }
+.invoice .t td, .invoice .t th { background: transparent; }
+@media print {
+  .preview-bar, .announce, header.site, footer.site, .cookie, .toasts, .noprint { display: none !important; }
+  body { background: #fff; }
+  .invoice { box-shadow: none; outline: none; }
+}
 </style>
 </head>
 <body>
@@ -427,15 +486,192 @@ const SIZE_GUIDE = {
   rows: [['Newborn', '50–56', '2.5–4', '38', '34'], ['0–3 months', '56–62', '4–6', '40', '38'], ['3–6 months', '62–68', '6–8', '43', '42'], ['6–9 months', '68–74', '8–9', '45', '46'], ['6–12 months', '68–80', '8–10', '46', '—'], ['12–24 months', '80–92', '10–13', '50', '—'], ['2–3 years', '92–98', '13–15', '53', '—']],
   note: 'Romper length is shoulder to ankle; ponchos are one length per size. Measurements are taken flat and hand-crocheted pieces can vary by ±1 cm. Between sizes? Choose the larger one.',
 };
-const PAGES = {
-  about: ['Our Story', 'We are a small crochet studio in Doha. Every romper, poncho and friend in our shop is made by hand, one stitch at a time, from soft baby-friendly yarns.\n\nWe make in small batches so we can check every seam and every safety eye, then wrap each order in tissue inside a kraft keepsake box with a handwritten card.\n\nThank you for supporting slow, handmade work.'],
-  contact: ['Contact Us', 'Email: hello@littlestitches.qa\nWhatsApp: +974 0000 0000\nInstagram: @littlestitches.qa\n\nWe reply within one working day, Sunday to Thursday.'],
-  shipping: ['Shipping Policy', 'We deliver across Qatar. Delivery is 25 QAR and free on orders over 300 QAR.\n\nEach product shows how long it takes to make and dispatch. Doha deliveries usually arrive the day after dispatch.'],
-  returns: ['Return Policy', 'Unworn, unwashed items in their original packaging may be returned within 14 days of delivery.\n\nPersonalised pieces cannot be returned unless they are faulty.'],
-  privacy: ['Privacy Policy', 'We collect only what we need to deliver your order and, if you opt in, to send our newsletter. Card details are handled by our payment partner and are never stored by us.'],
-  terms: ['Terms & Conditions', 'Prices are in Qatari riyals (QAR). Orders are confirmed once payment is received.'],
-  faq: ['FAQ', 'Which size should I choose?\nOpen the Size Guide on any clothing page. Measurements are in centimetres. Between sizes, choose the larger one.\n\nAre the dolls safe for newborns?\nThey use locking safety eyes. For babies under 12 months we can embroider the eyes instead. Just add a note at checkout.\n\nHow do I wash crochet pieces?\nHand wash cold and dry flat in the shade. Dolls can be spot cleaned.\n\nCan you make a different colour?\nYes. Most pieces can be made to order in other colours. Message us on WhatsApp.'],
-};
+// ===================== Legal & policy pages (English + Arabic) =====================
+// Bracketed values such as [CR number] are placeholders the owner fills in Admin > Legal details.
+const ph = (s) => esc(s).replace(/\[([^\]]+)\]/g, '<mark class="ph">[$1]</mark>');
+const LEGAL_DEFAULTS = () => ({
+  legalName: '[Registered business name as shown on the CR]',
+  owner: '[Owner / authorised signatory full name]',
+  cr: '[CR number]',
+  ecom: '[E-commerce licence number]',
+  address: '[Building No., Street No., Zone No., City], State of Qatar',
+  email: '[hello@yaoua.qa]',
+  phone: '[+974 XXXX XXXX]',
+  whatsapp: '[+974 XXXX XXXX]',
+  website: '[www.yaoua.qa]',
+  hours: 'Sunday to Thursday, 9:00 to 17:00 (Doha time)',
+  hoursAr: 'من الأحد إلى الخميس، من 9:00 صباحاً حتى 5:00 مساءً (بتوقيت الدوحة)',
+  updated: '24 November 2026',
+});
+const LEGAL_LINKS = [['seller', 'Seller information'], ['terms', 'Terms & conditions'], ['privacy', 'Privacy policy'], ['cookies', 'Cookie policy'], ['shipping', 'Shipping & delivery'], ['returns', 'Returns & refunds'], ['complaints', 'Complaints'], ['safety', 'Product safety'], ['faq', 'FAQ']];
+
+function legalPages() {
+  const L = S.settings.legal, fee = S.settings.flatFee, free = S.settings.freeOver;
+  return {
+    seller: { t: 'Seller information', ta: 'معلومات البائع', en: [
+      ['Business details', `Trading name: YAOUA\nRegistered name: ${L.legalName}\nOwner / authorised signatory: ${L.owner}\nCommercial Registration (CR) No.: ${L.cr}\nE-commerce licence No.: ${L.ecom}\nLicensing authority: Ministry of Commerce and Industry (MoCI), State of Qatar\nBusiness activity: online retail of handmade crocheted baby clothing, accessories and soft toys`],
+      ['Address and contact', `Address: ${L.address}\nEmail: ${L.email}\nPhone: ${L.phone}\nWhatsApp: ${L.whatsapp}\nCustomer service hours: ${L.hours}\nWebsite: ${L.website}`],
+      ['Laws that apply to this store', '• Law No. 8 of 2008 on Consumer Protection and its executive regulations\n• Decree-Law No. 16 of 2010 promulgating the Electronic Transactions and Commerce Law\n• Law No. 13 of 2016 on Personal Data Privacy Protection\n• Ministerial Decision No. 25 of 2026 on e-commerce licensing (MoCI)'],
+      ['Codes of conduct', 'We follow the consumer protection rules and guidance published by the Ministry of Commerce and Industry. We are not a member of any other code of conduct.'],
+    ], ar: [
+      ['بيانات النشاط التجاري', `الاسم التجاري: YAOUA (ياوا)\nالاسم المسجل: ${L.legalName}\nالمالك / المفوض بالتوقيع: ${L.owner}\nرقم السجل التجاري: ${L.cr}\nرقم ترخيص التجارة الإلكترونية: ${L.ecom}\nجهة الترخيص: وزارة التجارة والصناعة، دولة قطر\nالنشاط: البيع الإلكتروني بالتجزئة لملابس الأطفال والإكسسوارات والألعاب المصنوعة يدوياً بالكروشيه`],
+      ['العنوان ووسائل التواصل', `العنوان: ${L.address}\nالبريد الإلكتروني: ${L.email}\nالهاتف: ${L.phone}\nواتساب: ${L.whatsapp}\nساعات خدمة العملاء: ${L.hoursAr}\nالموقع الإلكتروني: ${L.website}`],
+      ['القوانين المطبقة على المتجر', '• القانون رقم (8) لسنة 2008 بشأن حماية المستهلك ولائحته التنفيذية\n• المرسوم بقانون رقم (16) لسنة 2010 بإصدار قانون المعاملات والتجارة الإلكترونية\n• القانون رقم (13) لسنة 2016 بشأن حماية خصوصية البيانات الشخصية\n• القرار الوزاري رقم (25) لسنة 2026 بشأن ترخيص التجارة الإلكترونية (وزارة التجارة والصناعة)'],
+      ['مدونات السلوك', 'نلتزم بقواعد حماية المستهلك والإرشادات الصادرة عن وزارة التجارة والصناعة، ولسنا أعضاء في أي مدونة سلوك أخرى.'],
+    ] },
+
+    terms: { t: 'Terms & conditions', ta: 'الشروط والأحكام', en: [
+      ['1. Who we are', `This website is operated by ${L.legalName}, trading as YAOUA, CR No. ${L.cr}, e-commerce licence No. ${L.ecom}, ${L.address}. Full details are on our Seller information page. By placing an order you agree to these terms.`],
+      ['2. Our products', 'Every item is crocheted by hand, so small differences in colour, size and stitch from the photos are normal and are not defects. Measurements are approximate (±1 cm). Product pages show materials, care instructions, age suitability and safety information.'],
+      ['3. Prices and payment', 'All prices are in Qatari riyals (QAR). The full total, including delivery, is shown before you confirm your order. Payment is made electronically through a licensed payment provider. We never see or store your full card details.'],
+      ['4. How a contract is made', 'You choose your items, review your cart and delivery details, then confirm the order and pay. You can correct any mistakes before confirming. Your order is accepted when we send the order confirmation and electronic invoice. If an item is unavailable or was shown at a clearly wrong price, we will contact you and refund any amount paid in full.'],
+      ['5. Made-to-order and personalised items', 'Production and dispatch times are shown on each product. Personalised items (for example an embroidered name) are made to your instructions. Please check spelling carefully before confirming.'],
+      ['6. Delivery', 'Delivery terms are set out in our Shipping & delivery policy.'],
+      ['7. Cancelling an order', 'You can cancel free of charge before we start making or dispatch your item, and we will refund you in full. After that, our Returns & refunds policy applies.'],
+      ['8. Returns, refunds and faulty items', 'Our Returns & refunds policy explains your options. If an item is faulty or not as described, you are entitled to a repair, replacement or refund under Law No. 8 of 2008 on Consumer Protection. Nothing in these terms limits your rights under Qatari law.'],
+      ['9. Safe use', 'Our toys and accessories must be used as described on the product page and in our Product safety page, always under adult supervision.'],
+      ['10. Intellectual property', 'Our designs, photos and texts belong to YAOUA and may not be copied for commercial use without written permission.'],
+      ['11. Liability', 'We are responsible for losses that are a foreseeable result of our breaking these terms. We do not exclude any liability that cannot be excluded under Qatari law.'],
+      ['12. Privacy', 'We handle your personal data as explained in our Privacy policy, in line with Law No. 13 of 2016.'],
+      ['13. Complaints', 'Please contact us first. If we cannot resolve your complaint you can contact the Ministry of Commerce and Industry. See our Complaints page.'],
+      ['14. Governing law and language', 'These terms are governed by the laws of the State of Qatar and the Qatari courts have jurisdiction. They are provided in Arabic and English. If there is any difference between the two, the Arabic version prevails.'],
+    ], ar: [
+      ['1. من نحن', `يُدار هذا الموقع من قِبل ${L.legalName} تحت الاسم التجاري YAOUA، سجل تجاري رقم ${L.cr}، ترخيص تجارة إلكترونية رقم ${L.ecom}، العنوان: ${L.address}. التفاصيل الكاملة في صفحة "معلومات البائع". بتقديم طلبك فإنك توافق على هذه الشروط.`],
+      ['2. منتجاتنا', 'جميع القطع مصنوعة يدوياً بالكروشيه، لذا فإن الاختلافات البسيطة في اللون والمقاس والغرز عن الصور أمر طبيعي ولا يُعد عيباً. القياسات تقريبية (±1 سم). تتضمن صفحة كل منتج الخامات وتعليمات العناية والعمر المناسب ومعلومات السلامة.'],
+      ['3. الأسعار والدفع', 'جميع الأسعار بالريال القطري. يظهر المبلغ الإجمالي شاملاً رسوم التوصيل قبل تأكيد الطلب. يتم الدفع إلكترونياً عبر مزود دفع مرخّص، ولا نطّلع على بيانات بطاقتك الكاملة ولا نحتفظ بها.'],
+      ['4. إبرام العقد', 'تختار المنتجات وتراجع السلة وبيانات التوصيل ثم تؤكد الطلب وتدفع، ويمكنك تصحيح أي خطأ قبل التأكيد. يُعد الطلب مقبولاً عند إرسال تأكيد الطلب والفاتورة الإلكترونية. إذا لم يتوفر منتج أو ظهر بسعر خاطئ بشكل واضح، نتواصل معك ونرد المبلغ المدفوع كاملاً.'],
+      ['5. القطع حسب الطلب والمخصصة', 'تظهر مدة التصنيع والشحن في صفحة كل منتج. تُصنع القطع المخصصة (مثل تطريز اسم) وفق تعليماتك، لذا يُرجى التحقق من الكتابة قبل التأكيد.'],
+      ['6. التوصيل', 'شروط التوصيل موضحة في سياسة الشحن والتوصيل.'],
+      ['7. إلغاء الطلب', 'يمكنك إلغاء الطلب مجاناً قبل البدء في تصنيع القطعة أو شحنها، ونرد لك المبلغ كاملاً. بعد ذلك تُطبق سياسة الإرجاع والاسترداد.'],
+      ['8. الإرجاع والاسترداد والعيوب', 'توضح سياسة الإرجاع والاسترداد الخيارات المتاحة لك. إذا كانت القطعة معيبة أو غير مطابقة للوصف، يحق لك الإصلاح أو الاستبدال أو استرداد المبلغ وفقاً للقانون رقم (8) لسنة 2008 بشأن حماية المستهلك. لا تحدّ هذه الشروط من حقوقك وفقاً للقانون القطري.'],
+      ['9. الاستخدام الآمن', 'يجب استخدام الألعاب والإكسسوارات كما هو موضح في صفحة المنتج وصفحة سلامة المنتجات، وتحت إشراف شخص بالغ دائماً.'],
+      ['10. الملكية الفكرية', 'التصاميم والصور والنصوص ملك لـ YAOUA، ولا يجوز نسخها لأغراض تجارية دون إذن كتابي.'],
+      ['11. المسؤولية', 'نتحمل المسؤولية عن الخسائر المتوقعة الناتجة عن إخلالنا بهذه الشروط، ولا نستثني أي مسؤولية لا يجوز استثناؤها وفقاً للقانون القطري.'],
+      ['12. الخصوصية', 'نتعامل مع بياناتك الشخصية كما هو موضح في سياسة الخصوصية، وفقاً للقانون رقم (13) لسنة 2016.'],
+      ['13. الشكاوى', 'يُرجى التواصل معنا أولاً، وإذا لم نتمكن من حل شكواك يمكنك التواصل مع وزارة التجارة والصناعة. راجع صفحة الشكاوى.'],
+      ['14. القانون الواجب التطبيق واللغة', 'تخضع هذه الشروط لقوانين دولة قطر وتختص المحاكم القطرية بالنظر في أي نزاع. الشروط متاحة باللغتين العربية والإنجليزية، وفي حال وجود أي اختلاف يُعتمد النص العربي.'],
+    ] },
+
+    privacy: { t: 'Privacy policy', ta: 'سياسة الخصوصية', en: [
+      ['Who is responsible for your data', `${L.legalName} (YAOUA), ${L.address}, is the controller of your personal data under Law No. 13 of 2016 on Personal Data Privacy Protection. Privacy questions: ${L.email}.`],
+      ['What we collect', '• Name, email and phone number\n• Delivery address\n• Order details and order history\n• Personalisation text you give us, such as a baby’s name\n• Payment confirmation from our payment provider (never full card numbers)\n• Messages you send us\n• Your newsletter choice, only if you opt in\n• Items in your cart and your preferences, stored in your own browser'],
+      ['Why we use it', '• To make, deliver and support your order (performing our contract with you)\n• To issue invoices and keep records the law requires\n• To answer your questions and complaints\n• To send our newsletter, only with your consent, which you can withdraw at any time\n• To keep the website secure and prevent fraud'],
+      ['Children', 'Our products are for babies, but this website is for adults. We do not knowingly collect personal data from children. If you give us a child’s name for personalisation, you confirm that you are the parent or guardian, or have their permission. We use it only to make your item and delete it 90 days after delivery.'],
+      ['Who we share it with', 'We share only what is needed with: our payment provider, our delivery company, and our website hosting and email providers. We may also share data with government authorities when the law requires it. We never sell your data.'],
+      ['Transfers outside Qatar', 'If one of our providers stores data outside Qatar, we make sure it is protected to the standard required by Qatari law.'],
+      ['How we protect it', 'The website uses encrypted connections (HTTPS). Only authorised people can access customer data. If a breach could harm you, we will notify you and the competent authority as the law requires.'],
+      ['How long we keep it', 'Order and invoice records: for the period required by Qatari commercial and tax law. Personalisation text: 90 days after delivery. Newsletter data: until you unsubscribe. Customer service messages: 2 years.'],
+      ['Your rights', 'You can ask to see, correct or delete your personal data, withdraw your consent, or object to how we use it. Use the privacy section of your account or email us. If you are not satisfied with our answer, you can complain to the National Data Privacy Office at the National Cyber Security Agency (NCSA).'],
+      ['Cookies and browser storage', 'See our Cookie policy.'],
+      ['Changes', `We will post any changes on this page. Last updated: ${L.updated}. The Arabic version prevails.`],
+    ], ar: [
+      ['المسؤول عن بياناتك', `${L.legalName} (YAOUA)، ${L.address}، هو المراقب المسؤول عن بياناتك الشخصية وفقاً للقانون رقم (13) لسنة 2016 بشأن حماية خصوصية البيانات الشخصية. للاستفسارات: ${L.email}.`],
+      ['البيانات التي نجمعها', '• الاسم والبريد الإلكتروني ورقم الهاتف\n• عنوان التوصيل\n• تفاصيل الطلبات وسجلها\n• نص التخصيص الذي تقدمه، مثل اسم الطفل\n• تأكيد الدفع من مزود الدفع (دون أرقام البطاقات الكاملة)\n• الرسائل التي ترسلها إلينا\n• اشتراكك في النشرة البريدية، فقط إذا وافقت\n• محتويات السلة وتفضيلاتك، وتُحفظ في متصفحك'],
+      ['لماذا نستخدمها', '• لتصنيع طلبك وتوصيله ومتابعته (تنفيذ العقد معك)\n• لإصدار الفواتير والاحتفاظ بالسجلات التي يتطلبها القانون\n• للرد على استفساراتك وشكاواك\n• لإرسال النشرة البريدية بموافقتك فقط، ويمكنك سحبها في أي وقت\n• لحماية الموقع ومنع الاحتيال'],
+      ['الأطفال', 'منتجاتنا مخصصة للأطفال، لكن الموقع موجه للبالغين. لا نجمع عن قصد بيانات شخصية من الأطفال. إذا قدمت اسم طفل للتخصيص، فإنك تؤكد أنك الوالد أو الولي أو لديك إذنه. نستخدم الاسم فقط لتصنيع القطعة ونحذفه بعد 90 يوماً من التوصيل.'],
+      ['مع من نشارك البيانات', 'نشارك فقط ما يلزم مع: مزود الدفع، وشركة التوصيل، ومزودي استضافة الموقع والبريد الإلكتروني، ومع الجهات الحكومية عندما يقتضي القانون ذلك. لا نبيع بياناتك أبداً.'],
+      ['النقل خارج قطر', 'إذا قام أحد مزودينا بتخزين البيانات خارج قطر، نتأكد من حمايتها بالمستوى الذي يتطلبه القانون القطري.'],
+      ['كيف نحمي بياناتك', 'يستخدم الموقع اتصالاً مشفراً (HTTPS)، ولا يطّلع على بيانات العملاء إلا الأشخاص المخوّلون. في حال حدوث اختراق قد يضرّك، نُخطرك ونُخطر الجهة المختصة وفقاً للقانون.'],
+      ['مدة الاحتفاظ', 'سجلات الطلبات والفواتير: للمدة التي تفرضها القوانين التجارية والضريبية في قطر. نص التخصيص: 90 يوماً بعد التوصيل. بيانات النشرة: حتى إلغاء الاشتراك. رسائل خدمة العملاء: سنتان.'],
+      ['حقوقك', 'يحق لك طلب الاطلاع على بياناتك أو تصحيحها أو حذفها، وسحب موافقتك، والاعتراض على طريقة استخدامها، من خلال قسم الخصوصية في حسابك أو عبر البريد الإلكتروني. إذا لم تكن راضياً عن ردنا، يمكنك تقديم شكوى إلى إدارة حماية خصوصية البيانات الشخصية في الوكالة الوطنية للأمن السيبراني.'],
+      ['ملفات تعريف الارتباط وتخزين المتصفح', 'راجع سياسة ملفات تعريف الارتباط.'],
+      ['التعديلات', `ننشر أي تعديلات على هذه الصفحة. آخر تحديث: ${L.updated}. يُعتمد النص العربي.`],
+    ] },
+
+    cookies: { t: 'Cookie policy', ta: 'سياسة ملفات تعريف الارتباط', en: [
+      ['What we use', 'We use only strictly necessary browser storage to keep your cart, wishlist, preferences and your cookie choice. We do not use advertising or tracking cookies.'],
+      ['Third parties', 'Our fonts load from Google Fonts, which receives your IP address to deliver them. Our payment provider may set its own cookies on its secure payment page to process your payment and prevent fraud.'],
+      ['Your choices', 'You can clear this storage at any time in your browser settings. The cart and wishlist will then be emptied.'],
+    ], ar: [
+      ['ما نستخدمه', 'نستخدم فقط التخزين الضروري في المتصفح لحفظ السلة وقائمة المفضلة والتفضيلات واختيارك بشأن ملفات تعريف الارتباط. لا نستخدم ملفات تعريف ارتباط إعلانية أو للتتبع.'],
+      ['الأطراف الأخرى', 'يتم تحميل الخطوط من Google Fonts التي تستلم عنوان IP الخاص بك لعرضها. قد يستخدم مزود الدفع ملفات تعريف ارتباط خاصة به في صفحة الدفع الآمنة لمعالجة الدفع ومنع الاحتيال.'],
+      ['خياراتك', 'يمكنك مسح هذا التخزين في أي وقت من إعدادات المتصفح، وسيتم عندها تفريغ السلة والمفضلة.'],
+    ] },
+
+    shipping: { t: 'Shipping & delivery', ta: 'الشحن والتوصيل', en: [
+      ['Where we deliver', 'We currently deliver within the State of Qatar.'],
+      ['Delivery cost', `${fee} QAR per order, free for orders of ${free} QAR or more. The delivery cost is shown in your cart and before you pay.`],
+      ['How long it takes', 'Every item is handmade. The making and dispatch time is shown on each product page (usually 2 to 8 working days). After dispatch, delivery takes 1 to 3 working days. We will message you with the expected delivery date.'],
+      ['Receiving your parcel', 'Please check your parcel when it arrives. If it is damaged, take photos and tell us within 48 hours so we can put it right. Responsibility for the item passes to you on delivery.'],
+      ['Missed deliveries', 'If the courier cannot reach you after two attempts, we will contact you to arrange a new delivery. A second delivery fee may apply.'],
+    ], ar: [
+      ['مناطق التوصيل', 'نوصل حالياً داخل دولة قطر.'],
+      ['رسوم التوصيل', `${fee} ريالاً قطرياً لكل طلب، والتوصيل مجاني للطلبات بقيمة ${free} ريال أو أكثر. تظهر رسوم التوصيل في السلة وقبل الدفع.`],
+      ['مدة التوصيل', 'جميع القطع مصنوعة يدوياً. تظهر مدة التصنيع والشحن في صفحة كل منتج (عادةً من 2 إلى 8 أيام عمل). بعد الشحن يستغرق التوصيل من يوم إلى 3 أيام عمل، ونرسل لك موعد التوصيل المتوقع.'],
+      ['استلام الطلب', 'يُرجى فحص الطرد عند استلامه. إذا كان تالفاً، التقط صوراً وأبلغنا خلال 48 ساعة لنعالج الأمر. تنتقل مسؤولية القطعة إليك عند التسليم.'],
+      ['تعذر التوصيل', 'إذا لم يتمكن المندوب من الوصول إليك بعد محاولتين، نتواصل معك لترتيب موعد جديد، وقد تُطبق رسوم توصيل إضافية.'],
+    ] },
+
+    returns: { t: 'Returns, exchanges & refunds', ta: 'سياسة الإرجاع والاستبدال والاسترداد', en: [
+      ['Faulty or not as described', 'If your item is faulty, damaged or different from its description, contact us within 30 days of delivery. We will repair it, replace it or refund you, including delivery costs, in line with Law No. 8 of 2008 on Consumer Protection. Your legal rights always apply, even outside these time limits.'],
+      ['Changed your mind', 'You can return unused, unwashed items in their original packaging within 14 days of delivery for an exchange or a refund. Please contact us first. The cost of sending a change-of-mind return is paid by you.'],
+      ['Items we cannot take back unless faulty', '• Personalised or made-to-order items\n• Pacifier clips and rattles once removed from their sealed packaging, for hygiene reasons'],
+      ['Refunds', 'We refund to your original payment method within 14 days of receiving the returned item, or within 14 days of agreeing a refund for a faulty item. Your bank may take a few extra days to show the money.'],
+      ['How to return', `1. Email ${L.email} or WhatsApp ${L.whatsapp} with your order number and photos if the item is faulty.\n2. We reply within 2 working days with return instructions.\n3. Send or hand over the item as agreed.`],
+    ], ar: [
+      ['القطع المعيبة أو غير المطابقة', 'إذا كانت القطعة معيبة أو تالفة أو مختلفة عن الوصف، تواصل معنا خلال 30 يوماً من التوصيل، وسنقوم بإصلاحها أو استبدالها أو رد المبلغ شاملاً رسوم التوصيل وفقاً للقانون رقم (8) لسنة 2008 بشأن حماية المستهلك. تبقى حقوقك القانونية سارية حتى بعد هذه المدد.'],
+      ['تغيير الرأي', 'يمكنك إرجاع القطع غير المستخدمة وغير المغسولة في عبوتها الأصلية خلال 14 يوماً من التوصيل للاستبدال أو الاسترداد، بعد التواصل معنا. تتحمل تكلفة إرسال القطعة في حالة تغيير الرأي.'],
+      ['قطع لا يمكن إرجاعها إلا إذا كانت معيبة', '• القطع المخصصة أو المصنوعة حسب الطلب\n• مشابك اللهاية والخشخيشات بعد إخراجها من عبوتها المغلقة، لأسباب صحية'],
+      ['رد المبلغ', 'نرد المبلغ إلى وسيلة الدفع الأصلية خلال 14 يوماً من استلام القطعة المرتجعة، أو من الاتفاق على الاسترداد في حال العيب. قد يستغرق البنك بضعة أيام إضافية لإظهار المبلغ.'],
+      ['طريقة الإرجاع', `1. راسلنا على ${L.email} أو عبر واتساب ${L.whatsapp} مع رقم الطلب وصور القطعة إذا كانت معيبة.\n2. نرد خلال يومي عمل بتعليمات الإرجاع.\n3. أرسل القطعة أو سلّمها كما اتفقنا.`],
+    ] },
+
+    complaints: { t: 'Complaints', ta: 'الشكاوى', en: [
+      ['Tell us first', `Email ${L.email}, call ${L.phone} or WhatsApp ${L.whatsapp} (${L.hours}). Please include your order number and a short description.`],
+      ['What happens next', 'We confirm we have received your complaint within 2 working days and aim to resolve it within 7 working days. We will tell you what we will do and when.'],
+      ['If you are not satisfied', 'You can contact the Consumer Protection Department of the Ministry of Commerce and Industry: call 16001, use the MoCI mobile app, or visit www.moci.gov.qa. Using our complaints process does not affect your right to complain to the Ministry at any time.'],
+    ], ar: [
+      ['تواصل معنا أولاً', `راسلنا على ${L.email} أو اتصل على ${L.phone} أو عبر واتساب ${L.whatsapp} (${L.hoursAr}). يُرجى ذكر رقم الطلب ووصف مختصر للمشكلة.`],
+      ['الخطوات التالية', 'نؤكد استلام الشكوى خلال يومي عمل، ونسعى إلى حلها خلال 7 أيام عمل، ونبلغك بالإجراء الذي سنتخذه وموعده.'],
+      ['إذا لم تكن راضياً', 'يمكنك التواصل مع إدارة حماية المستهلك في وزارة التجارة والصناعة: الاتصال على 16001، أو عبر تطبيق الوزارة، أو الموقع الإلكتروني www.moci.gov.qa. لا يؤثر استخدامك لإجراءات الشكاوى لدينا على حقك في تقديم شكوى للوزارة في أي وقت.'],
+    ] },
+
+    safety: { t: 'Product safety', ta: 'سلامة المنتجات', en: [
+      ['Soft toys', 'Our dolls use safety eyes fixed with locking washers and are stitched closed by hand. For babies under 12 months we can embroider the eyes instead. Ask in the order note. Check toys regularly and stop using any toy that is damaged or has loose parts.'],
+      ['Rattles and pacifier clips', 'Always supervise use. Never tie a pacifier clip around a baby’s neck or attach it to a cot or pram while the baby sleeps. Check the clip, cord and beads before every use.'],
+      ['Clothing', 'Ponchos have a short, securely knotted neck tie. Take clothing with ties off before sleep. Do not leave a baby unattended while wearing clothing with ties.'],
+      ['Decorative items', 'WARNING: Pearl the Turtle Treasure Pouch has small sewn-on beads and is not a toy. Keep it out of reach of children under 3 years.'],
+      ['Materials and care', 'Each product page lists the yarns, fillings and other materials used, and how to wash the item.'],
+      ['Standards', 'Toys sold in Qatar must meet the GCC Technical Regulation on Children’s Toys. Conformity status of our toys: [to be confirmed after testing]'],
+    ], ar: [
+      ['الألعاب القطنية', 'تُثبَّت العيون الآمنة في دمانا بحلقات قفل من الداخل، وتُخاط الدمى يدوياً. للأطفال دون 12 شهراً يمكننا تطريز العيون بدلاً من ذلك، اطلب ذلك في ملاحظة الطلب. افحص الألعاب بانتظام وتوقف عن استخدام أي لعبة تالفة أو بها أجزاء مرتخية.'],
+      ['الخشخيشات ومشابك اللهاية', 'يجب الإشراف دائماً أثناء الاستخدام. لا تربط مشبك اللهاية حول رقبة الطفل ولا تعلّقه بالسرير أو العربة أثناء نوم الطفل. افحص المشبك والحبل والخرز قبل كل استخدام.'],
+      ['الملابس', 'يحتوي البونشو على رباط قصير ومعقود بإحكام عند الرقبة. انزع الملابس ذات الأربطة قبل النوم، ولا تترك الطفل دون مراقبة أثناء ارتدائها.'],
+      ['القطع الزخرفية', 'تحذير: حقيبة السلحفاة "بيرل" تحتوي على خرز صغير مخيط وليست لعبة. تُحفظ بعيداً عن متناول الأطفال دون 3 سنوات.'],
+      ['الخامات والعناية', 'توضح صفحة كل منتج الخيوط والحشوات والخامات المستخدمة وطريقة الغسيل.'],
+      ['المواصفات', 'يجب أن تستوفي الألعاب المباعة في قطر اللائحة الفنية الخليجية لألعاب الأطفال. حالة مطابقة ألعابنا: [يُحدَّد بعد الفحص]'],
+    ] },
+
+    faq: { t: 'FAQ', ta: 'الأسئلة الشائعة', en: [
+      ['Which size should I choose?', 'Open the Size guide on any clothing page. Measurements are in centimetres. Between sizes, choose the larger one.'],
+      ['Are the dolls safe for newborns?', 'They use locking safety eyes. For babies under 12 months we can embroider the eyes instead. Just add a note at checkout.'],
+      ['How do I wash crochet pieces?', 'Hand wash cold and dry flat in the shade. Dolls can be spot cleaned.'],
+      ['Can you make a different colour?', 'Yes. Most pieces can be made to order in other colours. Message us on WhatsApp.'],
+    ], ar: [
+      ['كيف أختار المقاس؟', 'افتح دليل المقاسات في صفحة أي قطعة ملابس، والقياسات بالسنتيمتر. إذا كان طفلك بين مقاسين اختر الأكبر.'],
+      ['هل الدمى آمنة لحديثي الولادة؟', 'نستخدم عيوناً آمنة بحلقات قفل، وللأطفال دون 12 شهراً يمكننا تطريز العيون. أضف ملاحظة عند الدفع.'],
+      ['كيف أغسل قطع الكروشيه؟', 'اغسلها يدوياً بماء بارد وجففها مسطحة في الظل. يمكن تنظيف الدمى موضعياً.'],
+      ['هل يمكن صنع لون مختلف؟', 'نعم، معظم القطع يمكن صنعها حسب الطلب بألوان أخرى. راسلنا عبر واتساب.'],
+    ] },
+
+    about: { t: 'Our story', ta: 'قصتنا', img: 17, en: [
+      ['Fait main au crochet', 'YAOUA is a small crochet studio in Qatar. Every romper, poncho and soft friend is made by hand, one stitch at a time, from soft baby-friendly yarns.'],
+      ['Made slowly, checked carefully', 'We make in small batches so we can check every seam and every safety eye, then wrap each order in tissue inside a kraft keepsake box with a handwritten card.'],
+    ], ar: [
+      ['صُنع يدوياً بالكروشيه', 'YAOUA استوديو صغير للكروشيه في قطر. كل قطعة من الملابس والبونشو والدمى مصنوعة يدوياً غرزة بغرزة من خيوط ناعمة مناسبة للأطفال.'],
+      ['صناعة متأنية وفحص دقيق', 'نصنع بكميات صغيرة لنفحص كل خياطة وكل عين آمنة، ثم نغلف كل طلب بورق ناعم داخل علبة كرافت تذكارية مع بطاقة مكتوبة بخط اليد.'],
+    ] },
+
+    contact: { t: 'Contact us', ta: 'تواصل معنا', img: 9, en: [
+      ['Customer service', `Email: ${L.email}\nPhone: ${L.phone}\nWhatsApp: ${L.whatsapp}\nHours: ${L.hours}\nAddress: ${L.address}`],
+      ['Replies', 'We reply within one working day.'],
+    ], ar: [
+      ['خدمة العملاء', `البريد الإلكتروني: ${L.email}\nالهاتف: ${L.phone}\nواتساب: ${L.whatsapp}\nساعات العمل: ${L.hoursAr}\nالعنوان: ${L.address}`],
+      ['الرد', 'نرد خلال يوم عمل واحد.'],
+    ] },
+  };
+}
+
 
 function seedState() {
   let seed = 11;
@@ -473,15 +709,17 @@ function seedState() {
   }
   return {
     products, reviews, orders, cart: [], wish: [], subs: 58,
-    settings: { brand: 'Little Stitches', tagline: 'Handmade crochet for little ones · Doha', headline: 'Little treasures, *handmade* with love', sub: 'Crocheted rompers, ponchos and cuddly friends, made stitch by stitch in Doha and wrapped as a gift.', flatFee: 25, freeOver: 300, rose: '#D8B4AF', sage: '#A8B8A0' },
+    settings: { brand: 'YAOUA', tagline: 'Fait main au crochet · Handmade in Qatar', headline: 'Tiny treasures, *crocheted* by hand', sub: 'Crocheted rompers, ponchos and cuddly friends, made stitch by stitch in Qatar and wrapped as a gift.', flatFee: 25, freeOver: 300, rose: '#D8B4AF', sage: '#A8B8A0', legal: LEGAL_DEFAULTS() },
+    cookieOk: false,
     events: { visitors: 1462, views: 3984, carts: 318, checkouts: 104 },
   };
 }
 
 // ===================== State (kept in this browser only) =====================
-const KEY = 'little-stitches-preview-v2';
+const KEY = 'yaoua-preview-v1';
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || seedState(); } catch { S = seedState(); }
+S.settings.legal = { ...LEGAL_DEFAULTS(), ...(S.settings.legal || {}) };
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* storage unavailable */ } };
 const BLANK = () => ({ cat: '', sizes: [], colors: [], min: '', max: '', avail: '', sort: 'featured', q: '', page: 1 });
 let V = { view: 'home', slug: null, filters: BLANK(), admin: 'dash', order: null, menu: false, search: false };
@@ -501,7 +739,7 @@ const stockOf = (p, v) => { const n = v ? v.stock : totalStock(p); return n <= 0
 const catName = (slug) => CATS.find((c) => c.slug === slug)?.name ?? '';
 const src = (x) => (typeof x === 'number' ? IMG(x) : x);
 const I = {
-  logo: '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="16" cy="16" r="12"/><path d="M8 11c5 1 11 6 14 13M6 17c5 0 10 3 12 9M12 5c4 2 9 7 14 12"/></svg>',
+  logo: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="18" cy="21" r="13" fill="currentColor" fill-opacity=".12"/><path d="M8 14c6 1 13 7 17 16M6 21c6 0 12 4 14 11M12 9.5c5 2 11 8 16 14M24 9c2 3 5 7 7 13"/><path d="M30 4 22 18" stroke-width="2.2"/><path d="M30 4c1.6-.4 2.4.8 1.6 2" stroke-width="2.2"/></svg>',
   search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
   user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
   heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6a5 5 0 0 1 9.2 5C19 15.6 12 20 12 20Z"/></svg>',
@@ -549,10 +787,10 @@ function header() {
   const cur = V.view === 'shop' ? (V.filters.cat ? `shop:${V.filters.cat}` : 'shop') : V.view === 'page' ? `page:${V.slug}` : V.view;
   return `
   <div class="preview-bar"><div class="wrap"><span>Preview: payments are simulated and nothing is charged.</span><button data-go="admin">Open admin</button><button data-act="reset">Reset demo</button></div></div>
-  <div class="announce">Free delivery across Qatar on orders over ${S.settings.freeOver} QAR · Every order gift-wrapped</div>
+  <div class="announce">Free delivery across Qatar over ${S.settings.freeOver} QAR · Every order gift-wrapped · التوصيل مجاني داخل قطر للطلبات فوق ${S.settings.freeOver} ريال</div>
   <header class="site"><div class="wrap hdr">
     <button class="ibtn menu-btn" data-act="menu" aria-label="Menu" aria-expanded="${V.menu}">${I.menu}</button>
-    <button class="logo" data-go="home">${I.logo}${esc(S.settings.brand)}</button>
+    <button class="logo" data-go="home" aria-label="${esc(S.settings.brand)} home">${I.logo}<span class="wm"><b>${esc(S.settings.brand)}</b><i>fait main au crochet</i></span></button>
     <nav class="main ${V.menu ? 'open' : ''}" aria-label="Main">${nav.map(([l, g]) => `<button data-go="${g}" aria-current="${cur === g}">${l}</button>`).join('')}</nav>
     <div class="icons">
       <button class="ibtn" data-act="search" aria-label="Search">${I.search}</button>
@@ -564,14 +802,19 @@ function header() {
   </header>`;
 }
 function footer() {
+  const L = S.settings.legal;
   return `<footer class="site"><div class="wrap">
     <div class="fgrid">
-      <div><h3 style="font-size:1.6rem">${esc(S.settings.brand)}</h3><p>Handmade crochet baby clothes, dolls and gifts, made in small batches in Doha and wrapped with love.</p><p class="small" style="color:#CDB9A8">Instagram · @littlestitches.qa</p></div>
-      <div><h3>Shop</h3><ul><li><button data-go="shop">Shop all</button></li><li><button data-go="shop:baby-clothes">Baby clothes</button></li><li><button data-go="shop:handmade-dolls">Handmade dolls</button></li><li><button data-go="shop:gift-boxes">Gift boxes</button></li><li><button data-go="shop:baby-accessories">Accessories</button></li></ul></div>
-      <div><h3>Help</h3><ul><li><button data-go="page:shipping">Shipping policy</button></li><li><button data-go="page:returns">Return policy</button></li><li><button data-go="page:faq">FAQ</button></li><li><button data-go="page:privacy">Privacy policy</button></li><li><button data-go="page:terms">Terms &amp; conditions</button></li></ul></div>
-      <div><h3>Contact</h3><ul><li>hello@littlestitches.qa</li><li>+974 0000 0000</li><li>Doha, Qatar</li><li><button data-go="page:contact">Contact us</button></li></ul></div>
+      <div><h3 style="font-size:1.7rem;letter-spacing:.2em">${esc(S.settings.brand)}</h3><p class="hand" style="color:#F2C9A8">fait main au crochet</p><p>Handmade crochet baby clothes, dolls and gifts, made in small batches in Qatar and wrapped with love.</p><p class="small" style="color:#CDB9A8">Instagram · @yaoua.qa</p></div>
+      <div><h3>Shop</h3><ul><li><button data-go="shop">Shop all</button></li><li><button data-go="shop:baby-clothes">Baby clothes</button></li><li><button data-go="shop:handmade-dolls">Handmade dolls</button></li><li><button data-go="shop:gift-boxes">Gift boxes</button></li><li><button data-go="shop:baby-accessories">Accessories</button></li><li><button data-go="page:about">Our story</button></li></ul></div>
+      <div><h3>Customer care &amp; legal</h3><ul>${LEGAL_LINKS.map(([k, l]) => `<li><button data-go="page:${k}">${l}</button></li>`).join('')}</ul></div>
+      <div><h3>Contact</h3><ul><li>${ph(L.email)}</li><li>${ph(L.phone)}</li><li>WhatsApp ${ph(L.whatsapp)}</li><li>${esc(L.hours)}</li><li><button data-go="page:contact">Contact us</button></li><li><button data-go="page:complaints">Make a complaint</button></li></ul></div>
     </div>
-    <div class="fbottom"><span>© 2026 ${esc(S.settings.brand)}. Payments are processed by our payment partners. We never store card details.</span><span class="pay"><span>VISA</span><span>Mastercard</span><span>PayPal</span></span></div>
+    <div class="legal-strip">
+      <div><strong style="color:#fff">${esc(S.settings.brand)}</strong> · ${ph(L.legalName)}<br>Commercial Registration No. ${ph(L.cr)} · E-commerce licence No. ${ph(L.ecom)}<br>Licensed by the Ministry of Commerce and Industry, State of Qatar<br>${ph(L.address)}<br>All prices in Qatari riyals (QAR). Consumer complaints: MoCI hotline 16001.</div>
+      <div class="ar"><strong style="color:#fff">${esc(S.settings.brand)}</strong> · ${ph(L.legalName)}<br>سجل تجاري رقم ${ph(L.cr)} · ترخيص تجارة إلكترونية رقم ${ph(L.ecom)}<br>مرخّص من وزارة التجارة والصناعة، دولة قطر<br>${ph(L.address)}<br>جميع الأسعار بالريال القطري. شكاوى المستهلكين: الخط الساخن لوزارة التجارة والصناعة 16001</div>
+    </div>
+    <div class="fbottom"><span>© 2026 ${esc(S.settings.brand)}. Payments are processed by a licensed payment provider. We never store card details.</span><span class="pay"><span>VISA</span><span>Mastercard</span><span>NAPS</span></span></div>
   </div></footer>`;
 }
 function card(p) {
@@ -608,7 +851,7 @@ function home() {
     <div class="collage">
       <div class="main"><img src="${IMG(1)}" alt="Buttercup crochet romper beside Duckie in Overalls" fetchpriority="high"></div>
       <div class="float"><img src="${IMG(12)}" alt="Pearl the turtle pouch and Rosie the pink penguin in a basket"></div>
-      <div class="stamp"><strong>Made in Doha</strong>Every piece is crocheted by hand.</div>
+      <div class="stamp"><span class="hand">fait main</span><strong>Made in Qatar</strong>Every piece is crocheted by hand.</div>
     </div>
   </div></section>
   <section class="trust"><div class="wrap">
@@ -637,7 +880,7 @@ function home() {
     <div class="grid">${fresh.map(card).join('')}</div>
   </div></section>
   <section class="section tint"><div class="wrap story">
-    <div class="ph"><img src="${IMG(17)}" alt="Hands crocheting a round in soft grey yarn"><span class="note">One stitch at a time</span></div>
+    <div class="ph"><img src="${IMG(17)}" alt="Hands crocheting a round in soft grey yarn"><span class="note hand">une maille à la fois</span></div>
     <div><span class="eyebrow">Our handmade story</span><h2>Slow-made for your <em>little one</em></h2>
       <p>Every piece starts as a ball of soft, baby-friendly yarn and a crochet hook. We work in small batches in our Doha studio, so each seam, button and safety eye is checked by the same hands that made it.</p>
       <div class="steps"><div class="step">${I.yarn}<strong>Choose</strong>soft, gentle yarns</div><div class="step">${I.hand}<strong>Crochet</strong>stitch by stitch</div><div class="step">${I.gift}<strong>Wrap</strong>boxed with a card</div></div>
@@ -648,7 +891,7 @@ function home() {
     <div class="reviews">${revs.slice(0, 4).map((r) => `<blockquote class="review"><div class="stars">${stars(r.rating)}</div>${r.title ? `<h3>${esc(r.title)}</h3>` : ''}<p>${esc(r.body)}</p><span class="small">${esc(r.name)} · <button class="link" data-go="product:${r.pid}">${esc(P(r.pid)?.name)}</button></span></blockquote>`).join('')}</div>
   </div></section>
   <section class="section" style="padding-top:0"><div class="wrap">
-    <div class="head center"><span class="eyebrow">@littlestitches.qa</span><h2>From the studio</h2></div>
+    <div class="head center"><span class="eyebrow">@yaoua.qa</span><h2>From the studio</h2></div>
     <div class="gallery-grid">${gallery.map(([n, s]) => `<button data-go="product:${s}" aria-label="${esc(P(s)?.name)}"><img src="${IMG(n)}" alt=""></button>`).join('')}</div>
   </div></section>
   <section class="wrap"><div class="news"><div><h2>Join our little circle</h2><p>New pieces, restocks and gentle care tips, no more than twice a month.</p></div>
@@ -723,12 +966,13 @@ function product() {
     <div class="pdp">
       <div class="gallery">
         <div class="thumbs">${p.imgs.map((x, i) => `<button data-act="img:${i}" aria-current="${i === sel.img}" aria-label="Show photo ${i + 1}"><img src="${src(x)}" alt=""></button>`).join('')}</div>
-        <div class="main-img ${sel.zoom ? 'zoom' : ''}" data-act="zoom"><img src="${src(im)}" alt="${esc(p.name)}"><span class="hint">${sel.zoom ? 'Click to zoom out' : 'Click to zoom'}</span></div>
+        <div class="main-img ${sel.zoom ? 'zoom' : ''}" data-act="zoom"><img src="${src(im)}" alt="${esc(p.name)}"><span class="yarn-tag">fait main</span><span class="hint">${sel.zoom ? 'Click to zoom out' : 'Click to zoom'}</span></div>
       </div>
       <div>
         <span class="eyebrow">${catName(p.cat)}</span><h1 style="font-size:clamp(2rem,4vw,3rem)">${esc(p.name)}</h1>
         ${revs.length ? `<span class="small"><span class="stars">${stars(avg)}</span> ${avg.toFixed(1)} · ${revs.length} review${revs.length > 1 ? 's' : ''}</span>` : ''}
         <div class="price" style="font-size:1.55rem;margin-block:8px 10px">${fmt(p.price)}${p.compareAt ? `<s>${fmt(p.compareAt)}</s>` : ''}</div>
+        <p class="small" style="margin-top:-6px">Price in Qatari riyals (QAR). Delivery is shown before you pay.</p>
         <p>${esc(p.short)}</p>
         ${picker(p)}
         ${p.personal ? `<label class="f" style="margin-bottom:12px">${esc(p.personal)} <span class="muted">(optional, free)</span><input id="pers" maxlength="60" value="${esc(sel.pers || '')}"></label>` : ''}
@@ -739,6 +983,8 @@ function product() {
           ${p.sizes ? `<dt>Sizes</dt><dd>${esc(p.sizes.join(', '))}</dd>` : `<dt>Size</dt><dd>${esc(p.dims)}</dd>`}
           <dt>Age</dt><dd>${esc(p.age)}</dd>
           <dt>Materials</dt><dd>${esc(p.materials)}</dd>
+          <dt>Origin</dt><dd>Handmade in Qatar</dd>
+          <dt>Sold by</dt><dd>${esc(S.settings.brand)} · CR ${ph(S.settings.legal.cr)}</dd>
           <dt>SKU</dt><dd>${esc(v?.sku ?? p.variants[0].sku)}</dd>
         </dl>
         <details class="info" open><summary>Description</summary><div>${esc(p.desc)}</div></details>
@@ -750,7 +996,7 @@ function product() {
     </div>
     <section class="section"><div class="head"><h2>Reviews</h2><button class="btn ghost sm" data-act="review">Write a review</button></div>
       <div class="reviews">${revs.length ? revs.map((r) => `<div class="review"><div class="stars">${stars(r.rating)}</div>${r.title ? `<h3>${esc(r.title)}</h3>` : ''}<p>${esc(r.body)}</p><span class="small">${esc(r.name)}${r.verified ? ' · Verified purchase' : ''}</span></div>`).join('') : '<p class="muted">No reviews yet. Be the first to share your thoughts.</p>'}</div></section>
-    ${related.length ? `<section class="section tint" style="border-radius:28px;padding-inline:clamp(14px,3vw,32px)"><div class="head"><h2>${p.pairs ? 'Pairs beautifully with' : 'You may also like'}</h2></div><div class="grid">${related.map(card).join('')}</div></section>` : ''}
+    ${related.length ? `<section class="section" style="border-radius:28px;padding-inline:clamp(14px,3vw,32px);background:var(--tint2)"><div class="head"><h2>${p.pairs ? 'Pairs beautifully with' : 'You may also like'}</h2></div><div class="grid">${related.map(card).join('')}</div></section>` : ''}
   </div>`;
 }
 
@@ -787,18 +1033,33 @@ function checkout() {
     </div>
     <aside class="panel sum"><h2>Your order</h2>${t.lines.map((l) => `<div class="r"><span>${l.qty} × ${esc(l.p.name)}<br><span class="small">${[l.v.size, l.pers && `“${l.pers}”`].filter(Boolean).map(esc).join(' · ')}</span></span><span>${fmt(l.total)}</span></div>`).join('')}
       <div class="r"><span>Subtotal</span><span>${fmt(t.sub)}</span></div><div class="r"><span>Delivery</span><span>${t.ship ? fmt(t.ship) : 'Free'}</span></div><div class="r tot"><span>Total</span><span>${fmt(t.total)}</span></div>
-      <p class="err" id="coErr" role="alert"></p><button class="btn block">Place order &amp; pay ${fmt(t.total)}</button>
-      <p class="small" style="margin-top:10px">By placing your order you agree to our terms and return policy.</p></aside></form></div>`;
+      <div class="stack" style="margin-block:14px 6px">
+        <label class="check"><input type="checkbox" id="coTerms"> <span>I have read and agree to the <button type="button" class="link" data-go="page:terms">Terms &amp; conditions</button>, <button type="button" class="link" data-go="page:returns">Returns &amp; refunds</button> and <button type="button" class="link" data-go="page:privacy">Privacy policy</button>. <span class="muted">(required)</span></span></label>
+        <label class="check"><input type="checkbox" id="coNews"> <span>Send me news and offers by email. <span class="muted">(optional)</span></span></label>
+      </div>
+      <p class="small">The total above includes delivery. You will receive an order confirmation and an electronic invoice.</p>
+      <p class="err" id="coErr" role="alert"></p><button class="btn block">Place order &amp; pay ${fmt(t.total)}</button></aside></form></div>`;
 }
 
 function order() {
   const o = S.orders.find((x) => x.number === V.order);
   if (!o) return `<div class="wrap section"><div class="empty"><h2>Order not found</h2></div></div>`;
-  return `<div class="wrap section"><p class="note n-ok">Payment received. Thank you for your order!</p><span class="eyebrow" style="display:block;margin-top:16px">Order ${o.number}</span><h1>We're making your parcel</h1>
-    <p class="muted">${new Date(o.at).toLocaleString()} · ${esc(o.email)} · Paid by ${o.pay}</p>
-    <div class="two"><section class="panel">${o.items.map((i) => `<div class="line"><img src="${src(i.img)}" alt=""><div><strong>${esc(i.name)}</strong><div class="small">${[i.size, i.pers && `“${i.pers}”`].filter(Boolean).map(esc).join(' · ')} · ${i.qty} × ${fmt(i.price)}</div></div><strong>${fmt(i.qty * i.price)}</strong></div>`).join('')}</section>
-    <aside class="panel sum"><div class="r"><span>Subtotal</span><span>${fmt(o.subtotal)}</span></div><div class="r"><span>Delivery</span><span>${o.ship ? fmt(o.ship) : 'Free'}</span></div><div class="r tot"><span>Total</span><span>${fmt(o.total)}</span></div>
-      <h3 style="margin-top:14px">Delivering to</h3><p>${esc(o.name)}<br>${esc(o.address)}<br>${esc(o.city)}, Qatar</p>${o.note ? `<p class="small">Note: ${esc(o.note)}</p>` : ''}<button class="btn ghost block" data-go="shop">Continue shopping</button></aside></div></div>`;
+  const L = S.settings.legal;
+  return `<div class="wrap section"><div class="noprint"><p class="note n-ok">Payment received. Thank you for your order! Your electronic invoice is below.</p></div>
+    <div class="invoice" style="margin-top:18px">
+      <div class="ih">
+        <div><div class="logo" style="cursor:default">${I.logo}<span class="wm"><b>${esc(S.settings.brand)}</b><i>fait main au crochet</i></span></div>
+          <p class="small" style="margin-top:10px">${ph(L.legalName)}<br>CR No. ${ph(L.cr)} · E-commerce licence No. ${ph(L.ecom)}<br>${ph(L.address)}<br>${ph(L.email)} · ${ph(L.phone)}</p></div>
+        <div style="text-align:right"><h2 style="margin:0">Invoice <span class="ar" style="font-size:.8em">فاتورة</span></h2><p class="small">Invoice / order No. <strong>${o.number}</strong><br>Date: ${new Date(o.at).toLocaleString('en-GB')}<br>Payment: ${o.pay} · Status: ${o.status}</p></div>
+      </div>
+      <div class="grid2"><div><strong>Bill &amp; deliver to</strong><p>${esc(o.name)}<br>${esc(o.address)}<br>${esc(o.city)}, Qatar<br>${esc(o.email)}</p></div>${o.note ? `<div><strong>Note</strong><p>${esc(o.note)}</p></div>` : ''}</div>
+      <div class="tscroll"><table class="t"><thead><tr><th>Item</th><th>SKU</th><th>Qty</th><th>Unit price</th><th>Amount</th></tr></thead><tbody>
+        ${o.items.map((i) => `<tr><td><strong>${esc(i.name)}</strong>${i.size ? `<br><span class="small">${esc(i.size)}</span>` : ''}${i.pers ? `<br><span class="small">Personalisation: “${esc(i.pers)}”</span>` : ''}</td><td>${esc(i.sku)}</td><td>${i.qty}</td><td>${fmt(i.price)}</td><td>${fmt(i.qty * i.price)}</td></tr>`).join('')}
+      </tbody></table></div>
+      <div class="sum" style="max-width:340px;margin-left:auto;margin-top:12px"><div class="r"><span>Subtotal</span><span>${fmt(o.subtotal)}</span></div><div class="r"><span>Delivery</span><span>${o.ship ? fmt(o.ship) : 'Free'}</span></div><div class="r tot"><span>Total paid (QAR)</span><span>${fmt(o.total)}</span></div></div>
+      <p class="small" style="margin-top:16px">Returns within 14 days for unused items; faulty items are repaired, replaced or refunded under Law No. 8 of 2008 on Consumer Protection. Complaints: ${ph(L.email)} or MoCI hotline 16001.</p>
+    </div>
+    <div class="row noprint" style="margin-top:18px"><button class="btn" data-act="print">Print or save invoice as PDF</button><button class="btn ghost" data-go="shop">Continue shopping</button></div></div>`;
 }
 function wishlist() {
   const items = S.wish.map(P).filter(Boolean);
@@ -808,19 +1069,28 @@ function account() {
   const mine = S.orders.filter((o) => !o.example);
   return `<div class="wrap section"><span class="eyebrow">My account</span><h1>Hello, Fatima</h1><div class="two">
     <section class="panel"><h2>Orders</h2>${mine.length ? mine.map((o) => `<div class="row between" style="padding-block:10px;border-bottom:1px solid var(--line)"><button class="link" data-act="vieworder:${o.number}">${o.number}</button><span><span class="status st-${o.status}">${o.status}</span> <strong class="price">${fmt(o.total)}</strong></span></div>`).join('') : '<p class="muted">Orders you place in this preview appear here.</p>'}</section>
-    <aside class="panel stack"><h2>Profile</h2><label class="f">Name<input value="Fatima Al-Kuwari"></label><label class="f">Phone<input value="+974 5555 1234"></label><p class="small">In the full store, accounts use secure sign-in with hashed passwords and server-side sessions.</p></aside></div></div>`;
+    <aside class="panel stack"><h2>Profile</h2><label class="f">Name<input value="Fatima Al-Kuwari"></label><label class="f">Phone<input value="+974 5555 1234"></label><p class="small">In the full store, accounts use secure sign-in with hashed passwords and server-side sessions.</p>
+      <h2 style="margin-top:12px">Your privacy rights</h2><p class="small">Under Law No. 13 of 2016 you can see, correct or delete your personal data and withdraw consent.</p>
+      <div class="row"><button class="btn ghost sm" data-act="mydata">Download my data</button><button class="btn ghost sm" data-act="deleteme">Request deletion</button></div></aside></div></div>`;
 }
 function page() {
-  const [title, body] = PAGES[V.slug] ?? ['Page', ''];
-  const img = { about: 17, contact: 9 }[V.slug];
-  return `<div class="wrap section"><div class="crumbs" style="padding-top:0"><button data-go="home">Home</button> / ${title}</div><h1>${title}</h1>
-    <div class="${img ? 'story' : ''}"><div style="max-width:68ch;white-space:pre-line">${esc(body)}</div>${img ? `<div class="ph"><img src="${IMG(img)}" alt=""></div>` : ''}</div></div>`;
+  const pg = legalPages()[V.slug];
+  if (!pg) return `<div class="wrap section"><div class="empty"><h2>Page not found</h2></div></div>`;
+  const isLegal = LEGAL_LINKS.some(([k]) => k === V.slug);
+  const block = (secs, ar) => secs.map(([h, b]) => `<h3>${esc(h)}</h3><p>${ph(b)}</p>`).join('');
+  return `<div class="wrap section"><div class="crumbs" style="padding-top:0"><button data-go="home">Home</button> / ${esc(pg.t)}</div>
+    <div class="row between" style="align-items:end"><h1 style="margin:8px 0 0">${esc(pg.t)}</h1><h2 class="ar" style="margin:0">${esc(pg.ta)}</h2></div>
+    ${isLegal ? `<p class="small">Last updated ${esc(S.settings.legal.updated)} · Highlighted items are details the store owner still has to fill in.</p><nav class="legal-nav" aria-label="Legal pages">${LEGAL_LINKS.map(([k, l]) => `<button class="chip" data-go="page:${k}" aria-pressed="${k === V.slug}">${l}</button>`).join('')}</nav>` : ''}
+    ${pg.img ? `<div class="story" style="margin-block:18px 28px"><div class="ph"><img src="${IMG(pg.img)}" alt=""></div><div><p class="hand" style="font-size:2rem">une maille à la fois</p><p>${esc(pg.en[0][1])}</p></div></div>` : ''}
+    <div class="legal"><section lang="en">${block(pg.en)}</section><section class="ar" lang="ar" dir="rtl">${block(pg.ar)}</section></div>
+    ${V.slug === 'contact' ? `<form id="contactForm" class="panel stack" style="margin-top:24px;max-width:640px"><h2>Send us a message</h2><div class="grid2"><label class="f">Name<input id="ctName" required></label><label class="f">Email<input id="ctEmail" type="email" required></label></div><label class="f">Order number (optional)<input id="ctOrder"></label><label class="f">Message<textarea id="ctMsg" required></textarea></label><p class="small">We use your details only to reply to you. See our Privacy policy.</p><div><button class="btn">Send message</button></div></form>` : ''}
+  </div>`;
 }
 
 // ===================== Admin =====================
 function admin() {
   const tabs = [['dash', 'Dashboard'], ['orders', 'Orders'], ['products', 'Products'], ['inventory', 'Inventory'], ['reviews', 'Reviews'], ['config', 'Store settings']];
-  return `<div class="admin"><aside class="aside"><button class="logo" data-go="home">${esc(S.settings.brand)} ↗</button>${tabs.map(([k, l]) => `<button data-admin="${k}" aria-current="${V.admin === k || (V.admin === 'edit' && k === 'products')}">${l}</button>`).join('')}</aside>
+  return `<div class="admin"><aside class="aside"><button class="logo" data-go="home">${I.logo}<span class="wm"><b>${esc(S.settings.brand)}</b><i>admin · view store ↗</i></span></button>${tabs.map(([k, l]) => `<button data-admin="${k}" aria-current="${V.admin === k || (V.admin === 'edit' && k === 'products')}">${l}</button>`).join('')}</aside>
     <main class="amain">${({ dash: aDash, orders: aOrders, products: aProducts, inventory: aInventory, reviews: aReviews, config: aConfig, edit: aEdit }[V.admin] || aDash)()}</main></div>`;
 }
 function aDash() {
@@ -896,7 +1166,12 @@ function aConfig() {
       <label class="f">Hero subheading<textarea id="cSub">${esc(s.sub)}</textarea></label>
       <div class="grid2"><label class="f">Delivery fee (QAR)<input id="cFee" type="number" min="0" value="${s.flatFee}"></label><label class="f">Free delivery from (QAR)<input id="cFree" type="number" min="0" value="${s.freeOver}"></label></div>
       <div class="grid2"><label class="f">Accent colour (dusty rose)<input id="cRose" type="color" value="${s.rose}"></label><label class="f">Secondary colour (sage)<input id="cSage" type="color" value="${s.sage}"></label></div>
-      <div><button class="btn">Save settings</button></div></form>`;
+      <div><button class="btn">Save settings</button></div></form>
+    <h2 style="margin-top:28px">Legal &amp; business details</h2><p class="muted">These appear in the footer, Seller information, all policies and every invoice. Fill them in from your CR and e-commerce licence before submitting the site to the Ministry.</p>
+    <form id="legalForm" class="panel stack">
+      <div class="grid2">${[['legalName', 'Registered business name (as on CR)'], ['owner', 'Owner / authorised signatory'], ['cr', 'Commercial Registration (CR) No.'], ['ecom', 'E-commerce licence No. (MoCI)'], ['email', 'Customer service email'], ['phone', 'Phone'], ['whatsapp', 'WhatsApp'], ['website', 'Website address'], ['hours', 'Service hours (English)'], ['hoursAr', 'Service hours (Arabic)'], ['updated', 'Policies last updated']].map(([k, l]) => `<label class="f">${l}<input data-legal="${k}" value="${esc(S.settings.legal[k])}"></label>`).join('')}</div>
+      <label class="f">Business address<input data-legal="address" value="${esc(S.settings.legal.address)}"></label>
+      <div><button class="btn">Save legal details</button></div></form>`;
 }
 
 // ===================== Modals =====================
@@ -933,13 +1208,15 @@ function reviewForm() {
 
 // ===================== Render & events =====================
 function render() {
+  $('.cookie')?.remove();
   document.documentElement.style.setProperty('--rose', S.settings.rose);
   document.documentElement.style.setProperty('--sage', S.settings.sage);
   if (V.view === 'admin') { $('#app').innerHTML = admin(); document.title = `Admin · ${S.settings.brand}`; return; }
   const views = { home, shop, product, cart, checkout, order, wishlist, account, page };
   $('#app').innerHTML = header() + `<main id="main">${(views[V.view] || home)()}</main>` + footer();
-  document.title = V.view === 'product' && P(V.slug) ? `${P(V.slug).name} · ${S.settings.brand}` : `${S.settings.brand} · ${plain(S.settings.tagline)}`;
+  document.title = V.view === 'product' && P(V.slug) ? `${P(V.slug).name} · ${S.settings.brand}` : V.view === 'page' && legalPages()[V.slug] ? `${legalPages()[V.slug].t} · ${S.settings.brand}` : `${S.settings.brand} · ${plain(S.settings.tagline)}`;
   if (V.search) $('#q')?.focus();
+  if (!S.cookieOk) document.body.insertAdjacentHTML('beforeend', `<div class="cookie" role="region" aria-label="Cookies"><span>We only use essential browser storage to keep your cart and preferences. No advertising or tracking cookies. <button class="link" data-go="page:cookies">Cookie policy</button></span><span class="ar">نستخدم فقط التخزين الضروري لحفظ السلة والتفضيلات، دون ملفات تتبع أو إعلانات.</span><div><button class="btn sm" data-act="cookieok">OK</button></div></div>`);
 }
 
 document.addEventListener('click', (e) => {
@@ -1018,6 +1295,15 @@ document.addEventListener('click', (e) => {
     case 'feat': { const [im] = p.imgs.splice(Number(x), 1); p.imgs.unshift(im); save(); render(); break; }
     case 'delimg': p.imgs.splice(Number(x), 1); save(); render(); toast('Photo removed'); break;
     case 'rv': S.reviews[Number(x)].status = y; save(); render(); toast(y === 'APPROVED' ? 'Review is now public' : 'Review hidden'); break;
+    case 'print': window.print(); break;
+    case 'cookieok': S.cookieOk = true; save(); $('.cookie')?.remove(); break;
+    case 'mydata': {
+      const data = { customer: { name: 'Fatima Al-Kuwari', email: 'parent@example.com', phone: '+974 5555 1234' }, orders: S.orders.filter((o) => !o.example), wishlist: S.wish, newsletter: 'see account' };
+      const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+      const link = document.createElement('a'); link.href = url; link.download = 'yaoua-my-data.json'; document.body.append(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000); toast('Your data file is downloading'); break;
+    }
+    case 'deleteme': toast('Deletion request received. We will confirm by email once your data is deleted.'); break;
   }
 });
 
@@ -1057,6 +1343,8 @@ document.addEventListener('submit', (e) => {
     const req = ['coEmail', 'coName', 'coPhone', 'coLine', 'coCity'];
     const bad = req.find((r) => !$('#' + r).value.trim() || !$('#' + r).checkValidity());
     if (bad) { $('#coErr').textContent = 'Please fill in every required field.'; $('#' + bad).focus(); return; }
+    if (!$('#coTerms').checked) { $('#coErr').textContent = 'Please tick the box to agree to the terms, returns and privacy policies.'; $('#coTerms').focus(); return; }
+    if ($('#coNews').checked) S.subs++;
     const t = cartTotals();
     for (const l of t.lines) if (l.qty > l.v.stock) { $('#coErr').textContent = `Sorry, only ${l.v.stock} of ${l.p.name} left.`; return; }
     t.lines.forEach((l) => { l.v.stock -= l.qty; l.p.sold += l.qty; });
@@ -1073,6 +1361,11 @@ document.addEventListener('submit', (e) => {
     const p = P(V.slug);
     Object.assign(p, { name: $('#eName').value.trim() || p.name, status: $('#eStatus').value, price: Math.round(Number($('#ePrice').value) * 100), cat: $('#eCat').value, short: $('#eShort').value, desc: $('#eDesc').value, materials: $('#eMat').value, age: $('#eAge').value, dims: $('#eDims').value, safety: $('#eSafe').value, featured: $('#eFeat').checked, isNew: $('#eNew').checked });
     save(); render(); toast('Product saved');
+  }
+  if (id === 'contactForm') { e.target.reset(); toast('Thank you. We will reply within one working day.'); }
+  if (id === 'legalForm') {
+    e.target.querySelectorAll('[data-legal]').forEach((el) => { S.settings.legal[el.dataset.legal] = el.value.trim(); });
+    save(); render(); toast('Legal details saved. They now appear across the site.');
   }
   if (id === 'cfgForm') {
     Object.assign(S.settings, { brand: $('#cBrand').value, tagline: $('#cTag').value, headline: $('#cHead').value, sub: $('#cSub').value, flatFee: Number($('#cFee').value), freeOver: Number($('#cFree').value), rose: $('#cRose').value, sage: $('#cSage').value });
