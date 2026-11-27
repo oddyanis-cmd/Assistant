@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const env = require('../../config/env');
 const { z } = require('zod');
 const prisma = require('../../lib/prisma');
 const { parse } = require('../../lib/validate');
@@ -121,7 +122,7 @@ router.get('/pages/:slug', async (req, res) => {
 });
 
 router.get('/settings', async (_req, res) => {
-  res.json({ settings: await settings.getPublic() });
+  res.json({ settings: await settings.getPublic(), testMode: env.PAYMENTS_TEST_MODE || !env.isProd });
 });
 
 module.exports = { router };

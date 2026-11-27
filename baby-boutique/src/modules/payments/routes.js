@@ -69,7 +69,7 @@ pages.get('/checkout/return', async (req, res) => {
 // ---------- Development fake gateway ----------
 const devApi = express.Router();
 devApi.post('/complete', async (req, res) => {
-  if (env.isProd || !getProvider('dev')) throw notFound();
+  if ((env.isProd && !env.PAYMENTS_TEST_MODE) || !getProvider('dev')) throw notFound();
   const { order: number, token, ref, outcome } = parse(
     z.object({ order: z.string(), token: z.string(), ref: z.string(), outcome: z.enum(['success', 'failure']) }),
     req.body,

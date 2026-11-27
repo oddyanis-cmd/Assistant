@@ -5,7 +5,9 @@
 [build]
   # Applies database changes before each deploy goes live. Uses the direct (non-pooled) database URL when
   # DIRECT_DATABASE_URL is set, as Neon/Supabase poolers can't run migrations.
-  command = "DATABASE_URL=\"${DIRECT_DATABASE_URL:-$DATABASE_URL}\" npx prisma migrate deploy"
+  # Applies database changes, then creates the owner account / categories / policy pages if missing
+  # (never sample products in production). See scripts/db-url.js for which database URL is used.
+  command = "DATABASE_URL=\"$(node scripts/db-url.js)\" npx prisma migrate deploy && DATABASE_URL=\"$(node scripts/db-url.js)\" node prisma/seed.js"
   publish = "netlify/publish"             # deliberately (almost) empty: nothing bypasses the app
   functions = "netlify/functions"
 

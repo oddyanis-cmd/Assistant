@@ -5,7 +5,7 @@ const env = require('../../config/env');
 const settings = require('../settings/service');
 const { badRequest, HttpError } = require('../../lib/errors');
 
-const storages = { local: require('./storage/local'), cloudinary: require('./storage/cloudinary') };
+const storages = { local: require('./storage/local'), cloudinary: require('./storage/cloudinary'), netlify: require('./storage/netlify') };
 const storage = () => storages[env.MEDIA_PROVIDER];
 
 const SIZES = { full: 2000, medium: 800, thumb: 360 };

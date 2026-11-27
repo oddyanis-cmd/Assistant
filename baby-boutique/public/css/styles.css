@@ -407,3 +407,4 @@ table.size-table { width: 100%; border-collapse: collapse; font-size: .9rem; bac
 .hidden { display: none !important; }
 .step svg { width: 28px; height: 28px; color: var(--sage); margin: 0 auto 6px; display: block; }
 .stock:empty { display: none; }
+.test-banner { background: #FFF3CD; color: #6B4E00; text-align: center; font-size: .85rem; padding: 6px 12px; border-bottom: 1px solid #F0D98C; }

@@ -48,7 +48,7 @@ async function main() {
           ${raw(providers.length
             ? providers.map((p, i) => html`<label class="pay-option"><input type="radio" name="provider" value="${p.id}" ${raw(i === 0 ? 'checked' : '')}> <span>${p.label}</span></label>`).join('')
             : '<p class="notice notice--err">Online payment is not available right now. Please contact us to place your order.</p>')}
-          ${raw(providers.some((p) => p.testMode) ? '<p class="notice notice--warn"><strong>Development mode:</strong> the test payment option does not charge any card.</p>' : '')}
+          ${raw(providers.some((p) => p.testMode) ? '<p class="notice notice--warn"><strong>Test mode:</strong> the test payment option does not charge any card. Real payment methods (QPay / cards) will appear here once connected.</p>' : '')}
           <p class="muted">You will be redirected to our secure payment partner to complete your purchase. We never see or store your card details.</p>
         </section>
       </div>

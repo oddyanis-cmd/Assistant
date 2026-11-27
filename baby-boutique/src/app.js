@@ -59,6 +59,13 @@ function createApp() {
 
   // ---------- Static storefront & admin ----------
   const pub = path.join(__dirname, '..', 'public');
+  // Product photos stored in Netlify Blobs (MEDIA_PROVIDER=netlify).
+  app.get('/media/*key', async (req, res, next) => {
+    if (env.MEDIA_PROVIDER !== 'netlify') return next();
+    const buf = await require('./modules/media/storage/netlify').read([].concat(req.params.key).join('/'));
+    if (!buf) return next();
+    res.set('Cache-Control', 'public, max-age=31536000, immutable').type('image/webp').send(buf);
+  });
   app.use('/uploads', express.static(path.resolve(env.MEDIA_UPLOAD_DIR), { maxAge: '30d', immutable: true, index: false }));
   app.use(express.static(pub, { index: false, maxAge: env.isProd ? '1h' : 0 }));
 
@@ -69,7 +76,7 @@ function createApp() {
   app.get('/product/:slug', page('product.html'));
   app.get('/cart', page('cart.html'));
   app.get('/checkout', page('checkout.html'));
-  app.get('/checkout/dev-pay', (req, res, next) => (env.isProd ? next() : page('dev-pay.html')(req, res)));
+  app.get('/checkout/dev-pay', (req, res, next) => (env.isProd && !env.PAYMENTS_TEST_MODE ? next() : page('dev-pay.html')(req, res)));
   app.get('/order', page('order.html'));
   app.get(['/login', '/register'], page('login.html'));
   app.get('/account', page('account.html'));

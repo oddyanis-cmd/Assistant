@@ -2,6 +2,16 @@
 require('dotenv').config();
 const { z } = require('zod');
 
+// Netlify Database: if no DATABASE_URL is given, use the database Netlify provisions for the site,
+// tuned for serverless (few connections per function instance; Neon pooler needs pgbouncer mode).
+if (!process.env.DATABASE_URL && process.env.NETLIFY_DB_URL) {
+  const u = new URL(process.env.NETLIFY_DB_URL);
+  if (u.hostname.includes('-pooler') && !u.searchParams.has('pgbouncer')) u.searchParams.set('pgbouncer', 'true');
+  if (!u.searchParams.has('connection_limit')) u.searchParams.set('connection_limit', '3');
+  if (!u.searchParams.has('pool_timeout')) u.searchParams.set('pool_timeout', '20');
+  process.env.DATABASE_URL = u.toString();
+}
+
 const bool = z.enum(['true', 'false']).default('false').transform((v) => v === 'true');
 
 const schema = z.object({
@@ -19,6 +29,10 @@ const schema = z.object({
   // Payments: comma-separated list of enabled providers, in display order.
   // "dev" is a clearly-labelled fake provider that is refused in production.
   PAYMENT_PROVIDERS: z.string().default('dev'),
+  /// TEST WEBSITE ONLY: allows the fake "test payment" in production so the full checkout can be tried
+  /// before a real gateway (QPay/cards) is connected. Shows a "test mode" banner on every page.
+  /// Must be false (or removed) before real customers buy.
+  PAYMENTS_TEST_MODE: bool,
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   PAYPAL_CLIENT_ID: z.string().optional(),
@@ -30,7 +44,7 @@ const schema = z.object({
   PAYPAL_FX_RATE: z.coerce.number().default(0.2747),
 
   // Media storage: "local" (dev only) or "cloudinary"
-  MEDIA_PROVIDER: z.enum(['local', 'cloudinary']).default('local'),
+  MEDIA_PROVIDER: z.enum(['local', 'cloudinary', 'netlify']).default('local'),
   CLOUDINARY_URL: z.string().optional(),
   MEDIA_UPLOAD_DIR: z.string().default('uploads'),
 
@@ -48,9 +62,12 @@ const env = parsed.data;
 env.isProd = env.NODE_ENV === 'production';
 env.paymentProviders = env.PAYMENT_PROVIDERS.split(',').map((s) => s.trim()).filter(Boolean);
 
-if (env.isProd && env.paymentProviders.includes('dev')) {
+if (env.isProd && env.paymentProviders.includes('dev') && !env.PAYMENTS_TEST_MODE) {
   console.error('Refusing to start: the "dev" payment provider must not be enabled in production.');
   process.exit(1);
+}
+if (env.isProd && env.PAYMENTS_TEST_MODE) {
+  console.warn('[warn] PAYMENTS_TEST_MODE is ON: checkout uses a fake test payment. Turn it off before real sales.');
 }
 if (env.isProd && env.MEDIA_PROVIDER === 'local') {
   console.warn('[warn] MEDIA_PROVIDER=local in production — use cloudinary/S3 object storage.');

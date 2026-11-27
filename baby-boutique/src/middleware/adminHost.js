@@ -9,7 +9,7 @@ const path = require('node:path');
 const env = require('../config/env');
 
 const isAdminPath = (p) => p === '/admin' || p.startsWith('/admin/') || p === '/api/admin' || p.startsWith('/api/admin/');
-const ADMIN_HOST_ALLOWED = ['/api/', '/js/', '/css/', '/img/', '/uploads/', '/fonts/'];
+const ADMIN_HOST_ALLOWED = ['/api/', '/js/', '/css/', '/img/', '/uploads/', '/media/', '/fonts/'];
 
 module.exports = function adminHost(req, res, next) {
   if (!env.ADMIN_URL) return next();

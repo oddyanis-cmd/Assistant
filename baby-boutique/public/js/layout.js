@@ -189,12 +189,13 @@ export { revealOnScroll };
 
 /** Boot sequence shared by all storefront pages. */
 export async function init() {
-  const [{ settings }, { user }, { cart }] = await Promise.all([api('/settings'), api('/auth/me'), api('/cart')]);
+  const [{ settings, testMode }, { user }, { cart }] = await Promise.all([api('/settings'), api('/auth/me'), api('/cart')]);
   state.settings = settings;
+  state.testMode = testMode;
   state.user = user;
   setCurrency(settings.commerce.currency, settings.commerce.locale);
   applyBrand(settings.brand);
-  qs('#site-header').innerHTML = headerHtml(settings);
+  qs('#site-header').innerHTML = (testMode ? '<div class="test-banner" role="note"><strong>Test website</strong> · payments are simulated and nothing is charged</div>' : '') + headerHtml(settings);
   qs('#site-footer').innerHTML = footerHtml(settings);
   wireHeader();
   updateCartBadge(cart);
