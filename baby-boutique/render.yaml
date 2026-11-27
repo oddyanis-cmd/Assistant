@@ -1,0 +1,55 @@
+# Render Blueprint for YAOUA: one web service (serves BOTH yaoua.qa and admin.yaoua.qa) + one Postgres database.
+# In Render: New > Blueprint > pick this repository > Blueprint file path: baby-boutique/render.yaml
+# Secrets marked `sync: false` are typed into the Render dashboard, never committed here.
+services:
+  - type: web
+    name: yaoua
+    runtime: node
+    rootDir: baby-boutique
+    region: frankfurt            # closest Render region to Qatar
+    plan: starter                # always on (the free plan sleeps and is not suitable for a shop)
+    buildCommand: npm ci
+    startCommand: npx prisma migrate deploy && node src/server.js
+    healthCheckPath: /api/health
+    domains:                     # Render adds www.yaoua.qa automatically and redirects it to yaoua.qa
+      - yaoua.qa
+      - admin.yaoua.qa
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_URL
+        value: https://yaoua.qa
+      - key: ADMIN_URL
+        value: https://admin.yaoua.qa
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: TRUST_PROXY
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: yaoua-db
+          property: connectionString
+      - key: MEDIA_PROVIDER
+        value: cloudinary
+      - key: CLOUDINARY_URL
+        sync: false
+      - key: PAYMENT_PROVIDERS        # set to the chosen gateway, e.g. "paypal"; "dev" is refused in production
+        sync: false
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: PAYPAL_ENV
+        value: live
+      - key: ADMIN_EMAIL              # first owner account, created by: npm run db:seed (Render Shell)
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+
+databases:
+  - name: yaoua-db
+    region: frankfurt
+    plan: basic-256mb
+    postgresMajorVersion: "16"

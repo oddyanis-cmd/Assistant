@@ -103,8 +103,11 @@ async function main() {
       },
     }));
 
+  // Sample products are for development only: a live shop starts empty and the owner adds real items in the admin.
+  const withSamples = process.env.NODE_ENV !== 'production' || process.env.SEED_SAMPLE_PRODUCTS === 'true';
+  if (!withSamples) console.log('Production: skipping sample products.');
   let i = 0;
-  for (const p of products) {
+  for (const p of withSamples ? products : []) {
     i++;
     const slug = p.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
     if (await prisma.product.findUnique({ where: { slug } })) continue;
