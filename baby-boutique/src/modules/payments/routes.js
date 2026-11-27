@@ -4,7 +4,7 @@ const prisma = require('../../lib/prisma');
 const env = require('../../config/env');
 const { parse } = require('../../lib/validate');
 const { badRequest, notFound, forbidden } = require('../../lib/errors');
-const { sha256 } = require('../../lib/crypto');
+const { sha256, safeEqual } = require('../../lib/crypto');
 const { getProvider, ALL } = require('./registry');
 const { applyPaymentResult } = require('../orders/service');
 const { track } = require('../analytics/service');
@@ -12,7 +12,9 @@ const { track } = require('../analytics/service');
 /** Amount checker for providers that settle in a different currency (PayPal). */
 function amountCheckFor(provider, result) {
   if (result.amountInProviderCurrency != null && provider.convert) {
-    return (order) => result.amountInProviderCurrency === provider.convert(order.total);
+    // Both the converted amount AND the currency must match what we asked the customer to pay.
+    return (order) => result.amountInProviderCurrency === provider.convert(order.total)
+      && (!result.providerCurrency || result.providerCurrency === provider.currency());
   }
   return undefined;
 }
@@ -51,7 +53,7 @@ pages.get('/checkout/return', async (req, res) => {
   try {
     const provider = getProvider(String(providerId));
     const order = await prisma.order.findUnique({ where: { number: String(number) } });
-    if (!provider?.confirmReturn || !order || sha256(String(token)) !== order.accessTokenHash) return res.redirect(back);
+    if (!provider?.confirmReturn || !order || !safeEqual(sha256(String(token)), order.accessTokenHash)) return res.redirect(back);
     const payment = await prisma.payment.findFirst({ where: { orderId: order.id, provider: provider.id }, orderBy: { createdAt: 'desc' } });
     if (payment && payment.status === 'PENDING') {
       const result = await provider.confirmReturn({ order, payment, query: req.query });
@@ -73,7 +75,7 @@ devApi.post('/complete', async (req, res) => {
     req.body,
   );
   const order = await prisma.order.findUnique({ where: { number } });
-  if (!order || sha256(token) !== order.accessTokenHash) throw forbidden();
+  if (!order || !safeEqual(sha256(token), order.accessTokenHash)) throw forbidden();
   const payment = await prisma.payment.findUnique({ where: { provider_providerRef: { provider: 'dev', providerRef: ref } } });
   if (!payment || payment.orderId !== order.id) throw badRequest('Unknown payment');
   const updated = await applyPaymentResult(payment, {

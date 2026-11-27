@@ -50,6 +50,8 @@ async function mergeGuestCartIntoUser(req, res, userId) {
       create: { cartId: userCart.id, variantId: it.variantId, quantity: it.quantity, personalization: it.personalization },
       update: { quantity: { increment: it.quantity } },
     });
+    // Never let a merge push a line above the per-line maximum.
+    await prisma.cartItem.updateMany({ where: { cartId: userCart.id, variantId: it.variantId, quantity: { gt: MAX_QTY_PER_LINE } }, data: { quantity: MAX_QTY_PER_LINE } });
   }
   await prisma.cart.delete({ where: { id: guest.id } });
 }

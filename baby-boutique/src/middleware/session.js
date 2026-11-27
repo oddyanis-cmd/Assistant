@@ -3,7 +3,13 @@ const env = require('../config/env');
 const { sha256, randomToken } = require('../lib/crypto');
 const { unauthorized, forbidden } = require('../lib/errors');
 
-const SESSION_COOKIE = 'sid';
+const clientIp = require('../lib/clientIp');
+
+// On HTTPS the __Host- prefix makes browsers refuse the cookie unless it is Secure, host-only and path=/,
+// so a sibling subdomain can never plant or overwrite it.
+const SESSION_COOKIE = env.COOKIE_SECURE ? '__Host-sid' : 'sid';
+const STAFF_ROLES = ['ADMIN', 'STAFF'];
+const STAFF_SESSION_HOURS = 12;
 
 function cookieOptions(maxAgeMs) {
   return {
@@ -15,15 +21,16 @@ function cookieOptions(maxAgeMs) {
   };
 }
 
-async function createSession(res, req, userId) {
+async function createSession(res, req, userId, role) {
   const token = randomToken();
-  const ttl = env.SESSION_TTL_DAYS * 864e5;
+  // Staff/admin sessions last 12 hours; customers keep the longer "stay signed in" period.
+  const ttl = STAFF_ROLES.includes(role) ? STAFF_SESSION_HOURS * 36e5 : env.SESSION_TTL_DAYS * 864e5;
   await prisma.session.create({
     data: {
       id: sha256(token),
       userId,
       expiresAt: new Date(Date.now() + ttl),
-      ip: req.ip,
+      ip: clientIp(req),
       userAgent: req.get('user-agent')?.slice(0, 255),
     },
   });
@@ -52,6 +59,7 @@ async function loadSession(req, res, next) {
   }
   req.user = session.user;
   req.sessionId = session.id;
+  req.mfaVerified = session.mfaVerified;
   next();
 }
 
@@ -65,8 +73,10 @@ function requireRole(...roles) {
   return (req, _res, next) => {
     if (!req.user) throw unauthorized();
     if (!roles.includes(req.user.role)) throw forbidden();
+    // Admin access always needs the second sign-in step (authenticator code) in this session.
+    if (STAFF_ROLES.some((r) => roles.includes(r)) && !req.mfaVerified) throw unauthorized('Two-step sign-in required');
     next();
   };
 }
 
-module.exports = { createSession, destroySession, loadSession, requireAuth, requireRole, cookieOptions };
+module.exports = { createSession, destroySession, loadSession, requireAuth, requireRole, cookieOptions, SESSION_COOKIE, STAFF_ROLES };

@@ -67,6 +67,23 @@ async function createOrderFromCart({ cart, userId, email, shippingAddress, custo
   return { order, accessToken, lines: priced.lines };
 }
 
+/** Try to take the order's items out of stock again (all or nothing). Returns false if any is short. */
+async function reReserve(tx, order) {
+  const items = await tx.orderItem.findMany({ where: { orderId: order.id, variantId: { not: null } } });
+  for (const it of items) {
+    const r = await tx.productVariant.updateMany({ where: { id: it.variantId, stock: { gte: it.quantity } }, data: { stock: { decrement: it.quantity } } });
+    if (r.count !== 1) {
+      // Undo the ones already taken in this attempt.
+      for (const done of items.slice(0, items.indexOf(it))) {
+        await tx.productVariant.update({ where: { id: done.variantId }, data: { stock: { increment: done.quantity } } });
+      }
+      return false;
+    }
+  }
+  await tx.inventoryMovement.createMany({ data: items.map((it) => ({ variantId: it.variantId, delta: -it.quantity, reason: 'sale', orderId: order.id, note: 'Re-reserved after late payment' })) });
+  return true;
+}
+
 /** Return reserved stock to inventory exactly once. Must be called inside a transaction. */
 async function releaseStock(tx, order, reason, userId) {
   const fresh = await tx.order.updateMany({ where: { id: order.id, stockReleased: false }, data: { stockReleased: true } });
@@ -86,7 +103,10 @@ async function applyPaymentResult(payment, result, expectedAmountCheck) {
   return prisma.$transaction(async (tx) => {
     const order = await tx.order.findUnique({ where: { id: payment.orderId } });
     if (result.status === 'SUCCEEDED') {
-      const amountOk = expectedAmountCheck ? expectedAmountCheck(order) : result.amount === order.total;
+      // Amount AND currency must match the order exactly; anything else is never marked paid.
+      const amountOk = expectedAmountCheck
+        ? expectedAmountCheck(order)
+        : result.amount === order.total && (!result.currency || result.currency === order.currency);
       if (!amountOk) {
         await tx.payment.update({ where: { id: payment.id }, data: { status: 'FAILED', raw: { ...result.raw, error: 'amount_mismatch' } } });
         console.error(`Payment amount mismatch for order ${order.number}`, result);
@@ -95,8 +115,15 @@ async function applyPaymentResult(payment, result, expectedAmountCheck) {
       const updated = await tx.payment.updateMany({ where: { id: payment.id, status: { not: 'SUCCEEDED' } }, data: { status: 'SUCCEEDED', raw: result.raw } });
       if (updated.count === 1 && ['PENDING_PAYMENT', 'CANCELLED'].includes(order.status)) {
         if (order.status === 'CANCELLED' && order.stockReleased) {
-          // Paid after expiry: re-reserve if possible; otherwise flag for the owner to handle manually.
-          await tx.order.update({ where: { id: order.id }, data: { adminNote: 'Payment arrived after the order expired — check stock and confirm with the customer.' } });
+          // Paid after the reservation expired: take the stock again if it is still there (never below zero);
+          // otherwise flag it so the owner refunds instead of overselling.
+          const reserved = await reReserve(tx, order);
+          await tx.order.update({
+            where: { id: order.id },
+            data: reserved
+              ? { stockReleased: false, adminNote: 'Paid after the reservation expired — stock was re-reserved.' }
+              : { adminNote: 'PAID BUT OUT OF STOCK: payment arrived after the order expired and the items are gone. Refund the customer.' },
+          });
         }
         const items = await tx.orderItem.findMany({ where: { orderId: order.id } });
         for (const it of items) {
@@ -145,10 +172,12 @@ async function expirePendingOrders() {
 // Allowed manual status transitions in the admin.
 const TRANSITIONS = {
   PENDING_PAYMENT: ['CANCELLED'],
-  PAID: ['PROCESSING', 'CANCELLED', 'REFUNDED'],
-  PROCESSING: ['SHIPPED', 'CANCELLED', 'REFUNDED'],
-  SHIPPED: ['DELIVERED', 'REFUNDED'],
-  DELIVERED: ['REFUNDED'],
+  // Paid orders are never just "cancelled" (that would keep the customer's money): use Refund, which
+  // goes through the payment provider and restocks. REFUNDED is only set by the refund action.
+  PAID: ['PROCESSING'],
+  PROCESSING: ['SHIPPED'],
+  SHIPPED: ['DELIVERED'],
+  DELIVERED: [],
   CANCELLED: [],
   REFUNDED: [],
 };

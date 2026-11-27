@@ -12,6 +12,8 @@ const media = require('../media/service');
 const router = Router();
 
 const price = z.coerce.number().min(0).max(1_000_000).transform((n) => Math.round(n * 100)); // QAR in, minor units stored
+// A sellable price must be above zero, otherwise an item could be checked out for free.
+const sellPrice = z.coerce.number().min(0.5, 'Price must be at least 0.50 QAR').max(1_000_000).transform((n) => Math.round(n * 100));
 const productSchema = z.object({
   name: z.string().trim().min(2).max(150),
   slug: z.string().trim().max(90).optional(),
@@ -19,7 +21,7 @@ const productSchema = z.object({
   description: z.string().max(20000).default(''),
   type: z.enum(['CLOTHING', 'SHOES', 'ACCESSORY', 'DOLL', 'GIFT_SET']).default('CLOTHING'),
   status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).default('DRAFT'),
-  basePrice: price,
+  basePrice: sellPrice,
   compareAtPrice: price.nullish(),
   categoryId: z.string().nullish(),
   sizeGuideId: z.string().nullish(),
@@ -132,11 +134,11 @@ const variantSchema = z.object({
   size: z.string().trim().max(40).nullish(),
   color: z.string().trim().max(40).nullish(),
   colorHex: z.string().regex(/^#[0-9a-fA-F]{6}$/).nullish(),
-  price: price.nullish(),
+  price: sellPrice.nullish(),
   stock: z.coerce.number().int().min(0).max(100000).default(0),
   lowStockThreshold: z.coerce.number().int().min(0).max(1000).default(2),
   isActive: z.boolean().default(true),
-  position: z.coerce.number().int().default(0),
+  position: z.coerce.number().int().min(0).max(10000).default(0),
 });
 
 router.post('/products/:id/variants', async (req, res) => {
@@ -153,7 +155,7 @@ router.post('/products/:id/variants/generate', async (req, res) => {
     z.object({
       sizes: z.array(z.string().trim().min(1).max(40)).max(30).default([]),
       colors: z.array(z.object({ name: z.string().trim().min(1).max(40), hex: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional() })).max(30).default([]),
-      stock: z.coerce.number().int().min(0).default(0),
+      stock: z.coerce.number().int().min(0).max(100000).default(0),
       skuPrefix: z.string().trim().max(20).regex(/^[A-Za-z0-9-]*$/).optional(),
     }),
     req.body,

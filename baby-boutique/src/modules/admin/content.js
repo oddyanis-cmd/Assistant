@@ -13,14 +13,32 @@ const defaults = require('../settings/defaults');
 const router = Router();
 const adminOnly = requireRole('ADMIN');
 
+// Links and image addresses may only be site paths or http(s) URLs: blocks javascript:, data: and similar
+// tricks that could run code in customers' browsers if an admin account were ever misused.
+const SAFE_URL = /^(\/(?!\/)|https?:\/\/)/i;
+const safeUrl = z.string().trim().max(500).refine((u) => u === '' || SAFE_URL.test(u), 'Use a link starting with / or https://');
+const DANGEROUS = /^\s*(javascript|data|vbscript|file):/i;
+function assertNoDangerousUrls(value, path = 'value') {
+  if (typeof value === 'string') {
+    if (DANGEROUS.test(value.replace(/[\u0000-\u001F\s]+/g, ''))) throw badRequest(`${path} contains a link type that is not allowed`);
+  } else if (value && typeof value === 'object') {
+    for (const [k, v] of Object.entries(value)) {
+      if (k === '__proto__' || k === 'constructor' || k === 'prototype') throw badRequest('Invalid setting key');
+      assertNoDangerousUrls(v, `${path}.${k}`);
+    }
+  }
+}
+// Spreadsheet apps run cells that start with = + - @ as formulas; prefix them so exports are inert.
+const csvCell = (s) => { const t = String(s ?? ''); return `"${(/^[=+\-@\t\r]/.test(t) ? `'${t}` : t).replace(/"/g, '""')}"`; };
+
 // ---------- Categories ----------
 const categorySchema = z.object({
   name: z.string().trim().min(2).max(100),
   slug: z.string().trim().max(90).optional(),
   description: z.string().max(1000).nullish(),
-  imageUrl: z.string().max(500).nullish(),
+  imageUrl: safeUrl.nullish(),
   parentId: z.string().nullish(),
-  sortOrder: z.coerce.number().int().default(0),
+  sortOrder: z.coerce.number().int().min(-10000).max(10000).default(0),
   isActive: z.boolean().default(true),
   showOnHome: z.boolean().default(false),
 });
@@ -118,6 +136,8 @@ router.put('/settings/:key', adminOnly, async (req, res) => {
     throw badRequest(`Setting "${key}" must be ${Array.isArray(defaults[key]) ? 'an array' : `an ${typeof defaults[key]}`}`);
   }
   if (JSON.stringify(value).length > 100_000) throw badRequest('Setting is too large');
+  assertNoDangerousUrls(value, key);
+  if (key === 'commerce') parse(z.object({ pendingOrderTtlMinutes: z.number().int().min(5).max(1440) }).passthrough(), value);
   if (key === 'media') {
     const m = parse(z.object({ maxFileSizeMb: z.number().min(0.1).max(50), storageQuotaMb: z.number().min(10), galleryPageSize: z.number().int().min(6).max(200) }).passthrough(), value);
     void m;
@@ -154,9 +174,8 @@ router.patch('/customers/:id/role', adminOnly, async (req, res) => {
 router.get('/newsletter', adminOnly, async (req, res) => {
   const subs = await prisma.newsletterSubscriber.findMany({ where: { unsubscribedAt: null }, orderBy: { consentAt: 'desc' } });
   if (req.query.format === 'csv') {
-    const esc = (s) => `"${String(s ?? '').replace(/"/g, '""')}"`;
     res.type('text/csv').attachment('newsletter.csv');
-    return res.send(['email,consent_at,source,consent_text', ...subs.map((s) => [s.email, s.consentAt.toISOString(), s.source, s.consentText].map(esc).join(','))].join('\n'));
+    return res.send(['email,consent_at,source,consent_text', ...subs.map((s) => [s.email, s.consentAt.toISOString(), s.source, s.consentText].map(csvCell).join(','))].join('\n'));
   }
   res.json({ subscribers: subs, total: subs.length });
 });

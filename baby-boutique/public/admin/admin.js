@@ -726,8 +726,8 @@ async function route() {
 }
 
 async function boot() {
-  const { user } = await api('/auth/me');
-  if (!user || !['ADMIN', 'STAFF'].includes(user.role)) {
+  const { user, mfa } = await api('/auth/me');
+  if (!user || !['ADMIN', 'STAFF'].includes(user.role) || !mfa?.verified) {
     location.replace('/admin/login');
     return;
   }

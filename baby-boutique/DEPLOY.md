@@ -92,6 +92,16 @@ Check your plan's limits in the Netlify dashboard.
    - `https://admin.yaoua.qa` shows the admin sign-in. Sign in with your owner email.
 6. **Add your real products and photos** in the admin. Then place one real low-value order to test payment, and refund it.
 
+## Admin security (two-step sign-in)
+
+- Every admin and staff sign-in needs the password **and** a 6-digit code from an authenticator app
+  (Google Authenticator, Microsoft Authenticator, 1Password…). The first sign-in shows a QR code to scan.
+- **Set yours up right after the first deploy**, before you share the admin address. Until an account has
+  scanned its QR code, anyone who knew that account's password could set up their own phone instead.
+- Admin and staff sessions end after 12 hours. Changing someone's role signs them out everywhere.
+- Lost your phone? Someone with database access runs:
+  `DATABASE_URL="<direct URL>" node scripts/reset-2fa.js you@yaoua.qa`. Your next sign-in will show a new QR code.
+
 ## After launch
 
 - Updates: push to the deployed branch and Render redeploys automatically. Database changes are applied on start.

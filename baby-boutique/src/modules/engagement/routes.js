@@ -1,7 +1,8 @@
 // Reviews, wishlist and newsletter.
 const { Router } = require('express');
 const { z } = require('zod');
-const rateLimit = require('express-rate-limit');
+const { limiter } = require('../../lib/rateLimit');
+const clientIp = require('../../lib/clientIp');
 const prisma = require('../../lib/prisma');
 const { parse } = require('../../lib/validate');
 const { notFound, badRequest } = require('../../lib/errors');
@@ -10,7 +11,7 @@ const settings = require('../settings/service');
 const catalog = require('../catalog/service');
 
 const router = Router();
-const writeLimiter = rateLimit({ windowMs: 60 * 60_000, limit: 30, standardHeaders: 'draft-7', legacyHeaders: false });
+const writeLimiter = limiter({ name: 'write', windowMs: 60 * 60_000, limit: 30 });
 
 // ---- Reviews ----
 router.get('/products/:slug/reviews', async (req, res) => {
@@ -86,8 +87,8 @@ router.post('/newsletter', writeLimiter, async (req, res) => {
   void consent;
   await prisma.newsletterSubscriber.upsert({
     where: { email },
-    create: { email, consentText: cfg.consentText, ip: req.ip, source },
-    update: { consentText: cfg.consentText, consentAt: new Date(), unsubscribedAt: null, ip: req.ip },
+    create: { email, consentText: cfg.consentText, ip: clientIp(req), source },
+    update: { consentText: cfg.consentText, consentAt: new Date(), unsubscribedAt: null, ip: clientIp(req) },
   });
   res.status(201).json({ ok: true, message: 'Thank you for subscribing!' });
 });

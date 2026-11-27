@@ -39,6 +39,13 @@ async function makeUser(role = 'CUSTOMER', email = `${role.toLowerCase()}-${Date
   const a = agent();
   const r = await a.post('/api/auth/login').send({ email, password });
   if (r.status !== 200) throw new Error(`login failed ${r.status}`);
+  if (role === 'STAFF' || role === 'ADMIN') {
+    // Complete the real two-step sign-in, exactly as staff do in the browser.
+    const { authenticator } = require('otplib');
+    const setup = await a.post('/api/auth/mfa/setup');
+    const v = await a.post('/api/auth/mfa/verify').send({ code: authenticator.generate(setup.body.secret) });
+    if (v.status !== 200) throw new Error(`mfa failed ${v.status}`);
+  }
   return a;
 }
 

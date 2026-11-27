@@ -113,7 +113,7 @@ test('settings are validated and appear on the public settings endpoint', async 
   assert.equal((await agent().get('/api/settings')).body.settings.hero.headline, 'Tiny Knits');
 });
 
-test('order status transitions are enforced; cancelling restocks', async () => {
+test('order status transitions are enforced; paid orders are refunded, not cancelled', async () => {
   const admin = await makeUser('ADMIN');
   const staff = await makeUser('STAFF');
   const a = agent();
@@ -126,8 +126,14 @@ test('order status transitions are enforced; cancelling restocks', async () => {
   assert.equal((await staff.patch(`/api/admin/orders/${order.id}`).send({ status: 'DELIVERED' })).status, 400, 'cannot skip to delivered');
   assert.equal((await staff.patch(`/api/admin/orders/${order.id}`).send({ status: 'PROCESSING' })).status, 200);
   assert.equal((await staff.patch(`/api/admin/orders/${order.id}`).send({ status: 'REFUNDED' })).status, 400, 'staff cannot refund');
-  assert.equal((await admin.patch(`/api/admin/orders/${order.id}`).send({ status: 'CANCELLED' })).status, 200);
-  assert.equal((await prisma.productVariant.findUnique({ where: { id: p.variants[0].id } })).stock, 2);
+  // A paid order cannot just be cancelled (the customer would keep no refund): it must be refunded.
+  assert.equal((await admin.patch(`/api/admin/orders/${order.id}`).send({ status: 'CANCELLED' })).status, 400, 'paid orders need a refund');
+  assert.equal((await staff.post(`/api/admin/orders/${order.id}/refund`).send({})).status, 403, 'staff cannot refund');
+  assert.equal((await admin.post(`/api/admin/orders/${order.id}/refund`).send({ amount: order.total + 1 })).status, 400, 'no over-refund');
+  assert.equal((await admin.post(`/api/admin/orders/${order.id}/refund`).send({})).status, 200);
+  assert.equal((await prisma.order.findUnique({ where: { id: order.id } })).status, 'REFUNDED');
+  assert.equal((await prisma.productVariant.findUnique({ where: { id: p.variants[0].id } })).stock, 2, 'refund restocks');
+  assert.equal((await admin.post(`/api/admin/orders/${order.id}/refund`).send({})).status, 400, 'no double refund');
 });
 
 test('webhook endpoint for unconfigured provider is not exposed', async () => {

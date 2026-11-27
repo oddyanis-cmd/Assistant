@@ -1,11 +1,11 @@
 const { Router } = require('express');
 const { z } = require('zod');
-const rateLimit = require('express-rate-limit');
+const { limiter: makeLimiter } = require('../../lib/rateLimit');
 const { parse } = require('../../lib/validate');
 const { track, TRACKABLE } = require('./service');
 
 const router = Router();
-const limiter = rateLimit({ windowMs: 60_000, limit: 120, standardHeaders: 'draft-7', legacyHeaders: false });
+const limiter = makeLimiter({ name: 'analytics', windowMs: 60_000, limit: 120 });
 
 // Client-side beacons are limited to a whitelist; server-side events (purchase, add_to_cart...) are tracked in their modules.
 router.post('/event', limiter, (req, res) => {

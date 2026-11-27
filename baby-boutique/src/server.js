@@ -2,6 +2,7 @@ const env = require('./config/env');
 const prisma = require('./lib/prisma');
 const { createApp } = require('./app');
 const { expirePendingOrders } = require('./modules/orders/service');
+const { purgeExpired } = require('./lib/rateLimit');
 
 const app = createApp();
 const server = app.listen(env.PORT, () => {
@@ -15,6 +16,7 @@ const timer = setInterval(() => {
     .then((n) => n && console.log(`expired ${n} unpaid order(s)`))
     .catch((e) => console.error('expire job', e));
   prisma.session.deleteMany({ where: { expiresAt: { lt: new Date() } } }).catch(() => {});
+  purgeExpired().catch(() => {});
 }, 5 * 60_000);
 
 async function shutdown() {

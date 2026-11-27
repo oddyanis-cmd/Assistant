@@ -1,11 +1,10 @@
 const { Router } = require('express');
 const { z } = require('zod');
-const rateLimit = require('express-rate-limit');
+const { limiter } = require('../../lib/rateLimit');
 const prisma = require('../../lib/prisma');
-const env = require('../../config/env');
 const { parse } = require('../../lib/validate');
 const { badRequest, notFound, forbidden } = require('../../lib/errors');
-const { sha256 } = require('../../lib/crypto');
+const { sha256, safeEqual } = require('../../lib/crypto');
 const { requireAuth } = require('../../middleware/session');
 const { findCart } = require('../cart/service');
 const { addressSchema } = require('../auth/routes');
@@ -15,7 +14,7 @@ const svc = require('./service');
 const { track } = require('../analytics/service');
 
 const router = Router();
-const checkoutLimiter = rateLimit({ windowMs: 10 * 60_000, limit: env.NODE_ENV === 'test' ? 1000 : 15, standardHeaders: 'draft-7', legacyHeaders: false });
+const checkoutLimiter = limiter({ name: 'checkout', windowMs: 10 * 60_000, limit: 15 });
 
 router.get('/checkout/providers', (_req, res) => {
   res.json({ providers: enabledProviders().map((p) => ({ id: p.id, label: p.label, testMode: p.id === 'dev' })) });
@@ -69,7 +68,7 @@ async function loadOrderForViewer(req, number, token) {
   });
   if (!order) throw notFound('Order not found');
   const ownsIt = req.user && order.userId === req.user.id;
-  const hasToken = token && sha256(token) === order.accessTokenHash;
+  const hasToken = typeof token === 'string' && token.length <= 200 && safeEqual(sha256(token), order.accessTokenHash);
   if (!ownsIt && !hasToken) throw forbidden('You cannot view this order');
   return order;
 }

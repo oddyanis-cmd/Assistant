@@ -67,6 +67,9 @@ model User {
   role           Role      @default(CUSTOMER)
   failedLogins   Int       @default(0)
   lockedUntil    DateTime?
+  /// Two-step sign-in (authenticator app) for the admin. Required for STAFF and ADMIN.
+  totpSecret     String?
+  totpEnabled    Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   sessions       Session[]
@@ -86,8 +89,19 @@ model Session {
   createdAt  DateTime @default(now())
   ip         String?
   userAgent  String?
+  /// true once the user has passed two-step sign-in in this session (needed for the admin).
+  mfaVerified Boolean  @default(false)
 
   @@index([userId])
+}
+
+/// Shared rate-limit counters, so limits hold across all server instances (Netlify Functions, multiple servers).
+model RateLimit {
+  key     String   @id
+  hits    Int
+  resetAt DateTime
+
+  @@index([resetAt])
 }
 
 model Address {

@@ -55,7 +55,7 @@ router.patch('/orders/:id', async (req, res) => {
   if (!order) throw notFound();
   if (body.status && body.status !== order.status) {
     if (!TRANSITIONS[order.status].includes(body.status)) throw badRequest(`Cannot change ${order.status} → ${body.status}`);
-    if (body.status === 'REFUNDED' && req.user.role !== 'ADMIN') throw badRequest('Only an administrator can refund');
+    if (body.status === 'REFUNDED') throw badRequest('Use the Refund action so the customer is actually refunded');
     if (body.status === 'CANCELLED') await cancelOrder(order.id, { userId: req.user.id });
   }
   const { status, ...rest } = body;
@@ -72,6 +72,8 @@ router.post('/orders/:id/refund', requireRole('ADMIN'), async (req, res) => {
   const { amount, restock } = parse(z.object({ amount: z.number().int().positive().optional(), restock: z.boolean().default(true) }), req.body);
   const order = await prisma.order.findUnique({ where: { id: req.params.id }, include: { payments: true } });
   if (!order) throw notFound();
+  if (order.status === 'REFUNDED') throw badRequest('This order has already been refunded');
+  if (amount && amount > order.total) throw badRequest('Refund cannot be more than the order total');
   const payment = order.payments.find((p) => p.status === 'SUCCEEDED');
   if (!payment) throw badRequest('No captured payment on this order');
   const provider = ALL[payment.provider];

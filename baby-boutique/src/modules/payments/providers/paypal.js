@@ -43,6 +43,7 @@ module.exports = {
   label: 'PayPal',
   isConfigured: () => Boolean(env.PAYPAL_CLIENT_ID && env.PAYPAL_CLIENT_SECRET),
   convert,
+  currency: () => env.PAYPAL_CURRENCY,
 
   async createCheckout({ order, returnUrl, cancelUrl }) {
     const j = await api('/v2/checkout/orders', {
@@ -77,7 +78,8 @@ module.exports = {
       });
     }
     const capture = j.purchase_units?.[0]?.payments?.captures?.[0];
-    const ok = j.status === 'COMPLETED' && capture?.status === 'COMPLETED' && capture.amount.value === convert(order.total);
+    const ok = j.status === 'COMPLETED' && capture?.status === 'COMPLETED'
+      && capture.amount?.value === convert(order.total) && capture.amount?.currency_code === env.PAYPAL_CURRENCY;
     return {
       status: ok ? 'SUCCEEDED' : capture?.status === 'DECLINED' ? 'FAILED' : 'PENDING',
       amount: ok ? order.total : null, // verified against the converted total above
@@ -106,6 +108,6 @@ module.exports = {
     const orderId = r?.supplementary_data?.related_ids?.order_id;
     const map = { 'PAYMENT.CAPTURE.COMPLETED': 'SUCCEEDED', 'PAYMENT.CAPTURE.DENIED': 'FAILED', 'PAYMENT.CAPTURE.REFUNDED': 'REFUNDED' };
     if (!map[event.event_type] || !orderId) return [];
-    return [{ eventId: event.id, type: event.event_type, providerRef: orderId, status: map[event.event_type], amountInProviderCurrency: r.amount?.value, raw: { captureId: r.id } }];
+    return [{ eventId: event.id, type: event.event_type, providerRef: orderId, status: map[event.event_type], amountInProviderCurrency: r.amount?.value, providerCurrency: r.amount?.currency_code, raw: { captureId: r.id } }];
   },
 };

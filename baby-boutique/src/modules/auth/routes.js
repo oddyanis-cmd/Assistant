@@ -1,22 +1,26 @@
 const { Router } = require('express');
 const { z } = require('zod');
-const rateLimit = require('express-rate-limit');
+const { authenticator } = require('otplib');
+const QRCode = require('qrcode');
+const { limiter } = require('../../lib/rateLimit');
 const prisma = require('../../lib/prisma');
 const { parse } = require('../../lib/validate');
 const { badRequest, unauthorized, conflict } = require('../../lib/errors');
 const { hashPassword, verifyPassword, dummyVerify } = require('./password');
-const { createSession, destroySession, requireAuth } = require('../../middleware/session');
+const { createSession, destroySession, requireAuth, STAFF_ROLES } = require('../../middleware/session');
 const { mergeGuestCartIntoUser } = require('../cart/service');
 
 const router = Router();
 
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  limit: process.env.NODE_ENV === 'test' ? 1000 : 20,
-  standardHeaders: 'draft-7',
-  legacyHeaders: false,
-  message: { error: 'Too many attempts, please try again later' },
+// Per-IP limit for all sign-in/sign-up attempts, plus a per-email limit so guesses spread over many
+// IPs still slow down. Both counters are shared across server instances (stored in Postgres).
+const authLimiter = limiter({ name: 'auth-ip', windowMs: 15 * 60_000, limit: 20 });
+const emailLimiter = limiter({
+  name: 'auth-email', windowMs: 60 * 60_000, limit: 15,
+  key: (req) => `e:${String(req.body?.email ?? '').trim().toLowerCase().slice(0, 200)}`,
 });
+const mfaLimiter = limiter({ name: 'mfa', windowMs: 15 * 60_000, limit: 10, key: (req) => `u:${req.user?.id ?? 'anon'}` });
+authenticator.options = { window: 1 }; // accept the previous/next 30-second code for clock drift
 
 const MAX_FAILED = 5;
 const LOCK_MINUTES = 15;
@@ -35,6 +39,7 @@ const registerSchema = z.object({
 });
 
 const publicUser = (u) => ({ id: u.id, email: u.email, name: u.name, role: u.role, phone: u.phone ?? null });
+const isStaff = (u) => STAFF_ROLES.includes(u.role);
 
 router.post('/register', authLimiter, async (req, res) => {
   const data = parse(registerSchema, req.body);
@@ -43,12 +48,12 @@ router.post('/register', authLimiter, async (req, res) => {
   const user = await prisma.user.create({
     data: { email: data.email, name: data.name, phone: data.phone, passwordHash: await hashPassword(data.password) },
   });
-  await createSession(res, req, user.id);
+  await createSession(res, req, user.id, user.role);
   await mergeGuestCartIntoUser(req, res, user.id);
   res.status(201).json({ user: publicUser(user) });
 });
 
-router.post('/login', authLimiter, async (req, res) => {
+router.post('/login', authLimiter, emailLimiter, async (req, res) => {
   const { email, password: pw } = parse(
     z.object({ email: z.string().trim().toLowerCase().email(), password: z.string().min(1).max(200) }),
     req.body,
@@ -73,9 +78,9 @@ router.post('/login', authLimiter, async (req, res) => {
     throw generic;
   }
   await prisma.user.update({ where: { id: user.id }, data: { failedLogins: 0, lockedUntil: null } });
-  await createSession(res, req, user.id);
+  await createSession(res, req, user.id, user.role);
   await mergeGuestCartIntoUser(req, res, user.id);
-  res.json({ user: publicUser(user) });
+  res.json({ user: publicUser(user), ...(isStaff(user) && { mfa: { required: true, enrolled: user.totpEnabled } }) });
 });
 
 router.post('/logout', async (req, res) => {
@@ -86,7 +91,39 @@ router.post('/logout', async (req, res) => {
 router.get('/me', async (req, res) => {
   if (!req.user) return res.json({ user: null });
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-  res.json({ user: publicUser(user) });
+  res.json({
+    user: publicUser(user),
+    ...(isStaff(user) && { mfa: { required: true, enrolled: user.totpEnabled, verified: Boolean(req.mfaVerified) } }),
+  });
+});
+
+// ---- Two-step sign-in (authenticator app) for STAFF / ADMIN ----
+function requireStaffSession(req, _res, next) {
+  if (!req.user) throw unauthorized();
+  if (!isStaff(req.user)) throw badRequest('Two-step sign-in is only used for admin accounts');
+  next();
+}
+
+/** First-time setup: returns a new secret + QR code. Only possible while 2FA is not yet switched on. */
+router.post('/mfa/setup', requireStaffSession, mfaLimiter, async (req, res) => {
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+  if (user.totpEnabled) throw conflict('Two-step sign-in is already set up for this account');
+  // Re-use a pending (not yet confirmed) secret so reloading the page doesn't invalidate a QR code
+  // the user has already scanned.
+  const secret = user.totpSecret || authenticator.generateSecret(20);
+  if (!user.totpSecret) await prisma.user.update({ where: { id: user.id }, data: { totpSecret: secret } });
+  const otpauth = authenticator.keyuri(user.email, 'YAOUA Admin', secret);
+  res.json({ secret, otpauth, qr: await QRCode.toDataURL(otpauth, { margin: 1, width: 220 }) });
+});
+
+/** Check a 6-digit code. Switches 2FA on (first time) and unlocks the admin for this session. */
+router.post('/mfa/verify', requireStaffSession, mfaLimiter, async (req, res) => {
+  const { code } = parse(z.object({ code: z.string().trim().regex(/^\d{6}$/, 'Enter the 6-digit code') }), req.body);
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+  if (!user.totpSecret || !authenticator.check(code, user.totpSecret)) throw unauthorized('That code is not correct');
+  if (!user.totpEnabled) await prisma.user.update({ where: { id: user.id }, data: { totpEnabled: true } });
+  await prisma.session.update({ where: { id: req.sessionId }, data: { mfaVerified: true } });
+  res.json({ ok: true });
 });
 
 router.patch('/me', requireAuth, async (req, res) => {

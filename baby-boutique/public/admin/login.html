@@ -13,13 +13,26 @@
 <body class="admin admin-login">
   <main class="auth-card">
     <div class="panel">
-      <h1 id="login-title">Admin sign in</h1>
-      <p class="muted">Staff only. Customer accounts cannot sign in here.</p>
       <form id="admin-auth" novalidate>
+        <h1>Admin sign in</h1>
+        <p class="muted">Staff only. Customer accounts cannot sign in here.</p>
         <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required autocomplete="username"></div>
         <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" required autocomplete="current-password"></div>
         <p class="form-error" role="alert" id="auth-error"></p>
         <button class="btn btn--block">Sign in</button>
+      </form>
+
+      <form id="mfa-form" novalidate hidden>
+        <h1>Two-step sign-in</h1>
+        <div id="mfa-setup" hidden>
+          <p>Protect the admin with a code from your phone. Open <strong>Google Authenticator</strong>, <strong>Microsoft Authenticator</strong> or a similar app, choose <em>Add account → Scan QR code</em>, and scan this:</p>
+          <p class="mfa-qr"><img id="mfa-qr" alt="QR code for your authenticator app" width="220" height="220"></p>
+          <p class="muted">Can't scan? Enter this key instead: <code id="mfa-secret"></code></p>
+        </div>
+        <p id="mfa-prompt">Enter the 6-digit code shown in your authenticator app.</p>
+        <div class="field"><label for="code">6-digit code</label><input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="\d{6}" maxlength="6" required></div>
+        <p class="form-error" role="alert" id="mfa-error"></p>
+        <button class="btn btn--block">Verify</button>
       </form>
     </div>
   </main>

@@ -66,3 +66,6 @@ table.data input, table.data select { padding: 6px 8px; font-size: .85rem; }
 .btn--danger { background: var(--danger); }
 body.admin-login { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
 body.admin-login .auth-card { width: 100%; margin: 0 auto; }
+.mfa-qr { text-align: center; } .mfa-qr img { display: inline-block; border-radius: 8px; background: #fff; padding: 6px; }
+#mfa-secret { word-break: break-all; }
+body.admin-login h1 { font-size: 1.8rem; }

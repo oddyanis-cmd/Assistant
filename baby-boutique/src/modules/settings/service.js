@@ -14,7 +14,10 @@ function isPlainObject(v) {
 function deepMerge(base, over) {
   if (!isPlainObject(base) || !isPlainObject(over)) return over === undefined ? base : over;
   const out = { ...base };
-  for (const [k, v] of Object.entries(over)) out[k] = deepMerge(base[k], v);
+  for (const [k, v] of Object.entries(over)) {
+    if (k === '__proto__' || k === 'constructor' || k === 'prototype') continue; // prototype-pollution guard
+    out[k] = deepMerge(base[k], v);
+  }
   return out;
 }
 
