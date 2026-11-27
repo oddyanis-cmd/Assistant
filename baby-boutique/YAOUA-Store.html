@@ -359,6 +359,11 @@ header.site .logo { margin-block: -6px; }
 .collage .stamp strong { font-size: 1.12rem; }
 [dir="rtl"] .collage .stamp { border-radius: 22px 999px 999px 22px; padding: 10px 10px 10px 16px; }
 .btn:hover { filter: brightness(1.06); }
+.admin-login { min-height: 100vh; display: grid; place-items: center; padding: 16px; background: var(--tint2); }
+.admin-login .panel { width: 100%; max-width: 420px; display: grid; gap: 12px; padding: 28px; background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow); outline: 1.6px dashed var(--stitch); outline-offset: -7px; }
+.admin-login .logo { justify-content: center; } .admin-login .logo .brand-badge { width: 96px; height: 96px; }
+.admin-login h1 { font-size: 1.6rem; margin: 0; text-align: center; } .admin-login .err { color: var(--bad); min-height: 1.2em; margin: 0; font-weight: 700; }
+.aside .signout { margin-top: auto; opacity: .8; }
 /* legal */
 .tba { font-style: italic; opacity: .8; border-bottom: 1px dotted currentColor; unicode-bidi: isolate; }
 mark.ph { unicode-bidi: isolate; display: inline-block; direction: ltr; background: #FFE9A8; color: #6B4A00; border-radius: 4px; padding: 0 4px; font-weight: 700; }
@@ -777,12 +782,18 @@ function seedState() {
 
 // ===================== State (kept in this browser only) =====================
 const KEY = 'yaoua-preview-v4';
+// Two separate builds from this one source: 'store' (customers only, no way into the admin)
+// and 'admin' (staff only, opens on its own sign-in screen, never shows the shop).
+const MODE = 'store';
+const ADMIN_DEMO_PASSWORD = 'yaoua-admin';
+let adminOk = false;
+try { adminOk = sessionStorage.getItem('yaoua-admin-ok') === '1'; } catch { /* private mode */ }
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || seedState(); } catch { S = seedState(); }
 S.settings.legal = { ...LEGAL_DEFAULTS(), ...(S.settings.legal || {}) };
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* storage unavailable */ } };
 const BLANK = () => ({ cat: '', sizes: [], colors: [], min: '', max: '', avail: '', sort: 'featured', q: '', page: 1 });
-let V = { view: 'home', slug: null, filters: BLANK(), admin: 'dash', order: null, menu: false, search: false };
+let V = { view: MODE === 'admin' ? 'admin' : 'home', slug: null, filters: BLANK(), admin: 'dash', order: null, menu: false, search: false };
 
 // ===================== Helpers =====================
 const $ = (s, r = document) => r.querySelector(s);
@@ -843,7 +854,18 @@ function addToCart(p, v, qty = 1, pers = '') {
   save(); render(); toast(`${p.name} added to your cart`, ['View cart', 'cart']);
   return true;
 }
-function go(view, extra = {}) { V = { ...V, view, menu: false, search: false, ...extra }; render(); window.scrollTo({ top: 0 }); }
+function adminLogin() {
+  return `<div class="admin-login"><form class="panel" id="adminLogin" novalidate>
+    <div class="logo" aria-hidden="true">${knitLogo()}</div>
+    <h1>Admin sign in</h1><p class="muted">Staff only. This is the separate admin app; customers never see it.</p>
+    <label class="f">Email<input name="email" type="email" autocomplete="username" value="owner@yaoua.qa"></label>
+    <label class="f">Password<input name="password" type="password" autocomplete="current-password" required></label>
+    <p class="err" id="adminErr" role="alert"></p>
+    <button class="btn" type="submit">Sign in</button>
+    <p class="small muted">Preview only: the demo password is <b>${ADMIN_DEMO_PASSWORD}</b>. The real app checks staff accounts on the server.</p>
+  </form></div>`;
+}
+function go(view, extra = {}) { if (MODE === 'admin') view = 'admin'; else if (view === 'admin') view = 'home'; V = { ...V, view, menu: false, search: false, ...extra }; render(); window.scrollTo({ top: 0 }); }
 
 // ===================== Layout =====================
 function header() {
@@ -851,7 +873,7 @@ function header() {
   const nav = [['Home', 'home'], ['Shop All', 'shop'], ['Baby Clothes', 'shop:baby-clothes'], ['Dolls', 'shop:handmade-dolls'], ['Gift Boxes', 'shop:gift-boxes'], ['Accessories', 'shop:baby-accessories'], ['Our Story', 'page:about'], ['Contact', 'page:contact']];
   const cur = V.view === 'shop' ? (V.filters.cat ? `shop:${V.filters.cat}` : 'shop') : V.view === 'page' ? `page:${V.slug}` : V.view;
   return `
-  <div class="preview-bar"><div class="wrap"><span>Preview: payments are simulated and nothing is charged.</span><button data-go="admin">Open admin</button><button data-act="reset">Reset demo</button></div></div>
+  <div class="preview-bar"><div class="wrap"><span>Preview: payments are simulated and nothing is charged.</span><button data-act="reset">Reset demo</button></div></div>
   <div class="announce"><span class="ar">${S.lang === 'ar' ? `توصيل مجاني داخل قطر للطلبات فوق ${S.settings.freeOver} ريال · كل طلب مغلّف كهدية` : ''}</span>${S.lang === 'ar' ? '' : `Free delivery across Qatar over ${S.settings.freeOver} QAR · Every order gift-wrapped · التوصيل مجاني داخل قطر للطلبات فوق ${S.settings.freeOver} ريال`}</div>
   <header class="site"><div class="wrap hdr">
     <button class="ibtn menu-btn" data-act="menu" aria-label="Menu" aria-expanded="${V.menu}">${I.menu}</button>
@@ -1157,7 +1179,7 @@ function page() {
 // ===================== Admin =====================
 function admin() {
   const tabs = [['dash', 'Dashboard'], ['orders', 'Orders'], ['products', 'Products'], ['inventory', 'Inventory'], ['reviews', 'Reviews'], ['config', 'Store settings']];
-  return `<div class="admin"><aside class="aside"><button class="logo" data-go="home" title="View store">${knitLogo()}</button>${tabs.map(([k, l]) => `<button data-admin="${k}" aria-current="${V.admin === k || (V.admin === 'edit' && k === 'products')}">${l}</button>`).join('')}</aside>
+  return `<div class="admin"><aside class="aside"><button class="logo" data-admin="dash" title="Dashboard">${knitLogo()}</button>${tabs.map(([k, l]) => `<button data-admin="${k}" aria-current="${V.admin === k || (V.admin === 'edit' && k === 'products')}">${l}</button>`).join('')}<button class="signout" data-act="adminout">Sign out</button></aside>
     <main class="amain">${({ dash: aDash, orders: aOrders, products: aProducts, inventory: aInventory, reviews: aReviews, config: aConfig, edit: aEdit }[V.admin] || aDash)()}</main></div>`;
 }
 function aDash() {
@@ -1471,7 +1493,11 @@ function render() {
   document.documentElement.lang = ar ? 'ar' : 'en';
   document.documentElement.dir = ar ? 'rtl' : 'ltr';
   money = new Intl.NumberFormat(ar ? 'ar-QA-u-nu-latn' : 'en-QA', { style: 'currency', currency: 'QAR' });
-  if (V.view === 'admin') { $('#app').innerHTML = admin(); document.title = `Admin · ${S.settings.brand}`; return; }
+  if (V.view === 'admin') {
+    $('#app').innerHTML = adminOk ? admin() : adminLogin();
+    document.title = `Admin · ${S.settings.brand}`;
+    return;
+  }
   const views = { home, shop, product, cart, checkout, order, wishlist, account, page };
   $('#app').innerHTML = header() + `<main id="main">${(views[V.view] || home)()}</main>` + footer();
   translateDOM($('#app'));
@@ -1527,6 +1553,7 @@ document.addEventListener('click', (e) => {
   switch (act) {
     case 'menu': V.menu = !V.menu; render(); break;
     case 'search': V.search = !V.search; render(); break;
+    case 'adminout': adminOk = false; try { sessionStorage.removeItem('yaoua-admin-ok'); } catch { /* ignore */ } render(); break;
     case 'reset': S = seedState(); save(); go('home'); toast('Preview reset to the original products'); break;
     case 'close': closeModal(); break;
     case 'quick': quickView(x); break;
@@ -1597,6 +1624,14 @@ document.addEventListener('change', (e) => {
 document.addEventListener('submit', (e) => {
   e.preventDefault();
   const id = e.target.id;
+  if (id === 'adminLogin') {
+    const f = new FormData(e.target);
+    if (f.get('password') === ADMIN_DEMO_PASSWORD) {
+      adminOk = true; try { sessionStorage.setItem('yaoua-admin-ok', '1'); } catch { /* ignore */ }
+      V.admin = 'dash'; render();
+    } else { $('#adminErr').textContent = 'Incorrect email or password.'; }
+    return;
+  }
   if (id === 'searchForm') { V.filters = { ...BLANK(), q: $('#q').value.trim() }; go('shop'); }
   if (id === 'newsForm') {
     if (!$('#nlEmail').value || !$('#nlEmail').checkValidity()) return toast('Enter a valid email address');

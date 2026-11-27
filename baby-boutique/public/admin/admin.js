@@ -728,7 +728,7 @@ async function route() {
 async function boot() {
   const { user } = await api('/auth/me');
   if (!user || !['ADMIN', 'STAFF'].includes(user.role)) {
-    location.href = `/login?next=${encodeURIComponent('/admin')}`;
+    location.replace('/admin/login');
     return;
   }
   me = user;
@@ -738,7 +738,7 @@ async function boot() {
   qs('#admin-user').textContent = `${user.name} · ${user.role}`;
   if (!isAdmin()) qsa('[data-admin]').forEach((a) => a.remove());
   qs('#admin-menu').addEventListener('click', () => qs('#side').classList.toggle('open'));
-  qs('#admin-logout').addEventListener('click', async () => { await api('/auth/logout', { method: 'POST' }); location.href = '/'; });
+  qs('#admin-logout').addEventListener('click', async () => { await api('/auth/logout', { method: 'POST' }); location.replace('/admin/login'); });
   window.addEventListener('hashchange', route);
   route();
 }

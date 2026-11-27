@@ -7,12 +7,11 @@ async function main() {
   if (!state.user) return (location.href = '/login?next=/account');
   setTitle('My account');
   const [{ orders }, { addresses }] = await Promise.all([api('/account/orders'), api('/auth/addresses')]);
-  const isStaff = ['ADMIN', 'STAFF'].includes(state.user.role);
 
   qs('#main').innerHTML = html`
     <div class="container section">
       <div class="section-head"><div><span class="eyebrow">My account</span><h1>Hello, ${state.user.name.split(' ')[0]}</h1></div>
-        <div class="buy-row">${raw(isStaff ? '<a class="btn btn--rose" href="/admin">Admin dashboard</a>' : '')}<button class="btn btn--ghost" id="logout">Log out</button></div></div>
+        <div class="buy-row"><button class="btn btn--ghost" id="logout">Log out</button></div></div>
       <div class="cart-layout">
         <section class="panel">
           <h2>Orders</h2>

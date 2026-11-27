@@ -8,6 +8,9 @@ const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().default(3000),
   APP_URL: z.string().url().default('http://localhost:3000'),
+  /// Optional separate admin address, e.g. https://admin.yaoua.qa. When set, the admin is served ONLY there
+  /// and the storefront has no /admin at all (404).
+  ADMIN_URL: z.string().url().optional(),
   DATABASE_URL: z.string().min(1),
   SESSION_TTL_DAYS: z.coerce.number().default(14),
   COOKIE_SECURE: bool,

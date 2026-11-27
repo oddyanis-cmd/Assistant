@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin sign in</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/admin/admin.css">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <script type="module" src="/admin/login.js"></script>
+</head>
+<body class="admin admin-login">
+  <main class="auth-card">
+    <div class="panel">
+      <h1 id="login-title">Admin sign in</h1>
+      <p class="muted">Staff only. Customer accounts cannot sign in here.</p>
+      <form id="admin-auth" novalidate>
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required autocomplete="username"></div>
+        <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" required autocomplete="current-password"></div>
+        <p class="form-error" role="alert" id="auth-error"></p>
+        <button class="btn btn--block">Sign in</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

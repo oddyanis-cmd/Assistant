@@ -8,6 +8,7 @@ const csrf = require('./middleware/csrf');
 const errorHandler = require('./middleware/errorHandler');
 const { visitorId } = require('./modules/analytics/service');
 const payments = require('./modules/payments/routes');
+const adminHost = require('./middleware/adminHost');
 
 function createApp() {
   const app = express();
@@ -33,6 +34,7 @@ function createApp() {
     }),
   );
   app.use(cookieParser());
+  app.use(adminHost);
 
   // Webhooks need the raw body and are authenticated by provider signatures, not cookies.
   app.use('/api/webhooks', payments.webhooks);
@@ -72,6 +74,7 @@ function createApp() {
   app.get('/account', page('account.html'));
   app.get('/wishlist', page('wishlist.html'));
   app.get(['/about', '/contact', '/faq', '/shipping-policy', '/return-policy', '/privacy-policy', '/terms', '/pages/:slug'], page('page.html'));
+  app.get('/admin/login', page('admin/login.html'));
   app.get(['/admin', '/admin/*rest'], page('admin/index.html'));
 
   app.use((req, res) => res.status(404).sendFile(path.join(pub, '404.html')));

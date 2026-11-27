@@ -34,6 +34,23 @@ settings validation, and order-status transition rules.
 
 ---
 
+
+## Keeping the admin separate from the shop
+
+Set `ADMIN_URL` (for example `https://admin.yaoua.qa`) next to `APP_URL` (`https://yaoua.qa`) and point both
+domains at the same server. Then:
+
+- the shop has **no** `/admin` and no `/api/admin` (they return 404), and no page links to the admin;
+- staff go straight to `ADMIN_URL/admin/login`, a dedicated sign-in page that refuses customer accounts;
+- every other page on the admin domain redirects to the admin, and the admin domain is marked `noindex`;
+- sessions are per domain, so being signed in on the shop never signs you in to the admin (or the reverse).
+
+Both sides share the same database, so orders placed in the shop appear in the admin immediately.
+Without `ADMIN_URL` (local development) the admin is at `http://localhost:3000/admin/login`.
+
+HTML previews: `YAOUA-Store.html` (customers) and `YAOUA-Admin.html` (staff, demo password `yaoua-admin`).
+Opened from the same folder in Chrome they share demo data.
+
 ## ⚠️ Payments in Qatar — read before going live
 
 Checked October 2026 (verify again on the providers' own pages before signing up):
