@@ -531,11 +531,12 @@ const LEGAL_DEFAULTS = () => ({
   ownerAr: 'سهير بن صغير',
   cr: '258148',
   ecom: '[E-commerce licence number]',
-  address: '[Building No., Street No., Zone No., City], State of Qatar',
-  email: '[hello@yaoua.qa]',
-  phone: '[+974 XXXX XXXX]',
-  whatsapp: '[+974 XXXX XXXX]',
-  website: '[www.yaoua.qa]',
+  address: 'Online business (no physical shop), State of Qatar',
+  addressAr: 'نشاط تجاري إلكتروني (بدون محل فعلي)، دولة قطر',
+  email: 'info@yaoua.qa',
+  phone: '+974 7735 3521',
+  whatsapp: '+974 7735 3521',
+  website: 'www.yaoua.qa',
   hours: 'Sunday to Thursday, 9:00 to 17:00 (Doha time)',
   hoursAr: 'من الأحد إلى الخميس، من 9:00 صباحاً حتى 5:00 مساءً (بتوقيت الدوحة)',
   updated: '24 November 2026',
@@ -568,13 +569,13 @@ function legalPages() {
     ] },
 
     seller: { t: 'Seller information', ta: 'معلومات البائع', en: [
-      ['Business details', `Trading name: YAOUA\nRegistered name: ${L.legalName}\nOwner / authorised signatory: ${L.owner}\nCommercial Registration (CR) No.: ${L.cr}\nE-commerce licence No.: ${L.ecom}\nLicensing authority: Ministry of Commerce and Industry (MoCI), State of Qatar\nBusiness activity: online retail of handmade crocheted baby clothing, accessories and soft toys`],
+      ['Business details', `Trading name: YAOUA\nRegistered name: ${L.legalName}\nCommercial Registration (CR) No.: ${L.cr}\nE-commerce licence No.: ${L.ecom}\nLicensing authority: Ministry of Commerce and Industry (MoCI), State of Qatar\nBusiness activity: online retail of handmade crocheted baby clothing, accessories and soft toys`],
       ['Address and contact', `Address: ${L.address}\nEmail: ${L.email}\nPhone: ${L.phone}\nWhatsApp: ${L.whatsapp}\nCustomer service hours: ${L.hours}\nWebsite: ${L.website}`],
       ['Laws that apply to this store', '• Law No. 8 of 2008 on Consumer Protection and its executive regulations\n• Decree-Law No. 16 of 2010 promulgating the Electronic Transactions and Commerce Law\n• Law No. 13 of 2016 on Personal Data Privacy Protection\n• Ministerial Decision No. 25 of 2026 on e-commerce licensing (MoCI)'],
       ['Codes of conduct', 'We follow the consumer protection rules and guidance published by the Ministry of Commerce and Industry. We are not a member of any other code of conduct.'],
     ], ar: [
-      ['بيانات النشاط التجاري', `الاسم التجاري: YAOUA (ياوا)\nالاسم المسجل: ${L.legalNameAr}\nالمالك / المفوض بالتوقيع: ${L.ownerAr}\nرقم السجل التجاري: ${L.cr}\nرقم ترخيص التجارة الإلكترونية: ${L.ecom}\nجهة الترخيص: وزارة التجارة والصناعة، دولة قطر\nالنشاط: البيع الإلكتروني بالتجزئة لملابس الأطفال والإكسسوارات والألعاب المصنوعة يدوياً بالكروشيه`],
-      ['العنوان ووسائل التواصل', `العنوان: ${L.address}\nالبريد الإلكتروني: ${L.email}\nالهاتف: ${L.phone}\nواتساب: ${L.whatsapp}\nساعات خدمة العملاء: ${L.hoursAr}\nالموقع الإلكتروني: ${L.website}`],
+      ['بيانات النشاط التجاري', `الاسم التجاري: YAOUA (ياوا)\nالاسم المسجل: ${L.legalNameAr}\nرقم السجل التجاري: ${L.cr}\nرقم ترخيص التجارة الإلكترونية: ${L.ecom}\nجهة الترخيص: وزارة التجارة والصناعة، دولة قطر\nالنشاط: البيع الإلكتروني بالتجزئة لملابس الأطفال والإكسسوارات والألعاب المصنوعة يدوياً بالكروشيه`],
+      ['العنوان ووسائل التواصل', `العنوان: ${L.addressAr}\nالبريد الإلكتروني: ${L.email}\nالهاتف: ${L.phone}\nواتساب: ${L.whatsapp}\nساعات خدمة العملاء: ${L.hoursAr}\nالموقع الإلكتروني: ${L.website}`],
       ['القوانين المطبقة على المتجر', '• القانون رقم (8) لسنة 2008 بشأن حماية المستهلك ولائحته التنفيذية\n• المرسوم بقانون رقم (16) لسنة 2010 بإصدار قانون المعاملات والتجارة الإلكترونية\n• القانون رقم (13) لسنة 2016 بشأن حماية خصوصية البيانات الشخصية\n• القرار الوزاري رقم (25) لسنة 2026 بشأن ترخيص التجارة الإلكترونية (وزارة التجارة والصناعة)'],
       ['مدونات السلوك', 'نلتزم بقواعد حماية المستهلك والإرشادات الصادرة عن وزارة التجارة والصناعة، ولسنا أعضاء في أي مدونة سلوك أخرى.'],
     ] },
@@ -624,7 +625,7 @@ function legalPages() {
       ['Cookies and browser storage', 'See our Cookie policy.'],
       ['Changes', `We will post any changes on this page. Last updated: ${L.updated}. The Arabic version prevails.`],
     ], ar: [
-      ['المسؤول عن بياناتك', `${L.legalNameAr} (YAOUA)، ${L.address}، هو المراقب المسؤول عن بياناتك الشخصية وفقاً للقانون رقم (13) لسنة 2016 بشأن حماية خصوصية البيانات الشخصية. للاستفسارات: ${L.email}.`],
+      ['المسؤول عن بياناتك', `${L.legalNameAr} (YAOUA)، ${L.addressAr}، هو المراقب المسؤول عن بياناتك الشخصية وفقاً للقانون رقم (13) لسنة 2016 بشأن حماية خصوصية البيانات الشخصية. للاستفسارات: ${L.email}.`],
       ['البيانات التي نجمعها', '• الاسم والبريد الإلكتروني ورقم الهاتف\n• عنوان التوصيل\n• تفاصيل الطلبات وسجلها\n• نص التخصيص الذي تقدمه، مثل اسم الطفل\n• تأكيد الدفع من مزود الدفع (دون أرقام البطاقات الكاملة)\n• الرسائل التي ترسلها إلينا\n• اشتراكك في النشرة البريدية، فقط إذا وافقت\n• محتويات السلة وتفضيلاتك، وتُحفظ في متصفحك'],
       ['لماذا نستخدمها', '• لتصنيع طلبك وتوصيله ومتابعته (تنفيذ العقد معك)\n• لإصدار الفواتير والاحتفاظ بالسجلات التي يتطلبها القانون\n• للرد على استفساراتك وشكاواك\n• لإرسال النشرة البريدية بموافقتك فقط، ويمكنك سحبها في أي وقت\n• لحماية الموقع ومنع الاحتيال'],
       ['الأطفال', 'منتجاتنا مخصصة للأطفال، لكن الموقع موجه للبالغين. لا نجمع عن قصد بيانات شخصية من الأطفال. إذا قدمت اسم طفل للتخصيص، فإنك تؤكد أنك الوالد أو الولي أو لديك إذنه. نستخدم الاسم فقط لتصنيع القطعة ونحذفه بعد 90 يوماً من التوصيل.'],
@@ -775,7 +776,7 @@ function seedState() {
 }
 
 // ===================== State (kept in this browser only) =====================
-const KEY = 'yaoua-preview-v3';
+const KEY = 'yaoua-preview-v4';
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY)) || seedState(); } catch { S = seedState(); }
 S.settings.legal = { ...LEGAL_DEFAULTS(), ...(S.settings.legal || {}) };
@@ -877,7 +878,7 @@ function footer() {
     </div>
     <div class="legal-strip">
       <div lang="en"><strong style="color:var(--heading)">${esc(S.settings.brand)}</strong> · ${ph(L.legalName)}<br>Commercial Registration No. ${ph(L.cr)} · E-commerce licence No. ${ph(L.ecom)}<br>Licensed by the Ministry of Commerce and Industry, State of Qatar<br>${ph(L.address)}<br>All prices in Qatari riyals (QAR). Consumer complaints: MoCI hotline 16001.</div>
-      <div class="ar"><strong style="color:var(--heading)">${esc(S.settings.brand)}</strong> · ${phAr(L.legalNameAr)}<br>سجل تجاري رقم ${phAr(L.cr)} · ترخيص تجارة إلكترونية رقم ${phAr(L.ecom)}<br>مرخّص من وزارة التجارة والصناعة، دولة قطر<br>${phAr(L.address)}<br>جميع الأسعار بالريال القطري. شكاوى المستهلكين: الخط الساخن لوزارة التجارة والصناعة 16001</div>
+      <div class="ar"><strong style="color:var(--heading)">${esc(S.settings.brand)}</strong> · ${phAr(L.legalNameAr)}<br>سجل تجاري رقم ${phAr(L.cr)} · ترخيص تجارة إلكترونية رقم ${phAr(L.ecom)}<br>مرخّص من وزارة التجارة والصناعة، دولة قطر<br>${phAr(L.addressAr)}<br>جميع الأسعار بالريال القطري. شكاوى المستهلكين: الخط الساخن لوزارة التجارة والصناعة 16001</div>
     </div>
     <div class="fbottom"><span>© 2026 ${esc(S.settings.brand)}. Payments are processed by a licensed payment provider. We never store card details.</span><span class="pay"><span>VISA</span><span>Mastercard</span><span>NAPS</span></span></div>
   </div></footer>`;
@@ -1235,8 +1236,8 @@ function aConfig() {
       <div><button class="btn">Save settings</button></div></form>
     <h2 style="margin-top:28px">Legal &amp; business details</h2><p class="muted">These appear in the footer, Seller information, all policies and every invoice. Fill them in from your CR and e-commerce licence before submitting the site to the Ministry.</p>
     <form id="legalForm" class="panel stack">
-      <div class="grid2">${[['legalName', 'Registered business name (as on CR)'], ['legalNameAr', 'Registered business name (Arabic)'], ['owner', 'Owner / authorised signatory'], ['ownerAr', 'Owner / authorised signatory (Arabic)'], ['cr', 'Commercial Registration (CR) No.'], ['ecom', 'E-commerce licence No. (MoCI)'], ['email', 'Customer service email'], ['phone', 'Phone'], ['whatsapp', 'WhatsApp'], ['website', 'Website address'], ['hours', 'Service hours (English)'], ['hoursAr', 'Service hours (Arabic)'], ['updated', 'Policies last updated']].map(([k, l]) => `<label class="f">${l}<input data-legal="${k}" value="${esc(S.settings.legal[k])}"></label>`).join('')}</div>
-      <label class="f">Business address<input data-legal="address" value="${esc(S.settings.legal.address)}"></label>
+      <div class="grid2">${[['legalName', 'Registered business name (as on CR)'], ['legalNameAr', 'Registered business name (Arabic)'], ['owner', 'Owner / authorised signatory (internal, not shown on site)'], ['ownerAr', 'Owner, Arabic (internal, not shown on site)'], ['cr', 'Commercial Registration (CR) No.'], ['ecom', 'E-commerce licence No. (MoCI)'], ['email', 'Customer service email'], ['phone', 'Phone'], ['whatsapp', 'WhatsApp'], ['website', 'Website address'], ['hours', 'Service hours (English)'], ['hoursAr', 'Service hours (Arabic)'], ['updated', 'Policies last updated']].map(([k, l]) => `<label class="f">${l}<input data-legal="${k}" value="${esc(S.settings.legal[k])}"></label>`).join('')}</div>
+      <label class="f">Business address<input data-legal="address" value="${esc(S.settings.legal.address)}"></label><label class="f">Business address (Arabic)<input data-legal="addressAr" value="${esc(S.settings.legal.addressAr)}"></label>
       <div><button class="btn">Save legal details</button></div></form>`;
 }
 
