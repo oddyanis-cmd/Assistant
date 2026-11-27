@@ -21,10 +21,11 @@ body.admin { background: #F6F2EC; }
 }
 .view-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
 .view-head h1 { font-size: 2rem; margin: 0; }
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
-.kpi { background: var(--white); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow-sm); }
-.kpi .v { font-size: 1.6rem; font-weight: 800; color: var(--brown); font-family: var(--font-heading); }
-.kpi .l { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 14px; margin-bottom: 20px; }
+.kpi { min-width: 0; background: var(--white); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow-sm); container-type: inline-size; }
+/* Figures use the body sans, scale with the card and never spill out of it. */
+.kpi .v { font-size: clamp(1.4rem, 13cqi, 2rem); font-weight: 800; color: var(--brown); font-family: var(--font-body, inherit); line-height: 1.1; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi .l { font-size: .86rem; color: var(--muted); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 @media (max-width: 1000px) { .grid-2 { grid-template-columns: 1fr; } }
 table.data { width: 100%; border-collapse: collapse; background: var(--white); font-size: .9rem; }

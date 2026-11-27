@@ -296,10 +296,40 @@ table.t { width: 100%; border-collapse: collapse; font-size: .88rem; background:
 .aside button[aria-current="true"] { background: #fff; color: #3E2F26; box-shadow: var(--shadow-sm); }
 .amain { padding: 28px max(18px, env(safe-area-inset-right, 0px)) 40px 28px; min-width: 0; }
 @media (max-width: 860px) { .admin { grid-template-columns: 1fr; } .aside { flex-direction: row; flex-wrap: wrap; padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); } .aside .logo { width: 100%; padding-bottom: 6px; } .amain { padding-left: max(18px, env(safe-area-inset-left, 0px)); } }
-.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 18px; }
-.kpi { background: var(--surface); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); }
-.kpi .v { font-family: var(--f-display); font-size: 1.75rem; font-weight: 700; color: var(--heading); font-variant-numeric: tabular-nums; }
-.kpi .l { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 800; }
+.kpiwrap { container-type: inline-size; margin-bottom: 22px; }
+.kpis { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; grid-auto-flow: row dense; }
+@container (min-width: 520px) { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kpi.wide, .kpi.hero { grid-column: span 2; } }
+@container (min-width: 900px) { .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.kpi { position: relative; display: flex; flex-direction: column; gap: 10px; min-width: 0; background: var(--surface); border-radius: 18px; padding: 18px 18px 14px; box-shadow: var(--shadow-sm); container-type: inline-size; transition: transform .2s ease, box-shadow .2s ease; }
+.kpi:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.kpi.hero { background: linear-gradient(160deg, var(--surface) 55%, color-mix(in srgb, var(--soft) 55%, var(--surface))); }
+.kpi .kh { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.kpi .ki { flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--tint2); color: var(--rust); }
+.kpi .ki svg { width: 17px; height: 17px; }
+.kpi .l { font-size: .86rem; font-weight: 700; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi .v { font-family: var(--f-body); font-weight: 800; color: var(--heading); font-size: clamp(1.55rem, 13cqi, 2.15rem); line-height: 1.05; letter-spacing: -.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi.hero .v { font-size: clamp(2.2rem, 9cqi, 3.25rem); }
+.kpi .u { font-size: .46em; font-weight: 800; color: var(--muted); letter-spacing: .04em; margin-inline-end: .35em; vertical-align: .62em; }
+.kpi .kf { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: .78rem; color: var(--muted); min-height: 22px; }
+.kpi .d { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: var(--pill); font-weight: 800; font-size: .76rem; }
+.kpi .d svg { width: 11px; height: 11px; }
+.kpi .d.up { color: var(--ok); background: var(--ok-bg); } .kpi .d.down { color: var(--bad); background: var(--bad-bg); } .kpi .d.flat { color: var(--muted); background: var(--tint2); }
+.kpi .d.warn { color: var(--warn); background: var(--warn-bg); }
+.kpi .spk { position: relative; height: 38px; margin-top: auto; }
+.kpi.hero .spk { height: 58px; }
+.kpi .spark { display: block; width: 100%; height: 100%; overflow: visible; }
+.kpi .spk i { position: absolute; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: var(--rust); box-shadow: 0 0 0 2px var(--surface); }
+.kpi .funnel { display: grid; gap: 7px; margin-top: auto; }
+.kpi .fs { display: grid; grid-template-columns: 8.6em minmax(0, 1fr) 3.4em; white-space: nowrap; align-items: center; gap: 10px; font-size: .78rem; color: var(--muted); }
+.kpi .fs b { color: var(--heading); font-weight: 800; text-align: end; font-variant-numeric: tabular-nums; }
+.kpi .fs .tr { height: 8px; border-radius: var(--pill); background: color-mix(in srgb, var(--rose) 26%, var(--surface)); overflow: hidden; }
+.kpi .fs .tr span { display: block; height: 100%; min-width: 4px; border-radius: var(--pill); background: color-mix(in srgb, var(--rust) 70%, var(--rose)); }
+.kpi .fs:last-child .tr span { background: var(--rust); }
+.kpi .spark .sl { fill: none; stroke: color-mix(in srgb, var(--rust) 38%, var(--surface)); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.kpi .spark .sa { fill: color-mix(in srgb, var(--rose) 22%, transparent); }
+.kpi .spark .sd { fill: var(--rust); stroke: var(--surface); stroke-width: 2; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .kpi, .kpi:hover { transition: none; transform: none; } }
 .agrid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 @media (max-width: 1000px) { .agrid { grid-template-columns: 1fr; } }
 .bars { display: flex; align-items: flex-end; gap: 4px; height: 150px; border-bottom: 1px solid var(--line); }
@@ -1183,6 +1213,61 @@ function admin() {
   return `<div class="admin"><aside class="aside"><button class="logo" data-admin="dash" title="Dashboard">${knitLogo()}</button>${tabs.map(([k, l]) => `<button data-admin="${k}" aria-current="${V.admin === k || (V.admin === 'edit' && k === 'products')}">${l}</button>`).join('')}<button class="signout" data-act="adminout">Sign out</button></aside>
     <main class="amain">${({ dash: aDash, orders: aOrders, products: aProducts, inventory: aInventory, reviews: aReviews, config: aConfig, edit: aEdit }[V.admin] || aDash)()}</main></div>`;
 }
+// ---- Dashboard stat tiles: label · value · change vs the previous 12 days · 12-day trend ----
+const KPI_ICONS = {
+  rev: '<path d="M4 7h16v10H4z"/><circle cx="12" cy="12" r="2.5"/><path d="M7 7V5h10v2"/>',
+  orders: '<path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  avg: '<path d="M5 4h14v16l-3-2-2 2-2-2-2 2-2-2-3 2V4Z"/><path d="M9 9h6M9 13h4"/>',
+  ship: '<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/>',
+  conv: '<path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z"/>',
+  subs: '<path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/>',
+};
+const kIcon = (k) => `<span class="ki" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${KPI_ICONS[k]}</svg></span>`;
+const ARROW = { up: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2 10 8H2Z" fill="currentColor"/></svg>', down: '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10 2 4h8Z" fill="currentColor"/></svg>' };
+function sparkline(vals) {
+  const w = 120, h = 32, max = Math.max(1, ...vals);
+  const pts = vals.map((v, i) => [2 + (i * (w - 4)) / (vals.length - 1), h - 3 - (v / max) * (h - 8)]);
+  const d = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join('');
+  const [lx, ly] = pts[pts.length - 1];
+  // The end dot is HTML (not SVG) so it stays perfectly round while the line stretches to the card width.
+  return `<div class="spk" aria-hidden="true"><svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path class="sa" d="${d}L${lx} ${h}L2 ${h}Z"/><path class="sl" d="${d}"/></svg><i style="left:${((lx / w) * 100).toFixed(2)}%;top:${((ly / h) * 100).toFixed(2)}%"></i></div>`;
+}
+function deltaChip(cur, prev) {
+  if (!prev) return '<span class="d flat">New</span>';
+  const pct = Math.round(((cur - prev) / prev) * 100);
+  if (pct === 0) return '<span class="d flat">No change</span>';
+  const dir = pct > 0 ? 'up' : 'down';
+  return `<span class="d ${dir}">${ARROW[dir]}<span class="sr-only">${dir === 'up' ? 'Up' : 'Down'} </span>${Math.abs(pct)}%</span>`;
+}
+const qar = (minor) => `<span class="u">QAR</span>${Math.round(minor / 100).toLocaleString('en-US')}`;
+function funnel(e, orders) {
+  const steps = [['Visitors', e.visitors], ['Added to cart', e.carts], ['Started checkout', e.checkouts], ['Ordered', orders]];
+  return `<div class="funnel" role="list" aria-label="Shopper journey">${steps.map(([l, n]) => `<div class="fs" role="listitem"><span>${l}</span><span class="tr"><span style="width:${((n / steps[0][1]) * 100).toFixed(1)}%"></span></span><b>${n.toLocaleString('en-US')}</b></div>`).join('')}</div>`;
+}
+function kpiTiles(paid, rev, e) {
+  const DAY = 864e5, today = new Date().setHours(0, 0, 0, 0);
+  const series = (fn) => Array.from({ length: 24 }, (_, i) => { const start = today - (23 - i) * DAY; return fn(paid.filter((o) => o.at >= start && o.at < start + DAY)); });
+  const revDays = series((os) => os.reduce((s, o) => s + o.total, 0));
+  const ordDays = series((os) => os.length);
+  const sum = (a) => a.reduce((s, v) => s + v, 0);
+  const cur = (a) => a.slice(12), prev = (a) => a.slice(0, 12);
+  const avgCur = sum(cur(ordDays)) ? sum(cur(revDays)) / sum(cur(ordDays)) : 0;
+  const avgPrev = sum(prev(ordDays)) ? sum(prev(revDays)) / sum(prev(ordDays)) : 0;
+  const avgDays = cur(revDays).map((r, i) => (cur(ordDays)[i] ? r / cur(ordDays)[i] : 0));
+  const waiting = S.orders.filter((o) => ['PAID', 'PROCESSING'].includes(o.status)).length;
+  const conv = e.visitors ? (paid.length / e.visitors) * 100 : 0;
+  const vs = '<span>vs previous 12 days</span>';
+  const tile = (cls, key, label, value, foot, extra, title) =>
+    `<div class="kpi ${cls}" title="${esc(title)}">${''}<div class="kh">${kIcon(key)}<span class="l">${label}</span></div><div class="v">${value}</div><div class="kf">${foot}</div>${extra}</div>`;
+  return [
+    tile('hero', 'rev', 'Revenue', qar(rev), deltaChip(sum(cur(revDays)), sum(prev(revDays))) + vs, sparkline(cur(revDays)), `Revenue: ${fmt(rev)}`),
+    tile('', 'orders', 'Orders', paid.length.toLocaleString('en-US'), deltaChip(sum(cur(ordDays)), sum(prev(ordDays))) + vs, sparkline(cur(ordDays)), `${paid.length} paid orders`),
+    tile('', 'avg', 'Average order', qar(paid.length ? rev / paid.length : 0), deltaChip(avgCur, avgPrev) + vs, sparkline(avgDays), `Average order: ${fmt(paid.length ? Math.round(rev / paid.length) : 0)}`),
+    tile('', 'ship', 'To make &amp; ship', String(waiting), waiting ? '<span class="d warn">Needs attention</span><span>paid, not yet shipped</span>' : '<span class="d up">All caught up</span>', '', `${waiting} orders waiting to be made or shipped`),
+    tile('wide', 'conv', 'Conversion', `${conv.toFixed(1)}<span class="u" style="vertical-align:.1em;margin-inline:.15em 0">%</span>`, `<span>of ${e.visitors.toLocaleString('en-US')} visitors placed an order</span>`, funnel(e, paid.length), 'Share of visitors who placed an order'),
+    tile('', 'subs', 'Subscribers', S.subs.toLocaleString('en-US'), '<span>newsletter sign-ups with consent</span>', '', `${S.subs} newsletter subscribers`),
+  ].join('');
+}
 function aDash() {
   const paid = S.orders.filter((o) => !['CANCELLED', 'REFUNDED'].includes(o.status));
   const rev = paid.reduce((s, o) => s + o.total, 0);
@@ -1192,13 +1277,7 @@ function aDash() {
   const low = S.products.flatMap((p) => p.variants.filter((v) => v.stock <= 2).map((v) => ({ p, v }))).slice(0, 8);
   const e = S.events;
   return `<div class="row between"><h1>Dashboard</h1><span class="muted">Last 28 days · example data</span></div>
-    <div class="kpis">
-      <div class="kpi"><div class="l">Revenue</div><div class="v">${fmt(rev)}</div></div>
-      <div class="kpi"><div class="l">Orders</div><div class="v">${paid.length}</div></div>
-      <div class="kpi"><div class="l">Avg. order</div><div class="v">${fmt(paid.length ? Math.round(rev / paid.length) : 0)}</div></div>
-      <div class="kpi"><div class="l">To make &amp; ship</div><div class="v">${S.orders.filter((o) => ['PAID', 'PROCESSING'].includes(o.status)).length}</div></div>
-      <div class="kpi"><div class="l">Conversion</div><div class="v">${((paid.length / e.visitors) * 100).toFixed(1)}%</div></div>
-      <div class="kpi"><div class="l">Subscribers</div><div class="v">${S.subs}</div></div>
+    <div class="kpiwrap"><div class="kpis">${kpiTiles(paid, rev, e)}</div>
     </div>
     <div class="agrid">
       <section class="panel"><h2>Revenue by day</h2><div class="bars">${days.map((d, i) => `<div style="height:${Math.round((d / max) * 100)}%" title="${new Date(Date.now() - (27 - i) * 864e5).toLocaleDateString()}: ${fmt(d)}"></div>`).join('')}</div><div class="row between small" style="margin-top:6px"><span>28 days ago</span><span>Today</span></div></section>
