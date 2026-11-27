@@ -4,7 +4,9 @@
   "private": true,
   "description": "Handmade baby knitwear & dolls e-commerce: Express + Prisma + PostgreSQL storefront and admin dashboard.",
   "main": "src/server.js",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
@@ -25,6 +27,7 @@
     "express-rate-limit": "8.0.1",
     "helmet": "8.1.0",
     "multer": "2.0.2",
+    "serverless-http": "4.0.0",
     "sharp": "0.34.4",
     "stripe": "18.5.0",
     "zod": "3.25.76"

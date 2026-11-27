@@ -25,7 +25,7 @@ module.exports = function adminHost(req, res, next) {
 
   if (isAdminPath(p)) {
     if (p.startsWith('/api/')) return res.status(404).json({ error: 'Not found' });
-    return res.status(404).sendFile(path.join(__dirname, '..', '..', 'public', '404.html'));
+    return res.status(404).sendFile('404.html', { root: path.join(__dirname, '..', '..', 'public') });
   }
   return next();
 };

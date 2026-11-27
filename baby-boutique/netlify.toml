@@ -1,0 +1,26 @@
+# Netlify deployment for YAOUA (shop + separate admin). In the Netlify UI set Base directory = baby-boutique.
+# The whole Express app runs in one Netlify Function, so static files, the admin/shop domain split and
+# security headers are all handled by the app itself.
+
+[build]
+  # Applies database changes before each deploy goes live. Uses the direct (non-pooled) database URL when
+  # DIRECT_DATABASE_URL is set, as Neon/Supabase poolers can't run migrations.
+  command = "DATABASE_URL=\"${DIRECT_DATABASE_URL:-$DATABASE_URL}\" npx prisma migrate deploy"
+  publish = "netlify/publish"             # deliberately (almost) empty: nothing bypasses the app
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  included_files = ["public/**", "node_modules/.prisma/client/*.node", "node_modules/.prisma/client/schema.prisma"]
+  external_node_modules = ["argon2", "sharp", "@prisma/client", ".prisma"]
+
+[functions.housekeeping]
+  schedule = "*/5 * * * *"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/app"
+  status = 200
+  force = true

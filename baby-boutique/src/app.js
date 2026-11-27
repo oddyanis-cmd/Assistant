@@ -62,7 +62,8 @@ function createApp() {
   app.use('/uploads', express.static(path.resolve(env.MEDIA_UPLOAD_DIR), { maxAge: '30d', immutable: true, index: false }));
   app.use(express.static(pub, { index: false, maxAge: env.isProd ? '1h' : 0 }));
 
-  const page = (file) => (_req, res) => res.sendFile(path.join(pub, file));
+  // `root` keeps send's dot-file guard to the file's own path (hosts like Netlify unpack under hidden dirs).
+  const page = (file) => (_req, res) => res.sendFile(file, { root: pub });
   app.get('/', page('index.html'));
   app.get('/shop', page('shop.html'));
   app.get('/product/:slug', page('product.html'));
@@ -77,7 +78,7 @@ function createApp() {
   app.get('/admin/login', page('admin/login.html'));
   app.get(['/admin', '/admin/*rest'], page('admin/index.html'));
 
-  app.use((req, res) => res.status(404).sendFile(path.join(pub, '404.html')));
+  app.use((req, res) => res.status(404).sendFile('404.html', { root: pub }));
   app.use(errorHandler);
   return app;
 }
