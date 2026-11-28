@@ -18,6 +18,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@netlify/aws-lambda-compat": "2.0.4",
     "@netlify/blobs": "11.1.12",
     "@netlify/database": "2.0.4",
     "@prisma/client": "6.19.3",

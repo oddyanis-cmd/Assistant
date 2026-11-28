@@ -1,5 +1,5 @@
 # Netlify deployment for YAOUA (shop + separate admin). In the Netlify UI set Base directory = baby-boutique.
-# The whole Express app runs in one Netlify Function, so static files, the admin/shop domain split and
+# The whole Express app runs in one Netlify Function (path /*, see netlify/functions/app.mjs), so static files, the admin/shop domain split and
 # security headers are all handled by the app itself.
 
 [build]
@@ -17,12 +17,3 @@
 [functions]
   included_files = ["public/**", "node_modules/.prisma/client/*.node", "node_modules/.prisma/client/schema.prisma"]
   external_node_modules = ["argon2", "sharp", "@prisma/client", ".prisma"]
-
-[functions.housekeeping]
-  schedule = "*/5 * * * *"
-
-[[redirects]]
-  from = "/*"
-  to = "/.netlify/functions/app"
-  status = 200
-  force = true
