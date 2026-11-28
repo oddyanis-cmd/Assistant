@@ -5,7 +5,6 @@
 //    storefront page redirects to /admin, and search engines are told not to index anything.
 // Session cookies are host-only, so a storefront login never carries over to the admin and vice versa.
 // Without ADMIN_URL (local development) both live on one host, as before.
-const path = require('node:path');
 const env = require('../config/env');
 
 const isAdminPath = (p) => p === '/admin' || p.startsWith('/admin/') || p === '/api/admin' || p.startsWith('/api/admin/');
@@ -25,7 +24,7 @@ module.exports = function adminHost(req, res, next) {
 
   if (isAdminPath(p)) {
     if (p.startsWith('/api/')) return res.status(404).json({ error: 'Not found' });
-    return res.status(404).sendFile('404.html', { root: path.join(__dirname, '..', '..', 'public') });
+    return res.status(404).sendFile('404.html', { root: require('../lib/paths').publicDir });
   }
   return next();
 };

@@ -2,6 +2,7 @@
 // It is a modern Netlify Function (default export + config.path), which is what gives it the
 // site's Netlify Database connection (NETLIFY_DB_URL) and Netlify Blobs automatically.
 // withLambda adapts the web Request/Response to the event shape serverless-http expects.
+import '../deps.mjs'; // ships every runtime package with the function
 import { withLambda } from '@netlify/aws-lambda-compat';
 import serverless from 'serverless-http';
 import appModule from '../../src/app.js';

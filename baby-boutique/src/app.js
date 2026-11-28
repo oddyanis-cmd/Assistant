@@ -58,7 +58,7 @@ function createApp() {
   app.use(payments.pages);
 
   // ---------- Static storefront & admin ----------
-  const pub = path.join(__dirname, '..', 'public');
+  const { publicDir: pub } = require('./lib/paths');
   // Product photos stored in Netlify Blobs (MEDIA_PROVIDER=netlify).
   app.get('/media/*key', async (req, res, next) => {
     if (env.MEDIA_PROVIDER !== 'netlify') return next();
