@@ -33,6 +33,8 @@ const schema = z.object({
   /// before a real gateway (QPay/cards) is connected. Shows a "test mode" banner on every page.
   /// Must be false (or removed) before real customers buy.
   PAYMENTS_TEST_MODE: bool,
+  /// Two-step sign-in (authenticator code) for ADMIN/STAFF. On unless set to "false".
+  ADMIN_MFA: z.enum(['true', 'false']).default('true').transform((v) => v === 'true'),
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   PAYPAL_CLIENT_ID: z.string().optional(),

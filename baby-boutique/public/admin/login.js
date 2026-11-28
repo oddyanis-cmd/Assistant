@@ -33,6 +33,7 @@ async function main() {
         await api('/auth/logout', { method: 'POST' });
         throw new Error('This account does not have admin access.');
       }
+      if (r.mfa && r.mfa.required === false) return location.replace('/admin');
       await showMfa(r.mfa?.enrolled);
     } catch (ex) {
       qs('#auth-error').textContent = errText(ex);

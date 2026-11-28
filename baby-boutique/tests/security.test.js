@@ -172,3 +172,22 @@ test('security headers are sent and personal data is never cached', async () => 
   assert.equal(r.headers['x-powered-by'], undefined);
   assert.match((await agent().get('/.well-known/security.txt')).text, /Contact: mailto:/);
 });
+
+test('two-step sign-in can be switched off by the owner (ADMIN_MFA=false) and back on', async () => {
+  const env = require('../src/config/env');
+  const email = 'nomfa-admin@test.local';
+  await prisma.user.create({ data: { email, name: 'Boss', role: 'ADMIN', passwordHash: await hashPassword('Password12345') } });
+  env.ADMIN_MFA = false;
+  try {
+    const a = agent();
+    const r = await a.post('/api/auth/login').send({ email, password: 'Password12345' });
+    assert.equal(r.body.mfa.required, false);
+    assert.equal((await a.get('/api/admin/products')).status, 200, 'password alone opens the admin');
+    assert.equal((await agent().post('/api/auth/login').send({ email, password: 'wrong-password' })).status, 401, 'wrong password still refused');
+  } finally {
+    env.ADMIN_MFA = true;
+  }
+  const b = agent();
+  await b.post('/api/auth/login').send({ email, password: 'Password12345' });
+  assert.equal((await b.get('/api/admin/products')).status, 401, 'switched back on: code required again');
+});

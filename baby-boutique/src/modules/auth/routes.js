@@ -9,6 +9,7 @@ const { badRequest, unauthorized, conflict } = require('../../lib/errors');
 const { hashPassword, verifyPassword, dummyVerify } = require('./password');
 const { createSession, destroySession, requireAuth, STAFF_ROLES } = require('../../middleware/session');
 const { mergeGuestCartIntoUser } = require('../cart/service');
+const env = require('../../config/env');
 
 const router = Router();
 
@@ -78,9 +79,10 @@ router.post('/login', authLimiter, emailLimiter, async (req, res) => {
     throw generic;
   }
   await prisma.user.update({ where: { id: user.id }, data: { failedLogins: 0, lockedUntil: null } });
-  await createSession(res, req, user.id, user.role);
+  // With ADMIN_MFA=false the password alone unlocks the admin (owner's temporary choice).
+  await createSession(res, req, user.id, user.role, { mfaVerified: isStaff(user) && !env.ADMIN_MFA });
   await mergeGuestCartIntoUser(req, res, user.id);
-  res.json({ user: publicUser(user), ...(isStaff(user) && { mfa: { required: true, enrolled: user.totpEnabled } }) });
+  res.json({ user: publicUser(user), ...(isStaff(user) && { mfa: { required: env.ADMIN_MFA, enrolled: user.totpEnabled } }) });
 });
 
 router.post('/logout', async (req, res) => {
@@ -93,7 +95,7 @@ router.get('/me', async (req, res) => {
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   res.json({
     user: publicUser(user),
-    ...(isStaff(user) && { mfa: { required: true, enrolled: user.totpEnabled, verified: Boolean(req.mfaVerified) } }),
+    ...(isStaff(user) && { mfa: { required: env.ADMIN_MFA, enrolled: user.totpEnabled, verified: Boolean(req.mfaVerified) || !env.ADMIN_MFA } }),
   });
 });
 

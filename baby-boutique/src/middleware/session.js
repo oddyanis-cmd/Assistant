@@ -21,7 +21,7 @@ function cookieOptions(maxAgeMs) {
   };
 }
 
-async function createSession(res, req, userId, role) {
+async function createSession(res, req, userId, role, { mfaVerified = false } = {}) {
   const token = randomToken();
   // Staff/admin sessions last 12 hours; customers keep the longer "stay signed in" period.
   const ttl = STAFF_ROLES.includes(role) ? STAFF_SESSION_HOURS * 36e5 : env.SESSION_TTL_DAYS * 864e5;
@@ -32,6 +32,7 @@ async function createSession(res, req, userId, role) {
       expiresAt: new Date(Date.now() + ttl),
       ip: clientIp(req),
       userAgent: req.get('user-agent')?.slice(0, 255),
+      mfaVerified,
     },
   });
   res.cookie(SESSION_COOKIE, token, cookieOptions(ttl));
