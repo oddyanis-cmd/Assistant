@@ -12,7 +12,13 @@ const handle = serverless(appModule.createApp(), {
   binary: ['image/*', 'font/*', 'application/octet-stream', 'application/pdf', 'multipart/form-data'],
 });
 
-export default withLambda((event, context) => handle(event, context));
+// Web Responses cannot carry a body with 204/205/304 statuses; drop the empty body serverless-http adds.
+const NO_BODY = new Set([204, 205, 304]);
+export default withLambda(async (event, context) => {
+  const result = await handle(event, context);
+  if (NO_BODY.has(result.statusCode)) { delete result.body; result.isBase64Encoded = false; }
+  return result;
+});
 
 // Every path goes to the app, so the admin/shop domain split and security headers always apply.
 export const config = { path: '/*' };
