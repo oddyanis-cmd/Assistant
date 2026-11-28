@@ -59,7 +59,7 @@ function headerHtml(s) {
     <div class="search-panel" id="search-panel" hidden>
       <form class="container" action="/shop" role="search">
         <label class="sr-only" for="site-search">Search products</label>
-        <input id="site-search" type="search" name="q" placeholder="Search cardigans, booties, dolls…" autocomplete="off">
+        <input id="site-search" type="search" name="q" placeholder="Search rompers, dolls, gift boxes…" autocomplete="off">
         <button class="btn" type="submit">Search</button>
       </form>
     </div>
@@ -74,17 +74,17 @@ function footerHtml(s) {
     <div class="container">
       <div class="footer-grid">
         <div>
-          <span class="footer-brand">${brand.name}</span>
+          ${raw(brand.logoUrl ? html`<img class="footer-badge" src="${brand.logoUrl}" alt="${brand.name}" width="112" height="112">` : html`<span class="footer-brand">${brand.name}</span>`)}
           <p>${footer.about}</p>
           <div class="social">${socials.map(([k, url]) => raw(html`<a href="${url}" target="_blank" rel="noopener" aria-label="${k}">${raw(icons[k] || '')}</a>`))}</div>
         </div>
         <div>
           <h4>Shop</h4>
-          <ul><li><a href="/shop">All products</a></li><li><a href="/shop?category=baby-clothes">Baby clothes</a></li><li><a href="/shop?category=handmade-dolls">Handmade dolls</a></li><li><a href="/shop?category=gift-boxes">Gift sets</a></li><li><a href="/about">About us</a></li></ul>
+          <ul><li><a href="/shop">All products</a></li><li><a href="/shop?category=baby-clothes">Baby clothes</a></li><li><a href="/shop?category=handmade-dolls">Handmade dolls</a></li><li><a href="/shop?category=gift-boxes">Gift boxes</a></li><li><a href="/shop?category=baby-accessories">Accessories</a></li><li><a href="/about">Our story</a></li></ul>
         </div>
         <div>
-          <h4>Help</h4>
-          <ul><li><a href="/shipping-policy">Shipping policy</a></li><li><a href="/return-policy">Return policy</a></li><li><a href="/faq">FAQ</a></li><li><a href="/privacy-policy">Privacy policy</a></li><li><a href="/terms">Terms &amp; conditions</a></li></ul>
+          <h4>Customer care &amp; legal</h4>
+          <ul><li><a href="/pages/legal">Legal &amp; regulations</a></li><li><a href="/pages/seller">Seller information</a></li><li><a href="/terms">Terms &amp; conditions</a></li><li><a href="/privacy-policy">Privacy policy</a></li><li><a href="/pages/cookies">Cookie policy</a></li><li><a href="/shipping-policy">Shipping &amp; delivery</a></li><li><a href="/return-policy">Returns &amp; refunds</a></li><li><a href="/pages/complaints">Complaints</a></li><li><a href="/pages/safety">Product safety</a></li><li><a href="/faq">FAQ</a></li></ul>
         </div>
         <div>
           <h4>Contact</h4>
@@ -97,9 +97,13 @@ function footerHtml(s) {
           </ul>
         </div>
       </div>
+      <div class="footer-legal">
+        <p lang="en">${footer.legalName || brand.name}${raw(footer.cr ? html` · Commercial Registration No. ${footer.cr}` : '')} · E-commerce licence No. ${footer.ecommerceLicence || 'to be added'} · Licensed by the Ministry of Commerce and Industry, State of Qatar · ${footer.address}</p>
+        ${raw(footer.legalNameAr ? html`<p lang="ar" dir="rtl">${footer.legalNameAr}${raw(footer.cr ? html` · سجل تجاري رقم ${footer.cr}` : '')} · ترخيص تجارة إلكترونية رقم ${footer.ecommerceLicence || 'سيُضاف لاحقاً'} · مرخّص من وزارة التجارة والصناعة، دولة قطر</p>` : '')}
+      </div>
       <div class="footer-bottom">
         <span>© ${new Date().getFullYear()} ${brand.name}. ${footer.securePaymentText}</span>
-        <span class="pay-icons" aria-label="Accepted payments"><span>VISA</span><span>Mastercard</span><span>PayPal</span></span>
+        <span class="pay-icons" aria-label="Payment methods"><span>QPay</span><span>VISA</span><span>Mastercard</span><span>Apple Pay</span></span>
       </div>
     </div>
   </footer>`;

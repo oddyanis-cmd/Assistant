@@ -121,6 +121,11 @@ router.post('/mfa/verify', requireStaffSession, mfaLimiter, async (req, res) => 
   const { code } = parse(z.object({ code: z.string().trim().regex(/^\d{6}$/, 'Enter the 6-digit code') }), req.body);
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   if (!user.totpSecret || !authenticator.check(code, user.totpSecret)) throw unauthorized('That code is not correct');
+  // A code is valid for about 90 seconds; refuse a second use of the same code (replay protection).
+  const used = await prisma.$queryRaw`
+    INSERT INTO "RateLimit" ("key", "hits", "resetAt") VALUES (${`totp-used:${user.id}:${code}`}, 1, NOW() + INTERVAL '3 minutes')
+    ON CONFLICT ("key") DO UPDATE SET "hits" = "RateLimit"."hits" + 1 RETURNING "hits"`;
+  if (used[0].hits > 1) throw unauthorized('That code was already used. Wait for the next code.');
   if (!user.totpEnabled) await prisma.user.update({ where: { id: user.id }, data: { totpEnabled: true } });
   await prisma.session.update({ where: { id: req.sessionId }, data: { mfaVerified: true } });
   res.json({ ok: true });

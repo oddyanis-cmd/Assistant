@@ -408,3 +408,52 @@ table.size-table { width: 100%; border-collapse: collapse; font-size: .9rem; bac
 .step svg { width: 28px; height: 28px; color: var(--sage); margin: 0 auto 6px; display: block; }
 .stock:empty { display: none; }
 .test-banner { background: #FFF3CD; color: #6B4E00; text-align: center; font-size: .85rem; padding: 6px 12px; border-bottom: 1px solid #F0D98C; }
+
+/* ==========================================================================
+   YAOUA theme: crochet badge, raspberry / rose / blush / gold, stitched edges.
+   Colours come from the brand setting (layout.js); these rules add the
+   handmade details that match the YAOUA preview.
+   ========================================================================== */
+:root {
+  --gold: #8F6418;
+  --stitch: rgba(142, 23, 48, .32);
+  --knit: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='16'%3E%3Cpath d='M1.5 1.5c1.2 6 4 10.5 7.5 13M16.5 1.5c-1.2 6-4 10.5-7.5 13' fill='none' stroke='%238E1730' stroke-opacity='.055' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
+  --shadow-sm: 0 2px 10px rgba(110, 15, 34, .07);
+  --shadow: 0 10px 30px rgba(110, 15, 34, .10);
+  --shadow-lg: 0 18px 50px rgba(110, 15, 34, .14);
+}
+body { background-image: var(--knit); }
+h1 em, h2 em { font-style: normal; color: var(--brown); }
+
+/* Logo: the round YAOUA badge replaces the text wordmark. */
+.logo img { width: 62px; height: 62px; border-radius: 50%; object-fit: cover; filter: drop-shadow(0 3px 8px rgba(110,15,34,.18)); transition: transform .35s var(--ease); }
+.logo:hover img { transform: rotate(-6deg) scale(1.04); }
+.logo img + span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@media (max-width: 600px) { .logo img { width: 48px; height: 48px; } }
+
+/* Stitched (dashed) edges on cards and panels, like crochet seams. */
+.card, .panel, .review-card, .step { outline: 1.5px dashed var(--stitch); outline-offset: -7px; }
+.hero-media img { outline: 2px dashed rgba(255,255,255,.55); outline-offset: -12px; }
+.hero { background: var(--knit), linear-gradient(120deg, var(--beige), var(--ivory) 60%); }
+
+/* Small gold capitals, echoing "CROCHET & GIFTS" on the badge. */
+.eyebrow { color: var(--gold); letter-spacing: .22em; }
+
+/* Footer: badge, plus the business / CR line MoCI requires on every page. */
+.footer-badge { width: 112px; height: 112px; border-radius: 50%; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+.footer-legal { border-top: 1px solid rgba(255,255,255,.18); margin-top: 28px; padding-top: 16px; display: grid; gap: 4px; font-size: .82rem; opacity: .9; }
+.footer-legal p { margin: 0; }
+.footer-legal [lang="ar"] { font-family: 'Noto Naskh Arabic', var(--font-body); }
+
+/* Legal and information pages: headings, bullets, Arabic version below. */
+.prose.rich { white-space: normal; }
+.prose.rich h2 { font-size: 1.35rem; margin: 1.6em 0 .4em; }
+.prose.rich p { margin: 0 0 .8em; white-space: pre-line; }
+.prose.rich ul { margin: 0 0 1em; padding-inline-start: 1.3em; }
+.prose-ar { margin-top: 48px; padding-top: 28px; border-top: 1.5px dashed var(--stitch); font-family: 'Noto Naskh Arabic', 'Geeza Pro', Tahoma, var(--font-body); font-size: 1.05rem; line-height: 1.9; }
+.prose-ar h2 { font-family: 'Noto Naskh Arabic', 'Geeza Pro', Tahoma, serif; }
+
+/* Test-mode banner (shown while PAYMENTS_TEST_MODE is on). */
+.test-banner { background: #FFF3CD; color: #6B4E00; }
+
+@media (prefers-reduced-motion: reduce) { .logo img { transition: none; } }

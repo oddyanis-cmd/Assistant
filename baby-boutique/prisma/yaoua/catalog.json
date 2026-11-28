@@ -1,0 +1,1350 @@
+{
+ "categories": [
+  {
+   "slug": "baby-clothes",
+   "name": "Baby Clothes",
+   "img": 2,
+   "desc": "Crocheted rompers and ponchos, made to measure in small batches."
+  },
+  {
+   "slug": "handmade-dolls",
+   "name": "Handmade Dolls",
+   "img": 6,
+   "desc": "Crochet friends with embroidered faces and tiny outfits."
+  },
+  {
+   "slug": "gift-boxes",
+   "name": "Gift Boxes",
+   "img": 18,
+   "desc": "Ready-to-give sets in a keepsake kraft box with a handwritten card."
+  },
+  {
+   "slug": "baby-accessories",
+   "name": "Accessories",
+   "img": 22,
+   "desc": "Rattles, pacifier clips and pretty storage for little things."
+  },
+  {
+   "slug": "new-arrivals",
+   "name": "New Arrivals",
+   "img": 21,
+   "desc": "The latest pieces from the studio."
+  },
+  {
+   "slug": "personalized",
+   "name": "Personalised",
+   "img": 23,
+   "desc": "Pieces we can embroider with a name."
+  }
+ ],
+ "products": [
+  {
+   "slug": "buttercup-crochet-romper",
+   "name": "Buttercup Crochet Romper",
+   "cat": "baby-clothes",
+   "price": 260,
+   "featured": true,
+   "isNew": true,
+   "imgs": [
+    1
+   ],
+   "sizes": [
+    "Newborn",
+    "0–3 months",
+    "3–6 months",
+    "6–9 months"
+   ],
+   "colors": [
+    [
+     "Buttercup & Rust",
+     "#F3DE9A"
+    ]
+   ],
+   "short": "A cosy crocheted all-in-one in buttercup yellow with rust-red trim.",
+   "desc": "Crocheted stitch by stitch in a soft buttercup yarn, finished with a rust-red trim on the cuffs, ankles and button band.\n\nFive shell-effect buttons open the front fully for quick changes, and the relaxed fit leaves room to wriggle. Wear it over a soft collared vest for photos, or on its own on cooler evenings.",
+   "materials": "Soft cotton–acrylic baby yarn, rust contrast trim, five shell-effect buttons sewn on with doubled thread",
+   "care": "Hand wash cold with a gentle baby detergent. Do not wring. Reshape and dry flat in the shade.",
+   "age": "Newborn to 9 months",
+   "dispatch": [
+    5,
+    8
+   ],
+   "sold": 41,
+   "daysOld": 4,
+   "pairs": "duckie-in-overalls"
+  },
+  {
+   "slug": "blossom-fringe-poncho",
+   "name": "Blossom Fringe Poncho",
+   "cat": "baby-clothes",
+   "price": 210,
+   "featured": true,
+   "imgs": [
+    2,
+    16,
+    4,
+    7
+   ],
+   "sizes": [
+    "6–12 months",
+    "12–24 months",
+    "2–3 years"
+   ],
+   "colors": [
+    [
+     "Pink, Grey & Cream",
+     "#E9C6CC"
+    ]
+   ],
+   "short": "An open-stitch V poncho in pink, grey and cream with tassel fringing.",
+   "desc": "A light, open shell-stitch poncho that layers over a vest or long-sleeve top. Stripes of blush pink, dove grey and cream run into a soft V at the front and back, with a full tassel fringe at the hem.\n\nThe neckline has a short braided tie with tassels.",
+   "materials": "Soft acrylic–wool blend baby yarn, hand-knotted fringe",
+   "care": "Hand wash cold with a gentle baby detergent. Do not wring. Reshape and dry flat in the shade.",
+   "age": "6 months to 3 years",
+   "dispatch": [
+    3,
+    5
+   ],
+   "sold": 33,
+   "daysOld": 18,
+   "safety": "The neck tie is short and knotted securely. Always supervise while worn and take it off before sleep."
+  },
+  {
+   "slug": "duckie-in-overalls",
+   "name": "Duckie in Overalls",
+   "cat": "handmade-dolls",
+   "price": 145,
+   "featured": true,
+   "imgs": [
+    23,
+    1
+   ],
+   "colors": [
+    [
+     "Rust overalls & hat",
+     "#9C3A22"
+    ]
+   ],
+   "dims": "Height approx. 24 cm with hat",
+   "short": "A pale-yellow duckling in rust overalls and a striped bucket hat.",
+   "desc": "Our duckling wears removable-look rust overalls with crossed straps, little orange feet and a bucket hat with a blush stripe. A lovely match for the Buttercup Romper.",
+   "materials": "Cotton yarn, hypoallergenic polyester filling, safety eyes",
+   "care": "Spot clean with a damp cloth, or hand wash cold in a laundry bag. Reshape and dry flat in the shade. Do not tumble dry.",
+   "age": "From birth (see safety note)",
+   "dispatch": [
+    3,
+    5
+   ],
+   "sold": 37,
+   "daysOld": 9,
+   "personal": "Name to embroider on the overalls (max 10 letters)",
+   "safety": "Safety eyes are fixed with locking washers. For babies under 12 months we can embroider the eyes instead. Just ask in the order note."
+  },
+  {
+   "slug": "ella-the-elephant",
+   "name": "Ella the Elephant",
+   "cat": "handmade-dolls",
+   "price": 180,
+   "featured": true,
+   "imgs": [
+    6,
+    18
+   ],
+   "colors": [
+    [
+     "Mustard & Olive",
+     "#D9A033"
+    ]
+   ],
+   "dims": "Height approx. 34 cm",
+   "short": "A mustard elephant in a frilled olive tutu, with a yellow bow and curly topknot.",
+   "desc": "Ella has big olive-lined ears, embroidered lashes, striped arms and legs, a ruffled olive skirt and a curly topknot finished with a butter-yellow bow. She is soft enough for cuddles and pretty enough for the nursery shelf.",
+   "materials": "Mercerised cotton yarn, hypoallergenic polyester filling, safety eyes",
+   "care": "Spot clean with a damp cloth, or hand wash cold in a laundry bag. Reshape and dry flat in the shade. Do not tumble dry.",
+   "age": "From birth (see safety note)",
+   "dispatch": [
+    4,
+    6
+   ],
+   "sold": 29,
+   "daysOld": 21,
+   "personal": "Name for the gift tag",
+   "safety": "Safety eyes are fixed with locking washers. For babies under 12 months we can embroider the eyes instead. Just ask in the order note."
+  },
+  {
+   "slug": "ella-elephant-gift-box",
+   "name": "Ella Elephant Gift Box",
+   "cat": "gift-boxes",
+   "price": 299,
+   "compareAt": 330,
+   "featured": true,
+   "imgs": [
+    18,
+    6,
+    15,
+    22
+   ],
+   "colors": [
+    [
+     "Mustard & Olive",
+     "#D9A033"
+    ]
+   ],
+   "dims": "Box approx. 35 × 30 × 10 cm",
+   "short": "Ella the Elephant, her matching rattle and a daisy pacifier clip, gift-boxed.",
+   "desc": "Our favourite new-baby gift. Everything arrives nestled in crinkle paper and tissue inside a kraft keepsake box, with a handwritten \"Handmade with love\" card.",
+   "includes": [
+    "Ella the Elephant doll (34 cm)",
+    "Ella Elephant Rattle with beech ring",
+    "Daisy Pacifier Clip",
+    "Kraft keepsake box, tissue and crinkle paper",
+    "Handwritten card with your message"
+   ],
+   "materials": "Cotton yarn, untreated beech wood, hypoallergenic filling",
+   "care": "Spot clean with a damp cloth, or hand wash cold in a laundry bag. Reshape and dry flat in the shade. Do not tumble dry.",
+   "age": "From birth (see safety note)",
+   "dispatch": [
+    4,
+    7
+   ],
+   "sold": 24,
+   "daysOld": 6,
+   "isNew": true,
+   "personal": "Message for the handwritten card",
+   "safety": "Supervise play with the rattle and clip. Never tie the pacifier clip around the neck or attach it to a cot."
+  },
+  {
+   "slug": "ella-elephant-rattle",
+   "name": "Ella Elephant Rattle",
+   "cat": "baby-accessories",
+   "price": 85,
+   "imgs": [
+    15,
+    18
+   ],
+   "colors": [
+    [
+     "Mustard & Olive",
+     "#D9A033"
+    ]
+   ],
+   "dims": "Beech ring Ø 7 cm; total height approx. 14 cm",
+   "short": "A crocheted elephant head on a smooth beech-wood ring, with a gentle rattle inside.",
+   "desc": "Little hands can grip the smooth beech ring while the soft crocheted head makes a gentle rattle sound. It matches Ella the Elephant.",
+   "materials": "Untreated, sanded beech wood ring; cotton yarn; sealed rattle insert",
+   "care": "Wipe the ring with a damp cloth. Spot clean the head. Do not soak the wood.",
+   "age": "From 3 months",
+   "dispatch": [
+    2,
+    4
+   ],
+   "sold": 19,
+   "daysOld": 25,
+   "safety": "Check the rattle before each use and supervise play. Stop using it if it is damaged."
+  },
+  {
+   "slug": "daisy-pacifier-clip",
+   "name": "Daisy Pacifier Clip",
+   "cat": "baby-accessories",
+   "price": 65,
+   "imgs": [
+    22,
+    18
+   ],
+   "colors": [
+    [
+     "Mustard, Olive & Cream",
+     "#E0A42A"
+    ]
+   ],
+   "dims": "Length approx. 20 cm",
+   "short": "A crocheted daisy and bead pacifier clip with a beech clasp.",
+   "desc": "Keeps the dummy close and off the floor. Crocheted mustard and olive beads frame a cream daisy, finished with natural beech beads and a sturdy clip.",
+   "materials": "Beech wood clip and beads, crocheted cotton beads, braided cotton cord",
+   "care": "Wipe clean with a damp cloth. Do not soak the clip.",
+   "age": "From birth",
+   "dispatch": [
+    2,
+    4
+   ],
+   "sold": 27,
+   "daysOld": 25,
+   "personal": "Initial to add as an extra bead (A–Z)",
+   "safety": "Never tie around a baby’s neck or attach to a cot or pram while baby sleeps. Check for wear before every use."
+  },
+  {
+   "slug": "hana-the-hippo-ballerina",
+   "name": "Hana the Hippo Ballerina",
+   "cat": "handmade-dolls",
+   "price": 165,
+   "featured": true,
+   "imgs": [
+    20,
+    9
+   ],
+   "colors": [
+    [
+     "Grey & Coral",
+     "#B9B9B9"
+    ]
+   ],
+   "dims": "Height approx. 26 cm",
+   "short": "A dove-grey hippo in a ruffled coral tutu with a matching bow.",
+   "desc": "Hana arrives in her gift box, wearing a full scrunched coral tutu with a little bow between her ears. Her soft, weighted bottom helps her sit up on a shelf.",
+   "materials": "Soft cotton–acrylic yarn, hypoallergenic polyester filling, safety eyes",
+   "care": "Spot clean with a damp cloth, or hand wash cold in a laundry bag. Reshape and dry flat in the shade. Do not tumble dry.",
+   "age": "From birth (see safety note)",
+   "dispatch": [
+    3,
+    5
+   ],
+   "sold": 31,
+   "daysOld": 14,
+   "personal": "Name for the gift tag",
+   "safety": "Safety eyes are fixed with locking washers. For babies under 12 months we can embroider the eyes instead. Just ask in the order note."
+  },
+  {
+   "slug": "pip-the-penguin",
+   "name": "Pip the Penguin",
+   "cat": "handmade-dolls",
+   "price": 150,
+   "imgs": [
+    11,
+    10
+   ],
+   "colors": [
+    [
+     "Classic Black & White",
+     "#2B2B2B"
+    ]
+   ],
+   "dims": "Height approx. 25 cm",
+   "short": "A classic black-and-white penguin with a sunny yellow beak and feet.",
+   "desc": "Pip is crocheted in a glossy black and soft white cotton, with a sunshine-yellow beak and chunky feet. He sits up on his own and comes gift-boxed.",
+   "materials": "Mercerised cotton yarn, hypoallergenic polyester filling, safety eyes",
+   "care": "Spot clean with a damp cloth, or hand wash cold in a laundry bag. Reshape and dry flat in the shade. Do not tumble dry.",
+   "age": "From birth (see safety note)",
+   "dispatch": [
+    3,
+    5
+   ],
+   "sold": 22,
+   "daysOld": 30,
+   "personal": "Name for the gift tag",
+   "safety": "Safety eyes are fixed with locking washers. For babies under 12 months we can embroider the eyes instead. Just ask in the order note."
+  },
+  {
+   "slug": "rosie-the-pink-penguin",
+   "name": "Rosie the Pink Penguin",
+   "cat": "handmade-dolls",
+   "price": 95,
+   "isNew": true,
+   "imgs": [
+    3,
+    12
+   ],
+   "colors": [
+    [
+     "Pink & Cream",
+     "#F2B8BF"
+    ]
+   ],
+   "dims": "Height approx. 12 cm",
+   "short": "A pocket-sized pink penguin, just right for small hands.",
+   "desc": "Rosie is small, squishy and easy to hold, with a cream tummy and yellow beak and feet. She makes a sweet add-on to any gift.",
+   "materials": "Cotton yarn, hypoallergenic polyester filling, safety eyes",
+   "care": "Spot clean with a damp cloth, or hand wash cold in a laundry bag. Reshape and dry flat in the shade. Do not tumble dry.",
+   "age": "From birth (see safety note)",
+   "dispatch": [
+    2,
+    4
+   ],
+   "sold": 18,
+   "daysOld": 3,
+   "safety": "Safety eyes are fixed with locking washers. For babies under 12 months we can embroider the eyes instead. Just ask in the order note."
+  },
+  {
+   "slug": "little-hatchling-chick",
+   "name": "Little Hatchling Chick",
+   "cat": "handmade-dolls",
+   "price": 90,
+   "isNew": true,
+   "imgs": [
+    21,
+    13
+   ],
+   "colors": [
+    [
+     "Sunshine Yellow",
+     "#F5C518"
+    ]
+   ],
+   "dims": "Height approx. 13 cm",
+   "short": "A cheerful yellow chick peeking out of its crocheted eggshell.",
+   "desc": "A little chick waving from a cream eggshell with a scalloped edge. A sweet keepsake for new arrivals and a perfect first toy.",
+   "materials": "Cotton yarn, hypoallergenic polyester filling, safety eyes",
+   "care": "Spot clean with a damp cloth, or hand wash cold in a laundry bag. Reshape and dry flat in the shade. Do not tumble dry.",
+   "age": "From birth (see safety note)",
+   "dispatch": [
+    2,
+    4
+   ],
+   "sold": 26,
+   "daysOld": 2,
+   "safety": "Safety eyes are fixed with locking washers. For babies under 12 months we can embroider the eyes instead. Just ask in the order note."
+  },
+  {
+   "slug": "ginger-the-giraffe",
+   "name": "Ginger the Giraffe",
+   "cat": "handmade-dolls",
+   "price": 150,
+   "imgs": [
+    5,
+    19
+   ],
+   "colors": [
+    [
+     "Mustard & Rust",
+     "#E0A42A"
+    ]
+   ],
+   "dims": "Height approx. 22 cm",
+   "short": "A mustard giraffe with rust patches, cream horns and embroidered lashes.",
+   "desc": "Ginger has a cream muzzle with a stitched smile, rust-red ears, hooves and patches, and a friendly wave. Crocheted tightly so no filling shows through.",
+   "materials": "Mercerised cotton yarn, hypoallergenic polyester filling, safety eyes",
+   "care": "Spot clean with a damp cloth, or hand wash cold in a laundry bag. Reshape and dry flat in the shade. Do not tumble dry.",
+   "age": "From birth (see safety note)",
+   "dispatch": [
+    3,
+    5
+   ],
+   "sold": 20,
+   "daysOld": 35,
+   "personal": "Name for the gift tag",
+   "safety": "Safety eyes are fixed with locking washers. For babies under 12 months we can embroider the eyes instead. Just ask in the order note."
+  },
+  {
+   "slug": "pearl-turtle-treasure-pouch",
+   "name": "Pearl the Turtle Treasure Pouch",
+   "cat": "baby-accessories",
+   "price": 135,
+   "isNew": true,
+   "imgs": [
+    8,
+    14,
+    12
+   ],
+   "colors": [
+    [
+     "Candy Pink & Cream",
+     "#F08AA4"
+    ]
+   ],
+   "dims": "Approx. 22 × 18 cm; pouch opening Ø 12 cm",
+   "short": "A turtle whose ruffled pink shell is a drawstring pouch for bows and clips.",
+   "desc": "Pearl keeps hair bows, clips and tiny treasures tidy on a dresser. Her candy-pink shell is dotted with pearl beads and opens wide with a cream drawstring, then pulls shut into a pretty ruffle.",
+   "materials": "Cotton–acrylic yarn, sewn-on pearl beads, cotton drawstring, polyester filling in the head and legs",
+   "care": "Spot clean only.",
+   "age": "Nursery decor (not a toy)",
+   "dispatch": [
+    4,
+    6
+   ],
+   "sold": 15,
+   "daysOld": 7,
+   "safety": "Decorative storage with small sewn-on beads, not a toy. Keep out of reach of children under 3."
+  }
+ ],
+ "sizeGuide": {
+  "cols": [
+   "Size",
+   "Baby height (cm)",
+   "Weight (kg)",
+   "Chest (cm)",
+   "Length (cm)"
+  ],
+  "rows": [
+   [
+    "Newborn",
+    "50–56",
+    "2.5–4",
+    "38",
+    "34"
+   ],
+   [
+    "0–3 months",
+    "56–62",
+    "4–6",
+    "40",
+    "38"
+   ],
+   [
+    "3–6 months",
+    "62–68",
+    "6–8",
+    "43",
+    "42"
+   ],
+   [
+    "6–9 months",
+    "68–74",
+    "8–9",
+    "45",
+    "46"
+   ],
+   [
+    "6–12 months",
+    "68–80",
+    "8–10",
+    "46",
+    "—"
+   ],
+   [
+    "12–24 months",
+    "80–92",
+    "10–13",
+    "50",
+    "—"
+   ],
+   [
+    "2–3 years",
+    "92–98",
+    "13–15",
+    "53",
+    "—"
+   ]
+  ],
+  "note": "Romper length is shoulder to ankle; ponchos are one length per size. Measurements are taken flat and hand-crocheted pieces can vary by ±1 cm. Between sizes? Choose the larger one."
+ },
+ "legalLinks": [
+  [
+   "legal",
+   "Legal & regulations"
+  ],
+  [
+   "seller",
+   "Seller information"
+  ],
+  [
+   "terms",
+   "Terms & conditions"
+  ],
+  [
+   "privacy",
+   "Privacy policy"
+  ],
+  [
+   "cookies",
+   "Cookie policy"
+  ],
+  [
+   "shipping",
+   "Shipping & delivery"
+  ],
+  [
+   "returns",
+   "Returns & refunds"
+  ],
+  [
+   "complaints",
+   "Complaints"
+  ],
+  [
+   "safety",
+   "Product safety"
+  ],
+  [
+   "faq",
+   "FAQ"
+  ]
+ ],
+ "legal": {
+  "legalName": "Yaoua for Craft Work Trading",
+  "legalNameAr": "ياوا للتجارة في الأعمال الحرفية",
+  "owner": "Souhir Benseghir",
+  "ownerAr": "سهير بن صغير",
+  "cr": "258148",
+  "ecom": "[E-commerce licence number]",
+  "address": "Online business (no physical shop), State of Qatar",
+  "addressAr": "نشاط تجاري إلكتروني (بدون محل فعلي)، دولة قطر",
+  "email": "info@yaoua.qa",
+  "phone": "+974 7735 3521",
+  "whatsapp": "+974 7735 3521",
+  "website": "www.yaoua.qa",
+  "hours": "Sunday to Thursday, 9:00 to 17:00 (Doha time)",
+  "hoursAr": "من الأحد إلى الخميس، من 9:00 صباحاً حتى 5:00 مساءً (بتوقيت الدوحة)",
+  "updated": "24 November 2026"
+ },
+ "pages": {
+  "legal": {
+   "t": "Legal & regulations",
+   "ta": "القوانين والأنظمة",
+   "en": [
+    [
+     "About this page",
+     "YAOUA is an online store in the State of Qatar operating under a Commercial Registration (CR No. 258148) and an e-commerce licence (No. [E-commerce licence number]) issued by the Ministry of Commerce and Industry. This page summarises the rules that protect you when you shop with us and links to our full policies."
+    ],
+    [
+     "Your rights as a consumer (Law No. 8 of 2008)",
+     "• Clear, accurate information about every product, in Arabic\n• Prices clearly shown in Qatari riyals before you buy\n• An invoice for every purchase, showing the date, items and price\n• Products that match their description and are safe to use\n• Repair, replacement or a refund if a product is faulty\n• Protection from misleading descriptions and advertising\n• The right to complain to the Ministry of Commerce and Industry"
+    ],
+    [
+     "Buying online (Decree-Law No. 16 of 2010)",
+     "• We show who we are, our address and how to contact us\n• You see the full price and the contract terms before you order\n• You can check and correct your order before confirming it\n• We confirm every order and send an electronic invoice\n• Electronic orders, confirmations and invoices are legally valid records\n• We use your personal information only for the purposes we tell you"
+    ],
+    [
+     "Licensed e-commerce (Ministerial Decision No. 25 of 2026)",
+     "• We sell online under a CR and an e-commerce licence from the Ministry of Commerce and Industry, shown at the bottom of every page\n• We offer secure electronic payment\n• We publish our return, exchange and refund policy\n• We have a complaints process with clear timeframes"
+    ],
+    [
+     "Your personal data (Law No. 13 of 2016)",
+     "• We collect only what we need to deliver your order\n• Marketing emails only with your separate consent\n• You can see, correct or delete your data and withdraw consent\n• Children’s data is used only with a parent’s or guardian’s permission\n• You can complain to the National Cyber Security Agency (NCSA)"
+    ],
+    [
+     "Product safety",
+     "• Toys sold in Qatar must meet the GCC Technical Regulation on Children’s Toys\n• Every product page shows age suitability and safety warnings\n• Toys and accessories should always be used under adult supervision"
+    ],
+    [
+     "Our full policies",
+     "Seller information · Terms & conditions · Privacy policy · Cookie policy · Shipping & delivery · Returns & refunds · Complaints · Product safety. Use the buttons at the top of this page."
+    ],
+    [
+     "Official contacts",
+     "Ministry of Commerce and Industry, Consumer Protection: hotline 16001, the MoCI mobile app, www.moci.gov.qa\nNational Cyber Security Agency (personal data): www.ncsa.gov.qa\nOfficial texts of Qatari laws: Al Meezan, www.almeezan.qa"
+    ],
+    [
+     "Important",
+     "This page is a plain-language summary for your convenience. The official texts of the laws prevail. Nothing in our policies limits your rights under Qatari law."
+    ]
+   ],
+   "ar": [
+    [
+     "عن هذه الصفحة",
+     "YAOUA متجر إلكتروني في دولة قطر يعمل بموجب سجل تجاري رقم 258148 وترخيص تجارة إلكترونية رقم [E-commerce licence number] صادرين عن وزارة التجارة والصناعة. تلخص هذه الصفحة القواعد التي تحميك عند التسوق معنا، مع روابط لسياساتنا الكاملة."
+    ],
+    [
+     "حقوقك كمستهلك (القانون رقم 8 لسنة 2008)",
+     "• معلومات واضحة ودقيقة عن كل منتج باللغة العربية\n• أسعار واضحة بالريال القطري قبل الشراء\n• فاتورة لكل عملية شراء تتضمن التاريخ والمنتجات والسعر\n• منتجات مطابقة للوصف وآمنة للاستخدام\n• الإصلاح أو الاستبدال أو استرداد المبلغ إذا كان المنتج معيباً\n• الحماية من الوصف والإعلان المضلل\n• الحق في تقديم شكوى إلى وزارة التجارة والصناعة"
+    ],
+    [
+     "الشراء عبر الإنترنت (المرسوم بقانون رقم 16 لسنة 2010)",
+     "• نعرض هويتنا وعنواننا ووسائل التواصل معنا\n• ترى السعر الكامل وشروط العقد قبل الطلب\n• يمكنك مراجعة طلبك وتصحيحه قبل التأكيد\n• نؤكد كل طلب ونرسل فاتورة إلكترونية\n• الطلبات والتأكيدات والفواتير الإلكترونية سجلات معتمدة قانوناً\n• نستخدم بياناتك الشخصية فقط للأغراض التي نبلغك بها"
+    ],
+    [
+     "التجارة الإلكترونية المرخصة (القرار الوزاري رقم 25 لسنة 2026)",
+     "• نبيع عبر الإنترنت بموجب سجل تجاري وترخيص تجارة إلكترونية من وزارة التجارة والصناعة، معروضين أسفل كل صفحة\n• نوفر الدفع الإلكتروني الآمن\n• ننشر سياسة الإرجاع والاستبدال والاسترداد\n• لدينا آلية للشكاوى بمدد زمنية واضحة"
+    ],
+    [
+     "بياناتك الشخصية (القانون رقم 13 لسنة 2016)",
+     "• نجمع فقط ما نحتاجه لتوصيل طلبك\n• لا نرسل رسائل تسويقية إلا بموافقتك المنفصلة\n• يحق لك الاطلاع على بياناتك وتصحيحها وحذفها وسحب موافقتك\n• لا تُستخدم بيانات الأطفال إلا بإذن الوالد أو الولي\n• يمكنك تقديم شكوى إلى الوكالة الوطنية للأمن السيبراني"
+    ],
+    [
+     "سلامة المنتجات",
+     "• يجب أن تستوفي الألعاب المباعة في قطر اللائحة الفنية الخليجية لألعاب الأطفال\n• تعرض صفحة كل منتج العمر المناسب وتحذيرات السلامة\n• يجب استخدام الألعاب والإكسسوارات دائماً تحت إشراف شخص بالغ"
+    ],
+    [
+     "سياساتنا الكاملة",
+     "معلومات البائع · الشروط والأحكام · سياسة الخصوصية · سياسة ملفات تعريف الارتباط · الشحن والتوصيل · الإرجاع والاسترداد · الشكاوى · سلامة المنتجات. استخدم الأزرار في أعلى هذه الصفحة."
+    ],
+    [
+     "جهات رسمية",
+     "وزارة التجارة والصناعة، إدارة حماية المستهلك: الخط الساخن 16001، تطبيق الوزارة، www.moci.gov.qa\nالوكالة الوطنية للأمن السيبراني (البيانات الشخصية): www.ncsa.gov.qa\nالنصوص الرسمية للقوانين القطرية: الميزان، www.almeezan.qa"
+    ],
+    [
+     "تنبيه",
+     "هذه الصفحة ملخص مبسط للتسهيل، والنصوص الرسمية للقوانين هي المرجع. لا تحدّ سياساتنا من حقوقك وفقاً للقانون القطري."
+    ]
+   ]
+  },
+  "seller": {
+   "t": "Seller information",
+   "ta": "معلومات البائع",
+   "en": [
+    [
+     "Business details",
+     "Trading name: YAOUA\nRegistered name: Yaoua for Craft Work Trading\nCommercial Registration (CR) No.: 258148\nE-commerce licence No.: [E-commerce licence number]\nLicensing authority: Ministry of Commerce and Industry (MoCI), State of Qatar\nBusiness activity: online retail of handmade crocheted baby clothing, accessories and soft toys"
+    ],
+    [
+     "Address and contact",
+     "Address: Online business (no physical shop), State of Qatar\nEmail: info@yaoua.qa\nPhone: +974 7735 3521\nWhatsApp: +974 7735 3521\nCustomer service hours: Sunday to Thursday, 9:00 to 17:00 (Doha time)\nWebsite: www.yaoua.qa"
+    ],
+    [
+     "Laws that apply to this store",
+     "• Law No. 8 of 2008 on Consumer Protection and its executive regulations\n• Decree-Law No. 16 of 2010 promulgating the Electronic Transactions and Commerce Law\n• Law No. 13 of 2016 on Personal Data Privacy Protection\n• Ministerial Decision No. 25 of 2026 on e-commerce licensing (MoCI)"
+    ],
+    [
+     "Codes of conduct",
+     "We follow the consumer protection rules and guidance published by the Ministry of Commerce and Industry. We are not a member of any other code of conduct."
+    ]
+   ],
+   "ar": [
+    [
+     "بيانات النشاط التجاري",
+     "الاسم التجاري: YAOUA (ياوا)\nالاسم المسجل: ياوا للتجارة في الأعمال الحرفية\nرقم السجل التجاري: 258148\nرقم ترخيص التجارة الإلكترونية: [E-commerce licence number]\nجهة الترخيص: وزارة التجارة والصناعة، دولة قطر\nالنشاط: البيع الإلكتروني بالتجزئة لملابس الأطفال والإكسسوارات والألعاب المصنوعة يدوياً بالكروشيه"
+    ],
+    [
+     "العنوان ووسائل التواصل",
+     "العنوان: نشاط تجاري إلكتروني (بدون محل فعلي)، دولة قطر\nالبريد الإلكتروني: info@yaoua.qa\nالهاتف: +974 7735 3521\nواتساب: +974 7735 3521\nساعات خدمة العملاء: من الأحد إلى الخميس، من 9:00 صباحاً حتى 5:00 مساءً (بتوقيت الدوحة)\nالموقع الإلكتروني: www.yaoua.qa"
+    ],
+    [
+     "القوانين المطبقة على المتجر",
+     "• القانون رقم (8) لسنة 2008 بشأن حماية المستهلك ولائحته التنفيذية\n• المرسوم بقانون رقم (16) لسنة 2010 بإصدار قانون المعاملات والتجارة الإلكترونية\n• القانون رقم (13) لسنة 2016 بشأن حماية خصوصية البيانات الشخصية\n• القرار الوزاري رقم (25) لسنة 2026 بشأن ترخيص التجارة الإلكترونية (وزارة التجارة والصناعة)"
+    ],
+    [
+     "مدونات السلوك",
+     "نلتزم بقواعد حماية المستهلك والإرشادات الصادرة عن وزارة التجارة والصناعة، ولسنا أعضاء في أي مدونة سلوك أخرى."
+    ]
+   ]
+  },
+  "terms": {
+   "t": "Terms & conditions",
+   "ta": "الشروط والأحكام",
+   "en": [
+    [
+     "1. Who we are",
+     "This website is operated by Yaoua for Craft Work Trading, trading as YAOUA, CR No. 258148, e-commerce licence No. [E-commerce licence number], Online business (no physical shop), State of Qatar. Full details are on our Seller information page. By placing an order you agree to these terms."
+    ],
+    [
+     "2. Our products",
+     "Every item is crocheted by hand, so small differences in colour, size and stitch from the photos are normal and are not defects. Measurements are approximate (±1 cm). Product pages show materials, care instructions, age suitability and safety information."
+    ],
+    [
+     "3. Who can buy",
+     "You must be at least 18 years old, or buying with a parent or guardian, and able to enter a contract under Qatari law. If you create an account, keep your password private; you are responsible for orders placed with it. Tell us straight away if you think someone else has used it."
+    ],
+    [
+     "4. Prices and payment",
+     "All prices are in Qatari riyals (QAR) and include any applicable charges; the full total, including delivery, is shown before you confirm. You pay electronically through a payment provider licensed by Qatar Central Bank (QPay/Himyan debit cards, Visa, Mastercard, Apple Pay or Google Pay). We never see or store your full card details. You receive an electronic invoice for every order."
+    ],
+    [
+     "5. How a contract is made",
+     "You choose your items, review your cart and delivery details, then confirm the order and pay. You can correct any mistakes before confirming. Your order is accepted when we send the order confirmation and electronic invoice. If an item is unavailable or was shown at a clearly wrong price, we will contact you and refund any amount paid in full."
+    ],
+    [
+     "6. Prices, mistakes and promotions",
+     "Prices may change, but you pay the price shown when you confirmed your order. If a price is clearly wrong because of a technical error, we will contact you before dispatch so you can confirm at the correct price or cancel for a full refund. Promotions apply only for the period and conditions stated."
+    ],
+    [
+     "7. Checks and refusing orders",
+     "To protect you and us from fraud, we and our payment provider may check orders. We may decline or cancel an order that appears fraudulent, breaks these terms or exceeds normal household quantities. If we cancel, we refund you in full."
+    ],
+    [
+     "8. Made-to-order and personalised items",
+     "Production and dispatch times are shown on each product. Personalised items (for example an embroidered name) are made to your instructions. Please check spelling carefully before confirming."
+    ],
+    [
+     "9. Delivery",
+     "Delivery terms are set out in our Shipping & delivery policy."
+    ],
+    [
+     "10. Ownership and risk",
+     "The items become yours once paid in full. Responsibility for loss or damage passes to you when the parcel is delivered to you or to the person you name."
+    ],
+    [
+     "11. Cancelling an order",
+     "You can cancel free of charge before we start making or dispatch your item, and we will refund you in full. After that, our Returns & refunds policy applies."
+    ],
+    [
+     "12. Returns, refunds and faulty items",
+     "Our Returns & refunds policy explains your options. If an item is faulty or not as described, you are entitled to a repair, replacement or refund under Law No. 8 of 2008 on Consumer Protection. Nothing in these terms limits your rights under Qatari law."
+    ],
+    [
+     "13. Safe use",
+     "Our toys and accessories must be used as described on the product page and in our Product safety page, always under adult supervision."
+    ],
+    [
+     "14. Reviews and your content",
+     "Reviews must be honest and about the product. We publish them only after checking, and may refuse content that is offensive, false, contains personal data or advertising."
+    ],
+    [
+     "15. Acceptable use of the website",
+     "Do not misuse the website: no attempts to break in, overload it, copy it automatically, test stolen cards or use someone else’s account. We may suspend accounts that do this and report it to the authorities."
+    ],
+    [
+     "16. Intellectual property",
+     "Our designs, photos and texts belong to YAOUA and may not be copied for commercial use without written permission."
+    ],
+    [
+     "17. Liability",
+     "We are responsible for losses that are a foreseeable result of our breaking these terms. We do not exclude any liability that cannot be excluded under Qatari law."
+    ],
+    [
+     "18. Events outside our control",
+     "We are not responsible for delays caused by events we cannot reasonably control, such as severe weather, strikes, network or payment-system outages, or official restrictions. We will tell you as soon as possible and you may cancel for a full refund if the delay is long."
+    ],
+    [
+     "19. Privacy",
+     "We handle your personal data as explained in our Privacy policy, in line with Law No. 13 of 2016."
+    ],
+    [
+     "20. Complaints",
+     "Please contact us first. If we cannot resolve your complaint you can contact the Ministry of Commerce and Industry. See our Complaints page."
+    ],
+    [
+     "21. Electronic contracts and communications",
+     "Your order, our confirmation and invoice are electronic records and are valid under Decree-Law No. 16 of 2010. We keep them for the period the law requires and send them to the email you give us. You can ask us for a copy at any time."
+    ],
+    [
+     "22. Changes to these terms",
+     "We may update these terms. The version that applies is the one shown when you placed your order. The date of the last update is shown at the top of our legal pages."
+    ],
+    [
+     "23. If part of these terms is invalid",
+     "If a court finds any part of these terms invalid, the rest stays in force."
+    ],
+    [
+     "24. Governing law and language",
+     "These terms are governed by the laws of the State of Qatar and the Qatari courts have jurisdiction. They are provided in Arabic and English. If there is any difference between the two, the Arabic version prevails."
+    ]
+   ],
+   "ar": [
+    [
+     "1. من نحن",
+     "يُدار هذا الموقع من قِبل ياوا للتجارة في الأعمال الحرفية تحت الاسم التجاري YAOUA، سجل تجاري رقم 258148، ترخيص تجارة إلكترونية رقم [E-commerce licence number]، العنوان: Online business (no physical shop), State of Qatar. التفاصيل الكاملة في صفحة \"معلومات البائع\". بتقديم طلبك فإنك توافق على هذه الشروط."
+    ],
+    [
+     "2. منتجاتنا",
+     "جميع القطع مصنوعة يدوياً بالكروشيه، لذا فإن الاختلافات البسيطة في اللون والمقاس والغرز عن الصور أمر طبيعي ولا يُعد عيباً. القياسات تقريبية (±1 سم). تتضمن صفحة كل منتج الخامات وتعليمات العناية والعمر المناسب ومعلومات السلامة."
+    ],
+    [
+     "3. من يمكنه الشراء",
+     "يجب أن يكون عمرك 18 عاماً على الأقل، أو أن تشتري بموافقة ولي أمرك، وأن تكون أهلاً للتعاقد وفق القانون القطري. إذا أنشأت حساباً فاحفظ كلمة المرور سرية، وأنت مسؤول عن الطلبات المقدمة منه. أخبرنا فوراً إذا اعتقدت أن شخصاً آخر استخدمه."
+    ],
+    [
+     "4. الأسعار والدفع",
+     "جميع الأسعار بالريال القطري وتشمل أي رسوم مطبقة، ويظهر الإجمالي كاملاً مع التوصيل قبل تأكيد الطلب. يتم الدفع إلكترونياً عبر مزود دفع مرخّص من مصرف قطر المركزي (بطاقات QPay/هميان، فيزا، ماستركارد، Apple Pay أو Google Pay). لا نطّلع على بيانات بطاقتك كاملة ولا نحتفظ بها. تصلك فاتورة إلكترونية لكل طلب."
+    ],
+    [
+     "5. إبرام العقد",
+     "تختار المنتجات وتراجع السلة وبيانات التوصيل ثم تؤكد الطلب وتدفع، ويمكنك تصحيح أي خطأ قبل التأكيد. يُعد الطلب مقبولاً عند إرسال تأكيد الطلب والفاتورة الإلكترونية. إذا لم يتوفر منتج أو ظهر بسعر خاطئ بشكل واضح، نتواصل معك ونرد المبلغ المدفوع كاملاً."
+    ],
+    [
+     "6. الأسعار والأخطاء والعروض",
+     "قد تتغير الأسعار، لكنك تدفع السعر الظاهر عند تأكيد طلبك. إذا كان السعر خاطئاً بوضوح بسبب خطأ تقني، نتواصل معك قبل الشحن لتؤكد بالسعر الصحيح أو تلغي وتسترد المبلغ كاملاً. تسري العروض فقط خلال المدة وبالشروط المعلنة."
+    ],
+    [
+     "7. التحقق ورفض الطلبات",
+     "لحمايتك وحمايتنا من الاحتيال، قد نقوم نحن ومزود الدفع بالتحقق من الطلبات. ويحق لنا رفض أو إلغاء طلب يبدو احتيالياً أو يخالف هذه الشروط أو يتجاوز الكميات المنزلية المعتادة، وفي حال الإلغاء نعيد المبلغ كاملاً."
+    ],
+    [
+     "8. القطع حسب الطلب والمخصصة",
+     "تظهر مدة التصنيع والشحن في صفحة كل منتج. تُصنع القطع المخصصة (مثل تطريز اسم) وفق تعليماتك، لذا يُرجى التحقق من الكتابة قبل التأكيد."
+    ],
+    [
+     "9. التوصيل",
+     "شروط التوصيل موضحة في سياسة الشحن والتوصيل."
+    ],
+    [
+     "10. الملكية وتحمل المخاطر",
+     "تنتقل ملكية القطع إليك بعد سداد ثمنها كاملاً، وتنتقل مسؤولية الفقدان أو التلف إليك عند تسليم الطرد إليك أو إلى الشخص الذي تحدده."
+    ],
+    [
+     "11. إلغاء الطلب",
+     "يمكنك إلغاء الطلب مجاناً قبل البدء في تصنيع القطعة أو شحنها، ونرد لك المبلغ كاملاً. بعد ذلك تُطبق سياسة الإرجاع والاسترداد."
+    ],
+    [
+     "12. الإرجاع والاسترداد والعيوب",
+     "توضح سياسة الإرجاع والاسترداد الخيارات المتاحة لك. إذا كانت القطعة معيبة أو غير مطابقة للوصف، يحق لك الإصلاح أو الاستبدال أو استرداد المبلغ وفقاً للقانون رقم (8) لسنة 2008 بشأن حماية المستهلك. لا تحدّ هذه الشروط من حقوقك وفقاً للقانون القطري."
+    ],
+    [
+     "13. الاستخدام الآمن",
+     "يجب استخدام الألعاب والإكسسوارات كما هو موضح في صفحة المنتج وصفحة سلامة المنتجات، وتحت إشراف شخص بالغ دائماً."
+    ],
+    [
+     "14. المراجعات والمحتوى",
+     "يجب أن تكون المراجعات صادقة ومتعلقة بالمنتج. ننشرها بعد التحقق منها، ويحق لنا رفض المحتوى المسيء أو غير الصحيح أو الذي يتضمن بيانات شخصية أو إعلانات."
+    ],
+    [
+     "15. الاستخدام المقبول للموقع",
+     "لا تُسئ استخدام الموقع: لا محاولات اختراق أو إغراق أو نسخ آلي أو تجربة بطاقات مسروقة أو استخدام حساب شخص آخر. يحق لنا إيقاف الحسابات المخالفة وإبلاغ الجهات المختصة."
+    ],
+    [
+     "16. الملكية الفكرية",
+     "التصاميم والصور والنصوص ملك لـ YAOUA، ولا يجوز نسخها لأغراض تجارية دون إذن كتابي."
+    ],
+    [
+     "17. المسؤولية",
+     "نتحمل المسؤولية عن الخسائر المتوقعة الناتجة عن إخلالنا بهذه الشروط، ولا نستثني أي مسؤولية لا يجوز استثناؤها وفقاً للقانون القطري."
+    ],
+    [
+     "18. الظروف الخارجة عن إرادتنا",
+     "لسنا مسؤولين عن التأخير الناتج عن ظروف لا يمكننا التحكم فيها بشكل معقول، مثل سوء الأحوال الجوية أو الإضرابات أو أعطال الشبكة أو أنظمة الدفع أو القيود الرسمية. سنخبرك في أقرب وقت، ويمكنك الإلغاء واسترداد المبلغ كاملاً إذا طال التأخير."
+    ],
+    [
+     "19. الخصوصية",
+     "نتعامل مع بياناتك الشخصية كما هو موضح في سياسة الخصوصية، وفقاً للقانون رقم (13) لسنة 2016."
+    ],
+    [
+     "20. الشكاوى",
+     "يُرجى التواصل معنا أولاً، وإذا لم نتمكن من حل شكواك يمكنك التواصل مع وزارة التجارة والصناعة. راجع صفحة الشكاوى."
+    ],
+    [
+     "21. العقود والمراسلات الإلكترونية",
+     "طلبك وتأكيدنا والفاتورة سجلات إلكترونية صحيحة وفق المرسوم بقانون رقم (16) لسنة 2010. نحتفظ بها للمدة التي يحددها القانون ونرسلها إلى بريدك الإلكتروني، ويمكنك طلب نسخة منها في أي وقت."
+    ],
+    [
+     "22. تعديل هذه الشروط",
+     "قد نحدّث هذه الشروط، والنسخة المطبقة هي الظاهرة عند تقديم طلبك. يظهر تاريخ آخر تحديث أعلى صفحاتنا القانونية."
+    ],
+    [
+     "23. بطلان جزء من الشروط",
+     "إذا قضت محكمة ببطلان أي جزء من هذه الشروط، يبقى باقيها سارياً."
+    ],
+    [
+     "24. القانون الواجب التطبيق واللغة",
+     "تخضع هذه الشروط لقوانين دولة قطر وتختص المحاكم القطرية بالنظر في أي نزاع. الشروط متاحة باللغتين العربية والإنجليزية، وفي حال وجود أي اختلاف يُعتمد النص العربي."
+    ]
+   ]
+  },
+  "privacy": {
+   "t": "Privacy policy",
+   "ta": "سياسة الخصوصية",
+   "en": [
+    [
+     "Who is responsible for your data",
+     "Yaoua for Craft Work Trading (YAOUA), Online business (no physical shop), State of Qatar, is the controller of your personal data under Law No. 13 of 2016 on Personal Data Privacy Protection. Privacy questions: info@yaoua.qa."
+    ],
+    [
+     "What we collect",
+     "• Name, email and phone number\n• Delivery address\n• Order details and order history\n• Personalisation text you give us, such as a baby’s name\n• Payment confirmation from our payment provider (never full card numbers)\n• Messages you send us\n• Your newsletter choice, only if you opt in\n• Items in your cart and your preferences, stored in your own browser"
+    ],
+    [
+     "Why we use it",
+     "• To make, deliver and support your order (performing our contract with you)\n• To issue invoices and keep records the law requires\n• To answer your questions and complaints\n• To send our newsletter, only with your consent, which you can withdraw at any time\n• To keep the website secure and prevent fraud"
+    ],
+    [
+     "Children",
+     "Our products are for babies, but this website is for adults. We do not knowingly collect personal data from children. If you give us a child’s name for personalisation, you confirm that you are the parent or guardian, or have their permission. We use it only to make your item and delete it 90 days after delivery."
+    ],
+    [
+     "Who we share it with",
+     "We share only what is needed with: our payment provider, our delivery company, and our website hosting and email providers. We may also share data with government authorities when the law requires it. We never sell your data."
+    ],
+    [
+     "Transfers outside Qatar",
+     "If one of our providers stores data outside Qatar, we make sure it is protected to the standard required by Qatari law."
+    ],
+    [
+     "How we protect it",
+     "The website uses encrypted connections (HTTPS). Only authorised people can access customer data. If a breach could harm you, we will notify you and the competent authority as the law requires."
+    ],
+    [
+     "How long we keep it",
+     "Order and invoice records: for the period required by Qatari commercial and tax law. Personalisation text: 90 days after delivery. Newsletter data: until you unsubscribe. Customer service messages: 2 years."
+    ],
+    [
+     "Your rights",
+     "You can ask to see, correct or delete your personal data, withdraw your consent, or object to how we use it. Use the privacy section of your account or email us. If you are not satisfied with our answer, you can complain to the National Data Privacy Office at the National Cyber Security Agency (NCSA)."
+    ],
+    [
+     "Cookies and browser storage",
+     "See our Cookie policy."
+    ],
+    [
+     "Changes",
+     "We will post any changes on this page. Last updated: 24 November 2026. The Arabic version prevails."
+    ]
+   ],
+   "ar": [
+    [
+     "المسؤول عن بياناتك",
+     "ياوا للتجارة في الأعمال الحرفية (YAOUA)، نشاط تجاري إلكتروني (بدون محل فعلي)، دولة قطر، هو المراقب المسؤول عن بياناتك الشخصية وفقاً للقانون رقم (13) لسنة 2016 بشأن حماية خصوصية البيانات الشخصية. للاستفسارات: info@yaoua.qa."
+    ],
+    [
+     "البيانات التي نجمعها",
+     "• الاسم والبريد الإلكتروني ورقم الهاتف\n• عنوان التوصيل\n• تفاصيل الطلبات وسجلها\n• نص التخصيص الذي تقدمه، مثل اسم الطفل\n• تأكيد الدفع من مزود الدفع (دون أرقام البطاقات الكاملة)\n• الرسائل التي ترسلها إلينا\n• اشتراكك في النشرة البريدية، فقط إذا وافقت\n• محتويات السلة وتفضيلاتك، وتُحفظ في متصفحك"
+    ],
+    [
+     "لماذا نستخدمها",
+     "• لتصنيع طلبك وتوصيله ومتابعته (تنفيذ العقد معك)\n• لإصدار الفواتير والاحتفاظ بالسجلات التي يتطلبها القانون\n• للرد على استفساراتك وشكاواك\n• لإرسال النشرة البريدية بموافقتك فقط، ويمكنك سحبها في أي وقت\n• لحماية الموقع ومنع الاحتيال"
+    ],
+    [
+     "الأطفال",
+     "منتجاتنا مخصصة للأطفال، لكن الموقع موجه للبالغين. لا نجمع عن قصد بيانات شخصية من الأطفال. إذا قدمت اسم طفل للتخصيص، فإنك تؤكد أنك الوالد أو الولي أو لديك إذنه. نستخدم الاسم فقط لتصنيع القطعة ونحذفه بعد 90 يوماً من التوصيل."
+    ],
+    [
+     "مع من نشارك البيانات",
+     "نشارك فقط ما يلزم مع: مزود الدفع، وشركة التوصيل، ومزودي استضافة الموقع والبريد الإلكتروني، ومع الجهات الحكومية عندما يقتضي القانون ذلك. لا نبيع بياناتك أبداً."
+    ],
+    [
+     "النقل خارج قطر",
+     "إذا قام أحد مزودينا بتخزين البيانات خارج قطر، نتأكد من حمايتها بالمستوى الذي يتطلبه القانون القطري."
+    ],
+    [
+     "كيف نحمي بياناتك",
+     "يستخدم الموقع اتصالاً مشفراً (HTTPS)، ولا يطّلع على بيانات العملاء إلا الأشخاص المخوّلون. في حال حدوث اختراق قد يضرّك، نُخطرك ونُخطر الجهة المختصة وفقاً للقانون."
+    ],
+    [
+     "مدة الاحتفاظ",
+     "سجلات الطلبات والفواتير: للمدة التي تفرضها القوانين التجارية والضريبية في قطر. نص التخصيص: 90 يوماً بعد التوصيل. بيانات النشرة: حتى إلغاء الاشتراك. رسائل خدمة العملاء: سنتان."
+    ],
+    [
+     "حقوقك",
+     "يحق لك طلب الاطلاع على بياناتك أو تصحيحها أو حذفها، وسحب موافقتك، والاعتراض على طريقة استخدامها، من خلال قسم الخصوصية في حسابك أو عبر البريد الإلكتروني. إذا لم تكن راضياً عن ردنا، يمكنك تقديم شكوى إلى إدارة حماية خصوصية البيانات الشخصية في الوكالة الوطنية للأمن السيبراني."
+    ],
+    [
+     "ملفات تعريف الارتباط وتخزين المتصفح",
+     "راجع سياسة ملفات تعريف الارتباط."
+    ],
+    [
+     "التعديلات",
+     "ننشر أي تعديلات على هذه الصفحة. آخر تحديث: 24 November 2026. يُعتمد النص العربي."
+    ]
+   ]
+  },
+  "cookies": {
+   "t": "Cookie policy",
+   "ta": "سياسة ملفات تعريف الارتباط",
+   "en": [
+    [
+     "What we use",
+     "We use only strictly necessary browser storage to keep your cart, wishlist, preferences and your cookie choice. We do not use advertising or tracking cookies."
+    ],
+    [
+     "Third parties",
+     "Our fonts load from Google Fonts, which receives your IP address to deliver them. Our payment provider may set its own cookies on its secure payment page to process your payment and prevent fraud."
+    ],
+    [
+     "Your choices",
+     "You can clear this storage at any time in your browser settings. The cart and wishlist will then be emptied."
+    ]
+   ],
+   "ar": [
+    [
+     "ما نستخدمه",
+     "نستخدم فقط التخزين الضروري في المتصفح لحفظ السلة وقائمة المفضلة والتفضيلات واختيارك بشأن ملفات تعريف الارتباط. لا نستخدم ملفات تعريف ارتباط إعلانية أو للتتبع."
+    ],
+    [
+     "الأطراف الأخرى",
+     "يتم تحميل الخطوط من Google Fonts التي تستلم عنوان IP الخاص بك لعرضها. قد يستخدم مزود الدفع ملفات تعريف ارتباط خاصة به في صفحة الدفع الآمنة لمعالجة الدفع ومنع الاحتيال."
+    ],
+    [
+     "خياراتك",
+     "يمكنك مسح هذا التخزين في أي وقت من إعدادات المتصفح، وسيتم عندها تفريغ السلة والمفضلة."
+    ]
+   ]
+  },
+  "shipping": {
+   "t": "Shipping & delivery",
+   "ta": "الشحن والتوصيل",
+   "en": [
+    [
+     "Where we deliver",
+     "We currently deliver within the State of Qatar."
+    ],
+    [
+     "Delivery cost",
+     "25 QAR per order, free for orders of 300 QAR or more. The delivery cost is shown in your cart and before you pay."
+    ],
+    [
+     "How long it takes",
+     "Every item is handmade. The making and dispatch time is shown on each product page (usually 2 to 8 working days). After dispatch, delivery takes 1 to 3 working days. We will message you with the expected delivery date."
+    ],
+    [
+     "Receiving your parcel",
+     "Please check your parcel when it arrives. If it is damaged, take photos and tell us within 48 hours so we can put it right. Responsibility for the item passes to you on delivery."
+    ],
+    [
+     "Missed deliveries",
+     "If the courier cannot reach you after two attempts, we will contact you to arrange a new delivery. A second delivery fee may apply."
+    ]
+   ],
+   "ar": [
+    [
+     "مناطق التوصيل",
+     "نوصل حالياً داخل دولة قطر."
+    ],
+    [
+     "رسوم التوصيل",
+     "25 ريالاً قطرياً لكل طلب، والتوصيل مجاني للطلبات بقيمة 300 ريال أو أكثر. تظهر رسوم التوصيل في السلة وقبل الدفع."
+    ],
+    [
+     "مدة التوصيل",
+     "جميع القطع مصنوعة يدوياً. تظهر مدة التصنيع والشحن في صفحة كل منتج (عادةً من 2 إلى 8 أيام عمل). بعد الشحن يستغرق التوصيل من يوم إلى 3 أيام عمل، ونرسل لك موعد التوصيل المتوقع."
+    ],
+    [
+     "استلام الطلب",
+     "يُرجى فحص الطرد عند استلامه. إذا كان تالفاً، التقط صوراً وأبلغنا خلال 48 ساعة لنعالج الأمر. تنتقل مسؤولية القطعة إليك عند التسليم."
+    ],
+    [
+     "تعذر التوصيل",
+     "إذا لم يتمكن المندوب من الوصول إليك بعد محاولتين، نتواصل معك لترتيب موعد جديد، وقد تُطبق رسوم توصيل إضافية."
+    ]
+   ]
+  },
+  "returns": {
+   "t": "Returns & refunds",
+   "ta": "سياسة الإرجاع والاستبدال والاسترداد",
+   "en": [
+    [
+     "1. Your legal rights",
+     "This policy follows Law No. 8 of 2008 on Consumer Protection and its implementing regulations, and Decree-Law No. 16 of 2010 on Electronic Commerce and Transactions. Nothing in it limits the rights the law gives you."
+    ],
+    [
+     "2. Faulty, damaged or not as described",
+     "If an item is faulty, damaged, incomplete or different from its description or photos, tell us within 30 days of delivery. You choose a repair, a replacement or a full refund, including the delivery fee and any return cost. We may ask for photos so we can fix the cause."
+    ],
+    [
+     "3. Damaged in delivery or wrong item",
+     "Please check your parcel when it arrives. If it is damaged or we sent the wrong item, send us a photo within 48 hours if you can. We will collect it at our cost and send the right item or refund you in full. Reporting later does not remove your rights for faulty items."
+    ],
+    [
+     "4. Changed your mind",
+     "You can return unused, unwashed items with their tags and original packaging within 14 days of delivery, for an exchange or a refund of the item price. Please contact us before sending anything. The original delivery fee is refunded only if you return the whole order. The cost of sending a change-of-mind return is paid by you."
+    ],
+    [
+     "5. Items we cannot take back unless faulty",
+     "• Personalised items (for example an embroidered name) and pieces made to your measurements or instructions\n• Pacifier clips, rattles and teethers once removed from their sealed packaging, for hygiene reasons\n• Items that have been worn, washed, damaged after delivery or are missing parts\nThese exceptions never apply to faulty or not-as-described items."
+    ],
+    [
+     "6. Cancelling before dispatch",
+     "You can cancel free of charge before we start making a made-to-order piece or before we dispatch a ready-made item. We refund you in full, including delivery."
+    ],
+    [
+     "7. Inspection and partial refunds",
+     "We check every returned item within 3 working days of receiving it. If a change-of-mind return shows wear, washing or damage, we will explain why and may offer a partial refund or return the item to you. Faulty items are always refunded in full."
+    ],
+    [
+     "8. How and when we refund",
+     "Refunds go back to the original payment method (card, QPay/Himyan, Apple Pay or Google Pay) through our licensed payment provider, in Qatari riyals, within 14 days of receiving the return or agreeing a refund for a faulty item. Your bank may need 5 to 10 working days to show it. We never refund in cash or to a different card. We send you an email confirming the refund."
+    ],
+    [
+     "9. Gifts",
+     "If you received an item as a gift, we can exchange it. A refund is made to the person who paid for the order."
+    ],
+    [
+     "10. How to return",
+     "1. Email info@yaoua.qa or WhatsApp +974 7735 3521 with your order number, the item and the reason (photos help for faulty items).\n2. We reply within 2 working days with instructions and arrange collection in Qatar.\n3. Pack the item safely with its tags and packaging.\n4. We inspect it and send your refund or exchange."
+    ],
+    [
+     "11. If you are not satisfied",
+     "Please contact us first; we want to put it right. You can also contact the Ministry of Commerce and Industry, Consumer Protection: hotline 16001 or the MoCI app. See our Complaints page."
+    ]
+   ],
+   "ar": [
+    [
+     "1. حقوقك القانونية",
+     "تتبع هذه السياسة القانون رقم (8) لسنة 2008 بشأن حماية المستهلك ولائحته التنفيذية، والمرسوم بقانون رقم (16) لسنة 2010 بشأن المعاملات والتجارة الإلكترونية. لا يحدّ أي بند منها من حقوقك القانونية."
+    ],
+    [
+     "2. القطع المعيبة أو التالفة أو غير المطابقة",
+     "إذا كانت القطعة معيبة أو تالفة أو ناقصة أو مختلفة عن وصفها أو صورها، أخبرنا خلال 30 يوماً من الاستلام. ولك أن تختار الإصلاح أو الاستبدال أو استرداد المبلغ كاملاً، بما في ذلك رسوم التوصيل وتكلفة الإرجاع. قد نطلب صوراً لمعالجة السبب."
+    ],
+    [
+     "3. تلف أثناء التوصيل أو قطعة خاطئة",
+     "يرجى فحص الطرد عند وصوله. إذا كان تالفاً أو أرسلنا قطعة خاطئة، أرسل لنا صورة خلال 48 ساعة إن أمكن، وسنستلمها على نفقتنا ونرسل القطعة الصحيحة أو نعيد المبلغ كاملاً. الإبلاغ المتأخر لا يُسقط حقوقك في القطع المعيبة."
+    ],
+    [
+     "4. تغيير الرأي",
+     "يمكنك إرجاع القطع غير المستخدمة وغير المغسولة مع بطاقاتها وتغليفها الأصلي خلال 14 يوماً من الاستلام، للاستبدال أو لاسترداد ثمن القطعة. يرجى التواصل معنا قبل الإرسال. تُرد رسوم التوصيل الأصلية فقط عند إرجاع الطلب كاملاً، وتكلفة إرسال الإرجاع في هذه الحالة على حسابك."
+    ],
+    [
+     "5. قطع لا يمكن إرجاعها إلا إذا كانت معيبة",
+     "• القطع المخصصة (مثل تطريز اسم) والقطع المصنوعة حسب مقاساتك أو تعليماتك\n• مشابك اللهاية والخشخيشات والعضّاضات بعد إخراجها من تغليفها المحكم، لأسباب صحية\n• القطع التي تم ارتداؤها أو غسلها أو تلفت بعد الاستلام أو الناقصة\nلا تنطبق هذه الاستثناءات أبداً على القطع المعيبة أو غير المطابقة."
+    ],
+    [
+     "6. الإلغاء قبل الشحن",
+     "يمكنك الإلغاء مجاناً قبل أن نبدأ في صنع القطعة حسب الطلب أو قبل شحن القطعة الجاهزة، ونعيد لك المبلغ كاملاً بما في ذلك التوصيل."
+    ],
+    [
+     "7. الفحص والاسترداد الجزئي",
+     "نفحص كل قطعة مُرجعة خلال 3 أيام عمل من استلامها. إذا ظهرت على قطعة مُرجعة لتغيير الرأي آثار استخدام أو غسيل أو تلف، نوضح لك السبب وقد نعرض استرداداً جزئياً أو نعيد القطعة إليك. أما القطع المعيبة فيُرد ثمنها كاملاً دائماً."
+    ],
+    [
+     "8. طريقة وموعد رد المبلغ",
+     "نرد المبلغ إلى وسيلة الدفع الأصلية (البطاقة أو QPay/هميان أو Apple Pay أو Google Pay) عبر مزود الدفع المرخّص، بالريال القطري، خلال 14 يوماً من استلام القطعة المُرجعة أو الاتفاق على رد مبلغ قطعة معيبة. قد يحتاج البنك من 5 إلى 10 أيام عمل لإظهاره. لا نرد المبالغ نقداً أو إلى بطاقة أخرى، ونرسل لك بريداً يؤكد رد المبلغ."
+    ],
+    [
+     "9. الهدايا",
+     "إذا وصلتك القطعة هدية، يمكننا استبدالها. أما رد المبلغ فيكون لمن دفع ثمن الطلب."
+    ],
+    [
+     "10. طريقة الإرجاع",
+     "1. راسلنا على info@yaoua.qa أو عبر واتساب ‎+974 7735 3521 مع رقم الطلب والقطعة والسبب (الصور مفيدة للقطع المعيبة).\n2. نرد خلال يومي عمل بالتعليمات ونرتب الاستلام داخل قطر.\n3. غلّف القطعة جيداً مع بطاقاتها وتغليفها.\n4. نفحصها ونرسل المبلغ أو البديل."
+    ],
+    [
+     "11. إذا لم تكن راضياً",
+     "يرجى التواصل معنا أولاً، فنحن حريصون على حل المشكلة. ويمكنك أيضاً التواصل مع إدارة حماية المستهلك بوزارة التجارة والصناعة: الخط الساخن 16001 أو تطبيق الوزارة. راجع صفحة الشكاوى."
+    ]
+   ]
+  },
+  "complaints": {
+   "t": "Complaints",
+   "ta": "الشكاوى",
+   "en": [
+    [
+     "Tell us first",
+     "Email info@yaoua.qa, call +974 7735 3521 or WhatsApp +974 7735 3521 (Sunday to Thursday, 9:00 to 17:00 (Doha time)). Please include your order number and a short description."
+    ],
+    [
+     "What happens next",
+     "We confirm we have received your complaint within 2 working days and aim to resolve it within 7 working days. We will tell you what we will do and when."
+    ],
+    [
+     "If you are not satisfied",
+     "You can contact the Consumer Protection Department of the Ministry of Commerce and Industry: call 16001, use the MoCI mobile app, or visit www.moci.gov.qa. Using our complaints process does not affect your right to complain to the Ministry at any time."
+    ]
+   ],
+   "ar": [
+    [
+     "تواصل معنا أولاً",
+     "راسلنا على info@yaoua.qa أو اتصل على +974 7735 3521 أو عبر واتساب +974 7735 3521 (من الأحد إلى الخميس، من 9:00 صباحاً حتى 5:00 مساءً (بتوقيت الدوحة)). يُرجى ذكر رقم الطلب ووصف مختصر للمشكلة."
+    ],
+    [
+     "الخطوات التالية",
+     "نؤكد استلام الشكوى خلال يومي عمل، ونسعى إلى حلها خلال 7 أيام عمل، ونبلغك بالإجراء الذي سنتخذه وموعده."
+    ],
+    [
+     "إذا لم تكن راضياً",
+     "يمكنك التواصل مع إدارة حماية المستهلك في وزارة التجارة والصناعة: الاتصال على 16001، أو عبر تطبيق الوزارة، أو الموقع الإلكتروني www.moci.gov.qa. لا يؤثر استخدامك لإجراءات الشكاوى لدينا على حقك في تقديم شكوى للوزارة في أي وقت."
+    ]
+   ]
+  },
+  "safety": {
+   "t": "Product safety",
+   "ta": "سلامة المنتجات",
+   "en": [
+    [
+     "Soft toys",
+     "Our dolls use safety eyes fixed with locking washers and are stitched closed by hand. For babies under 12 months we can embroider the eyes instead. Ask in the order note. Check toys regularly and stop using any toy that is damaged or has loose parts."
+    ],
+    [
+     "Rattles and pacifier clips",
+     "Always supervise use. Never tie a pacifier clip around a baby’s neck or attach it to a cot or pram while the baby sleeps. Check the clip, cord and beads before every use."
+    ],
+    [
+     "Clothing",
+     "Ponchos have a short, securely knotted neck tie. Take clothing with ties off before sleep. Do not leave a baby unattended while wearing clothing with ties."
+    ],
+    [
+     "Decorative items",
+     "WARNING: Pearl the Turtle Treasure Pouch has small sewn-on beads and is not a toy. Keep it out of reach of children under 3 years."
+    ],
+    [
+     "Materials and care",
+     "Each product page lists the yarns, fillings and other materials used, and how to wash the item."
+    ],
+    [
+     "Standards",
+     "Toys sold in Qatar must meet the GCC Technical Regulation on Children’s Toys. Conformity status of our toys: [to be confirmed after testing]"
+    ]
+   ],
+   "ar": [
+    [
+     "الألعاب القطنية",
+     "تُثبَّت العيون الآمنة في دمانا بحلقات قفل من الداخل، وتُخاط الدمى يدوياً. للأطفال دون 12 شهراً يمكننا تطريز العيون بدلاً من ذلك، اطلب ذلك في ملاحظة الطلب. افحص الألعاب بانتظام وتوقف عن استخدام أي لعبة تالفة أو بها أجزاء مرتخية."
+    ],
+    [
+     "الخشخيشات ومشابك اللهاية",
+     "يجب الإشراف دائماً أثناء الاستخدام. لا تربط مشبك اللهاية حول رقبة الطفل ولا تعلّقه بالسرير أو العربة أثناء نوم الطفل. افحص المشبك والحبل والخرز قبل كل استخدام."
+    ],
+    [
+     "الملابس",
+     "يحتوي البونشو على رباط قصير ومعقود بإحكام عند الرقبة. انزع الملابس ذات الأربطة قبل النوم، ولا تترك الطفل دون مراقبة أثناء ارتدائها."
+    ],
+    [
+     "القطع الزخرفية",
+     "تحذير: حقيبة السلحفاة \"بيرل\" تحتوي على خرز صغير مخيط وليست لعبة. تُحفظ بعيداً عن متناول الأطفال دون 3 سنوات."
+    ],
+    [
+     "الخامات والعناية",
+     "توضح صفحة كل منتج الخيوط والحشوات والخامات المستخدمة وطريقة الغسيل."
+    ],
+    [
+     "المواصفات",
+     "يجب أن تستوفي الألعاب المباعة في قطر اللائحة الفنية الخليجية لألعاب الأطفال. حالة مطابقة ألعابنا: [يُحدَّد بعد الفحص]"
+    ]
+   ]
+  },
+  "faq": {
+   "t": "FAQ",
+   "ta": "الأسئلة الشائعة",
+   "en": [
+    [
+     "Which size should I choose?",
+     "Open the Size guide on any clothing page. Measurements are in centimetres. Between sizes, choose the larger one."
+    ],
+    [
+     "Are the dolls safe for newborns?",
+     "They use locking safety eyes. For babies under 12 months we can embroider the eyes instead. Just add a note at checkout."
+    ],
+    [
+     "How do I wash crochet pieces?",
+     "Hand wash cold and dry flat in the shade. Dolls can be spot cleaned."
+    ],
+    [
+     "Can you make a different colour?",
+     "Yes. Most pieces can be made to order in other colours. Message us on WhatsApp."
+    ]
+   ],
+   "ar": [
+    [
+     "كيف أختار المقاس؟",
+     "افتح دليل المقاسات في صفحة أي قطعة ملابس، والقياسات بالسنتيمتر. إذا كان طفلك بين مقاسين اختر الأكبر."
+    ],
+    [
+     "هل الدمى آمنة لحديثي الولادة؟",
+     "نستخدم عيوناً آمنة بحلقات قفل، وللأطفال دون 12 شهراً يمكننا تطريز العيون. أضف ملاحظة عند الدفع."
+    ],
+    [
+     "كيف أغسل قطع الكروشيه؟",
+     "اغسلها يدوياً بماء بارد وجففها مسطحة في الظل. يمكن تنظيف الدمى موضعياً."
+    ],
+    [
+     "هل يمكن صنع لون مختلف؟",
+     "نعم، معظم القطع يمكن صنعها حسب الطلب بألوان أخرى. راسلنا عبر واتساب."
+    ]
+   ]
+  },
+  "about": {
+   "t": "Our story",
+   "ta": "قصتنا",
+   "img": 17,
+   "en": [
+    [
+     "Fait main au crochet",
+     "YAOUA is a small crochet studio in Qatar. Every romper, poncho and soft friend is made by hand, one stitch at a time, from soft baby-friendly yarns."
+    ],
+    [
+     "Made slowly, checked carefully",
+     "We make in small batches so we can check every seam and every safety eye, then wrap each order in tissue inside a kraft keepsake box with a handwritten card."
+    ]
+   ],
+   "ar": [
+    [
+     "صُنع يدوياً بالكروشيه",
+     "YAOUA استوديو صغير للكروشيه في قطر. كل قطعة من الملابس والبونشو والدمى مصنوعة يدوياً غرزة بغرزة من خيوط ناعمة مناسبة للأطفال."
+    ],
+    [
+     "صناعة متأنية وفحص دقيق",
+     "نصنع بكميات صغيرة لنفحص كل خياطة وكل عين آمنة، ثم نغلف كل طلب بورق ناعم داخل علبة كرافت تذكارية مع بطاقة مكتوبة بخط اليد."
+    ]
+   ]
+  },
+  "contact": {
+   "t": "Contact us",
+   "ta": "تواصل معنا",
+   "img": 9,
+   "en": [
+    [
+     "Customer service",
+     "Email: info@yaoua.qa\nPhone: +974 7735 3521\nWhatsApp: +974 7735 3521\nHours: Sunday to Thursday, 9:00 to 17:00 (Doha time)\nAddress: Online business (no physical shop), State of Qatar"
+    ],
+    [
+     "Replies",
+     "We reply within one working day."
+    ]
+   ],
+   "ar": [
+    [
+     "خدمة العملاء",
+     "البريد الإلكتروني: info@yaoua.qa\nالهاتف: +974 7735 3521\nواتساب: +974 7735 3521\nساعات العمل: من الأحد إلى الخميس، من 9:00 صباحاً حتى 5:00 مساءً (بتوقيت الدوحة)\nالعنوان: Online business (no physical shop), State of Qatar"
+    ],
+    [
+     "الرد",
+     "نرد خلال يوم عمل واحد."
+    ]
+   ]
+  }
+ }
+}

@@ -145,3 +145,30 @@ test('sign-in attempts are limited across server instances (shared counter)', as
     delete process.env.STRICT_RATE_LIMITS;
   }
 });
+
+test('an authenticator code cannot be used twice', async () => {
+  const email = 'replay-admin@test.local';
+  await prisma.user.create({ data: { email, name: 'Boss', role: 'ADMIN', passwordHash: await hashPassword('Password12345') } });
+  const a = agent();
+  await a.post('/api/auth/login').send({ email, password: 'Password12345' });
+  const { body } = await a.post('/api/auth/mfa/setup');
+  const code = authenticator.generate(body.secret);
+  assert.equal((await a.post('/api/auth/mfa/verify').send({ code })).status, 200);
+  const b = agent();
+  await b.post('/api/auth/login').send({ email, password: 'Password12345' });
+  const again = await b.post('/api/auth/mfa/verify').send({ code });
+  assert.equal(again.status, 401, 'a stolen or replayed code is refused');
+});
+
+test('security headers are sent and personal data is never cached', async () => {
+  const r = await agent().get('/api/auth/me');
+  assert.equal(r.headers['cache-control'], 'no-store');
+  assert.match(r.headers['content-security-policy'], /frame-ancestors 'none'/);
+  assert.match(r.headers['content-security-policy'], /object-src 'none'/);
+  assert.match(r.headers['permissions-policy'], /camera=\(\)/);
+  assert.equal(r.headers['x-content-type-options'], 'nosniff');
+  assert.equal(r.headers['referrer-policy'], 'no-referrer');
+  assert.match(r.headers['strict-transport-security'], /max-age=31536000/);
+  assert.equal(r.headers['x-powered-by'], undefined);
+  assert.match((await agent().get('/.well-known/security.txt')).text, /Contact: mailto:/);
+});

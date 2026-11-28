@@ -27,12 +27,30 @@ function createApp() {
           connectSrc: ["'self'"],
           formAction: ["'self'"],
           frameAncestors: ["'none'"],
+          objectSrc: ["'none'"],
+          baseUri: ["'self'"],
           upgradeInsecureRequests: env.isProd ? [] : null,
         },
       },
       crossOriginEmbedderPolicy: false,
+      // 1 year. Sub-domains are left out on purpose: mail.yaoua.qa is the email host at Unitech.
+      strictTransportSecurity: { maxAge: 31536000, includeSubDomains: false },
+      referrerPolicy: { policy: 'no-referrer' },
     }),
   );
+  app.use((req, res, next) => {
+    // The site never needs these browser features; switching them off limits what injected code could do.
+    res.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), usb=(), serial=(), bluetooth=(), payment=(self), interest-cohort=()');
+    // Never let a shared cache or the CDN keep personal data (accounts, orders, admin).
+    if (req.path.startsWith('/api/') || req.path.startsWith('/admin') || req.path.startsWith('/account') || req.path.startsWith('/order') || req.path.startsWith('/checkout')) {
+      res.set('Cache-Control', 'no-store');
+    }
+    next();
+  });
+  // How security researchers can report a problem (RFC 9116).
+  app.get('/.well-known/security.txt', (_req, res) => {
+    res.type('text/plain').send(`Contact: mailto:info@yaoua.qa\nExpires: ${new Date(Date.now() + 365 * 864e5).toISOString()}\nPreferred-Languages: en, ar\nCanonical: ${env.APP_URL}/.well-known/security.txt\n`);
+  });
   app.use(cookieParser());
   app.use(adminHost);
 

@@ -64,7 +64,7 @@ async function load() {
   const cat = categories.find((c) => c.slug === f.category);
   const title = f.q ? `Search: “${f.q}”` : cat?.name ?? 'Shop all';
   setTitle(title);
-  setMeta(cat?.description ?? 'Shop handmade knitted baby clothes, booties, bonnets, dolls and gift sets.');
+  setMeta(cat?.description ?? 'Shop handmade crochet baby clothes, dolls, accessories and gift boxes from YAOUA, made in Qatar.');
 
   const apiQuery = toQuery({ ...f, newArrivals: f.category === 'new-arrivals' ? 'true' : '', category: f.category === 'new-arrivals' ? '' : f.category });
   apiQuery.set('pageSize', 12);
