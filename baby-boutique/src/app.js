@@ -90,7 +90,15 @@ function createApp() {
     res.set('Cache-Control', 'public, max-age=31536000, immutable').type('image/webp').send(buf);
   });
   app.use('/uploads', express.static(path.resolve(env.MEDIA_UPLOAD_DIR), { maxAge: '30d', immutable: true, index: false }));
-  app.use(express.static(pub, { index: false, maxAge: env.isProd ? '1h' : 0 }));
+  app.use(express.static(pub, {
+    index: false,
+    maxAge: env.isProd ? '1h' : 0,
+    // Code and pages must update the moment a new version is published (e.g. a sign-in change), so the
+    // browser re-checks them on every visit; only images keep the 1-hour cache.
+    setHeaders: (res, filePath) => {
+      if (/\.(js|css|html)$/.test(filePath)) res.setHeader('Cache-Control', 'no-cache');
+    },
+  }));
 
   // `root` keeps send's dot-file guard to the file's own path (hosts like Netlify unpack under hidden dirs).
   const page = (file) => (_req, res) => res.sendFile(file, { root: pub });

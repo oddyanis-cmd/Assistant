@@ -191,3 +191,10 @@ test('two-step sign-in can be switched off by the owner (ADMIN_MFA=false) and ba
   await b.post('/api/auth/login').send({ email, password: 'Password12345' });
   assert.equal((await b.get('/api/admin/products')).status, 401, 'switched back on: code required again');
 });
+
+test('site code and admin pages are always re-checked, so updates apply immediately', async () => {
+  const a = agent();
+  for (const path of ['/admin/login.js', '/admin/admin.js', '/js/layout.js', '/css/styles.css']) {
+    assert.equal((await a.get(path)).headers['cache-control'], 'no-cache', path);
+  }
+});
