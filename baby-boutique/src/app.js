@@ -47,6 +47,11 @@ function createApp() {
     }
     next();
   });
+  // While the site is a test website, keep it out of Google and other search engines.
+  if (env.PAYMENTS_TEST_MODE) {
+    app.use((_req, res, next) => { res.set('X-Robots-Tag', 'noindex, nofollow'); next(); });
+    app.get('/robots.txt', (_req, res) => res.type('text/plain').send('User-agent: *\nDisallow: /\n'));
+  }
   // How security researchers can report a problem (RFC 9116).
   app.get('/.well-known/security.txt', (_req, res) => {
     res.type('text/plain').send(`Contact: mailto:info@yaoua.qa\nExpires: ${new Date(Date.now() + 365 * 864e5).toISOString()}\nPreferred-Languages: en, ar\nCanonical: ${env.APP_URL}/.well-known/security.txt\n`);
