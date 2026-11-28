@@ -39,15 +39,23 @@ function pageBody(p) {
 async function main() {
   // ---------- Owner account ----------
   const email = (process.env.ADMIN_EMAIL || '').toLowerCase();
-  if (email && process.env.ADMIN_PASSWORD) {
-    await prisma.user.upsert({
-      where: { email },
-      create: { email, name: 'Store Owner', role: 'ADMIN', passwordHash: await hashPassword(process.env.ADMIN_PASSWORD) },
-      update: { role: 'ADMIN' },
-    });
-    console.log(`Admin: ${email}`);
-  } else {
-    console.warn('ADMIN_EMAIL/ADMIN_PASSWORD not set: no admin user created');
+  // Changing the owner's sign-in email: set ADMIN_EMAIL to the new address and ADMIN_PREVIOUS_EMAIL to
+  // the old one. The same account (password, two-step sign-in, orders) is kept; old sessions are ended.
+  const previous = (process.env.ADMIN_PREVIOUS_EMAIL || '').toLowerCase();
+  if (email && previous && previous !== email) {
+    const old = await prisma.user.findUnique({ where: { email: previous } });
+    const taken = await prisma.user.findUnique({ where: { email } });
+    if (old && !taken) {
+      await prisma.user.update({ where: { id: old.id }, data: { email } });
+      await prisma.session.deleteMany({ where: { userId: old.id } });
+      console.log(`Admin sign-in email changed (${previous} -> ${email})`);
+    }
+  }
+  if (email && process.env.ADMIN_PASSWORD && !(await prisma.user.findUnique({ where: { email } }))) {
+    await prisma.user.create({ data: { email, name: 'Store Owner', role: 'ADMIN', passwordHash: await hashPassword(process.env.ADMIN_PASSWORD) } });
+    console.log(`Admin created: ${email}`);
+  } else if (!email) {
+    console.warn('ADMIN_EMAIL not set: no admin user created');
   }
 
   // ---------- Categories ----------
